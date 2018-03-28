@@ -60,6 +60,13 @@ versions.lombok = "1.16.20"
 versions.rxjava2 = "2.1.3"
 versions.rx_android = "2.0.1"
 versions.room = "1.1.0-alpha1"
+versions.material_drawer_kt = "1.3.3"
+versions.material_drawer = "6.0.6@aar"
+versions.about_libraries = "6.0.6@aar"
+
+versions.junit = "4.12"
+versions.testrunner = "1.0.1"
+versions.espresso = "3.0.1"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -67,12 +74,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation "com.android.support:appcompat-v7:${versions.support}"
+    implementation "com.android.support:recyclerview-v7:${versions.support}"
+    implementation "com.android.support:support-annotations:${versions.support}"
+    implementation "com.android.support:design:${versions.support}"
+    implementation "com.android.support:cardview-v7:${versions.support}"
 //    implementation "com.android.support:support-core-utils:${versions.support}"
-//    implementation "com.android.support:recyclerview-v7:$versions.support"
-//    implementation "com.android.support:cardview-v7:$versions.support"
-//    implementation "com.android.support:design:${versions.support}"
-//    implementation "com.android.support:support-annotations:${versions.support}"
-//    implementation "com.android.support:design:${versions.support}"
 
 //    implementation "android.arch.persistence.room:runtime:$versions.room"
 //    implementation "android.arch.persistence.room:rxjava2:$versions.room"
@@ -88,16 +94,17 @@ dependencies {
 //    implementation "com.drewnoakes:metadata-extractor:${versions.metadata_extractor}"
 //    implementation "commons-io:commons-io:${versions.apache_commons}"
 
-//    implementation "com.github.arimorty:floatingsearchview:${versions.floating_search_view}"
+    implementation "com.github.arimorty:floatingsearchview:${versions.floating_search_view}"
 
-//    implementation("com.mikepenz:materialdrawer:6.0.6@aar") { transitive = true }
-//    implementation("com.mikepenz:aboutlibraries:6.0.6@aar") { transitive = true }
+    implementation "co.zsmb:materialdrawer-kt:${versions.material_drawer_kt}"
+    implementation("com.mikepenz:materialdrawer:${versions.material_drawer}") { transitive = true }
+    implementation("com.mikepenz:aboutlibraries:${versions.about_libraries}") { transitive = true }
 
 //    implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
 //    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
 //    implementation "com.squareup.okhttp3:logging-interceptor:${versions.okhttp_logging_interceptor}"
 
-//    implementation "com.squareup.picasso:picasso:${versions.picasso}"
+    implementation "com.squareup.picasso:picasso:${versions.picasso}"
 
 //    implementation "com.jakewharton:butterknife:${versions.butterknife}"
 
@@ -112,8 +119,8 @@ dependencies {
 
 //    compileOnly "org.projectlombok:lombok:${versions.lombok}"
 
-//    implementation "com.mikepenz:google-material-typeface:3.0.1.2.original@aar"
-//    implementation "com.mikepenz:fontawesome-typeface:5.0.6.0@aar"
+    implementation "com.mikepenz:google-material-typeface:3.0.1.2.original@aar"
+    implementation "com.mikepenz:fontawesome-typeface:5.0.6.0@aar"
 
 //    annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 //    annotationProcessor "com.jakewharton:butterknife-compiler:${versions.butterknife}"
@@ -124,7 +131,7 @@ dependencies {
 //    annotationProcessor "com.google.dagger:dagger-compiler:${versions.dagger}"
 
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation "junit:junit:${versions.junit}"
+    androidTestImplementation "com.android.support.test:runner:${versions.testrunner}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
 }

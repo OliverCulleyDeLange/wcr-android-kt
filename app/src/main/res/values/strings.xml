@@ -1,4 +1,9 @@
 <resources>
-    <string name="app_name">wcr-android-kt</string>
+    <string name="app_name">We Climb Rocks</string>
+
+    <string name="menu_about">About</string>
+
     <string name="title_activity_maps">Map</string>
+    <string name="map_search_hint">Search for crags and climbs</string>
+
 </resources>
