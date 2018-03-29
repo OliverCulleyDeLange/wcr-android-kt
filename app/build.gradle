@@ -45,7 +45,7 @@ def versions = [:]
 versions.support = "27.1.0"
 versions.arch_core = "1.1.0"
 versions.databinding = "3.2.0-alpha04"
-versions.play_services = "11.8.0"
+versions.play_services = "12.0.1"
 versions.maps_utils = "0.5"
 versions.metadata_extractor = "2.9.0"
 versions.apache_commons = "2.6"
@@ -73,6 +73,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.google.firebase:firebase-core:${versions.play_services}"
 
     implementation "com.android.support:appcompat-v7:${versions.support}"
     implementation "com.android.support:recyclerview-v7:${versions.support}"
@@ -138,3 +139,5 @@ dependencies {
     androidTestImplementation "com.android.support.test:runner:${versions.testrunner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
 }
+
+apply plugin: 'com.google.gms.google-services'
