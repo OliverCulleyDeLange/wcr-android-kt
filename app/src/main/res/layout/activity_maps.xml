@@ -24,11 +24,12 @@
             <Button
                 android:id="@+id/map_toggle"
                 style="@style/Wcr_MapToggle"
-                android:layout_marginTop="110dp"
+                android:layout_marginTop="65dp"
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="7dp"
                 android:layout_gravity="top|end"
-                android:onClick="toggleMap" />
+                android:onClick="@{vm::toggleMap}"
+                android:text="@{vm.mapLabel}" />
         </fragment>
 
         <com.arlib.floatingsearchview.FloatingSearchView
@@ -52,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_vertical_margin"
             android:elevation="8dp"
-            android:onClick="submit"
+            android:onClick="@{vm::submit}"
             app:layout_anchor="@id/bottom_sheet_peek"
             app:layout_anchorGravity="top|end" />
 

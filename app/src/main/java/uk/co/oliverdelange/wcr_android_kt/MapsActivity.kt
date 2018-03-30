@@ -42,6 +42,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
+        binding.setLifecycleOwner(this)
         val viewModel = ViewModelProviders.of(this).get(MapViewModel::class.java)
         binding.vm = viewModel
         viewModel.init()
@@ -59,10 +60,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.vm?.mapType?.observe(this, Observer {
             if (GoogleMap.MAP_TYPE_NORMAL == it) {
-                map_toggle.text = "SAT"
                 mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
             } else {
-                map_toggle.text = "MAP"
                 mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
             }
         })
@@ -89,18 +88,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         })
-    }
-
-    fun submit(view: View) {
-        binding.vm?.mapMode?.value = MapMode.SUBMIT
-    }
-
-    fun toggleMap(view: View) {
-        if (GoogleMap.MAP_TYPE_NORMAL == binding.vm?.mapType?.value) {
-            binding.vm?.mapType?.value = GoogleMap.MAP_TYPE_SATELLITE
-        } else {
-            binding.vm?.mapType?.value = GoogleMap.MAP_TYPE_NORMAL
-        }
     }
 
     private fun initialiseDrawer() {
