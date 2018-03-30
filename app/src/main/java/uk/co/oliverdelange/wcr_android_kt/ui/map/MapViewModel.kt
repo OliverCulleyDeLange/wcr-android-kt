@@ -9,15 +9,14 @@ import com.google.android.gms.maps.GoogleMap
 
 class MapViewModel : ViewModel() {
 
-    val mapType: MutableLiveData<Int> = MutableLiveData()
+    val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
+        it.value = GoogleMap.MAP_TYPE_NORMAL
+    }
     val mapLabel: LiveData<String> = Transformations.map(mapType) {
         if (it == 1) "SAT" else "MAP"
     }
-    val mapMode: MutableLiveData<MapMode> = MutableLiveData()
-
-    fun init() {
-        mapType.value = GoogleMap.MAP_TYPE_NORMAL
-        mapMode.value = MapMode.DEFAULT
+    val mapMode: MutableLiveData<MapMode> = MutableLiveData<MapMode>().also {
+        it.value = MapMode.DEFAULT
     }
 
     fun submit(view: View) {

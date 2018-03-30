@@ -45,7 +45,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.setLifecycleOwner(this)
         val viewModel = ViewModelProviders.of(this).get(MapViewModel::class.java)
         binding.vm = viewModel
-        viewModel.init()
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
