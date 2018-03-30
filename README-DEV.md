@@ -12,3 +12,11 @@ Adding a git remote: (https://help.github.com/articles/adding-a-remote/)
   $ git remote add origin {url of new repo}
 Verify a git remote:
   $ git remote -v
+
+
+Data Structure:
+
+- Crags
+    - Sectors
+        - Topos
+            - Climbs

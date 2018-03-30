@@ -10,7 +10,7 @@
             type="uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel" />
     </data>
 
-    <FrameLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -44,5 +44,17 @@
             app:floatingSearch_showSearchKey="false"
             app:floatingSearch_suggestionsListAnimDuration="250" />
 
-    </FrameLayout>
+        <include layout="@layout/bottom_sheet" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_vertical_margin"
+            android:elevation="8dp"
+            android:onClick="submit"
+            app:layout_anchor="@id/bottom_sheet_peek"
+            app:layout_anchorGravity="top|end" />
+
+    </android.support.design.widget.CoordinatorLayout>
 </layout>
