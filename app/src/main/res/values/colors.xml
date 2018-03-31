@@ -2,10 +2,8 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-
-    <color name="accent">#4eacff</color>
-    <color name="accent_light">#a1d3ff</color>
+    <color name="colorAccent">#4eacff</color>
+    <color name="colorAccentLight">#a1d3ff</color>
 
     <!--Background colours-->
     <color name="bg_grey">#eaeaea</color>
@@ -30,8 +28,8 @@
     <!--FAB colours-->
     <color name="fab_new_crag">@color/crag_light</color>
     <color name="fab_new_sector">@color/sector_light</color>
-    <color name="fab_new_topo">@color/accent_light</color>
-    <color name="fab_done_painting">#00c624</color>
+    <color name="fab_new_topo">@color/colorAccentLight</color>
+    <color name="fab_done">#81c784</color>
     <color name="transparent">#00ffffff</color>
 
     <!--Climb Grades-->

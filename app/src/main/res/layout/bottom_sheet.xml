@@ -4,7 +4,7 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="480dp"
-    android:background="@android:color/darker_gray"
+    android:background="@color/bg_grey_light"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:behavior_peekHeight="80dp"
@@ -20,12 +20,9 @@
         android:text="Peekaboo"
         android:textColor="@android:color/white" />
 
-    <TextView
-        android:id="@+id/bottom_sheet_content"
+    <FrameLayout
+        android:id="@+id/bottom_sheet_content_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Bottom sheet"
-        android:textColor="@android:color/white" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

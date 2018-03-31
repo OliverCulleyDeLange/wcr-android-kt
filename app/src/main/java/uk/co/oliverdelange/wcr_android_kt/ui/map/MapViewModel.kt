@@ -6,6 +6,7 @@ import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
+import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 
 class MapViewModel : ViewModel() {
 
@@ -20,7 +21,11 @@ class MapViewModel : ViewModel() {
     }
 
     fun submit(view: View) {
-        mapMode.value = MapMode.SUBMIT
+        when (mapMode.value) {
+            DEFAULT -> mapMode.value = SUBMIT_CRAG
+            CRAG -> mapMode.value = SUBMIT_SECTOR
+            SECTOR, TOPO -> mapMode.value = SUBMIT_TOPO
+        }
     }
 
     fun toggleMap(view: View) {
@@ -30,8 +35,9 @@ class MapViewModel : ViewModel() {
             mapType.value = GoogleMap.MAP_TYPE_NORMAL
         }
     }
+
 }
 
 enum class MapMode {
-    DEFAULT, CRAG, SECTOR, TOPO, SUBMIT
+    DEFAULT, CRAG, SECTOR, TOPO, SUBMIT_CRAG, SUBMIT_SECTOR, SUBMIT_TOPO
 }

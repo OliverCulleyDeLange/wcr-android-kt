@@ -26,8 +26,10 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_maps.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode
+import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
+import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitFragment
+import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import java.lang.Math.round
 
 
@@ -67,24 +69,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.vm?.mapMode?.observe(this, Observer {
             when (it) {
-                MapMode.DEFAULT -> {
-                    fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.fab_new_crag))
-                    fab.setImageResource(R.drawable.add_crag_button)
+                DEFAULT -> {
+                    fabStyle(R.drawable.add_crag_button, R.color.fab_new_crag)
                 }
-                MapMode.CRAG -> {
-                    fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.fab_new_sector))
-                    fab.setImageResource(R.drawable.add_sector_button)
+                CRAG -> {
+                    fabStyle(R.drawable.add_sector_button, R.color.fab_new_sector)
                 }
-                MapMode.SECTOR -> {
-                    fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.fab_new_topo))
-                    fab.setImageResource(R.drawable.add_topo_button)
+                SECTOR -> {
+                    fabStyle(R.drawable.add_topo_button, R.color.fab_new_topo)
                 }
-                MapMode.TOPO -> {
-                    bottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-                }
-                MapMode.SUBMIT -> {
+                TOPO -> {
                     bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
                 }
+                SUBMIT_CRAG -> {
+                    fab.animate().scaleX(0f).scaleY(0f).setDuration(2000).start()
+                    bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+                    replaceFragment(SubmitFragment.newInstance(), R.id.bottom_sheet_content_container)
+                }
+                SUBMIT_SECTOR -> {
+                    bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+                }
+                SUBMIT_TOPO -> {
+                    bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+                }
+
             }
         })
     }
@@ -145,12 +153,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             override fun onStateChanged(bottomSheet: View, newState: Int) {}
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 mMap.setPadding(/*Left*/ 0, /*Top*/ 150, /*Right*/ 0, /*Bottom*/ if (slideOffset > 0) {
-                    round(bottom_sheet_content.height * slideOffset + bottom_sheet_peek.height)
+                    round(bottom_sheet_content_container.height * slideOffset + bottom_sheet_peek.height)
                 } else {
                     round(bottom_sheet_peek.height - (bottom_sheet_peek.height * -slideOffset))
                 })
             }
         })
 
+    }
+
+    private fun fabStyle(iconId: Int, colourId: Int) {
+        fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(colourId))
+        fab.setImageResource(iconId)
     }
 }
