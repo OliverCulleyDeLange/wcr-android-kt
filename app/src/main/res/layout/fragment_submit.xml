@@ -23,6 +23,7 @@
             app:hintTextAppearance="@style/FloatingLabel">
 
             <EditText
+                android:id="@+id/crag_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/submission_text_input_crag_name"
@@ -33,6 +34,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
+            android:id="@+id/submit"
             style="@style/Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

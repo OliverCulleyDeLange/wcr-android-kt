@@ -66,6 +66,7 @@ versions.material_drawer = "6.0.6@aar"
 versions.about_libraries = "6.0.6@aar"
 
 versions.junit = "4.12"
+versions.mockito_kotlin = "1.5.0"
 versions.testrunner = "1.0.1"
 versions.espresso = "3.0.1"
 
@@ -82,7 +83,7 @@ dependencies {
     implementation "com.android.support:cardview-v7:${versions.support}"
 //    implementation "com.android.support:support-core-utils:${versions.support}"
 
-//    implementation "android.arch.persistence.room:runtime:$versions.room"
+    implementation "android.arch.persistence.room:runtime:$versions.room"
 //    implementation "android.arch.persistence.room:rxjava2:$versions.room"
     implementation "android.arch.lifecycle:extensions:${versions.arch_core}"
 
@@ -126,7 +127,7 @@ dependencies {
 
 //    annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 //    annotationProcessor "com.jakewharton:butterknife-compiler:${versions.butterknife}"
-//    annotationProcessor "android.arch.persistence.room:compiler:$versions.room"
+    kapt "android.arch.persistence.room:compiler:$versions.room"
 //    annotationProcessor "android.arch.lifecycle:compiler:${versions.arch_core}"
 //    annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
 //    annotationProcessor "com.google.dagger:dagger-android-processor:${versions.dagger}"
@@ -136,6 +137,9 @@ dependencies {
 
 
     testImplementation "junit:junit:${versions.junit}"
+    testImplementation "android.arch.core:core-testing:${versions.arch_core}"
+    testImplementation "com.nhaarman:mockito-kotlin:${versions.mockito_kotlin}"
+//    testImplementation "org.mockito:mockito-core:${versions.mockito}"
     androidTestImplementation "com.android.support.test:runner:${versions.testrunner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
 }
