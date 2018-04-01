@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.LinearLayout
@@ -14,15 +15,19 @@ import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
+import com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.util.DrawerUIUtils
 import com.squareup.picasso.Picasso
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_maps.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
@@ -31,14 +36,28 @@ import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitFragment
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import java.lang.Math.round
+import javax.inject.Inject
 
+const val DEFAULT_ZOOM = 6f
+const val CRAG_ZOOM = 14f
+const val MAP_ANIMATION_DURATION = 400
+const val MAP_PADDING_TOP = 150
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReadyCallback {
+
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+
+    override fun supportFragmentInjector(): DispatchingAndroidInjector<Fragment> {
+        return dispatchingAndroidInjector
+    }
 
     private lateinit var mMap: GoogleMap
     private lateinit var slidingDrawer: Drawer
     private lateinit var binding: ActivityMapsBinding
     private lateinit var bottomSheet: BottomSheetBehavior<LinearLayout>
+
+    private val defaultLanLng = LatLng(52.0, -2.0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +78,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+        observeViewModel()
+        mMap.moveCamera(newLatLngZoom(defaultLanLng, DEFAULT_ZOOM))
+    }
+
+    private fun observeViewModel() {
         binding.vm?.mapType?.observe(this, Observer {
             if (GoogleMap.MAP_TYPE_NORMAL == it) {
                 mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
@@ -152,7 +176,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         bottomSheet.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {}
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                mMap.setPadding(/*Left*/ 0, /*Top*/ 150, /*Right*/ 0, /*Bottom*/ if (slideOffset > 0) {
+                mMap.setPadding(/*Left*/ 0, /*Top*/ MAP_PADDING_TOP, /*Right*/ 0, /*Bottom*/ if (slideOffset > 0) {
                     round(bottom_sheet_content_container.height * slideOffset + bottom_sheet_peek.height)
                 } else {
                     round(bottom_sheet_peek.height - (bottom_sheet_peek.height * -slideOffset))

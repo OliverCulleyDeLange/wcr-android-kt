@@ -111,12 +111,12 @@ dependencies {
 
 //    implementation "com.jakewharton:butterknife:${versions.butterknife}"
 
-//    implementation "com.google.dagger:dagger:${versions.dagger}"
-//    implementation "com.google.dagger:dagger-android:${versions.dagger}"
-//    implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
+    implementation "com.google.dagger:dagger:${versions.dagger}"
+    implementation "com.google.dagger:dagger-android:${versions.dagger}"
+    implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
 
-//    implementation "com.facebook.stetho:stetho:${versions.stetho}"
-//    implementation "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
+    implementation "com.facebook.stetho:stetho:${versions.stetho}"
+    implementation "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
 
 //    implementation "org.mapstruct:mapstruct-jdk8:${versions.mapstruct}"
 
@@ -125,13 +125,13 @@ dependencies {
     implementation "com.mikepenz:google-material-typeface:3.0.1.2.original@aar"
     implementation "com.mikepenz:fontawesome-typeface:5.0.6.0@aar"
 
+    kapt "android.arch.persistence.room:compiler:$versions.room"
+    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 //    annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 //    annotationProcessor "com.jakewharton:butterknife-compiler:${versions.butterknife}"
-    kapt "android.arch.persistence.room:compiler:$versions.room"
 //    annotationProcessor "android.arch.lifecycle:compiler:${versions.arch_core}"
 //    annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
-//    annotationProcessor "com.google.dagger:dagger-android-processor:${versions.dagger}"
-//    annotationProcessor "com.google.dagger:dagger-compiler:${versions.dagger}"
 
     kapt "com.android.databinding:compiler:$gradle_plugin_version"
 

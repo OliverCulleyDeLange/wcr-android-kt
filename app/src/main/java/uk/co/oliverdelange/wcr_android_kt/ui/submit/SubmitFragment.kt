@@ -1,6 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -9,26 +10,31 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_submit.*
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitBinding
+import uk.co.oliverdelange.wcr_android_kt.di.Injectable
+import javax.inject.Inject
 
-class SubmitFragment : Fragment() {
+class SubmitFragment : Fragment(), Injectable {
     companion object {
         fun newInstance(): SubmitFragment {
             return SubmitFragment()
         }
     }
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
     private lateinit var binding: FragmentSubmitBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSubmitBinding.inflate(layoutInflater, container, false)
         binding.setLifecycleOwner(this)
-        val viewModel = ViewModelProviders.of(this).get(SubmitViewModel::class.java)
+        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitViewModel::class.java)
         binding.vm = viewModel
 
         viewModel.cragNameError.observe(this, Observer { t ->
             crag_name_input_layout.error = binding.vm?.cragNameError?.value
         })
-        return binding.root //?
+        return binding.root
     }
 }
 

@@ -7,8 +7,11 @@ import android.arch.lifecycle.ViewModel
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MapViewModel : ViewModel() {
+@Singleton
+class MapViewModel @Inject constructor() : ViewModel() {
 
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
         it.value = GoogleMap.MAP_TYPE_NORMAL
