@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'groovyx.android'
 
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
@@ -44,7 +45,6 @@ android {
 def versions = [:]
 versions.support = "27.1.0"
 versions.arch_core = "1.1.0"
-versions.databinding = "3.2.0-alpha04"
 versions.play_services = "12.0.1"
 versions.maps_utils = "0.5"
 versions.metadata_extractor = "2.9.0"
@@ -133,13 +133,14 @@ dependencies {
 //    annotationProcessor "com.google.dagger:dagger-android-processor:${versions.dagger}"
 //    annotationProcessor "com.google.dagger:dagger-compiler:${versions.dagger}"
 
-    kapt "com.android.databinding:compiler:${versions.databinding}"
+    kapt "com.android.databinding:compiler:$gradle_plugin_version"
 
-
-    testImplementation "junit:junit:${versions.junit}"
+    testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
+    testImplementation 'org.objenesis:objenesis:2.6'
+    testImplementation 'cglib:cglib-nodep:3.2.4'
+    testImplementation 'org.codehaus.groovy:groovy:2.4.13:grooid'
     testImplementation "android.arch.core:core-testing:${versions.arch_core}"
-    testImplementation "com.nhaarman:mockito-kotlin:${versions.mockito_kotlin}"
-//    testImplementation "org.mockito:mockito-core:${versions.mockito}"
+
     androidTestImplementation "com.android.support.test:runner:${versions.testrunner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
 }

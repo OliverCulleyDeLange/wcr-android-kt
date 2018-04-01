@@ -2,17 +2,18 @@
 
 buildscript {
     ext.kotlin_version = '1.2.21'
+    ext.gradle_plugin_version = '3.2.0-alpha08'
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-alpha04'
+        classpath "com.android.tools.build:gradle:$gradle_plugin_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:3.2.0'
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        //https://github.com/groovy/groovy-android-gradle-plugin
+        classpath 'org.codehaus.groovy:groovy-android-gradle-plugin:2.0.0'
     }
 }
 

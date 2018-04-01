@@ -26,7 +26,7 @@ class MapTest {
         onView(withId(R.id.map_toggle))
                 .perform(click())
 
-        onView(withId(R.id.material_drawer_name))
+        onView(withId(R.id.map_toggle))
                 .check(matches(withText("MAP")))
     }
 }
