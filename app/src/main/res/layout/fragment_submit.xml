@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:onClick="@{vm::submit}"
+            android:enabled="@{vm.submitButtonEnabled}"
             android:text="@string/button_submit" />
     </LinearLayout>
 </layout>

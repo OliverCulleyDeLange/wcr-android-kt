@@ -3,6 +3,7 @@ package uk.co.oliverdelange.wcr_android_kt.ui.submit
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -20,10 +21,24 @@ class SubmitFragment : Fragment(), Injectable {
         }
     }
 
+    interface OnCompleteListener {
+        fun onSubmitFragmentReady(vm: SubmitViewModel?)
+    }
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    private lateinit var completeListener: OnCompleteListener
     private lateinit var binding: FragmentSubmitBinding
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is OnCompleteListener) {
+            completeListener = context
+        } else {
+            throw ClassCastException(context!!.toString() + " must implement OnCompleteListener")
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSubmitBinding.inflate(layoutInflater, container, false)
@@ -35,6 +50,11 @@ class SubmitFragment : Fragment(), Injectable {
             crag_name_input_layout.error = binding.vm?.cragNameError?.value
         })
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        completeListener.onSubmitFragmentReady(binding.vm)
     }
 }
 

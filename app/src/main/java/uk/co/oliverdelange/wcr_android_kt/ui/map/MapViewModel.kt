@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
+import android.databinding.ObservableBoolean
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
 import uk.co.oliverdelange.wcr_android_kt.model.Location
@@ -15,6 +16,7 @@ import javax.inject.Singleton
 @Singleton
 class MapViewModel @Inject constructor(locationRepository: LocationRepository) : ViewModel() {
 
+    val showFab = ObservableBoolean(true)
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
         it.value = GoogleMap.MAP_TYPE_NORMAL
     }
