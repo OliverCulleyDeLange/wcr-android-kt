@@ -13,7 +13,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MapViewModel @Inject constructor(val locationRepository: LocationRepository) : ViewModel() {
+class MapViewModel @Inject constructor(locationRepository: LocationRepository) : ViewModel() {
 
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
         it.value = GoogleMap.MAP_TYPE_NORMAL

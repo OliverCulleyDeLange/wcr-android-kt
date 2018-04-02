@@ -3,17 +3,14 @@ package uk.co.oliverdelange.wcr_android_kt.ui.map
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
-import de.jodamob.kotlin.testrunner.OpenedPackages
-import de.jodamob.kotlin.testrunner.SpotlinTestRunner
 import org.junit.Rule
-import org.junit.runner.RunWith
 import spock.lang.Specification
 import spock.lang.Unroll
+import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 
+import static org.mockito.Mockito.mock
 import static uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 
-@RunWith(SpotlinTestRunner)
-@OpenedPackages("uk.co.oliverdelange")
 class MapViewModelSpec extends Specification {
 
     @Rule
@@ -21,10 +18,11 @@ class MapViewModelSpec extends Specification {
 
     MapViewModel mapViewModel
 
-    View dummyView = new View(null)
+    def mockLocationRepository = mock(LocationRepository)
+    def mockView = mock(View)
 
     void setup() {
-        mapViewModel = new MapViewModel()
+        mapViewModel = new MapViewModel(mockLocationRepository)
     }
 
     @Unroll
@@ -33,7 +31,7 @@ class MapViewModelSpec extends Specification {
         mapViewModel.mapMode.value = before
 
         when:
-        mapViewModel.submit(dummyView)
+        mapViewModel.submit(mockView)
 
         then:
         mapViewModel.mapMode.value == after
@@ -51,7 +49,7 @@ class MapViewModelSpec extends Specification {
         mapViewModel.mapType.value = before
 
         when:
-        mapViewModel.toggleMap(dummyView)
+        mapViewModel.toggleMap(mockView)
 
         then:
         mapViewModel.mapType.value == after

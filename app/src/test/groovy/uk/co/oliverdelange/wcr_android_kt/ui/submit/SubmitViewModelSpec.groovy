@@ -2,16 +2,13 @@ package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.view.View
-import de.jodamob.kotlin.testrunner.OpenedPackages
-import de.jodamob.kotlin.testrunner.SpotlinTestRunner
 import org.junit.Rule
-import org.junit.runner.RunWith
 import spock.lang.Specification
 import spock.lang.Unroll
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 
-@RunWith(SpotlinTestRunner)
-@OpenedPackages("uk.co.oliverdelange")
+import static org.mockito.Mockito.mock
+
 class SubmitViewModelSpec extends Specification {
 
     @Rule
@@ -19,8 +16,8 @@ class SubmitViewModelSpec extends Specification {
 
     SubmitViewModel submitViewModel
 
-    LocationRepository mockLocationRepository = Mock(LocationRepository)
-    View dummyView = new View(null)
+    def mockLocationRepository = mock(LocationRepository)
+    def mockView = mock(View)
 
     def setup() {
         submitViewModel = new SubmitViewModel(mockLocationRepository)
@@ -33,7 +30,7 @@ class SubmitViewModelSpec extends Specification {
         submitViewModel.cragNameError.value = null
 
         when: "user clicks submit"
-        submitViewModel.submit(dummyView)
+        submitViewModel.submit(mockView)
 
         then: "crag name error value is set"
         submitViewModel.cragNameError.value == error
