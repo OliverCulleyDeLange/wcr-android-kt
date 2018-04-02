@@ -14,6 +14,7 @@ class LocationRepositorySpec extends Specification {
     public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule()
 
     LocationRepository locationRepository
+
     LocationDao mockLocationDao = Mock(LocationDao)
 
     void setup() {
@@ -28,6 +29,16 @@ class LocationRepositorySpec extends Specification {
         locationRepository.save(location)
 
         then:
-        mockLocationDao.save(location)
+        1 * mockLocationDao.save(location)
+    }
+
+    def "load() should load crags from DB"() {
+        given:
+
+        when:
+        locationRepository.loadCrags()
+
+        then:
+        1 * mockLocationDao.load(LocationType.CRAG)
     }
 }

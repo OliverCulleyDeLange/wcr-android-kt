@@ -17,7 +17,7 @@ class SubmitViewModel @Inject constructor(private val locationRepository: Locati
 
     fun submit(view: View) {
         val cragnameValue = cragName.value
-        if (cragnameValue == null || cragnameValue.isEmpty()) {
+        if (cragnameValue == null || cragnameValue.isBlank()) {
             cragNameError.value = "Can not be empty"
         } else {
             cragNameError.value = null

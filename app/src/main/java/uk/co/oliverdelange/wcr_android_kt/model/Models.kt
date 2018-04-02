@@ -1,7 +1,9 @@
 package uk.co.oliverdelange.wcr_android_kt.model
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
+import com.google.android.gms.maps.model.LatLng
 
 @Entity(primaryKeys = ["name", "lat", "lng"])
 data class Location(val name: String,
@@ -22,6 +24,9 @@ data class Location(val name: String,
     fun boulders(i: Int): Location = apply { boulders = i }
     fun sports(i: Int): Location = apply { sports = i }
     fun trads(i: Int): Location = apply { trads = i }
+
+    @Ignore
+    val latlng: LatLng = LatLng(lat, lng)
 }
 
 @Entity

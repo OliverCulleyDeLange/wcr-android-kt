@@ -1,6 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.res.ColorStateList
 import android.databinding.DataBindingUtil
@@ -20,6 +21,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.MarkerManager
+import com.google.maps.android.clustering.ClusterManager
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
@@ -30,7 +33,10 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_maps.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
+import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
+import uk.co.oliverdelange.wcr_android_kt.map.CragClusterItem
+import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitFragment
@@ -48,11 +54,16 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
     override fun supportFragmentInjector(): DispatchingAndroidInjector<Fragment> {
         return dispatchingAndroidInjector
     }
 
     private lateinit var mMap: GoogleMap
+    private lateinit var clusterManager: ClusterManager<CragClusterItem>
+
     private lateinit var slidingDrawer: Drawer
     private lateinit var binding: ActivityMapsBinding
     private lateinit var bottomSheet: BottomSheetBehavior<LinearLayout>
@@ -64,7 +75,7 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
         binding.setLifecycleOwner(this)
-        val viewModel = ViewModelProviders.of(this).get(MapViewModel::class.java)
+        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
         binding.vm = viewModel
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -77,6 +88,22 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
+        // For creating marker icons with text on the fly
+//        val iconHelper = IconHelper(applicationContext)
+        // To handle separation between clustered markers (crags) and climb markers
+        val markerManager = MarkerManager(mMap)
+        // Handles clustering and data fetch on map idle
+        clusterManager = ClusterManager(applicationContext, mMap, markerManager)
+        // Allows custom icons for cluster items
+//        val customRenderer = CustomRenderer(applicationContext, mMap, clusterManager)
+
+        // Set some listeners
+//        clusterManager.setRenderer(customRenderer)
+//        clusterManager.setOnClusterItemClickListener(this)
+
+        mMap.setOnMarkerClickListener(markerManager)
+        mMap.setOnCameraIdleListener(clusterManager)
 
         observeViewModel()
         mMap.moveCamera(newLatLngZoom(defaultLanLng, DEFAULT_ZOOM))
@@ -118,6 +145,13 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
                 }
 
             }
+        })
+
+        binding.vm?.crags?.observe(this, Observer { locations: List<Location>? ->
+            Timber.d("New crag location to display. Locations: %s", locations)
+            clusterManager.clearItems()
+            clusterManager.addItems(locations?.map { CragClusterItem(it) })
+            clusterManager.cluster()
         })
     }
 

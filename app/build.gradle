@@ -88,7 +88,7 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:${versions.arch_core}"
 
     implementation "com.google.android.gms:play-services-maps:${versions.play_services}"
-//    implementation "com.google.maps.android:android-maps-utils:${versions.maps_utils}"
+    implementation "com.google.maps.android:android-maps-utils:${versions.maps_utils}"
 
 //    implementation "com.drewnoakes:metadata-extractor:${versions.metadata_extractor}"
 
@@ -127,6 +127,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
     testImplementation 'org.objenesis:objenesis:2.6'
     testImplementation 'cglib:cglib-nodep:3.2.4'
+    testImplementation "de.jodamob.kotlin:kotlin-runner-spock:0.3.1"
     testImplementation 'org.codehaus.groovy:groovy:2.4.13:grooid'
     testImplementation "android.arch.core:core-testing:${versions.arch_core}"
 

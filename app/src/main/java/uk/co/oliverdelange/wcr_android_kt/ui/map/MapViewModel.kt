@@ -6,12 +6,14 @@ import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
+import uk.co.oliverdelange.wcr_android_kt.model.Location
+import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MapViewModel @Inject constructor() : ViewModel() {
+class MapViewModel @Inject constructor(val locationRepository: LocationRepository) : ViewModel() {
 
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
         it.value = GoogleMap.MAP_TYPE_NORMAL
@@ -22,6 +24,8 @@ class MapViewModel @Inject constructor() : ViewModel() {
     val mapMode: MutableLiveData<MapMode> = MutableLiveData<MapMode>().also {
         it.value = MapMode.DEFAULT
     }
+
+    val crags: LiveData<List<Location>> = locationRepository.loadCrags()
 
     fun submit(view: View) {
         when (mapMode.value) {

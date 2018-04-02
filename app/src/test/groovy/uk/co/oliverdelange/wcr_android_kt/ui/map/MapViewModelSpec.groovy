@@ -3,19 +3,25 @@ package uk.co.oliverdelange.wcr_android_kt.ui.map
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
+import de.jodamob.kotlin.testrunner.OpenedPackages
+import de.jodamob.kotlin.testrunner.SpotlinTestRunner
 import org.junit.Rule
+import org.junit.runner.RunWith
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 
+@RunWith(SpotlinTestRunner)
+@OpenedPackages("uk.co.oliverdelange")
 class MapViewModelSpec extends Specification {
 
     @Rule
-    InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule()
+    InstantTaskExecutorRule rule = new InstantTaskExecutorRule()
 
     MapViewModel mapViewModel
-    View mockView = Mock(View)
+
+    View dummyView = new View(null)
 
     void setup() {
         mapViewModel = new MapViewModel()
@@ -27,7 +33,7 @@ class MapViewModelSpec extends Specification {
         mapViewModel.mapMode.value = before
 
         when:
-        mapViewModel.submit(mockView)
+        mapViewModel.submit(dummyView)
 
         then:
         mapViewModel.mapMode.value == after
@@ -45,7 +51,7 @@ class MapViewModelSpec extends Specification {
         mapViewModel.mapType.value = before
 
         when:
-        mapViewModel.toggleMap(mockView)
+        mapViewModel.toggleMap(dummyView)
 
         then:
         mapViewModel.mapType.value == after

@@ -28,3 +28,4 @@ https://dzone.com/articles/testing-kotlin-with-spock-part-1-object
 https://blog.andresteingress.com/2014/07/22/spock-junit-rules
 https://stackoverflow.com/questions/48391716/spock-with-mockito-testing-kotlin-classes
 https://proandroiddev.com/improve-your-tests-with-kotlin-in-android-pt-1-6d0b04017e80
+https://github.com/dpreussler/kotlin-testrunner
