@@ -21,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -39,6 +40,9 @@ import kotlinx.android.synthetic.main.bottom_sheet.*
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
 import uk.co.oliverdelange.wcr_android_kt.map.CragClusterItem
+import uk.co.oliverdelange.wcr_android_kt.map.CustomRenderer
+import uk.co.oliverdelange.wcr_android_kt.map.Icon
+import uk.co.oliverdelange.wcr_android_kt.map.IconHelper
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
@@ -96,9 +100,9 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
     override fun onBackPressed() {
         when (binding.vm?.mapMode?.value) {
             SUBMIT_CRAG -> {
-                binding.vm?.mapMode?.value = DEFAULT
                 if (bottomSheet.state == STATE_EXPANDED) fragmentToRemove = submitFragment
                 else removeFragment(submitFragment)
+                binding.vm?.mapMode?.value = DEFAULT
             }
             SUBMIT_SECTOR -> binding.vm?.mapMode?.value = CRAG
             SUBMIT_TOPO -> binding.vm?.mapMode?.value = SECTOR
@@ -109,17 +113,9 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
         map = googleMap
         setMapBottomPadding(bottom_sheet_peek.height)
 
-        // For creating marker icons with text on the fly
-//        val iconHelper = IconHelper(applicationContext)
-        // To handle separation between clustered markers (crags) and climb markers
         val markerManager = MarkerManager(map)
-        // Handles clustering and data fetch on map idle
         clusterManager = ClusterManager(applicationContext, map, markerManager)
-        // Allows custom icons for cluster items
-//        val customRenderer = CustomRenderer(applicationContext, map, clusterManager)
-
-        // Set some listeners
-//        clusterManager.setRenderer(customRenderer)
+        clusterManager.renderer = CustomRenderer(applicationContext, map, clusterManager)
 //        clusterManager.setOnClusterItemClickListener(this)
 
         map.setOnMarkerClickListener(markerManager)
@@ -271,7 +267,9 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
         //TODO Feels hacky - Better way to execute code when BottomSheet state is expanded?
         doAfterBottomSheetExpanded = {
             val mapCenter = map.projection.visibleRegion.latLngBounds.center
+            val icon = IconHelper(applicationContext).getIcon("Hold and drag me", Icon.CRAG)
             map.addMarker(MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(icon))
                     .position(mapCenter)
                     .draggable(true)
             )

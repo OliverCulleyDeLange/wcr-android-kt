@@ -23,6 +23,20 @@
         <item name="android:background">@drawable/btn_map_toggle</item>
     </style>
 
+    <!--MAP ICONS-->
+    <style name="generated_icon_text">
+        <item name="android:textSize">10sp</item>
+        <item name="android:padding">2dp</item>
+    </style>
+
+    <style name="generated_crag_icon_text" parent="generated_icon_text">
+        <item name="android:textColor">@color/crag_accent</item>
+    </style>
+
+    <style name="generated_sector_icon_text" parent="generated_icon_text">
+        <item name="android:textColor">@color/sector_accent</item>
+    </style>
+
     <!--INPUT-->
     <style name="FloatingLabel" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/accent</item>
