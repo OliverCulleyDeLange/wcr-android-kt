@@ -5,11 +5,10 @@ import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 import com.google.android.gms.maps.model.LatLng
 
-//TODO no default values for name,lat,lng - Build on submit()
 @Entity(primaryKeys = ["name", "lat", "lng"])
-data class Location(var name: String = "",
-                    var lat: Double = 0.0,
-                    var lng: Double = 0.0,
+data class Location(var name: String,
+                    var lat: Double,
+                    var lng: Double,
                     val type: LocationType,
                     var greens: Int = 0,
                     var oranges: Int = 0,

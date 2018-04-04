@@ -39,7 +39,10 @@ class SubmitTest {
         onView(allOf(withParent(withParent(withId(R.id.crag_name_input_layout))), withId(R.id.textinput_error)))
                 .check(matches(not(isDisplayed())))
 
-        onView(withId(R.id.submit)).perform(click())
+        onView(withId(R.id.crag_name_input))
+                .perform(typeText("    "))
+        Espresso.closeSoftKeyboard()
+
 
         onView(allOf(withParent(withParent(withId(R.id.crag_name_input_layout))), withId(R.id.textinput_error)))
                 .check(matches(allOf(
@@ -49,7 +52,6 @@ class SubmitTest {
 
         onView(withId(R.id.crag_name_input))
                 .perform(typeText("cragname"))
-
         Espresso.closeSoftKeyboard()
 
         onView(withId(R.id.submit)).perform(click())
