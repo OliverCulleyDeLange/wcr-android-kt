@@ -10,6 +10,8 @@ import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import uk.co.oliverdelange.wcr_android_kt.model.Location
+import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.SUBMIT_CRAG
+import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
 
 class CragClusterItem(val location: Location) : ClusterItem {
 
@@ -27,7 +29,7 @@ class CragClusterItem(val location: Location) : ClusterItem {
 
 }
 
-class CustomRenderer(context: Context, map: GoogleMap, clusterManager: ClusterManager<CragClusterItem>)
+class CustomRenderer(val vm: MapViewModel?, context: Context, map: GoogleMap, clusterManager: ClusterManager<CragClusterItem>)
     : DefaultClusterRenderer<CragClusterItem>(context, map, clusterManager) {
 
     private val iconHelper = IconHelper(context)
@@ -36,7 +38,11 @@ class CustomRenderer(context: Context, map: GoogleMap, clusterManager: ClusterMa
     }
 
     override fun onClusterItemRendered(clusterItem: CragClusterItem, marker: Marker) {
-        iconHelper.setMarkerIcon(marker, Icon.CRAG, clusterItem.location.name)
+        if (vm?.mapMode?.value == SUBMIT_CRAG) {
+            iconHelper.setMarkerIcon(marker, Icon.CRAG_DIMMED, clusterItem.location.name)
+        } else {
+            iconHelper.setMarkerIcon(marker, Icon.CRAG, clusterItem.location.name)
+        }
     }
 
     override fun shouldRenderAsCluster(cluster: Cluster<CragClusterItem>): Boolean {

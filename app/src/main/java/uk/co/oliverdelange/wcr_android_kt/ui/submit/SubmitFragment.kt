@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,22 +22,23 @@ class SubmitFragment : Fragment(), Injectable {
         }
     }
 
-    interface OnCompleteListener {
+    interface ActivityInteractor {
         fun onSubmitFragmentReady(vm: SubmitViewModel?)
+        fun removeSubmitFragment()
     }
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var completeListener: OnCompleteListener
+    private lateinit var activityInteractor: ActivityInteractor
     private lateinit var binding: FragmentSubmitBinding
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is OnCompleteListener) {
-            completeListener = context
+        if (context is ActivityInteractor) {
+            activityInteractor = context
         } else {
-            throw ClassCastException(context!!.toString() + " must implement OnCompleteListener")
+            throw ClassCastException(context!!.toString() + " must implement ActivityInteractor")
         }
     }
 
@@ -46,15 +48,28 @@ class SubmitFragment : Fragment(), Injectable {
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitViewModel::class.java)
         binding.vm = viewModel
 
-        viewModel.cragNameError.observe(this, Observer { t ->
+        binding.submit.setOnClickListener { _: View? ->
+            binding.vm?.submit()?.let {
+                if (it) {
+                    Snackbar.make(binding.submit, "Crag submitted!", Snackbar.LENGTH_SHORT).show()
+                    activityInteractor.removeSubmitFragment()
+
+                } else {
+                    Snackbar.make(binding.submit, "Failed to submit crag!", Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        viewModel.cragNameError.observe(this, Observer { _ ->
             crag_name_input_layout.error = binding.vm?.cragNameError?.value
         })
+
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        completeListener.onSubmitFragmentReady(binding.vm)
+        activityInteractor.onSubmitFragmentReady(binding.vm)
     }
 }
 

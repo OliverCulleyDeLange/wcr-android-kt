@@ -33,6 +33,10 @@
         <item name="android:textColor">@color/crag_accent</item>
     </style>
 
+    <style name="generated_crag_icon_text_dimmed" parent="generated_icon_text">
+        <item name="android:textColor">@color/crag_light</item>
+    </style>
+
     <style name="generated_sector_icon_text" parent="generated_icon_text">
         <item name="android:textColor">@color/sector_accent</item>
     </style>

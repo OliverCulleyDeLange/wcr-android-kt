@@ -58,7 +58,7 @@ const val CRAG_ZOOM = 14f
 const val MAP_ANIMATION_DURATION = 400
 const val MAP_PADDING_TOP = 150
 
-class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReadyCallback, SubmitFragment.OnCompleteListener {
+class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReadyCallback, SubmitFragment.ActivityInteractor {
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
@@ -73,7 +73,8 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
     private val submitFragment = SubmitFragment.newInstance()
 
     internal lateinit var map: GoogleMap
-    internal val defaultLatLng = LatLng(52.0, -2.0)
+    private var newCragMarker: Marker? = null
+    private val defaultLatLng = LatLng(52.0, -2.0)
     internal lateinit var bottomSheet: BottomSheetBehavior<LinearLayout>
 
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
@@ -115,7 +116,7 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
 
         val markerManager = MarkerManager(map)
         clusterManager = ClusterManager(applicationContext, map, markerManager)
-        clusterManager.renderer = CustomRenderer(applicationContext, map, clusterManager)
+        clusterManager.renderer = CustomRenderer(binding.vm, applicationContext, map, clusterManager)
 //        clusterManager.setOnClusterItemClickListener(this)
 
         map.setOnMarkerClickListener(markerManager)
@@ -140,6 +141,8 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
                     fabStyle(R.drawable.add_crag_button, R.color.fab_new_crag)
                     binding.vm?.showFab?.set(true)
                     bottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+                    refreshCragClusterItems()
+                    newCragMarker?.remove()
                 }
                 CRAG -> {
                     fabStyle(R.drawable.add_sector_button, R.color.fab_new_sector)
@@ -152,6 +155,7 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
                 }
                 SUBMIT_CRAG -> {
                     replaceFragment(submitFragment, R.id.bottom_sheet_content_container)
+                    refreshCragClusterItems()
                 }
                 SUBMIT_SECTOR -> {
                 }
@@ -170,10 +174,17 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
 
         binding.vm?.crags?.observe(this, Observer { locations: List<Location>? ->
             Timber.d("New crag location to display. Locations: %s", locations)
-            clusterManager.clearItems()
-            clusterManager.addItems(locations?.map { CragClusterItem(it) })
-            clusterManager.cluster()
+            refreshCragClusterItems()
         })
+    }
+
+    private fun refreshCragClusterItems() {
+        val cragClusterItems = binding.vm?.crags?.value?.map { CragClusterItem(it) }
+        cragClusterItems?.let {
+            clusterManager.clearItems()
+            clusterManager.addItems(cragClusterItems)
+            clusterManager.cluster()
+        }
     }
 
     private fun initialiseDrawer() {
@@ -268,7 +279,7 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
         doAfterBottomSheetExpanded = {
             val mapCenter = map.projection.visibleRegion.latLngBounds.center
             val icon = IconHelper(applicationContext).getIcon("Hold and drag me", Icon.CRAG)
-            map.addMarker(MarkerOptions()
+            newCragMarker = map.addMarker(MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromBitmap(icon))
                     .position(mapCenter)
                     .draggable(true)
@@ -287,5 +298,7 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
         bottomSheet.state = STATE_EXPANDED
     }
 
-
+    override fun removeSubmitFragment() {
+        onBackPressed()
+    }
 }

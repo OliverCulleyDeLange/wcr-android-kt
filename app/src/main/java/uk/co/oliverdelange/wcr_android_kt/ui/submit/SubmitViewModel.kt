@@ -3,7 +3,6 @@ package uk.co.oliverdelange.wcr_android_kt.ui.submit
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.view.View
 import com.google.android.gms.maps.model.LatLng
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.Location
@@ -30,14 +29,16 @@ class SubmitViewModel @Inject constructor(private val locationRepository: Locati
         }
     }
 
-    fun submit(view: View) {
+    fun submit(): Boolean {
         val cragName = cragName.value
         val lat = cragLatLng.value?.latitude
         val lng = cragLatLng.value?.longitude
         if (cragName != null && lat != null && lng != null) {
             val crag = Location(cragName, lat, lng, LocationType.CRAG)
             locationRepository.save(crag)
+            return true
         } else {
+            return false
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
         }
     }
