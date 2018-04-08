@@ -14,7 +14,7 @@
     </style>
 
     <!--MAP-->
-    <style name="Wcr_MapToggle" parent="@style/Widget.AppCompat.Button">
+    <style name="MapToggle" parent="@style/Widget.AppCompat.Button">
         <item name="android:layout_width">38dp</item>
         <item name="android:layout_height">38dp</item>
         <item name="android:textSize">10sp</item>
@@ -39,6 +39,11 @@
 
     <style name="generated_sector_icon_text" parent="generated_icon_text">
         <item name="android:textColor">@color/sector_accent</item>
+    </style>
+
+    <!--OUTPUT-->
+    <style name="TextView" parent="Theme.AppCompat.Light">
+        <item name="android:textColor">@color/text_grey_light</item>
     </style>
 
     <!--INPUT-->

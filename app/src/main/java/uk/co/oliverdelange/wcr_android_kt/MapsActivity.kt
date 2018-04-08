@@ -21,10 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.maps.android.MarkerManager
 import com.google.maps.android.clustering.ClusterManager
 import com.mikepenz.aboutlibraries.Libs
@@ -39,10 +36,7 @@ import kotlinx.android.synthetic.main.activity_maps.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
-import uk.co.oliverdelange.wcr_android_kt.map.CragClusterItem
-import uk.co.oliverdelange.wcr_android_kt.map.CustomRenderer
-import uk.co.oliverdelange.wcr_android_kt.map.Icon
-import uk.co.oliverdelange.wcr_android_kt.map.IconHelper
+import uk.co.oliverdelange.wcr_android_kt.map.*
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
@@ -58,7 +52,8 @@ const val CRAG_ZOOM = 14f
 const val MAP_ANIMATION_DURATION = 400
 const val MAP_PADDING_TOP = 150
 
-class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReadyCallback, SubmitFragment.ActivityInteractor {
+class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReadyCallback, SubmitFragment.ActivityInteractor, ClusterManager.OnClusterItemClickListener<CragClusterItem> {
+
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
@@ -103,11 +98,10 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
             SUBMIT_CRAG -> {
                 if (bottomSheet.state == STATE_EXPANDED) fragmentToRemove = submitFragment
                 else removeFragment(submitFragment)
-                binding.vm?.mapMode?.value = DEFAULT
             }
-            SUBMIT_SECTOR -> binding.vm?.mapMode?.value = CRAG
-            SUBMIT_TOPO -> binding.vm?.mapMode?.value = SECTOR
+            SECTOR, CRAG -> map.animate(defaultLatLng)
         }
+        binding.vm?.back()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -117,13 +111,22 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
         val markerManager = MarkerManager(map)
         clusterManager = ClusterManager(applicationContext, map, markerManager)
         clusterManager.renderer = CustomRenderer(binding.vm, applicationContext, map, clusterManager)
-//        clusterManager.setOnClusterItemClickListener(this)
-
+        clusterManager.setOnClusterItemClickListener(this)
+        clusterManager.setOnClusterClickListener {
+            val bounds: LatLngBounds = LatLngUtil.getBoundsForLatLngs(it.items.map { it.position })
+            map.animate(bounds)
+            true
+        }
         map.setOnMarkerClickListener(markerManager)
         map.setOnCameraIdleListener(clusterManager)
 
         observeViewModel()
         map.moveCamera(newLatLngZoom(defaultLatLng, DEFAULT_ZOOM))
+    }
+
+    override fun onClusterItemClick(clusterItem: CragClusterItem): Boolean {
+        binding.vm?.onCragClick(clusterItem.location)
+        return true
     }
 
     private fun observeViewModel() {
@@ -139,13 +142,13 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
             when (it) {
                 DEFAULT -> {
                     fabStyle(R.drawable.add_crag_button, R.color.fab_new_crag)
-                    binding.vm?.showFab?.set(true)
                     bottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
                     refreshCragClusterItems()
                     newCragMarker?.remove()
                 }
                 CRAG -> {
                     fabStyle(R.drawable.add_sector_button, R.color.fab_new_sector)
+                    bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
                 }
                 SECTOR -> {
                     fabStyle(R.drawable.add_topo_button, R.color.fab_new_topo)

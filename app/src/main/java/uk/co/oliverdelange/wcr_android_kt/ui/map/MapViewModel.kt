@@ -24,10 +24,15 @@ class MapViewModel @Inject constructor(locationRepository: LocationRepository) :
         if (it == 1) "SAT" else "MAP"
     }
     val mapMode: MutableLiveData<MapMode> = MutableLiveData<MapMode>().also {
-        it.value = MapMode.DEFAULT
+        it.value = DEFAULT
     }
 
     val crags: LiveData<List<Location>> = locationRepository.loadCrags()
+    val selectedLocation: MutableLiveData<Location> = MutableLiveData()
+
+    val bottomSheetTitle: LiveData<String> = Transformations.map(selectedLocation) { crag ->
+        crag.name
+    }
 
     fun submit(view: View) {
         when (mapMode.value) {
@@ -45,6 +50,21 @@ class MapViewModel @Inject constructor(locationRepository: LocationRepository) :
         }
     }
 
+    fun onCragClick(location: Location) {
+        selectedLocation.value = location
+        mapMode.value = CRAG
+    }
+
+    fun back() {
+        when (mapMode.value) {
+            CRAG -> mapMode.value = DEFAULT
+            SUBMIT_CRAG -> mapMode.value = DEFAULT
+            SECTOR -> mapMode.value = CRAG
+            SUBMIT_SECTOR -> mapMode.value = CRAG
+            TOPO -> mapMode.value = SECTOR
+            SUBMIT_TOPO -> mapMode.value = SECTOR
+        }
+    }
 }
 
 enum class MapMode {
