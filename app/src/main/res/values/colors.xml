@@ -14,9 +14,10 @@
     <color name="border_black">#1e1e1e</color>
 
     <!--Text colours-->
-    <color name="text_grey_dark">#1e1e1e</color>
+    <color name="text_white">#ffffff</color>
     <color name="text_grey_light">#d6d6d6</color>
     <color name="text_grey">#9e9e9e</color>
+    <color name="text_grey_dark">#1e1e1e</color>
     <color name="text_black">#000000</color>
 
     <!--Marker colours-->

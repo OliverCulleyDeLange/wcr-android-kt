@@ -6,8 +6,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import uk.co.oliverdelange.wcr_android_kt.MAP_ANIMATION_DURATION
 
-fun GoogleMap.animate(latlng: LatLng) {
-    this.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 100f), MAP_ANIMATION_DURATION, null)
+fun GoogleMap.animate(latlng: LatLng, zoom: Float) {
+    this.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom), MAP_ANIMATION_DURATION, null)
 }
 
 fun GoogleMap.animate(latLngBounds: LatLngBounds) {

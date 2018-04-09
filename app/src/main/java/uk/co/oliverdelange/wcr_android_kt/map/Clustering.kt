@@ -46,6 +46,6 @@ class CustomRenderer(val vm: MapViewModel?, context: Context, map: GoogleMap, cl
     }
 
     override fun shouldRenderAsCluster(cluster: Cluster<CragClusterItem>): Boolean {
-        return cluster.size > 1
+        return cluster.size > 5
     }
 }

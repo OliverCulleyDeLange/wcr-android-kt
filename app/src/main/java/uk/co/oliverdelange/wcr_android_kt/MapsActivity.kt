@@ -69,7 +69,7 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
 
     internal lateinit var map: GoogleMap
     private var newCragMarker: Marker? = null
-    private val defaultLatLng = LatLng(52.0, -2.0)
+    private val defaultLatLng = LatLng(54.056, -3.155)
     internal lateinit var bottomSheet: BottomSheetBehavior<LinearLayout>
 
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
@@ -99,7 +99,7 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
                 if (bottomSheet.state == STATE_EXPANDED) fragmentToRemove = submitFragment
                 else removeFragment(submitFragment)
             }
-            SECTOR, CRAG -> map.animate(defaultLatLng)
+            DEFAULT, CRAG, SECTOR -> map.animate(defaultLatLng, DEFAULT_ZOOM)
         }
         binding.vm?.back()
     }
@@ -126,6 +126,7 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
 
     override fun onClusterItemClick(clusterItem: CragClusterItem): Boolean {
         binding.vm?.onCragClick(clusterItem.location)
+        map.animate(clusterItem.location.latlng, CRAG_ZOOM)
         return true
     }
 
