@@ -24,39 +24,39 @@ class SubmitTest {
 
     @Test
     fun checkCragNameValidation() {
-        onView(withId(R.id.crag_name_input_layout))
+        onView(withId(R.id.location_name_input_layout))
                 .check(doesNotExist())
 
         onView(withId(R.id.fab))
                 .perform(click())
 
-        onView(withId(R.id.crag_name_input_layout))
+        onView(withId(R.id.location_name_input_layout))
                 .check(matches(isDisplayed()))
 
-        onView(withId(R.id.crag_name_input))
+        onView(withId(R.id.location_name_input))
                 .check(matches(isDisplayed()))
 
-        onView(allOf(withParent(withParent(withId(R.id.crag_name_input_layout))), withId(R.id.textinput_error)))
+        onView(allOf(withParent(withParent(withId(R.id.location_name_input_layout))), withId(R.id.textinput_error)))
                 .check(matches(not(isDisplayed())))
 
-        onView(withId(R.id.crag_name_input))
+        onView(withId(R.id.location_name_input))
                 .perform(typeText("    "))
         Espresso.closeSoftKeyboard()
 
 
-        onView(allOf(withParent(withParent(withId(R.id.crag_name_input_layout))), withId(R.id.textinput_error)))
+        onView(allOf(withParent(withParent(withId(R.id.location_name_input_layout))), withId(R.id.textinput_error)))
                 .check(matches(allOf(
                         isDisplayed(),
                         withText("Can not be empty")
                 )))
 
-        onView(withId(R.id.crag_name_input))
+        onView(withId(R.id.location_name_input))
                 .perform(typeText("cragname"))
         Espresso.closeSoftKeyboard()
 
         onView(withId(R.id.submit)).perform(click())
 
-        onView(allOf(withParent(withParent(withId(R.id.crag_name_input_layout))), withId(R.id.textinput_error)))
+        onView(allOf(withParent(withParent(withId(R.id.location_name_input_layout))), withId(R.id.textinput_error)))
                 .check(matches(not(isDisplayed())))
     }
 }

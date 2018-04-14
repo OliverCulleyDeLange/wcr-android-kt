@@ -36,15 +36,15 @@ class SubmitViewModelSpec extends Specification {
     def "submit button enabled [#buttonEnabled] if crag name [#enteredName]"() {
         given: "No error exists already and submitButtonEnabled is being observed"
         submitViewModel.submitButtonEnabled.observeForever({})
-        submitViewModel.cragNameError.value = null
-        submitViewModel.cragName.value = null
+        submitViewModel.getLocationNameError.value = null
+        submitViewModel.getLocationName.value = null
 
         when: "user has not entered a crag enteredName"
-        submitViewModel.cragName.value = enteredName
+        submitViewModel.getLocationName.value = enteredName
 
         then: "submit button is not enabled & crag enteredName error value is set"
         submitViewModel.submitButtonEnabled.value == buttonEnabled
-        submitViewModel.cragNameError.value == error
+        submitViewModel.getLocationNameError.value == error
 
         where:
         enteredName | error              | buttonEnabled
@@ -56,8 +56,8 @@ class SubmitViewModelSpec extends Specification {
 
     def "submit() should build and save crag to DB using Repository"() {
         given: "all crag details available"
-        submitViewModel.cragName.value = name
-        submitViewModel.cragLatLng.value = new LatLng(lat, lng)
+        submitViewModel.getLocationName.value = name
+        submitViewModel.getLocationLatLng.value = new LatLng(lat, lng)
 
         when: "user clicks submit"
         submitViewModel.submit(mockView)

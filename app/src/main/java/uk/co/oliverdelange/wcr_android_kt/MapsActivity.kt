@@ -7,6 +7,7 @@ import android.content.res.ColorStateList
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
+import android.support.design.widget.BottomSheetBehavior.STATE_COLLAPSED
 import android.support.design.widget.BottomSheetBehavior.STATE_EXPANDED
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -38,11 +39,11 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
 import uk.co.oliverdelange.wcr_android_kt.map.*
 import uk.co.oliverdelange.wcr_android_kt.model.Location
+import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
+import uk.co.oliverdelange.wcr_android_kt.ui.map.ToposFragment
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitFragment
-import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitViewModel
-import uk.co.oliverdelange.wcr_android_kt.util.removeFragment
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import java.lang.Math.round
 import javax.inject.Inject
@@ -52,7 +53,12 @@ const val CRAG_ZOOM = 14f
 const val MAP_ANIMATION_DURATION = 400
 const val MAP_PADDING_TOP = 150
 
-class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReadyCallback, SubmitFragment.ActivityInteractor, ClusterManager.OnClusterItemClickListener<CragClusterItem> {
+class MapsActivity : AppCompatActivity(),
+        HasSupportFragmentInjector,
+        OnMapReadyCallback,
+        ClusterManager.OnClusterItemClickListener<CragClusterItem>,
+        GoogleMap.OnMarkerClickListener,
+        SubmitFragment.ActivityInteractor {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -64,18 +70,18 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
         return dispatchingAndroidInjector
     }
 
-    private var fragmentToRemove: Fragment? = null
-    private val submitFragment = SubmitFragment.newInstance()
+    private val submitCragFragment = SubmitFragment.newCragSubmission()
+    private val submitSectorFragment = SubmitFragment.newSectorSubmission()
+    private val viewToposFragment = ToposFragment.newToposFragment()
 
     internal lateinit var map: GoogleMap
-    private var newCragMarker: Marker? = null
     private val defaultLatLng = LatLng(54.056, -3.155)
     internal lateinit var bottomSheet: BottomSheetBehavior<LinearLayout>
 
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
-
+    private lateinit var sectorMarkers: MarkerManager.Collection
     private lateinit var slidingDrawer: Drawer
-    private lateinit var binding: ActivityMapsBinding
+    internal lateinit var binding: ActivityMapsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,13 +100,6 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
     }
 
     override fun onBackPressed() {
-        when (binding.vm?.mapMode?.value) {
-            SUBMIT_CRAG -> {
-                if (bottomSheet.state == STATE_EXPANDED) fragmentToRemove = submitFragment
-                else removeFragment(submitFragment)
-            }
-            DEFAULT, CRAG, SECTOR -> map.animate(defaultLatLng, DEFAULT_ZOOM)
-        }
         binding.vm?.back()
     }
 
@@ -109,6 +108,8 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
         setMapBottomPadding(bottom_sheet_peek.height)
 
         val markerManager = MarkerManager(map)
+        sectorMarkers = markerManager.newCollection()
+        sectorMarkers.setOnMarkerClickListener(this)
         clusterManager = ClusterManager(applicationContext, map, markerManager)
         clusterManager.renderer = CustomRenderer(binding.vm, applicationContext, map, clusterManager)
         clusterManager.setOnClusterItemClickListener(this)
@@ -120,14 +121,28 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
         map.setOnMarkerClickListener(markerManager)
         map.setOnCameraIdleListener(clusterManager)
 
+
         observeViewModel()
         map.moveCamera(newLatLngZoom(defaultLatLng, DEFAULT_ZOOM))
     }
 
     override fun onClusterItemClick(clusterItem: CragClusterItem): Boolean {
         binding.vm?.onCragClick(clusterItem.location)
-        map.animate(clusterItem.location.latlng, CRAG_ZOOM)
         return true
+    }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        binding.vm?.onSectorClick(marker.tag as Location)
+        return true
+    }
+
+    override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: Long) {
+        if (locationType == LocationType.CRAG) {
+            binding.vm?.mapMode?.value = CRAG_MODE
+        } else {
+            binding.vm?.mapMode?.value = SECTOR_MODE
+        }
+        binding.vm?.selectedLocationId?.value = submittedLocationId
     }
 
     private fun observeViewModel() {
@@ -139,47 +154,80 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
             }
         })
 
+        binding.vm?.bottomSheetState?.observe(this, Observer {
+            it?.let {
+                bottomSheet.state = it
+            }
+        })
+
+        binding.vm?.selectedLocation?.observe(this, Observer { location: Location? ->
+            location?.let {
+                if (it.type == LocationType.CRAG) map.animate(it.latlng, CRAG_ZOOM)
+            }
+        })
+
+        binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
+            Timber.d("New crag location to display. Locations: %s", crags)
+            refreshCragClusterItems()
+        })
+
+        binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
+            Timber.d("New sector location to display. Locations: %s", sectors)
+            refreshSectorsForCrag(sectors)
+        })
+
         binding.vm?.mapMode?.observe(this, Observer {
             when (it) {
-                DEFAULT -> {
+                DEFAULT_MODE -> {
                     fabStyle(R.drawable.add_crag_button, R.color.fab_new_crag)
-                    bottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
                     refreshCragClusterItems()
-                    newCragMarker?.remove()
+                    map.animateCamera(newLatLngZoom(defaultLatLng, DEFAULT_ZOOM))
+                    replaceFragment(viewToposFragment, R.id.bottom_sheet_content_container)
                 }
-                CRAG -> {
+                CRAG_MODE -> {
                     fabStyle(R.drawable.add_sector_button, R.color.fab_new_sector)
-                    bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+                    refreshCragClusterItems()
+                    replaceFragment(viewToposFragment, R.id.bottom_sheet_content_container)
                 }
-                SECTOR -> {
+                SECTOR_MODE -> {
                     fabStyle(R.drawable.add_topo_button, R.color.fab_new_topo)
+                    replaceFragment(viewToposFragment, R.id.bottom_sheet_content_container)
                 }
-                TOPO -> {
-                    bottomSheet.state = STATE_EXPANDED
+                TOPO_MODE -> {
                 }
-                SUBMIT_CRAG -> {
-                    replaceFragment(submitFragment, R.id.bottom_sheet_content_container)
+                SUBMIT_CRAG_MODE -> {
+                    replaceFragment(submitCragFragment, R.id.bottom_sheet_content_container)
                     refreshCragClusterItems()
                 }
-                SUBMIT_SECTOR -> {
+                SUBMIT_SECTOR_MODE -> {
+                    submitSectorFragment.parentId = binding.vm?.selectedLocationId?.value
+                    replaceFragment(submitSectorFragment, R.id.bottom_sheet_content_container)
+                    refreshCragClusterItems()
                 }
-                SUBMIT_TOPO -> {
+                SUBMIT_TOPO_MODE -> {
                 }
             }
             when (it) {
-                DEFAULT, CRAG, SECTOR, TOPO -> {
+                DEFAULT_MODE, CRAG_MODE, SECTOR_MODE, TOPO_MODE -> {
                     binding.vm?.showFab?.set(true)
                 }
-                SUBMIT_CRAG, SUBMIT_SECTOR, SUBMIT_TOPO -> {
+                SUBMIT_CRAG_MODE, SUBMIT_SECTOR_MODE, SUBMIT_TOPO_MODE -> {
                     binding.vm?.showFab?.set(false)
                 }
             }
         })
+    }
 
-        binding.vm?.crags?.observe(this, Observer { locations: List<Location>? ->
-            Timber.d("New crag location to display. Locations: %s", locations)
-            refreshCragClusterItems()
-        })
+    private fun refreshSectorsForCrag(sectors: List<Location>?) {
+        sectorMarkers.clear()
+        sectors?.forEach {
+            val icon = IconHelper(this).getIcon(it.name, Icon.SECTOR)
+            val marker = sectorMarkers.addMarker(MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(icon))
+                    .position(it.latlng)
+                    .draggable(false))
+            marker.tag = it
+        }
     }
 
     private fun refreshCragClusterItems() {
@@ -240,8 +288,6 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
         })
     }
 
-    private var doAfterBottomSheetExpanded: () -> Unit = {}
-
     private fun initialiseBottomSheet() {
         bottomSheet = BottomSheetBehavior.from(bottom_sheet)
 
@@ -250,17 +296,12 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
                 when (newState) {
                     STATE_EXPANDED -> {
                         setMapBottomPadding(bottom_sheet_content_container.measuredHeight + bottom_sheet_peek.height)
-                        doAfterBottomSheetExpanded.invoke(); doAfterBottomSheetExpanded = {}
                     }
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                    STATE_COLLAPSED -> {
                         setMapBottomPadding(bottom_sheet_peek.height)
-                        // Remove the fragment after the bottom sheet has settled
-                        fragmentToRemove?.let { fragment ->
-                            removeFragment(fragment)
-                            fragmentToRemove = null
-                        }
                     }
                 }
+                binding.vm?.bottomSheetState?.value = newState
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -269,40 +310,12 @@ class MapsActivity : AppCompatActivity(), HasSupportFragmentInjector, OnMapReady
         })
     }
 
-    private fun fabStyle(iconId: Int, colourId: Int) {
-        fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(colourId))
-        fab.setImageResource(iconId)
-    }
-
     private fun setMapBottomPadding(padding: Int) {
         if (::map.isInitialized) map.setPadding(/*Left*/ 0, MAP_PADDING_TOP, /*Right*/ 0, /*Bottom*/ padding)
     }
 
-    override fun onSubmitFragmentReady(vm: SubmitViewModel?) {
-        //TODO Feels hacky - Better way to execute code when BottomSheet state is expanded?
-        doAfterBottomSheetExpanded = {
-            val mapCenter = map.projection.visibleRegion.latLngBounds.center
-            val icon = IconHelper(applicationContext).getIcon("Hold and drag me", Icon.CRAG)
-            newCragMarker = map.addMarker(MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromBitmap(icon))
-                    .position(mapCenter)
-                    .draggable(true)
-            )
-            vm?.cragLatLng?.value = mapCenter
-
-            map.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
-                override fun onMarkerDragStart(marker: Marker) {}
-                override fun onMarkerDrag(marker: Marker) {}
-                override fun onMarkerDragEnd(marker: Marker) {
-                    vm?.cragLatLng?.value = marker.position
-                }
-            })
-        }
-
-        bottomSheet.state = STATE_EXPANDED
-    }
-
-    override fun removeSubmitFragment() {
-        onBackPressed()
+    private fun fabStyle(iconId: Int, colourId: Int) {
+        fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(colourId))
+        fab.setImageResource(iconId)
     }
 }

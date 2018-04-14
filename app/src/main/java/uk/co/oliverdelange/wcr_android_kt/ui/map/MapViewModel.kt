@@ -5,11 +5,13 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableBoolean
+import android.support.design.widget.BottomSheetBehavior
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
 import uk.co.oliverdelange.wcr_android_kt.model.Location
+import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
+import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,23 +26,39 @@ class MapViewModel @Inject constructor(locationRepository: LocationRepository) :
         if (it == 1) "SAT" else "MAP"
     }
     val mapMode: MutableLiveData<MapMode> = MutableLiveData<MapMode>().also {
-        it.value = DEFAULT
+        it.value = MapMode.DEFAULT_MODE
+    }
+
+    val selectedLocationId: MutableLiveData<Long?> = MutableLiveData<Long?>().also {
+        it.value = null
+    }
+    val selectedLocation: LiveData<Location> = Transformations.switchMap(selectedLocationId) {
+        if (it != null) {
+            locationRepository.load(it)
+        } else {
+            AbsentLiveData.create()
+        }
     }
 
     val crags: LiveData<List<Location>> = locationRepository.loadCrags()
-    val selectedLocation: MutableLiveData<Location?> = MutableLiveData<Location?>().also {
-        it.value = null
+    val sectors: LiveData<List<Location>> = Transformations.switchMap(selectedLocation) {
+        when (it?.type) {
+            LocationType.CRAG -> it.id?.let { locationRepository.loadSectorsFor(it) }
+            LocationType.SECTOR -> it.parentId?.let { locationRepository.loadSectorsFor(it) }
+            null -> AbsentLiveData.create()
+        }
     }
 
+    val bottomSheetState: MutableLiveData<Int> = MutableLiveData()
     val bottomSheetTitle: LiveData<String> = Transformations.map(selectedLocation) {
         it?.name ?: "Select a crag or search"
     }
 
     fun submit(view: View) {
         when (mapMode.value) {
-            DEFAULT -> mapMode.value = SUBMIT_CRAG
-            CRAG -> mapMode.value = SUBMIT_SECTOR
-            SECTOR, TOPO -> mapMode.value = SUBMIT_TOPO
+            MapMode.DEFAULT_MODE -> mapMode.value = MapMode.SUBMIT_CRAG_MODE
+            MapMode.CRAG_MODE -> mapMode.value = MapMode.SUBMIT_SECTOR_MODE
+            MapMode.SECTOR_MODE, MapMode.TOPO_MODE -> mapMode.value = MapMode.SUBMIT_TOPO_MODE
         }
     }
 
@@ -53,25 +71,34 @@ class MapViewModel @Inject constructor(locationRepository: LocationRepository) :
     }
 
     fun onCragClick(location: Location) {
-        selectedLocation.value = location
-        mapMode.value = CRAG
+        selectedLocationId.value = location.id
+        mapMode.value = MapMode.CRAG_MODE
+    }
+
+    fun onSectorClick(location: Location) {
+        selectedLocationId.value = location.id
+        mapMode.value = MapMode.SECTOR_MODE
     }
 
     fun back() {
         when (mapMode.value) {
-            CRAG -> {
-                mapMode.value = DEFAULT
-                selectedLocation.value = null
+            MapMode.DEFAULT_MODE -> bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
+            MapMode.CRAG_MODE -> {
+                mapMode.value = MapMode.DEFAULT_MODE
+                selectedLocationId.value = null
             }
-            SUBMIT_CRAG -> mapMode.value = DEFAULT
-            SECTOR -> mapMode.value = CRAG
-            SUBMIT_SECTOR -> mapMode.value = CRAG
-            TOPO -> mapMode.value = SECTOR
-            SUBMIT_TOPO -> mapMode.value = SECTOR
+            MapMode.SUBMIT_CRAG_MODE -> mapMode.value = MapMode.DEFAULT_MODE
+            MapMode.SECTOR_MODE -> {
+                mapMode.value = MapMode.CRAG_MODE
+                selectedLocation.value?.parentId?.let { selectedLocationId.value = it }
+            }
+            MapMode.SUBMIT_SECTOR_MODE -> mapMode.value = MapMode.CRAG_MODE
+            MapMode.TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE
+            MapMode.SUBMIT_TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE
         }
     }
 }
 
 enum class MapMode {
-    DEFAULT, CRAG, SECTOR, TOPO, SUBMIT_CRAG, SUBMIT_SECTOR, SUBMIT_TOPO
+    DEFAULT_MODE, CRAG_MODE, SECTOR_MODE, TOPO_MODE, SUBMIT_CRAG_MODE, SUBMIT_SECTOR_MODE, SUBMIT_TOPO_MODE
 }

@@ -5,6 +5,10 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <import type="uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode" />
+
         <variable
             name="vm"
             type="uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel" />
@@ -13,7 +17,7 @@
     <LinearLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="400dp"
         android:background="@color/bg_grey_light"
         android:orientation="vertical"
         app:behavior_hideable="false"
@@ -22,14 +26,14 @@
 
         <RelativeLayout
             android:id="@+id/bottom_sheet_peek"
-            style="@style/Container"
+            style="@style/Wcr_Container"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:background="@color/bg_grey_light">
 
             <TextView
                 android:id="@+id/bottom_sheet_peek_title"
-                style="@style/MapBottomSheetTitle"
+                style="@style/Wcr_MapBottomSheetTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{vm.bottomSheetTitle}"
@@ -40,7 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/bottom_sheet_peek_title"
-                android:gravity="bottom|start">
+                android:gravity="bottom|start"
+                app:gone="@{vm.mapMode == MapMode.DEFAULT_MODE}">
 
                 <LinearLayout
                     android:id="@+id/dragbar_climb_grades_parent"
@@ -51,7 +56,7 @@
 
                     <TextView
                         android:id="@+id/climb_grades_text_green"
-                        style="@style/MapBottomSheetClimbGradesText.DarkText"
+                        style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_green"
@@ -59,7 +64,7 @@
 
                     <TextView
                         android:id="@+id/climb_grades_text_orange"
-                        style="@style/MapBottomSheetClimbGradesText.DarkText"
+                        style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_orange"
@@ -67,7 +72,7 @@
 
                     <TextView
                         android:id="@+id/climb_grades_text_red"
-                        style="@style/MapBottomSheetClimbGradesText.DarkText"
+                        style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_red"
@@ -75,7 +80,7 @@
 
                     <TextView
                         android:id="@+id/climb_grades_text_black"
-                        style="@style/MapBottomSheetClimbGradesText.LightText"
+                        style="@style/Wcr_MapBottomSheetClimbGradesText.LightText"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_black"
@@ -94,7 +99,7 @@
 
                     <ImageView
                         android:id="@+id/climb_types_icon_bouldering"
-                        style="@style/MapBottomSheetClimbTypeIcon"
+                        style="@style/Wcr_MapBottomSheetClimbTypeIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -102,7 +107,7 @@
 
                     <TextView
                         android:id="@+id/climb_types_text_bouldering"
-                        style="@style/MapBottomSheetClimbTypeText"
+                        style="@style/Wcr_MapBottomSheetClimbTypeText"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -117,7 +122,7 @@
 
                     <TextView
                         android:id="@+id/climb_types_text_sport"
-                        style="@style/MapBottomSheetClimbTypeText"
+                        style="@style/Wcr_MapBottomSheetClimbTypeText"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -132,7 +137,7 @@
 
                     <TextView
                         android:id="@+id/climb_types_text_trad"
-                        style="@style/MapBottomSheetClimbTypeText"
+                        style="@style/Wcr_MapBottomSheetClimbTypeText"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"

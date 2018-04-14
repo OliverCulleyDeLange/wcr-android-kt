@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="uk.co.oliverdelange.wcr_android_kt.model.LocationType" />
+
+        <variable
+            name="topo"
+            type="uk.co.oliverdelange.wcr_android_kt.model.Topo" />
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/topo_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg_grey_light"
+            android:paddingBottom="10dp">
+
+            <ImageView
+                android:id="@+id/topo_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:background="@drawable/topo_placeholder" />
+            <!--app:imageUrl="@{topo.image}"-->
+
+            <LinearLayout
+                android:id="@+id/name_and_grade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/topo_image">
+
+                <TextView
+                    android:id="@+id/topo_name"
+                    style="@style/Wcr_TopoTitleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Dummy climb name" />
+
+                <TextView
+                    android:id="@+id/topo_grade"
+                    style="@style/Wcr_TopoGradeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="V5" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/name_and_grade"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/darker_gray" />
+
+            <RelativeLayout
+                android:id="@+id/climb_location_and_climb_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider">
+
+                <TextView
+                    android:id="@+id/topo_location"
+                    style="@style/Wcr_TopoText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="Dummy climb location" />
+
+                <ImageView
+                    android:id="@+id/climb_type_icon"
+                    style="@style/Wcr_MapBottomSheetClimbTypeIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/climb_type_text" />
+
+                <TextView
+                    android:id="@+id/climb_type_text"
+                    style="@style/Wcr_TopoClimbTypeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="bouldering" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/topo_description"
+                style="@style/Wcr_TopoContentText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/climb_location_and_climb_type"
+                android:text="Some long description so we can test the wrapping of this text view :) Some long description so we can test the wrapping of this text view :)" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</layout>

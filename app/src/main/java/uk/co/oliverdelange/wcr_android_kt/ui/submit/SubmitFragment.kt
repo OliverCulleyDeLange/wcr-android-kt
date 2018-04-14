@@ -5,41 +5,60 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.fragment_submit.*
+import uk.co.oliverdelange.wcr_android_kt.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
+import uk.co.oliverdelange.wcr_android_kt.map.IconHelper
+import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import javax.inject.Inject
 
 class SubmitFragment : Fragment(), Injectable {
     companion object {
-        fun newInstance(): SubmitFragment {
-            return SubmitFragment()
+        fun newCragSubmission(): SubmitFragment {
+            return SubmitFragment().also { it.locationType = LocationType.CRAG }
+        }
+
+        fun newSectorSubmission(): SubmitFragment {
+            return SubmitFragment().also { it.locationType = LocationType.SECTOR }
         }
     }
 
     interface ActivityInteractor {
-        fun onSubmitFragmentReady(vm: SubmitViewModel?)
-        fun removeSubmitFragment()
+        fun onLocationSubmitted(locationType: LocationType, submittedLocationId: Long)
     }
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var activityInteractor: ActivityInteractor
+    private var activityInteractor: ActivityInteractor? = null
+
+    var parentId: Long? = null
+    lateinit var locationType: LocationType
+    private var newLocationMarker: Marker? = null
+
     private lateinit var binding: FragmentSubmitBinding
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is ActivityInteractor) {
-            activityInteractor = context
-        } else {
-            throw ClassCastException(context!!.toString() + " must implement ActivityInteractor")
-        }
+        if (context is MapsActivity) context.bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+        if (context is ActivityInteractor) activityInteractor = context
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        newLocationMarker?.remove()
+        newLocationMarker = null
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -47,35 +66,50 @@ class SubmitFragment : Fragment(), Injectable {
         binding.setLifecycleOwner(this)
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitViewModel::class.java)
         binding.vm = viewModel
+        binding.vm?.locationType = locationType
 
         binding.submit.setOnClickListener { _: View? ->
-            binding.vm?.submit()?.let {
-                if (it) {
-                    Snackbar.make(binding.submit, "Crag submitted!", Snackbar.LENGTH_SHORT).show()
-                    activityInteractor.removeSubmitFragment()
-
+            binding.vm?.submit(parentId)?.observe(this, Observer {
+                if (it != null) {
+                    Snackbar.make(binding.submit, locationType.name.toLowerCase() + " submitted!", Snackbar.LENGTH_SHORT).show()
+                    activityInteractor?.onLocationSubmitted(locationType, it)
                 } else {
-                    Snackbar.make(binding.submit, "Failed to submit crag!", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.submit, "Failed to submit location!", Snackbar.LENGTH_SHORT).show()
                 }
-            }
+            })
         }
 
-        viewModel.cragNameError.observe(this, Observer { _ ->
-            crag_name_input_layout.error = binding.vm?.cragNameError?.value
+        viewModel.locationNameError.observe(this, Observer { _ ->
+            location_name_input_layout.error = binding.vm?.locationNameError?.value
         })
+
+        val mapsActivity = activity
+        if (mapsActivity is MapsActivity) {
+            mapsActivity.binding.vm?.bottomSheetState?.observe(this, Observer {
+                if (it == BottomSheetBehavior.STATE_EXPANDED && newLocationMarker == null) {
+                    setupMarker(mapsActivity.map, mapsActivity)
+                }
+            })
+            mapsActivity.map.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
+                override fun onMarkerDragStart(marker: Marker) {}
+                override fun onMarkerDrag(marker: Marker) {}
+                override fun onMarkerDragEnd(marker: Marker) {
+                    binding.vm?.locationLatLng?.value = marker.position
+                }
+            })
+        }
 
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        activityInteractor.onSubmitFragmentReady(binding.vm)
+    private fun setupMarker(map: GoogleMap, context: Context) {
+        val mapCenter = map.projection.visibleRegion.latLngBounds.center
+        val icon = IconHelper(context).getIcon("Hold and drag me", locationType.icon)
+        newLocationMarker = map.addMarker(MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(icon))
+                .position(mapCenter)
+                .draggable(true)
+        )
+        binding.vm?.locationLatLng?.value = mapCenter
     }
 }
-
-//onAttach: When the fragment attaches to its host activity.
-//onCreate: When a new fragment instance initializes, which always happens after it attaches to the host — fragments are a bit like viruses.
-//onCreateView: When a fragment creates its portion of the view hierarchy, which is added to its activity’s view hierarchy.
-//onActivityCreated: When the fragment’s activity has finished its own onCreate event.
-//onStart: When the fragment is visible; a fragment starts only after its activity starts and often starts immediately after its activity does.
-//onResume: When the fragment is visible and interactable; a fragment resumes only after its activity resumes and often resumes immediately after the activity does.

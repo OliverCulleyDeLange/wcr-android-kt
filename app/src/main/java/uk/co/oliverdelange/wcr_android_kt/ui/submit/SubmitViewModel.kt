@@ -1,5 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
@@ -14,32 +15,32 @@ import javax.inject.Singleton
 @Singleton
 class SubmitViewModel @Inject constructor(private val locationRepository: LocationRepository) : ViewModel() {
 
-    val cragName = MutableLiveData<String>()
-    val cragNameError = MutableLiveData<String>()
-    val cragLatLng = MutableLiveData<LatLng>()
+    lateinit var locationType: LocationType
+    val locationName = MutableLiveData<String>()
+    val locationNameError = MutableLiveData<String>()
+    val locationLatLng = MutableLiveData<LatLng>()
 
     val submitButtonEnabled = MediatorLiveData<Boolean>().also {
         it.value = false
-        it.addSource(cragName) { cragName: String? ->
-            if (cragName == null || cragName.isBlank()) {
-                it.value = false; cragNameError.value = "Can not be empty"
+        it.addSource(locationName) { locationName: String? ->
+            if (locationName == null || locationName.isBlank()) {
+                it.value = false; locationNameError.value = "Can not be empty"
             } else {
-                it.value = true; cragNameError.value = null
+                it.value = true; locationNameError.value = null
             }
         }
     }
 
-    fun submit(): Boolean {
-        val cragName = cragName.value
-        val lat = cragLatLng.value?.latitude
-        val lng = cragLatLng.value?.longitude
-        if (cragName != null && lat != null && lng != null) {
-            val crag = Location(cragName, lat, lng, LocationType.CRAG)
-            locationRepository.save(crag)
-            return true
+    fun submit(parentId: Long?): LiveData<Long> {
+        val locationName = locationName.value
+        val lat = locationLatLng.value?.latitude
+        val lng = locationLatLng.value?.longitude
+        if (locationName != null && lat != null && lng != null) {
+            val location = Location(name = locationName, lat = lat, lng = lng, type = locationType, parentId = parentId)
+            return locationRepository.save(location)
         } else {
-            return false
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
+            return MutableLiveData()
         }
     }
 }

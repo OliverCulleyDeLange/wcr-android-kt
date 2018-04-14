@@ -4,38 +4,40 @@
 
     <data>
 
+        <import type="uk.co.oliverdelange.wcr_android_kt.model.LocationType" />
+
         <variable
             name="vm"
             type="uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitViewModel" />
     </data>
 
     <LinearLayout
-        style="@style/Container"
+        style="@style/Wcr_Container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/crag_name_input_layout"
+            android:id="@+id/location_name_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true"
-            app:hintTextAppearance="@style/FloatingLabel">
+            app:hintTextAppearance="@style/Wcr_FloatingLabel">
 
             <EditText
-                android:id="@+id/crag_name_input"
+                android:id="@+id/location_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/submission_text_input_crag_name"
+                android:hint="@{vm.locationType == LocationType.CRAG ? @string/submission_text_input_crag_name : @string/submission_text_input_sector_name}"
                 android:inputType="textCapWords"
-                android:text="@={vm.cragName}"
-                android:theme="@style/EditText" />
+                android:text="@={vm.locationName}"
+                android:theme="@style/Wcr_EditText" />
 
         </android.support.design.widget.TextInputLayout>
 
         <Button
             android:id="@+id/submit"
-            style="@style/Button"
+            style="@style/Wcr_Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"

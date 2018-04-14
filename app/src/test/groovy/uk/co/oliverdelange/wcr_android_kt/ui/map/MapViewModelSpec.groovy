@@ -37,10 +37,10 @@ class MapViewModelSpec extends Specification {
         mapViewModel.mapMode.value == after
 
         where:
-        before  | after
-        DEFAULT | SUBMIT_CRAG
-        CRAG    | SUBMIT_SECTOR
-        SECTOR  | SUBMIT_TOPO
+        before       | after
+        DEFAULT_MODE | SUBMIT_CRAG_MODE
+        CRAG_MODE    | SUBMIT_SECTOR_MODE
+        SECTOR_MODE  | SUBMIT_TOPO_MODE
     }
 
     @Unroll

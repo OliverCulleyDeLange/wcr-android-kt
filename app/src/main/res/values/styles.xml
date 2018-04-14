@@ -9,13 +9,13 @@
     </style>
 
     <!--CONTAINER-->
-    <style name="Container">
+    <style name="Wcr_Container">
         <item name="android:paddingLeft">15dp</item>
         <item name="android:paddingTop">8dp</item>
     </style>
 
     <!--MAP-->
-    <style name="MapToggle" parent="@style/Widget.AppCompat.Button">
+    <style name="Wcr_MapToggle" parent="@style/Widget.AppCompat.Button">
         <item name="android:layout_width">38dp</item>
         <item name="android:layout_height">38dp</item>
         <item name="android:textSize">10sp</item>
@@ -25,62 +25,99 @@
     </style>
 
     <!--MAP ICONS-->
-    <style name="generated_icon_text">
+    <style name="Wcr_GeneratedIconText">
         <item name="android:textSize">10sp</item>
         <item name="android:padding">2dp</item>
     </style>
 
-    <style name="generated_crag_icon_text" parent="generated_icon_text">
+    <style name="Wcr_GeneratedCragIconText" parent="Wcr_GeneratedIconText">
         <item name="android:textColor">@color/crag_accent</item>
     </style>
 
-    <style name="generated_crag_icon_text_dimmed" parent="generated_icon_text">
+    <style name="Wcr_GeneratedCragIconTextDimmed" parent="Wcr_GeneratedIconText">
         <item name="android:textColor">@color/crag_light</item>
     </style>
 
-    <style name="generated_sector_icon_text" parent="generated_icon_text">
+    <style name="Wcr_GeneratedSectorIconText" parent="Wcr_GeneratedIconText">
         <item name="android:textColor">@color/sector_accent</item>
     </style>
 
     <!--OUTPUT-->
-    <style name="MapBottomSheetTitle" parent="Theme.AppCompat.Light">
+    <!--BOTTOM SHEET-->
+    <style name="Wcr_MapBottomSheetTitle" parent="Theme.AppCompat.Light">
         <item name="android:textSize">20sp</item>
         <item name="android:layout_marginBottom">5dp</item>
     </style>
 
-    <style name="MapBottomSheetClimbTypeIcon">
+    <style name="Wcr_MapBottomSheetClimbTypeIcon">
         <item name="android:paddingEnd">3dp</item>
     </style>
 
-    <style name="MapBottomSheetClimbTypeText">
+    <style name="Wcr_MapBottomSheetClimbTypeText">
         <item name="android:paddingEnd">10dp</item>
         <item name="android:textSize">20sp</item>
     </style>
 
-    <style name="MapBottomSheetClimbGradesText">
+    <style name="Wcr_MapBottomSheetClimbGradesText">
         <item name="android:gravity">center</item>
         <item name="android:textSize">20sp</item>
     </style>
 
-    <style name="MapBottomSheetClimbGradesText.DarkText" parent="MapBottomSheetClimbGradesText">
+    <style name="Wcr_MapBottomSheetClimbGradesText.DarkText" parent="Wcr_MapBottomSheetClimbGradesText">
         <item name="android:textColor">@color/text_grey_dark</item>
     </style>
 
-    <style name="MapBottomSheetClimbGradesText.LightText" parent="MapBottomSheetClimbGradesText">
+    <style name="Wcr_MapBottomSheetClimbGradesText.LightText" parent="Wcr_MapBottomSheetClimbGradesText">
         <item name="android:textColor">@color/text_grey_light</item>
     </style>
 
+    <!--TOPO_MODE STYLING-->
+
+    <style name="Wcr_TopoText" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/text_grey</item>
+        <item name="android:paddingLeft">25dp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingBottom">1dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Wcr_TopoTitleText" parent="Wcr_TopoText">
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:textColor">@color/text_grey_dark</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="Wcr_TopoContentText" parent="Wcr_TopoText">
+        <item name="android:textColor">@color/text_grey_dark</item>
+    </style>
+
+    <style name="Wcr_TopoGradeText" parent="Wcr_TopoText">
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Wcr_TopoClimbTypeText">
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
     <!--INPUT-->
-    <style name="FloatingLabel" parent="TextAppearance.AppCompat.Small">
+    <style name="Wcr_FloatingLabel" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/accent</item>
     </style>
 
-    <style name="EditText" parent="Theme.AppCompat.Light">
+    <style name="Wcr_EditText" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/colorAccentLight</item>
         <item name="colorControlActivated">@color/accent</item>
     </style>
 
-    <style name="Button" parent="Widget.AppCompat.Button.Colored">
+    <style name="Wcr_Button" parent="Widget.AppCompat.Button.Colored">
 
     </style>
 </resources>
