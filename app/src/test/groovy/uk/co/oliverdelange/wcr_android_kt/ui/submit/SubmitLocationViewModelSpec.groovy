@@ -13,18 +13,18 @@ import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.*
 
-class SubmitViewModelSpec extends Specification {
+class SubmitLocationViewModelSpec extends Specification {
 
     @Rule
     InstantTaskExecutorRule rule = new InstantTaskExecutorRule()
 
-    SubmitViewModel submitViewModel
+    SubmitLocationViewModel submitViewModel
 
     def mockLocationRepository = mock(LocationRepository)
     def mockView = mock(View)
 
     def setup() {
-        submitViewModel = new SubmitViewModel(mockLocationRepository)
+        submitViewModel = new SubmitLocationViewModel(mockLocationRepository)
     }
 
     def "submitButtonEnabled should default to false"() {

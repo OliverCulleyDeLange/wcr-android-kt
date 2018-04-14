@@ -43,7 +43,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
 import uk.co.oliverdelange.wcr_android_kt.ui.map.ToposFragment
-import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitFragment
+import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import java.lang.Math.round
 import javax.inject.Inject
@@ -58,7 +58,7 @@ class MapsActivity : AppCompatActivity(),
         OnMapReadyCallback,
         ClusterManager.OnClusterItemClickListener<CragClusterItem>,
         GoogleMap.OnMarkerClickListener,
-        SubmitFragment.ActivityInteractor {
+        SubmitLocationFragment.ActivityInteractor {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -70,8 +70,8 @@ class MapsActivity : AppCompatActivity(),
         return dispatchingAndroidInjector
     }
 
-    private val submitCragFragment = SubmitFragment.newCragSubmission()
-    private val submitSectorFragment = SubmitFragment.newSectorSubmission()
+    private val submitCragFragment = SubmitLocationFragment.newCragSubmission()
+    private val submitSectorFragment = SubmitLocationFragment.newSectorSubmission()
     private val viewToposFragment = ToposFragment.newToposFragment()
 
     internal lateinit var map: GoogleMap

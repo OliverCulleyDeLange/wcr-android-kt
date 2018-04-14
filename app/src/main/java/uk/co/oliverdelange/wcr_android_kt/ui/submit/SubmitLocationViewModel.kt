@@ -13,7 +13,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SubmitViewModel @Inject constructor(private val locationRepository: LocationRepository) : ViewModel() {
+class SubmitLocationViewModel @Inject constructor(private val locationRepository: LocationRepository) : ViewModel() {
 
     lateinit var locationType: LocationType
     val locationName = MutableLiveData<String>()

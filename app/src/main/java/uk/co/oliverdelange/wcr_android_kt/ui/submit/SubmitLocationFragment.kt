@@ -15,22 +15,22 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.android.synthetic.main.fragment_submit.*
+import kotlinx.android.synthetic.main.fragment_submit_location.*
 import uk.co.oliverdelange.wcr_android_kt.MapsActivity
-import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitBinding
+import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitLocationBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.map.IconHelper
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import javax.inject.Inject
 
-class SubmitFragment : Fragment(), Injectable {
+class SubmitLocationFragment : Fragment(), Injectable {
     companion object {
-        fun newCragSubmission(): SubmitFragment {
-            return SubmitFragment().also { it.locationType = LocationType.CRAG }
+        fun newCragSubmission(): SubmitLocationFragment {
+            return SubmitLocationFragment().also { it.locationType = LocationType.CRAG }
         }
 
-        fun newSectorSubmission(): SubmitFragment {
-            return SubmitFragment().also { it.locationType = LocationType.SECTOR }
+        fun newSectorSubmission(): SubmitLocationFragment {
+            return SubmitLocationFragment().also { it.locationType = LocationType.SECTOR }
         }
     }
 
@@ -47,7 +47,7 @@ class SubmitFragment : Fragment(), Injectable {
     lateinit var locationType: LocationType
     private var newLocationMarker: Marker? = null
 
-    private lateinit var binding: FragmentSubmitBinding
+    private lateinit var binding: FragmentSubmitLocationBinding
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -62,9 +62,9 @@ class SubmitFragment : Fragment(), Injectable {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentSubmitBinding.inflate(layoutInflater, container, false)
+        binding = FragmentSubmitLocationBinding.inflate(layoutInflater, container, false)
         binding.setLifecycleOwner(this)
-        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitViewModel::class.java)
+        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitLocationViewModel::class.java)
         binding.vm = viewModel
         binding.vm?.locationType = locationType
 
