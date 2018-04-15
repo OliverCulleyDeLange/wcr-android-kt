@@ -10,13 +10,16 @@ import android.view.View
 import com.google.android.gms.maps.GoogleMap
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
+import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
+import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MapViewModel @Inject constructor(locationRepository: LocationRepository) : ViewModel() {
+class MapViewModel @Inject constructor(locationRepository: LocationRepository,
+                                       topoRepository: TopoRepository) : ViewModel() {
 
     val showFab = ObservableBoolean(true)
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
@@ -46,6 +49,11 @@ class MapViewModel @Inject constructor(locationRepository: LocationRepository) :
             LocationType.CRAG -> it.id?.let { locationRepository.loadSectorsFor(it) }
             LocationType.SECTOR -> it.parentId?.let { locationRepository.loadSectorsFor(it) }
             null -> AbsentLiveData.create()
+        }
+    }
+    val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocationId) {
+        it?.let {
+            topoRepository.getToposForLocation(it)
         }
     }
 

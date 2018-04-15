@@ -32,6 +32,6 @@ interface TopoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun save(topo: Topo): Long
 
-    @Query("SELECT * from topo")
-    fun loadTopoAndRoutes(): LiveData<TopoAndRoutes>
+    @Query("SELECT * from topo where locationId = :locationId")
+    fun loadTopoAndRoutes(locationId: Long): LiveData<List<TopoAndRoutes>>
 }

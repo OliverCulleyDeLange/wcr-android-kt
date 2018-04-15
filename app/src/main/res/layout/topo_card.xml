@@ -3,18 +3,15 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
     <data>
-
-        <import type="uk.co.oliverdelange.wcr_android_kt.model.LocationType" />
-
         <variable
-            name="topo"
-            type="uk.co.oliverdelange.wcr_android_kt.model.Topo" />
+            name="vm"
+            type="uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes" />
     </data>
 
     <android.support.v7.widget.CardView
         android:id="@+id/topo_card_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         card_view:cardCornerRadius="0dp">
 
@@ -44,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Dummy climb name" />
+                    android:text="@{vm.topo.name}" />
 
                 <TextView
                     android:id="@+id/topo_grade"
