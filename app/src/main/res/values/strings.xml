@@ -8,8 +8,10 @@
     <string name="map_search_hint">Search for crags and climbs</string>
 
     <!--SUBMIT-->
+    <string name="button_submit">Submit</string>
     <string name="submission_text_input_crag_name">Enter the crag name</string>
     <string name="submission_text_input_sector_name">Enter the sector name</string>
-    <string name="button_submit">Submit</string>
+
+    <string name="submission_text_input_topo_name">Enter a name for the topo</string>
 
 </resources>

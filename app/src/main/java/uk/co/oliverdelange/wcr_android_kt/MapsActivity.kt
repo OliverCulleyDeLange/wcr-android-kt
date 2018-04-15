@@ -44,6 +44,7 @@ import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
 import uk.co.oliverdelange.wcr_android_kt.ui.map.ToposFragment
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
+import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoFragment
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import java.lang.Math.round
 import javax.inject.Inject
@@ -72,6 +73,7 @@ class MapsActivity : AppCompatActivity(),
 
     private val submitCragFragment = SubmitLocationFragment.newCragSubmission()
     private val submitSectorFragment = SubmitLocationFragment.newSectorSubmission()
+    private val submitTopoFragment = SubmitTopoFragment.newTopoSubmission()
     private val viewToposFragment = ToposFragment.newToposFragment()
 
     internal lateinit var map: GoogleMap
@@ -205,6 +207,10 @@ class MapsActivity : AppCompatActivity(),
                     refreshCragClusterItems()
                 }
                 SUBMIT_TOPO_MODE -> {
+                    binding.vm?.selectedLocation?.value?.id?.let {
+                        submitTopoFragment.sectorId = it
+                        replaceFragment(submitTopoFragment, R.id.bottom_sheet_content_container)
+                    }
                 }
             }
             when (it) {

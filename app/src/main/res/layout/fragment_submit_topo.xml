@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="uk.co.oliverdelange.wcr_android_kt.model.LocationType" />
+
+        <variable
+            name="vm"
+            type="uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoViewModel" />
+    </data>
+
+    <LinearLayout
+        style="@style/Wcr_Container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/location_name_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:errorEnabled="true"
+            app:hintTextAppearance="@style/Wcr_FloatingLabel">
+
+            <EditText
+                android:id="@+id/location_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/submission_text_input_topo_name"
+                android:inputType="textCapWords"
+                android:text="@={vm.topoName}"
+                android:theme="@style/Wcr_EditText" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/submit"
+            style="@style/Wcr_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:enabled="@{vm.submitButtonEnabled}"
+            android:text="@string/button_submit" />
+    </LinearLayout>
+</layout>

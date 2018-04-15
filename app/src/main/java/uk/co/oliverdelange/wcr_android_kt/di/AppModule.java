@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao;
+import uk.co.oliverdelange.wcr_android_kt.db.TopoDao;
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb;
 
 @Module(includes = ViewModelModule.class)
@@ -22,5 +23,11 @@ class AppModule {
     @Provides
     LocationDao provideLocationDao(WcrDb db) {
         return db.locationDao();
+    }
+
+    @Singleton
+    @Provides
+    TopoDao provideTopoDao(WcrDb db) {
+        return db.topoDao();
     }
 }

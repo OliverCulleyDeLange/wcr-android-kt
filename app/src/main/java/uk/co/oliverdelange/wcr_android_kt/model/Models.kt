@@ -1,8 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.model
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.*
 import com.google.android.gms.maps.model.LatLng
 import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
@@ -25,16 +23,25 @@ data class Location(@PrimaryKey(autoGenerate = true) val id: Long? = null,
     val latlng: LatLng = LatLng(lat, lng)
 }
 
-@Entity
-data class Topo(@PrimaryKey val id: Int,
-                val entrantId: Int,
-                val image: String,
-                val routes: List<Route>)
+class TopoAndRoutes {
+    @Embedded
+    lateinit var topo: Topo
+    @Relation(parentColumn = "id", entityColumn = "topoId")
+    lateinit var routes: List<Route>
+}
 
 @Entity
+data class Topo(@PrimaryKey(autoGenerate = true) val id: Long? = null,
+                val locationId: Long,
+                val name: String)
+
+@Entity(foreignKeys = [(
+        ForeignKey(entity = Topo::class, parentColumns = arrayOf("id"), childColumns = arrayOf("topoId"))
+        )])
 data class Route(@PrimaryKey val id: Int,
+                 val topoId: Long,
                  val name: String,
-                 val grade: Grade,
+                 @Embedded(prefix = "grade_") val grade: Grade,
                  val type: RouteType,
                  val description: String)
 

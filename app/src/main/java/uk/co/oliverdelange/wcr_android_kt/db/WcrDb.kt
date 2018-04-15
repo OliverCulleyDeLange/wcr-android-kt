@@ -2,14 +2,14 @@ package uk.co.oliverdelange.wcr_android_kt.db
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
-import uk.co.oliverdelange.wcr_android_kt.model.Location
-import uk.co.oliverdelange.wcr_android_kt.model.LocationType
+import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType.SECTOR
 
-@Database(entities = [(Location::class)], version = 1)
+@Database(entities = [(Location::class), (Topo::class), (Route::class), (Grade::class)], version = 1)
 @TypeConverters(WcrTypeConverters::class)
 abstract class WcrDb : RoomDatabase() {
     abstract fun locationDao(): LocationDao
+    abstract fun topoDao(): TopoDao
 }
 
 @Dao
@@ -25,4 +25,13 @@ interface LocationDao {
 
     @Query("SELECT * FROM location where type = :type AND parentId = :id")
     fun loadWithParentId(id: Long, type: LocationType = SECTOR): LiveData<List<Location>>
+}
+
+@Dao
+interface TopoDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun save(topo: Topo): Long
+
+    @Query("SELECT * from topo")
+    fun loadTopoAndRoutes(): LiveData<TopoAndRoutes>
 }
