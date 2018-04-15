@@ -162,12 +162,6 @@ class MapsActivity : AppCompatActivity(),
             }
         })
 
-        binding.vm?.selectedLocation?.observe(this, Observer { location: Location? ->
-            location?.let {
-                if (it.type == LocationType.CRAG) map.animate(it.latlng, CRAG_ZOOM)
-            }
-        })
-
         binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
             Timber.d("New crag location to display. Locations: %s", crags)
             refreshCragClusterItems()
@@ -176,6 +170,8 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
             Timber.d("New sector location to display. Locations: %s", sectors)
             refreshSectorsForCrag(sectors)
+            val locations = sectors?.plus(binding.vm!!.selectedLocation.value!!)
+            locations?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
         })
 
         binding.vm?.mapMode?.observe(this, Observer {
