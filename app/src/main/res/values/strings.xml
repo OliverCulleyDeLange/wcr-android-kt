@@ -13,5 +13,7 @@
     <string name="submission_text_input_sector_name">Enter the sector name</string>
 
     <string name="submission_text_input_topo_name">Enter a name for the topo</string>
+    <string name="submission_text_input_route_name">Route name</string>
+    <string name="submission_text_input_route_description">Route description</string>
 
 </resources>

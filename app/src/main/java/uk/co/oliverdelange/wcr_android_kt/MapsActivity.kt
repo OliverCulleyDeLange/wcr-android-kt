@@ -78,7 +78,7 @@ class MapsActivity : AppCompatActivity(),
 
     internal lateinit var map: GoogleMap
     private val defaultLatLng = LatLng(54.056, -3.155)
-    internal lateinit var bottomSheet: BottomSheetBehavior<LinearLayout>
+    internal var bottomSheet: BottomSheetBehavior<LinearLayout>? = null
 
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
     private lateinit var sectorMarkers: MarkerManager.Collection
@@ -158,7 +158,7 @@ class MapsActivity : AppCompatActivity(),
 
         binding.vm?.bottomSheetState?.observe(this, Observer {
             it?.let {
-                bottomSheet.state = it
+                bottomSheet?.state = it
             }
         })
 
@@ -285,7 +285,7 @@ class MapsActivity : AppCompatActivity(),
         floating_search_view.setOnFocusChangeListener(object : FloatingSearchView.OnFocusChangeListener {
             override fun onFocusCleared() {}
             override fun onFocus() {
-                bottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+                bottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         })
     }
@@ -293,7 +293,7 @@ class MapsActivity : AppCompatActivity(),
     private fun initialiseBottomSheet() {
         bottomSheet = BottomSheetBehavior.from(bottom_sheet)
 
-        bottomSheet.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheet?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     STATE_EXPANDED -> {

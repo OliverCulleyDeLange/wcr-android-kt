@@ -11,37 +11,79 @@
             type="uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoViewModel" />
     </data>
 
-    <LinearLayout
-        style="@style/Wcr_Container"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/location_name_input_layout"
+        <LinearLayout
+            style="@style/Wcr_Container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:errorEnabled="true"
-            app:hintTextAppearance="@style/Wcr_FloatingLabel">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/location_name_input"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/topo_name_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/submission_text_input_topo_name"
-                android:inputType="textCapWords"
-                android:text="@={vm.topoName}"
-                android:theme="@style/Wcr_EditText" />
+                app:errorEnabled="true"
+                app:hintTextAppearance="@style/Wcr_FloatingLabel">
 
-        </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/topo_name_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/submission_text_input_topo_name"
+                    android:inputType="textCapWords"
+                    android:text="@={vm.topoName}"
+                    android:theme="@style/Wcr_EditText" />
 
-        <Button
-            android:id="@+id/submit"
-            style="@style/Wcr_Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:enabled="@{vm.submitButtonEnabled}"
-            android:text="@string/button_submit" />
-    </LinearLayout>
+            </android.support.design.widget.TextInputLayout>
+
+            <!--<Button-->
+            <!--android:id="@+id/add_image"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:onClick="@{viewModel::onAddImageButtonClick}"-->
+            <!--android:text="@string/submission_button_text_select_image"-->
+            <!--android:visibility="@{viewModel.selectedImageUri != null ? View.GONE : View.VISIBLE}" />-->
+
+            <!--<ImageView-->
+            <!--android:id="@+id/selected_image"-->
+            <!--android:layout_width="150dp"-->
+            <!--android:layout_height="150dp"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:background="@color/bg_grey"-->
+            <!--android:visibility="@{viewModel.selectedImageUri != null  ? View.VISIBLE : View.GONE}" />-->
+
+            <!--<Button-->
+            <!--android:id="@+id/draw_image"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:onClick="@{viewModel::onDrawOnImageButtonClick}"-->
+            <!--android:text="@string/submission_button_text_draw_route"-->
+            <!--android:visibility="@{viewModel.selectedImageUri != null ? View.VISIBLE : View.GONE}" />-->
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/route_pager"
+                android:layout_width="match_parent"
+                android:layout_height="120dp" />
+
+            <ImageButton
+                android:id="@+id/add_route"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_add" />
+
+            <Button
+                android:id="@+id/submit"
+                style="@style/Wcr_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:enabled="@{vm.submitButtonEnabled}"
+                android:text="@string/button_submit" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </layout>

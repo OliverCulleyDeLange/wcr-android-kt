@@ -7,6 +7,7 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel;
+import uk.co.oliverdelange.wcr_android_kt.ui.submit.RouteViewModel;
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationViewModel;
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoViewModel;
 
@@ -26,6 +27,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SubmitTopoViewModel.class)
     abstract ViewModel bindTopoViewModel(SubmitTopoViewModel submitTopoViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RouteViewModel.class)
+    abstract ViewModel bindRouteViewModel(RouteViewModel routeViewModel);
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(WcrViewModelFactory factory);

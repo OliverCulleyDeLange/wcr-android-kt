@@ -8,14 +8,17 @@ import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_submit_location.*
+import kotlinx.android.synthetic.main.fragment_submit_topo.*
 import uk.co.oliverdelange.wcr_android_kt.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import javax.inject.Inject
+
 
 class SubmitTopoFragment : Fragment(), Injectable {
     companion object {
@@ -32,6 +35,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private var activityInteractor: ActivityInteractor? = null
+    private var routeFragments: MutableList<RouteFragment> = mutableListOf(RouteFragment.newRouteFragment())
 
     var sectorId: Long = -1
 
@@ -39,7 +43,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is MapsActivity) context.bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+        if (context is MapsActivity) context.bottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
         if (context is ActivityInteractor) activityInteractor = context
     }
 
@@ -61,9 +65,47 @@ class SubmitTopoFragment : Fragment(), Injectable {
         }
 
         viewModel.topoNameError.observe(this, Observer { _ ->
-            location_name_input_layout.error = binding.vm?.topoNameError?.value
+            topo_name_input_layout.error = binding.vm?.topoNameError?.value
         })
 
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        route_pager.adapter = RoutePagerAdapter(childFragmentManager, routeFragments)
+        route_pager.clipToPadding = false
+        route_pager.setPadding(200, 20, 200, 20)
+        route_pager.pageMargin = 25
+
+        add_route.setOnClickListener({
+            routeFragments.add(RouteFragment.newRouteFragment())
+            route_pager.adapter?.notifyDataSetChanged()
+        })
+    }
+
+    fun removeRouteFragment(routeFragment: RouteFragment) {
+        routeFragments.remove(routeFragment)
+        route_pager.adapter?.notifyDataSetChanged()
+    }
+
+}
+
+class RoutePagerAdapter(fragmentManager: FragmentManager, val routeFragments: List<RouteFragment>) : FragmentPagerAdapter(fragmentManager) {
+    override fun getItem(position: Int): Fragment {
+        return routeFragments[position]
+    }
+
+    override fun getCount(): Int {
+        return routeFragments.size
+    }
+
+    override fun getItemId(position: Int): Long {
+        return routeFragments[position].fragmentId?.toLong() ?: -1
+    }
+
+    override fun getItemPosition(fragment: Any): Int {
+        val fragmentPosition = routeFragments.indexOf(fragment as Fragment)
+        return if (fragmentPosition == -1) POSITION_NONE else fragmentPosition
     }
 }

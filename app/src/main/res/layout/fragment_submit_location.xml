@@ -24,7 +24,7 @@
             app:errorEnabled="true"
             app:hintTextAppearance="@style/Wcr_FloatingLabel">
 
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/location_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -51,7 +51,7 @@ class SubmitLocationFragment : Fragment(), Injectable {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is MapsActivity) context.bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+        if (context is MapsActivity) context.bottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
         if (context is ActivityInteractor) activityInteractor = context
     }
 

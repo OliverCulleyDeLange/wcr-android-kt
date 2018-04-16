@@ -117,6 +117,10 @@
         <item name="colorControlActivated">@color/accent</item>
     </style>
 
+    <style name="Wcr_EditText_Route" parent="Wcr_EditText">
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="Wcr_Button" parent="Widget.AppCompat.Button.Colored">
 
     </style>

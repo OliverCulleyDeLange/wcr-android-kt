@@ -31,26 +31,26 @@ class TopoAndRoutes {
 }
 
 @Entity
-data class Topo(@PrimaryKey(autoGenerate = true) val id: Long? = null,
-                val locationId: Long,
-                val name: String)
+data class Topo(@PrimaryKey(autoGenerate = true) var id: Long? = null,
+                var locationId: Long,
+                var name: String)
 
 @Entity(foreignKeys = [(
         ForeignKey(entity = Topo::class, parentColumns = arrayOf("id"), childColumns = arrayOf("topoId"))
         )])
-data class Route(@PrimaryKey val id: Int,
-                 val topoId: Long,
-                 val name: String,
-                 @Embedded(prefix = "grade_") val grade: Grade,
-                 val type: RouteType,
-                 val description: String)
+data class Route(@PrimaryKey var id: Long? = null,
+                 var topoId: Long? = null,
+                 var name: String? = null,
+                 @Embedded(prefix = "grade_") var grade: Grade? = null,
+                 var type: RouteType? = null,
+                 var description: String? = null)
 
 @Entity
-data class Grade(@PrimaryKey val string: String,
-                 val type: GradeType,
-                 val colour: GradeColour)
+data class Grade(@PrimaryKey var string: String,
+                 var type: GradeType,
+                 var colour: GradeColour)
 
-enum class LocationType(val icon: Icon) {
+enum class LocationType(var icon: Icon) {
     CRAG(Icon.CRAG), SECTOR(Icon.SECTOR)
 }
 
