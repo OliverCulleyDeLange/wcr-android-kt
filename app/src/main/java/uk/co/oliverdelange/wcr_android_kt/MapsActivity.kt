@@ -170,8 +170,10 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
             Timber.d("New sector location to display. Locations: %s", sectors)
             refreshSectorsForCrag(sectors)
-            val locations = sectors?.plus(binding.vm!!.selectedLocation.value!!)
-            locations?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
+            if (binding.vm?.selectedLocation?.value?.type == LocationType.CRAG) {
+                val locations = sectors?.plus(binding.vm!!.selectedLocation.value!!)
+                locations?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
+            }
         })
 
         binding.vm?.mapMode?.observe(this, Observer {
@@ -189,6 +191,7 @@ class MapsActivity : AppCompatActivity(),
                 }
                 SECTOR_MODE -> {
                     fabStyle(R.drawable.add_topo_button, R.color.fab_new_topo)
+                    refreshCragClusterItems()
                     replaceFragment(viewToposFragment, R.id.bottom_sheet_content_container)
                 }
                 TOPO_MODE -> {

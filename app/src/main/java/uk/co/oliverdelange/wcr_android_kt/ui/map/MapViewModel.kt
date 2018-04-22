@@ -47,7 +47,7 @@ class MapViewModel @Inject constructor(locationRepository: LocationRepository,
     val sectors: LiveData<List<Location>> = Transformations.switchMap(selectedLocation) {
         when (it?.type) {
             LocationType.CRAG -> it.id?.let { locationRepository.loadSectorsFor(it) }
-            LocationType.SECTOR -> MutableLiveData()
+            LocationType.SECTOR -> it.parentId?.let { locationRepository.loadSectorsFor(it) }
             null -> AbsentLiveData.create()
         }
     }
