@@ -28,14 +28,14 @@ class SubmitTopoFragment : Fragment(), Injectable {
     }
 
     interface ActivityInteractor {
-        fun onTopoSubmitted(submittedTopoId: Long)
+        fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, Array<Long>>?)
     }
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private var activityInteractor: ActivityInteractor? = null
-    private var routeFragments: MutableList<RouteFragment> = mutableListOf(RouteFragment.newRouteFragment())
+    private var routeFragments: MutableList<SubmitRouteFragment> = mutableListOf(SubmitRouteFragment.newRouteFragment())
 
     var sectorId: Long = -1
 
@@ -73,25 +73,25 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        route_pager.adapter = RoutePagerAdapter(childFragmentManager, routeFragments)
+        route_pager.adapter = SubmitRoutePagerAdapter(childFragmentManager, routeFragments)
         route_pager.clipToPadding = false
         route_pager.setPadding(200, 20, 200, 20)
         route_pager.pageMargin = 25
 
         add_route.setOnClickListener({
-            routeFragments.add(RouteFragment.newRouteFragment())
+            routeFragments.add(SubmitRouteFragment.newRouteFragment())
             route_pager.adapter?.notifyDataSetChanged()
         })
     }
 
-    fun removeRouteFragment(routeFragment: RouteFragment) {
+    fun removeRouteFragment(routeFragment: SubmitRouteFragment) {
         routeFragments.remove(routeFragment)
         route_pager.adapter?.notifyDataSetChanged()
     }
 
 }
 
-class RoutePagerAdapter(fragmentManager: FragmentManager, val routeFragments: List<RouteFragment>) : FragmentPagerAdapter(fragmentManager) {
+class SubmitRoutePagerAdapter(fragmentManager: FragmentManager, val routeFragments: List<SubmitRouteFragment>) : FragmentPagerAdapter(fragmentManager) {
     override fun getItem(position: Int): Fragment {
         return routeFragments[position]
     }

@@ -10,7 +10,7 @@
 
         <variable
             name="vm"
-            type="uk.co.oliverdelange.wcr_android_kt.ui.submit.RouteViewModel" />
+            type="uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoViewModel" />
     </data>
 
     <android.support.v7.widget.CardView

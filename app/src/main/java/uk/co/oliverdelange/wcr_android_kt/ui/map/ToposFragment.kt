@@ -6,6 +6,8 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -38,7 +40,7 @@ class ToposFragment : Fragment(), Injectable {
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
 
         topo_recycler.layoutManager = LinearLayoutManager(activity)
-        val recyclerAdapter = RecyclerAdapter()
+        val recyclerAdapter = RecyclerAdapter(childFragmentManager)
         topo_recycler.adapter = recyclerAdapter
         viewModel.topos.observe(this, Observer {
             it?.let {
@@ -55,12 +57,16 @@ class ToposFragment : Fragment(), Injectable {
     }
 }
 
-class RecyclerAdapter : RecyclerView.Adapter<ViewHolder>() {
+class RecyclerAdapter(val childFragmentManager: FragmentManager) : RecyclerView.Adapter<ViewHolder>() {
 
     var topos: List<TopoAndRoutes> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: TopoCardBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.topo_card, parent, false)
+        binding.routePager.clipToPadding = false
+        binding.routePager.setPadding(200, 20, 200, 20)
+        binding.routePager.pageMargin = 25
+
         return ViewHolder(binding)
     }
 
@@ -70,8 +76,12 @@ class RecyclerAdapter : RecyclerView.Adapter<ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val topoAndRoutes = topos.get(position)
-        holder.binding.vm = topoAndRoutes
-        holder.binding.executePendingBindings()
+        holder.binding.topo = topoAndRoutes.topo
+        val adapter = RoutePagerAdapter(childFragmentManager, topoAndRoutes.routes.map {
+            RouteFragment.newRouteFragment(it)
+        })
+        holder.binding.routePager.adapter = adapter
+        holder.binding.routePager.id = topoAndRoutes.topo.id?.toInt() ?: -1
     }
 
     fun updateTopos(newTopos: List<TopoAndRoutes>) {
@@ -106,4 +116,23 @@ class RecyclerAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
     class ViewHolder(var binding: TopoCardBinding) : RecyclerView.ViewHolder(binding.root)
+}
+
+class RoutePagerAdapter(fragmentManager: FragmentManager, val routeFragments: List<RouteFragment>) : FragmentPagerAdapter(fragmentManager) {
+    override fun getItem(position: Int): Fragment {
+        return routeFragments[position]
+    }
+
+    override fun getCount(): Int {
+        return routeFragments.size
+    }
+
+    override fun getItemId(position: Int): Long {
+        return routeFragments[position].route?.id ?: -1
+    }
+
+    override fun getItemPosition(fragment: Any): Int {
+        val fragmentPosition = routeFragments.indexOf(fragment as Fragment)
+        return if (fragmentPosition == -1) POSITION_NONE else fragmentPosition
+    }
 }

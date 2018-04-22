@@ -17,7 +17,7 @@
     <LinearLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="500dp"
         android:background="@color/bg_grey_light"
         android:orientation="vertical"
         app:behavior_hideable="false"
@@ -37,7 +37,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{vm.bottomSheetTitle}"
-                app:mapModeTextColour="@{vm.mapMode}" />
+                app:mapModeTextColour="@{vm.mapMode}"
+                tools:text="Some location name" />
 
             <RelativeLayout
                 android:id="@+id/dragbar_climb_grades_and_types_parent"
@@ -60,7 +61,8 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_green"
-                        android:text="@{String.valueOf(vm.selectedLocation.greens)}" />
+                        android:text="@{String.valueOf(vm.selectedLocation.greens)}"
+                        tools:text="1" />
 
                     <TextView
                         android:id="@+id/climb_grades_text_orange"
@@ -68,7 +70,8 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_orange"
-                        android:text="@{String.valueOf(vm.selectedLocation.oranges)}" />
+                        android:text="@{String.valueOf(vm.selectedLocation.oranges)}"
+                        tools:text="2" />
 
                     <TextView
                         android:id="@+id/climb_grades_text_red"
@@ -76,7 +79,8 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_red"
-                        android:text="@{String.valueOf(vm.selectedLocation.reds)}" />
+                        android:text="@{String.valueOf(vm.selectedLocation.reds)}"
+                        tools:text="3" />
 
                     <TextView
                         android:id="@+id/climb_grades_text_black"
@@ -84,7 +88,8 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_black"
-                        android:text="@{String.valueOf(vm.selectedLocation.blacks)}" />
+                        android:text="@{String.valueOf(vm.selectedLocation.blacks)}"
+                        tools:text="4" />
 
                 </LinearLayout>
 
@@ -111,7 +116,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="@{String.valueOf(vm.selectedLocation.boulders)}" />
+                        android:text="@{String.valueOf(vm.selectedLocation.boulders)}"
+                        tools:text="1" />
 
                     <ImageView
                         android:id="@+id/climb_types_icon_sport"
@@ -126,14 +132,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="@{String.valueOf(vm.selectedLocation.sports)}" />
+                        android:text="@{String.valueOf(vm.selectedLocation.sports)}"
+                        tools:text="2" />
 
                     <ImageView
                         android:id="@+id/climb_types_icon_trad"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:src="@drawable/ic_cam" />
+                        android:src="@drawable/ic_cam"
+                        tools:text="3" />
 
                     <TextView
                         android:id="@+id/climb_types_text_trad"
@@ -141,12 +149,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="@{String.valueOf(vm.selectedLocation.trads)}" />
+                        android:text="@{String.valueOf(vm.selectedLocation.trads)}"
+                        tools:text="" />
 
                 </LinearLayout>
 
             </RelativeLayout>
 
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="2dp"
+                android:background="@android:color/darker_gray" />
         </RelativeLayout>
 
         <FrameLayout

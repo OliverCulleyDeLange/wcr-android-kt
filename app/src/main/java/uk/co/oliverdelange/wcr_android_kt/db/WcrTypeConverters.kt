@@ -9,27 +9,31 @@ import uk.co.oliverdelange.wcr_android_kt.model.RouteType
 class WcrTypeConverters {
 
     @TypeConverter
-    fun enumTypeToString(enum: Enum<*>): String {
-        return enum.name
+    fun enumTypeToString(enum: Enum<*>?): String {
+        return enum?.name ?: ""
     }
 
     @TypeConverter
-    fun stringToLocationType(data: String): LocationType {
-        return LocationType.valueOf(data)
+    fun stringToLocationType(data: String): LocationType? {
+        return if (enumContains<LocationType>(data)) LocationType.valueOf(data) else null
     }
 
     @TypeConverter
-    fun stringToRouteType(data: String): RouteType {
-        return RouteType.valueOf(data)
+    fun stringToRouteType(data: String): RouteType? {
+        return if (enumContains<RouteType>(data)) RouteType.valueOf(data) else null
     }
 
     @TypeConverter
-    fun stringToGradeType(data: String): GradeType {
-        return GradeType.valueOf(data)
+    fun stringToGradeType(data: String): GradeType? {
+        return if (enumContains<GradeType>(data)) GradeType.valueOf(data) else null
     }
 
     @TypeConverter
-    fun stringToGradeColour(data: String): GradeColour {
-        return GradeColour.valueOf(data)
+    fun stringToGradeColour(data: String): GradeColour? {
+        return if (enumContains<GradeColour>(data)) GradeColour.valueOf(data) else null
+    }
+
+    inline fun <reified T : Enum<T>> enumContains(name: String): Boolean {
+        return enumValues<T>().any { it.name == name }
     }
 }

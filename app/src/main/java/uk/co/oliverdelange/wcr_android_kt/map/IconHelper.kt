@@ -2,6 +2,7 @@ package uk.co.oliverdelange.wcr_android_kt.map
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.support.annotation.DrawableRes
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.ui.IconGenerator
@@ -33,7 +34,7 @@ class IconHelper(val context: Context) {
     }
 }
 
-enum class Icon constructor(val iconDrawable: Int, val iconNoTextDrawable: Int, val iconTextStyle: Int) {
+enum class Icon constructor(@DrawableRes val iconDrawable: Int, @DrawableRes val iconNoTextDrawable: Int, @DrawableRes val iconTextStyle: Int) {
     CRAG(R.drawable.location_marker_crag, R.drawable.location_marker_crag_no_text, R.style.Wcr_GeneratedCragIconText),
     CRAG_DIMMED(R.drawable.location_marker_crag_dimmed, R.drawable.location_marker_crag_dimmed_no_text, R.style.Wcr_GeneratedCragIconTextDimmed),
     SECTOR(R.drawable.location_marker_sector, R.drawable.location_marker_sector_no_text, R.style.Wcr_GeneratedSectorIconText),

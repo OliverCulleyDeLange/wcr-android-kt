@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="route"
+            type="uk.co.oliverdelange.wcr_android_kt.model.Route" />
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/route_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="5dp"
+        tools:layout_height="150dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg_grey_light"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/route_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/route_name"
+                    style="@style/Wcr_TopoTitleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@{route.name}"
+                    tools:layout_height="50dp"
+                    tools:layout_width="200dp"
+                    tools:text="Crag name" />
+
+                <ImageView
+                    android:id="@+id/climb_type_icon"
+                    style="@style/Wcr_MapBottomSheetClimbTypeIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/climb_type_text"
+                    android:src="@{route.type.icon}"
+                    tools:layout_height="30dp"
+                    tools:layout_width="30dp"
+                    tools:src="@drawable/ic_boulder" />
+
+                <TextView
+                    android:id="@+id/climb_type_text"
+                    style="@style/Wcr_TopoClimbTypeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="@{route.type.name}"
+                    tools:text="bouldering" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/route_description"
+                style="@style/Wcr_TopoContentText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{route.description}"
+                tools:text="Some route description" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+</layout>

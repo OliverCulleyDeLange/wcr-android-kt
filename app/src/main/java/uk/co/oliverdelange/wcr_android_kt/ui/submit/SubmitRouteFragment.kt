@@ -13,16 +13,16 @@ import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.Route
 import javax.inject.Inject
 
-class RouteFragment : Fragment(), Injectable {
+class SubmitRouteFragment : Fragment(), Injectable {
     companion object {
         private var id: Int = 0
-        fun newRouteFragment(): RouteFragment {
-            return RouteFragment().withId(id++)
+        fun newRouteFragment(): SubmitRouteFragment {
+            return SubmitRouteFragment().withId(id++)
         }
     }
 
     var fragmentId: Int? = null
-    private fun withId(id: Int): RouteFragment = apply { this.fragmentId = id }
+    private fun withId(id: Int): SubmitRouteFragment = apply { this.fragmentId = id }
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -32,7 +32,7 @@ class RouteFragment : Fragment(), Injectable {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSubmitRouteBinding.inflate(layoutInflater, container, false)
         binding.setLifecycleOwner(this)
-        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(RouteViewModel::class.java)
+        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitTopoViewModel::class.java)
         binding.vm = viewModel
 
         return binding.root

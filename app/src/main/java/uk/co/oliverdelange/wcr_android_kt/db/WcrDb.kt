@@ -10,6 +10,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.LocationType.SECTOR
 abstract class WcrDb : RoomDatabase() {
     abstract fun locationDao(): LocationDao
     abstract fun topoDao(): TopoDao
+    abstract fun routeDao(): RouteDao
 }
 
 @Dao
@@ -34,4 +35,13 @@ interface TopoDao {
 
     @Query("SELECT * from topo where locationId = :locationId")
     fun loadTopoAndRoutes(locationId: Long): LiveData<List<TopoAndRoutes>>
+}
+
+@Dao
+interface RouteDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun save(route: Route): Long
+
+    @Query("SELECT * from route where topoId = :topoId")
+    fun loadWithTopoId(topoId: Long): LiveData<List<Route>>
 }

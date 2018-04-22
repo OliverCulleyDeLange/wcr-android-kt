@@ -1,7 +1,9 @@
 package uk.co.oliverdelange.wcr_android_kt.model
 
 import android.arch.persistence.room.*
+import android.support.annotation.DrawableRes
 import com.google.android.gms.maps.model.LatLng
+import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
 @Entity
@@ -54,8 +56,8 @@ enum class LocationType(var icon: Icon) {
     CRAG(Icon.CRAG), SECTOR(Icon.SECTOR)
 }
 
-enum class RouteType {
-    TRAD, SPORT, BOULDERING
+enum class RouteType constructor(@DrawableRes val icon: Int) {
+    TRAD(R.drawable.ic_cam), SPORT(R.drawable.ic_quick_draw), BOULDERING(R.drawable.ic_boulder)
 }
 
 enum class GradeType {

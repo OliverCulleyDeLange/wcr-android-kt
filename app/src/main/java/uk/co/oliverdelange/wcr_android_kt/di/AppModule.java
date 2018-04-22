@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao;
+import uk.co.oliverdelange.wcr_android_kt.db.RouteDao;
 import uk.co.oliverdelange.wcr_android_kt.db.TopoDao;
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb;
 
@@ -29,5 +30,11 @@ class AppModule {
     @Provides
     TopoDao provideTopoDao(WcrDb db) {
         return db.topoDao();
+    }
+
+    @Singleton
+    @Provides
+    RouteDao provideRouteDao(WcrDb db) {
+        return db.routeDao();
     }
 }

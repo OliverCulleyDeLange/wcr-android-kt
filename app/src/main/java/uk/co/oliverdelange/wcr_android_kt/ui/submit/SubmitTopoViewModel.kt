@@ -1,10 +1,10 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.model.Route
 import uk.co.oliverdelange.wcr_android_kt.model.Topo
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import javax.inject.Inject
@@ -15,6 +15,20 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
 
     val topoName = MutableLiveData<String>()
     val topoNameError = MutableLiveData<String>()
+
+    val routes = MutableLiveData<MutableMap<Int, Route>>().also { it.value = mutableMapOf() }
+
+    fun routeNameChanged(fragmentId: Int, text: CharSequence) {
+        routes.value?.get(fragmentId)?.let {
+            it.name = text.toString()
+        }
+    }
+
+    fun routeDescriptionChanged(fragmentId: Int, text: CharSequence) {
+        routes.value?.get(fragmentId)?.let {
+            it.description = text.toString()
+        }
+    }
 
     val submitButtonEnabled = MediatorLiveData<Boolean>().also {
         it.value = false
@@ -27,11 +41,11 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         }
     }
 
-    fun submit(sectorId: Long): LiveData<Long> {
+    fun submit(sectorId: Long): MutableLiveData<Pair<Long, Array<Long>>> {
         val locationName = topoName.value
         if (locationName != null) {
             val topo = Topo(name = locationName, locationId = sectorId)
-            return topoRepository.save(topo)
+            return topoRepository.save(topo, routes.value?.values ?: emptyList())
         } else {
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
             return MutableLiveData()

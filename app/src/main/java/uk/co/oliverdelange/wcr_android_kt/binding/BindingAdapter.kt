@@ -50,3 +50,8 @@ fun loadImage(view: ImageView, imageUrl: String) {
             .placeholder(R.drawable.topo_placeholder)
             .into(view)
 }
+
+@BindingAdapter("android:src")
+fun setImageResource(imageView: ImageView, resource: Int) {
+    imageView.setImageResource(resource)
+}
