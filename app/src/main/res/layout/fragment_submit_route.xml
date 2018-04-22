@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -19,7 +20,8 @@
         android:layout_margin="5dp"
         android:orientation="vertical"
         app:cardCornerRadius="4dp"
-        app:cardElevation="@dimen/cardview_default_elevation">
+        app:cardElevation="@dimen/cardview_default_elevation"
+        tools:layout_height="150dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -28,7 +30,7 @@
 
             <EditText
                 android:id="@+id/route_name"
-                style="@style/Wcr_EditText_Route"
+                style="@style/Wcr_EditText_Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/submission_text_input_route_name"
@@ -37,36 +39,40 @@
 
             <EditText
                 android:id="@+id/route_description"
-                style="@style/Wcr_EditText_Route"
+                style="@style/Wcr_EditText_Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/route_name"
+                android:layout_below="@+id/route_name"
                 android:hint="@string/submission_text_input_route_description"
                 android:inputType="textCapSentences"
                 android:onTextChanged="@{(text, start, lengthBefore, lengthAfter) -> vm.routeDescriptionChanged(fragmentId, text)}" />
 
-            <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:weightSum="9">-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/route_description"
+                android:orientation="horizontal"
+                android:weightSum="9">
 
-            <!--<TextView-->
-            <!--style="@style/Wcr_SubmissionSpinnerLabel"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="3"-->
-            <!--android:text="@string/submission_climb_type_label" />-->
+                <TextView
+                    style="@style/Wcr_SpinnerLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="0dp"
+                    android:layout_weight="3"
+                    android:padding="0dp"
+                    android:text="@string/submission_label_route_type" />
 
-            <!--<Spinner-->
-            <!--android:id="@+id/climb_type_spinner"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="6"-->
-            <!--android:onItemSelected="@{viewModel::onClimbTypeSelected}"-->
-            <!--android:selectedItemPosition="@={Converter.toInt(viewModel.climbType)}" />-->
+                <Spinner
+                    android:id="@+id/route_type_spinner"
+                    style="@style/Wcr_Spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:onItemSelected="@{(parent, view, position, id) -> vm.routeTypeChanged(fragmentId, position)}"
+                    tools:listitem="@layout/support_simple_spinner_dropdown_item" />
 
-            <!--</LinearLayout>-->
+            </LinearLayout>
 
             <!--<LinearLayout-->
             <!--android:id="@+id/grade_spinner_parent"-->
@@ -82,7 +88,6 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:layout_weight="3"-->
             <!--android:text="@string/submission_grade_label" />-->
-
 
             <!--<Spinner-->
             <!--android:id="@+id/v_grade_spinner"-->

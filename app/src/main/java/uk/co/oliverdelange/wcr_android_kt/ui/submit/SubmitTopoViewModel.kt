@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.Route
+import uk.co.oliverdelange.wcr_android_kt.model.RouteType
 import uk.co.oliverdelange.wcr_android_kt.model.Topo
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import javax.inject.Inject
@@ -27,6 +28,12 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     fun routeDescriptionChanged(fragmentId: Int, text: CharSequence) {
         routes.value?.get(fragmentId)?.let {
             it.description = text.toString()
+        }
+    }
+
+    fun routeTypeChanged(fragmentId: Int, position: Int) {
+        routes.value?.get(fragmentId)?.let {
+            it.type = RouteType.values()[position]
         }
     }
 

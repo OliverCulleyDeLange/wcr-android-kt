@@ -6,7 +6,6 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
 import uk.co.oliverdelange.wcr_android_kt.db.TopoDao
 import uk.co.oliverdelange.wcr_android_kt.model.Route
-import uk.co.oliverdelange.wcr_android_kt.model.RouteType
 import uk.co.oliverdelange.wcr_android_kt.model.Topo
 import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
 import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
@@ -22,7 +21,6 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao, val routeDao: Rou
             val routeIds = emptyArray<Long>()
             for (route in routes) {
                 route.topoId = topoId
-                route.type = RouteType.BOULDERING //TODO Only tmp
                 Timber.d("Saving route: %s", route)
                 routeIds.plus(routeDao.save(route))
             }
