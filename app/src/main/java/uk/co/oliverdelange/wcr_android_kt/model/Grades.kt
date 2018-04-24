@@ -1,0 +1,130 @@
+package uk.co.oliverdelange.wcr_android_kt.model
+
+enum class GradeDropDown {
+    V, FONT, SPORT, TRAD_ADJ, TRAD_TECH
+}
+
+enum class FontGrade(val textRepresentation: String, val colour: GradeColour) {
+    fThree("f3", GradeColour.GREEN),
+    fThreeP("f3+", GradeColour.GREEN),
+    fFour("f4", GradeColour.GREEN),
+    fFourP("f4+", GradeColour.ORANGE),
+    fFive("f5", GradeColour.ORANGE),
+    fFiveP("f5+", GradeColour.ORANGE),
+    fSixA("f6a", GradeColour.RED),
+    fSixAP("f6a+", GradeColour.RED),
+    fSixB("f6b", GradeColour.RED),
+    fSixBP("f6b+", GradeColour.RED),
+    fSixC("f6c", GradeColour.RED),
+    fSixCP("f6c+", GradeColour.RED),
+    fSevenA("f7a", GradeColour.RED),
+    fSevenAP("f7a+", GradeColour.BLACK),
+    fSevenB("f7b", GradeColour.BLACK),
+    fSevenBP("f7b+", GradeColour.BLACK),
+    fSevenC("f7c", GradeColour.BLACK),
+    fSevenCP("f7c+", GradeColour.BLACK),
+    fEightA("f8a", GradeColour.BLACK),
+    fEightAP("f8a+", GradeColour.BLACK),
+    fEightB("f8b", GradeColour.BLACK),
+    fEightBP("f8b+", GradeColour.BLACK),
+    fEightC("f8c", GradeColour.BLACK),
+    fEightCP("f8c+", GradeColour.BLACK);
+}
+
+enum class SportGrade(val textRepresentation: String, val colour: GradeColour) {
+    One("1", GradeColour.GREEN),
+    Two("Two", GradeColour.GREEN),
+    TwoP("2+", GradeColour.GREEN),
+    ThreeN("3-", GradeColour.GREEN),
+    Three("3", GradeColour.GREEN),
+    ThreeP("3+", GradeColour.GREEN),
+    FourA("4a", GradeColour.GREEN),
+    FourB("4b", GradeColour.GREEN),
+    FourC("4c", GradeColour.GREEN),
+    FiveA("5a", GradeColour.ORANGE),
+    FiveB("5b", GradeColour.ORANGE),
+    FiveC("5c", GradeColour.ORANGE),
+    SixA("6a", GradeColour.ORANGE),
+    SixAP("6a+", GradeColour.ORANGE),
+    SixB("6b", GradeColour.RED),
+    SixBP("6b+", GradeColour.RED),
+    SixC("6c", GradeColour.RED),
+    SixCP("6c+", GradeColour.RED),
+    SevenA("7a", GradeColour.RED),
+    SevenAP("7a+", GradeColour.BLACK),
+    SevenB("7b", GradeColour.BLACK),
+    SevenBP("7b+", GradeColour.BLACK),
+    SevenC("7c", GradeColour.BLACK),
+    SevenCP("7c+", GradeColour.BLACK),
+    EightA("8a", GradeColour.BLACK),
+    EightAP("8a+", GradeColour.BLACK),
+    EightB("8b", GradeColour.BLACK),
+    EightBP("8b+", GradeColour.BLACK),
+    EightC("8c", GradeColour.BLACK),
+    EightCP("8c+", GradeColour.BLACK),
+    NineA("9a", GradeColour.BLACK),
+    NineAP("9a+", GradeColour.BLACK),
+    NineB("9b", GradeColour.BLACK),
+    NineBP("9b+", GradeColour.BLACK),
+    NineC("9c", GradeColour.BLACK),
+    NineCP("9c+", GradeColour.BLACK);
+}
+
+enum class TradAdjectivalGrade(val textRepresentation: String, val colour: GradeColour) {
+    Mod("Mod", GradeColour.GREEN),
+    Diff("Diff", GradeColour.GREEN),
+    VDiff("VDiff", GradeColour.GREEN),
+    HVD("HVD", GradeColour.GREEN),
+    Sev("Sev", GradeColour.GREEN),
+    HS("HS", GradeColour.ORANGE),
+    VS("VS", GradeColour.ORANGE),
+    HVS("HVS", GradeColour.ORANGE),
+    E1("E1", GradeColour.RED),
+    E2("E2", GradeColour.RED),
+    E3("E3", GradeColour.RED),
+    E4("E4", GradeColour.BLACK),
+    E5("E5", GradeColour.BLACK),
+    E6("E6", GradeColour.BLACK),
+    E7("E7", GradeColour.BLACK),
+    E8("E8", GradeColour.BLACK),
+    E9("E9", GradeColour.BLACK),
+    E10("E10", GradeColour.BLACK),
+    E11("E11", GradeColour.BLACK);
+}
+
+enum class TradTechnicalGrade(val textRepresentation: String) {
+    ThreeA("3a"),
+    ThreeB("3b"),
+    ThreeC("3c"),
+    FourA("4a"),
+    FourB("4b"),
+    FourC("4c"),
+    FiveA("5a"),
+    FiveB("5b"),
+    FiveC("5c"),
+    SixA("6a"),
+    SixB("6b"),
+    SixC("6c"),
+    SevenA("7a"),
+    SevenB("7b");
+}
+
+enum class VGrade(val textRepresentation: String, val colour: GradeColour) {
+    VB("VB", GradeColour.GREEN),
+    V0("V0", GradeColour.GREEN),
+    V1("V1", GradeColour.ORANGE),
+    V2("V2", GradeColour.ORANGE),
+    V3("V3", GradeColour.RED),
+    V4("V4", GradeColour.RED),
+    V5("V5", GradeColour.RED),
+    V6("V6", GradeColour.RED),
+    V7("V7", GradeColour.BLACK),
+    V8("V8", GradeColour.BLACK),
+    V9("V9", GradeColour.BLACK),
+    V10("V10", GradeColour.BLACK),
+    V11("V11", GradeColour.BLACK),
+    V12("V12", GradeColour.BLACK),
+    V13("V13", GradeColour.BLACK),
+    V14("V14", GradeColour.BLACK),
+    V15("V15", GradeColour.BLACK);
+}

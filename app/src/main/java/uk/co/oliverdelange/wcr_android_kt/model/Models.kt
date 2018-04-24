@@ -50,7 +50,28 @@ data class Route(@PrimaryKey var id: Long? = null,
 @Entity
 data class Grade(@PrimaryKey var string: String,
                  var type: GradeType,
-                 var colour: GradeColour)
+                 var colour: GradeColour) {
+    companion object {
+        fun from(vGrade: VGrade): Grade {
+            return Grade(vGrade.textRepresentation, GradeType.V, vGrade.colour)
+        }
+
+        fun from(fontGrade: FontGrade): Grade {
+            return Grade(fontGrade.textRepresentation, GradeType.FONT, fontGrade.colour)
+        }
+
+        fun from(sportGrade: SportGrade): Grade {
+            return Grade(sportGrade.textRepresentation, GradeType.SPORT, sportGrade.colour)
+        }
+
+        fun from(tradAdjectivalGrade: TradAdjectivalGrade, tradTechnicalGrade: TradTechnicalGrade): Grade {
+            return Grade(tradAdjectivalGrade.textRepresentation + " " + tradTechnicalGrade.textRepresentation,
+                    GradeType.TRAD,
+                    tradAdjectivalGrade.colour
+            )
+        }
+    }
+}
 
 enum class LocationType(var icon: Icon) {
     CRAG(Icon.CRAG), SECTOR(Icon.SECTOR)

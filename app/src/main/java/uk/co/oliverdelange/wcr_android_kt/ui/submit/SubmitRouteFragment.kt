@@ -12,8 +12,7 @@ import kotlinx.android.synthetic.main.fragment_submit_route.*
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitRouteBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
-import uk.co.oliverdelange.wcr_android_kt.model.Route
-import uk.co.oliverdelange.wcr_android_kt.model.RouteType
+import uk.co.oliverdelange.wcr_android_kt.model.*
 import javax.inject.Inject
 
 class SubmitRouteFragment : Fragment(), Injectable {
@@ -39,6 +38,11 @@ class SubmitRouteFragment : Fragment(), Injectable {
         binding.vm = viewModel
 
         binding.routeTypeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, RouteType.values())
+        binding.vGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, VGrade.values())
+        binding.fGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, FontGrade.values())
+        binding.sportGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, SportGrade.values())
+        binding.tradAdjectivalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradAdjectivalGrade.values())
+        binding.tradTechnicalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradTechnicalGrade.values())
 
         return binding.root
     }
