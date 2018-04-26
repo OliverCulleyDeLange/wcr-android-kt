@@ -1,6 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.binding
 
 import android.databinding.BindingAdapter
+import android.support.annotation.ColorInt
 import android.view.View
 import android.view.View.*
 import android.widget.ImageView
@@ -8,6 +9,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 import uk.co.oliverdelange.wcr_android_kt.R
+import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 
@@ -63,4 +65,16 @@ fun setSpinnerHighlight(spinner: Spinner?, highlighted: Boolean) {
 @BindingAdapter("android:src")
 fun setImageResource(imageView: ImageView, resource: Int) {
     imageView.setImageResource(resource)
+}
+
+@BindingAdapter("android:textColor")
+fun setTextGradeColour(textView: TextView, gradeColour: GradeColour) {
+    @ColorInt val colour: Int
+    when (gradeColour) {
+        GradeColour.GREEN -> colour = R.color.map_dragbar_climb_grades_green
+        GradeColour.ORANGE -> colour = R.color.map_dragbar_climb_grades_orange
+        GradeColour.RED -> colour = R.color.map_dragbar_climb_grades_red
+        GradeColour.BLACK -> colour = R.color.map_dragbar_climb_grades_black
+    }
+    textView.setTextColor(textView.resources.getColor(colour))
 }

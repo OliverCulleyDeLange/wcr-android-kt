@@ -64,7 +64,7 @@ class RecyclerAdapter(val childFragmentManager: FragmentManager) : RecyclerView.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: TopoCardBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.topo_card, parent, false)
         binding.routePager.clipToPadding = false
-        binding.routePager.setPadding(200, 20, 200, 20)
+        binding.routePager.setPadding(100, 20, 100, 20)
         binding.routePager.pageMargin = 25
 
         return ViewHolder(binding)

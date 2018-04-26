@@ -40,25 +40,35 @@
                     tools:layout_width="200dp"
                     tools:text="Crag name" />
 
+                <TextView
+                    android:id="@+id/climb_type_text"
+                    style="@style/Wcr_TopoClimbTypeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/climb_type_icon"
+                    android:text="@{route.type.name}"
+                    tools:text="bouldering" />
+
                 <ImageView
                     android:id="@+id/climb_type_icon"
                     style="@style/Wcr_MapBottomSheetClimbTypeIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/climb_type_text"
+                    android:layout_toLeftOf="@+id/topo_grade"
                     android:src="@{route.type.icon}"
                     tools:layout_height="30dp"
                     tools:layout_width="30dp"
                     tools:src="@drawable/ic_boulder" />
 
                 <TextView
-                    android:id="@+id/climb_type_text"
-                    style="@style/Wcr_TopoClimbTypeText"
+                    android:id="@+id/topo_grade"
+                    style="@style/Wcr_TopoGradeText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="@{route.type.name}"
-                    tools:text="bouldering" />
+                    android:text="@{route.grade.string}"
+                    android:textColor="@{route.grade.colour}"
+                    tools:text="V5" />
 
             </RelativeLayout>
 
