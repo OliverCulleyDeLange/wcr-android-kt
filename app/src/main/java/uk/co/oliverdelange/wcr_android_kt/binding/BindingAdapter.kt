@@ -4,12 +4,12 @@ import android.databinding.BindingAdapter
 import android.view.View
 import android.view.View.*
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
-
 
 @set:BindingAdapter("show")
 var View.visibleOrGone
@@ -49,6 +49,15 @@ fun loadImage(view: ImageView, imageUrl: String) {
             .load(imageUrl)
             .placeholder(R.drawable.topo_placeholder)
             .into(view)
+}
+
+@BindingAdapter("spinner:highlighted")
+fun setSpinnerHighlight(spinner: Spinner?, highlighted: Boolean) {
+    val spinnerItem = spinner?.selectedView as TextView?
+    spinnerItem?.let {
+        if (highlighted) spinnerItem.setTextColor(spinnerItem.resources.getColor(R.color.dark_gray))
+        else spinnerItem.setTextColor(spinnerItem.resources.getColor(R.color.text_grey_light))
+    }
 }
 
 @BindingAdapter("android:src")

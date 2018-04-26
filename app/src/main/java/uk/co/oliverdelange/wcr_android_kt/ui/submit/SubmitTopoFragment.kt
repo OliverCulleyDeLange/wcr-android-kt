@@ -17,6 +17,11 @@ import kotlinx.android.synthetic.main.fragment_submit_topo.*
 import uk.co.oliverdelange.wcr_android_kt.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
+import uk.co.oliverdelange.wcr_android_kt.model.FontGrade
+import uk.co.oliverdelange.wcr_android_kt.model.GradeType
+import uk.co.oliverdelange.wcr_android_kt.model.VGrade
+import uk.co.oliverdelange.wcr_android_kt.util.fontToV
+import uk.co.oliverdelange.wcr_android_kt.util.vToFont
 import javax.inject.Inject
 
 
@@ -75,12 +80,29 @@ class SubmitTopoFragment : Fragment(), Injectable {
         super.onActivityCreated(savedInstanceState)
         route_pager.adapter = SubmitRoutePagerAdapter(childFragmentManager, routeFragments)
         route_pager.clipToPadding = false
-        route_pager.setPadding(200, 20, 200, 20)
+        route_pager.setPadding(100, 20, 100, 20)
         route_pager.pageMargin = 25
 
         add_route.setOnClickListener({
             routeFragments.add(SubmitRouteFragment.newRouteFragment())
             route_pager.adapter?.notifyDataSetChanged()
+        })
+
+        binding.vm?.boulderingGradeType?.observe(this, Observer {
+            it?.let {
+                val submitRouteFragment = routeFragments[route_pager.currentItem]
+                binding.vm?.autoGradeChange = true
+                when (it) {
+                    GradeType.FONT -> {
+                        val convertedGrade = fontToV(FontGrade.values()[submitRouteFragment.binding.fGradeSpinner.selectedItemPosition])
+                        submitRouteFragment.binding.vGradeSpinner.setSelection(convertedGrade.ordinal, false)
+                    }
+                    GradeType.V -> {
+                        val convertedGrade = vToFont(VGrade.values()[submitRouteFragment.binding.vGradeSpinner.selectedItemPosition])
+                        submitRouteFragment.binding.fGradeSpinner.setSelection(convertedGrade.ordinal, false)
+                    }
+                }
+            }
         })
     }
 

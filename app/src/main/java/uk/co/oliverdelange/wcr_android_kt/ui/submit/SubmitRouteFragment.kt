@@ -29,7 +29,7 @@ class SubmitRouteFragment : Fragment(), Injectable {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var binding: FragmentSubmitRouteBinding
+    lateinit var binding: FragmentSubmitRouteBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSubmitRouteBinding.inflate(layoutInflater, container, false)
@@ -38,11 +38,11 @@ class SubmitRouteFragment : Fragment(), Injectable {
         binding.vm = viewModel
 
         binding.routeTypeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, RouteType.values())
-        binding.vGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, VGrade.values())
-        binding.fGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, FontGrade.values())
-        binding.sportGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, SportGrade.values())
-        binding.tradAdjectivalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradAdjectivalGrade.values())
-        binding.tradTechnicalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradTechnicalGrade.values())
+        binding.vGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, VGrade.values().map { it.textRepresentation })
+        binding.fGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, FontGrade.values().map { it.textRepresentation })
+        binding.sportGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, SportGrade.values().map { it.textRepresentation })
+        binding.tradAdjectivalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradAdjectivalGrade.values().map { it.textRepresentation })
+        binding.tradTechnicalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradTechnicalGrade.values().map { it.textRepresentation })
 
         return binding.root
     }

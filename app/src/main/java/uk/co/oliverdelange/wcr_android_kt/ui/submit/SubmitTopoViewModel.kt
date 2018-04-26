@@ -54,11 +54,27 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     }
 
     val halfFinishedTradGrades = mutableMapOf<Long, Pair<TradAdjectivalGrade?, TradTechnicalGrade?>>()
+    val boulderingGradeType = MutableLiveData<GradeType>()
+    var autoGradeChange = false
     fun gradeChanged(fragmentId: Int, position: Int, gradeDropDown: GradeDropDown) {
         routes.value?.get(fragmentId)?.let { route ->
             when (gradeDropDown) {
-                GradeDropDown.V -> route.grade = Grade.from(VGrade.values()[position])
-                GradeDropDown.FONT -> route.grade = Grade.from(FontGrade.values()[position])
+                GradeDropDown.V -> {
+                    if (!autoGradeChange) {
+                        route.grade = Grade.from(VGrade.values()[position])
+                        boulderingGradeType.value = GradeType.V
+                    } else {
+                        autoGradeChange = false
+                    }
+                }
+                GradeDropDown.FONT -> {
+                    if (!autoGradeChange) {
+                        route.grade = Grade.from(FontGrade.values()[position])
+                        boulderingGradeType.value = GradeType.FONT
+                    } else {
+                        autoGradeChange = false
+                    }
+                }
                 GradeDropDown.SPORT -> route.grade = Grade.from(SportGrade.values()[position])
                 GradeDropDown.TRAD_ADJ -> {
                     val routeId = fragmentId.toLong()

@@ -33,7 +33,7 @@ enum class FontGrade(val textRepresentation: String, val colour: GradeColour) {
 
 enum class SportGrade(val textRepresentation: String, val colour: GradeColour) {
     One("1", GradeColour.GREEN),
-    Two("Two", GradeColour.GREEN),
+    Two("2", GradeColour.GREEN),
     TwoP("2+", GradeColour.GREEN),
     ThreeN("3-", GradeColour.GREEN),
     Three("3", GradeColour.GREEN),
