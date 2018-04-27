@@ -54,7 +54,7 @@ const val CRAG_ZOOM = 14f
 const val MAP_ANIMATION_DURATION = 400
 const val MAP_PADDING_TOP = 150
 
-class MapsActivity : AppCompatActivity(),
+class MapsActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteractor,
         HasSupportFragmentInjector,
         OnMapReadyCallback,
         ClusterManager.OnClusterItemClickListener<CragClusterItem>,
@@ -145,6 +145,10 @@ class MapsActivity : AppCompatActivity(),
             binding.vm?.mapMode?.value = SECTOR_MODE
         }
         binding.vm?.selectedLocationId?.value = submittedLocationId
+    }
+
+    override fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, Array<Long>>?) {
+        // TODO
     }
 
     private fun observeViewModel() {

@@ -7,12 +7,16 @@ import android.databinding.ObservableInt
 import android.view.View
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.*
+import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
+import uk.co.oliverdelange.wcr_android_kt.service.WorkerService
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRepository) : ViewModel() {
+class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRepository,
+                                              private val locationRepository: LocationRepository,
+                                              private val workerService: WorkerService) : ViewModel() {
 
     val topoName = MutableLiveData<String>()
     val topoNameError = MutableLiveData<String>()
@@ -121,7 +125,9 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         val locationName = topoName.value
         if (locationName != null) {
             val topo = Topo(name = locationName, locationId = sectorId)
-            return topoRepository.save(topo, routes.value?.values ?: emptyList())
+            val savedIds = topoRepository.save(topo, routes.value?.values ?: emptyList())
+            workerService.updateRouteInfo(sectorId)
+            return savedIds
         } else {
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
             return MutableLiveData()

@@ -9,7 +9,8 @@ import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
 
-class LocationRepository @Inject constructor(val locationDao: LocationDao, val appExecutors: AppExecutors) {
+class LocationRepository @Inject constructor(val locationDao: LocationDao,
+                                             val appExecutors: AppExecutors) {
 
     fun save(location: Location): LiveData<Long> {
         val result = MutableLiveData<Long>()
@@ -25,11 +26,23 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao, val a
         return locationDao.load(selectedLocationId)
     }
 
+    fun get(selectedLocationId: Long): Location {
+        return locationDao.get(selectedLocationId)
+    }
+
     fun loadCrags(): LiveData<List<Location>> {
         return locationDao.load(LocationType.CRAG)
     }
 
     fun loadSectorsFor(cragId: Long): LiveData<List<Location>> {
         return locationDao.loadWithParentId(cragId)
+    }
+
+    fun getSectorsFor(cragId: Long): List<Location> {
+        return locationDao.getWithParentId(cragId)
+    }
+
+    fun updateRouteInfo(locationId: Long, boulders: Int, sports: Int, trads: Int, greens: Int, oranges: Int, reds: Int, blacks: Int) {
+        locationDao.updateRouteInfo(locationId, boulders, sports, trads, greens, oranges, reds, blacks)
     }
 }

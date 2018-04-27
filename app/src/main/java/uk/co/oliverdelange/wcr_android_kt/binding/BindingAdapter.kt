@@ -78,3 +78,8 @@ fun setTextGradeColour(textView: TextView, gradeColour: GradeColour) {
     }
     textView.setTextColor(textView.resources.getColor(colour))
 }
+
+@BindingAdapter("android:text")
+fun setTextGradeColour(textView: TextView, int: Int) {
+    textView.text = int.toString()
+}

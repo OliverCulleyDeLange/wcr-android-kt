@@ -61,7 +61,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_green"
-                        android:text="@{String.valueOf(vm.selectedLocation.greens)}"
+                        android:text="@{vm.selectedLocation.greens}"
                         tools:text="1" />
 
                     <TextView
@@ -70,7 +70,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_orange"
-                        android:text="@{String.valueOf(vm.selectedLocation.oranges)}"
+                        android:text="@{vm.selectedLocation.oranges}"
                         tools:text="2" />
 
                     <TextView
@@ -79,7 +79,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_red"
-                        android:text="@{String.valueOf(vm.selectedLocation.reds)}"
+                        android:text="@{vm.selectedLocation.reds}"
                         tools:text="3" />
 
                     <TextView
@@ -88,7 +88,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@color/map_dragbar_climb_grades_black"
-                        android:text="@{String.valueOf(vm.selectedLocation.blacks)}"
+                        android:text="@{vm.selectedLocation.blacks}"
                         tools:text="4" />
 
                 </LinearLayout>
@@ -116,7 +116,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="@{String.valueOf(vm.selectedLocation.boulders)}"
+                        android:text="@{vm.selectedLocation.boulders}"
                         tools:text="1" />
 
                     <ImageView
@@ -132,7 +132,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="@{String.valueOf(vm.selectedLocation.sports)}"
+                        android:text="@{vm.selectedLocation.sports}"
                         tools:text="2" />
 
                     <ImageView
@@ -149,7 +149,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="@{String.valueOf(vm.selectedLocation.trads)}"
+                        android:text="@{vm.selectedLocation.trads}"
                         tools:text="" />
 
                 </LinearLayout>

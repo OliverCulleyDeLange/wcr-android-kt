@@ -53,7 +53,7 @@ class MapViewModel @Inject constructor(locationRepository: LocationRepository,
     }
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocationId) {
         it?.let {
-            topoRepository.getToposForLocation(it)
+            topoRepository.loadToposForLocation(it)
         }
     }
 
