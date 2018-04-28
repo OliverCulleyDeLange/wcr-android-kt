@@ -16,7 +16,7 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
         val result = MutableLiveData<Long>()
         appExecutors.diskIO().execute {
             Timber.d("Saving location: %s", location)
-            val locationId = locationDao.save(location)
+            val locationId = locationDao.insert(location)
             appExecutors.mainThread().execute({ result.value = locationId })
         }
         return result
@@ -24,10 +24,6 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
 
     fun load(selectedLocationId: Long): LiveData<Location> {
         return locationDao.load(selectedLocationId)
-    }
-
-    fun get(selectedLocationId: Long): Location {
-        return locationDao.get(selectedLocationId)
     }
 
     fun loadCrags(): LiveData<List<Location>> {
@@ -40,9 +36,5 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
 
     fun getSectorsFor(cragId: Long): List<Location> {
         return locationDao.getWithParentId(cragId)
-    }
-
-    fun updateRouteInfo(locationId: Long, boulders: Int, sports: Int, trads: Int, greens: Int, oranges: Int, reds: Int, blacks: Int) {
-        locationDao.updateRouteInfo(locationId, boulders, sports, trads, greens, oranges, reds, blacks)
     }
 }

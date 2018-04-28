@@ -62,7 +62,7 @@ class SubmitLocationViewModelSpec extends Specification {
         when: "user clicks submit"
         submitViewModel.submit(mockView)
 
-        then: "save location to DB"
+        then: "insert location to DB"
         ArgumentCaptor<Location> location = ArgumentCaptor.forClass(Location.class)
         verify(mockLocationRepository).save(location.capture())
         location.getValue().name == name

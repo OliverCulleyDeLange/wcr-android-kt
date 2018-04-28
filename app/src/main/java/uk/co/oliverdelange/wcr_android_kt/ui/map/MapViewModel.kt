@@ -14,11 +14,13 @@ import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
+import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MapViewModel @Inject constructor(locationRepository: LocationRepository,
+class MapViewModel @Inject constructor(appExecutors: AppExecutors,
+                                       locationRepository: LocationRepository,
                                        topoRepository: TopoRepository) : ViewModel() {
 
     val showFab = ObservableBoolean(true)
@@ -51,9 +53,22 @@ class MapViewModel @Inject constructor(locationRepository: LocationRepository,
             null -> AbsentLiveData.create()
         }
     }
-    val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocationId) {
+    val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) {
         it?.let {
-            topoRepository.loadToposForLocation(it)
+            when (it.type) {
+                LocationType.SECTOR -> it.id?.let { topoRepository.loadToposForLocation(it) }
+                LocationType.CRAG -> it.id?.let { cragId ->
+                    val topos: MutableLiveData<List<TopoAndRoutes>> = MutableLiveData()
+                    appExecutors.diskIO().execute {
+                        val toposforCrag = mutableListOf<TopoAndRoutes>()
+                        locationRepository.getSectorsFor(cragId).forEach {
+                            it.id?.let { toposforCrag.addAll(topoRepository.getToposForLocation(it)) }
+                        }
+                        topos.postValue(toposforCrag)
+                    }
+                    topos
+                }
+            }
         }
     }
 

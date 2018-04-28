@@ -1,25 +1,25 @@
 package uk.co.oliverdelange.wcr_android_kt.service
 
+import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
+import uk.co.oliverdelange.wcr_android_kt.db.TopoDao
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.model.RouteType
 import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
-import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
-import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
 
 class WorkerService @Inject constructor(val appExecutors: AppExecutors,
-                                        val locationRepository: LocationRepository,
-                                        val topoRepository: TopoRepository) {
+                                        val locationDao: LocationDao,
+                                        val topoDao: TopoDao) {
 
     fun updateRouteInfo(sectorId: Long) {
         appExecutors.diskIO().execute {
-            val sectorRoutes = topoRepository.getToposForLocation(sectorId)
+            val sectorRoutes = topoDao.getTopoAndRoutes(sectorId)
             updateLocationRouteInfo(sectorRoutes, sectorId)
 
-            val sector = locationRepository.get(sectorId)
-            sector.parentId?.let { cragId ->
-                val cragRoutes = topoRepository.getToposForCrag(cragId)
+            val sector = locationDao.get(sectorId)
+            sector?.parentId?.let { cragId ->
+                val cragRoutes = topoDao.getTopoAndRoutes(cragId)
                 updateLocationRouteInfo(cragRoutes, cragId)
             }
         }
@@ -48,6 +48,6 @@ class WorkerService @Inject constructor(val appExecutors: AppExecutors,
                 }
             }
         }
-        locationRepository.updateRouteInfo(locationId, boulders, sports, trads, greens, oranges, reds, blacks)
+        locationDao.updateRouteInfo(locationId, boulders, sports, trads, greens, oranges, reds, blacks)
     }
 }

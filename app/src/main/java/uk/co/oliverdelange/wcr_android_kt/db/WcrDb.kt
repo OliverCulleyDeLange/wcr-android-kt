@@ -14,17 +14,19 @@ abstract class WcrDb : RoomDatabase() {
     abstract fun routeDao(): RouteDao
 }
 
-@Dao
-interface LocationDao {
+interface BaseDao<T> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun save(location: Location): Long
+    fun insert(obj: T): Long
+}
 
+@Dao
+interface LocationDao : BaseDao<Location> {
     @Query("SELECT * FROM location where id = :id")
     fun load(id: Long): LiveData<Location>
 
     @WorkerThread
     @Query("SELECT * FROM location where id = :id")
-    fun get(id: Long): Location
+    fun get(id: Long): Location?
 
     @Query("SELECT * FROM location where type = :type")
     fun load(type: LocationType): LiveData<List<Location>>
@@ -41,10 +43,7 @@ interface LocationDao {
 }
 
 @Dao
-interface TopoDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun save(topo: Topo): Long
-
+interface TopoDao : BaseDao<Topo> {
     @Query("SELECT * from topo where locationId = :locationId")
     fun loadTopoAndRoutes(locationId: Long): LiveData<List<TopoAndRoutes>>
 
@@ -54,10 +53,7 @@ interface TopoDao {
 }
 
 @Dao
-interface RouteDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun save(route: Route): Long
-
+interface RouteDao : BaseDao<Route> {
     @Query("SELECT * from route where topoId = :topoId")
     fun loadWithTopoId(topoId: Long): LiveData<List<Route>>
 }

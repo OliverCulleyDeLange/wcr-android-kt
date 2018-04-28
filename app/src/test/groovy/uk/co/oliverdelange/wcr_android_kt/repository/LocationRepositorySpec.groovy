@@ -29,7 +29,7 @@ class LocationRepositorySpec extends Specification {
         locationRepository.save(location)
 
         then:
-        1 * mockLocationDao.save(location)
+        1 * mockLocationDao.insert(location)
     }
 
     def "load() should load crags from DB"() {
