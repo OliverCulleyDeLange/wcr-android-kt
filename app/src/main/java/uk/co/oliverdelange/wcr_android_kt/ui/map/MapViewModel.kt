@@ -1,9 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.map
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.*
 import android.databinding.ObservableBoolean
 import android.support.design.widget.BottomSheetBehavior
 import android.view.View
@@ -14,14 +11,12 @@ import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
-import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MapViewModel @Inject constructor(appExecutors: AppExecutors,
-                                       locationRepository: LocationRepository,
-                                       topoRepository: TopoRepository) : ViewModel() {
+class MapViewModel @Inject constructor(val locationRepository: LocationRepository,
+                                       val topoRepository: TopoRepository) : ViewModel() {
 
     val showFab = ObservableBoolean(true)
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
@@ -37,7 +32,7 @@ class MapViewModel @Inject constructor(appExecutors: AppExecutors,
     val selectedLocationId: MutableLiveData<Long?> = MutableLiveData<Long?>().also {
         it.value = null
     }
-    val selectedLocation: LiveData<Location> = Transformations.switchMap(selectedLocationId) {
+    val selectedLocation: LiveData<Location?> = Transformations.switchMap(selectedLocationId) {
         if (it != null) {
             locationRepository.load(it)
         } else {
@@ -54,22 +49,29 @@ class MapViewModel @Inject constructor(appExecutors: AppExecutors,
         }
     }
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) {
-        it?.let {
-            when (it.type) {
-                LocationType.SECTOR -> it.id?.let { topoRepository.loadToposForLocation(it) }
-                LocationType.CRAG -> it.id?.let { cragId ->
-                    val topos: MutableLiveData<List<TopoAndRoutes>> = MutableLiveData()
-                    appExecutors.diskIO().execute {
-                        val toposforCrag = mutableListOf<TopoAndRoutes>()
-                        locationRepository.getSectorsFor(cragId).forEach {
-                            it.id?.let { toposforCrag.addAll(topoRepository.getToposForLocation(it)) }
+        when (it?.type) {
+            LocationType.SECTOR -> it.id?.let { topoRepository.loadToposForLocation(it) }
+            LocationType.CRAG -> it.id?.let { cragId -> getToposForCrag(cragId) }
+            null -> AbsentLiveData.create()
+        }
+    }
+
+    private fun getToposForCrag(cragId: Long): LiveData<List<TopoAndRoutes>> {
+        val topos: MediatorLiveData<List<TopoAndRoutes>> = MediatorLiveData()
+        val loadSectorsForCrag = locationRepository.loadSectorsFor(cragId)
+        topos.addSource(loadSectorsForCrag) { sectorsForCrag ->
+            topos.removeSource(loadSectorsForCrag)
+            sectorsForCrag?.forEach { sector ->
+                sector.id?.let { sectorId ->
+                    topos.addSource(topoRepository.loadToposForLocation(sectorId)) {
+                        it?.let { newToposAndRoutes ->
+                            topos.value = newToposAndRoutes.plus(topos.value ?: emptyList())
                         }
-                        topos.postValue(toposforCrag)
                     }
-                    topos
                 }
             }
         }
+        return topos
     }
 
     val bottomSheetState: MutableLiveData<Int> = MutableLiveData()

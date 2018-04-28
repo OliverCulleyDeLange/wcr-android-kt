@@ -43,10 +43,8 @@ class ToposFragment : Fragment(), Injectable {
         val recyclerAdapter = RecyclerAdapter(childFragmentManager)
         topo_recycler.adapter = recyclerAdapter
         viewModel.topos.observe(this, Observer {
-            it?.let {
-                recyclerAdapter.updateTopos(it)
+            recyclerAdapter.updateTopos(it ?: emptyList())
                 binding.executePendingBindings()
-            }
         })
     }
 
@@ -81,7 +79,7 @@ class RecyclerAdapter(val childFragmentManager: FragmentManager) : RecyclerView.
             RouteFragment.newRouteFragment(it)
         })
         holder.binding.routePager.adapter = adapter
-        holder.binding.routePager.id = topoAndRoutes.topo.id?.toInt() ?: -1
+//        holder.binding.routePager.id = topoAndRoutes.topo.id?.toInt() ?: -1
     }
 
     fun updateTopos(newTopos: List<TopoAndRoutes>) {

@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.support.annotation.WorkerThread
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
 import uk.co.oliverdelange.wcr_android_kt.db.TopoDao
 import uk.co.oliverdelange.wcr_android_kt.model.Route
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 class TopoRepository @Inject constructor(val topoDao: TopoDao,
                                          val routeDao: RouteDao,
+                                         val locationDao: LocationDao,
                                          val appExecutors: AppExecutors) {
 
     fun save(topo: Topo, routes: Collection<Route>): MutableLiveData<Pair<Long, Array<Long>>> {
@@ -40,5 +42,15 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
     @WorkerThread
     fun getToposForLocation(locationId: Long): List<TopoAndRoutes> {
         return topoDao.getTopoAndRoutes(locationId)
+    }
+
+    @WorkerThread
+    fun getToposForCrag(cragId: Long): List<TopoAndRoutes> {
+        val toposAndRoutes = ArrayList<TopoAndRoutes>()
+        val sectorsForCrag = locationDao.getWithParentId(cragId)
+        for (sector in sectorsForCrag) {
+            sector.id?.let { sectorId -> toposAndRoutes.addAll(topoDao.getTopoAndRoutes(sectorId)) }
+        }
+        return toposAndRoutes
     }
 }
