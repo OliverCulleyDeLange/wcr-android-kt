@@ -49,11 +49,12 @@
                 android:layout_marginRight="10dp"
                 android:background="@android:color/darker_gray" />
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/route_pager"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/route_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:layout_below="@+id/divider" />
+                android:layout_height="200dp"
+                android:layout_below="@+id/divider"></android.support.v7.widget.RecyclerView>
+
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

@@ -135,6 +135,7 @@ class MapsActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteractor,
 
     override fun onMarkerClick(marker: Marker): Boolean {
         binding.vm?.onSectorClick(marker.tag as Location)
+//        topo_recycler.scrollToPosition(0)
         return true
     }
 
