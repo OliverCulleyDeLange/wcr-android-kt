@@ -1,6 +1,8 @@
 package uk.co.oliverdelange.wcr_android_kt.binding
 
 import android.databinding.BindingAdapter
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.support.annotation.ColorInt
 import android.view.View
 import android.view.View.*
@@ -50,6 +52,14 @@ fun loadImage(view: ImageView, imageUrl: String) {
     Picasso.with(view.context)
             .load(imageUrl)
             .placeholder(R.drawable.topo_placeholder)
+            .into(view)
+}
+
+@BindingAdapter("app:imageUri", "app:placeholder")
+fun loadImage(view: ImageView, uri: Uri?, placeholder: Drawable) {
+    Picasso.with(view.context)
+            .load(uri)
+            .placeholder(placeholder)
             .into(view)
 }
 

@@ -302,7 +302,7 @@ class MapsActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteractor,
         bottomSheet = BottomSheetBehavior.from(bottom_sheet)
 
         bottomSheet?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
+            override fun onStateChanged(bottomSheetView: View, newState: Int) {
                 when (newState) {
                     STATE_EXPANDED -> {
                         setMapBottomPadding(bottom_sheet_content_container.measuredHeight + bottom_sheet_peek.height)

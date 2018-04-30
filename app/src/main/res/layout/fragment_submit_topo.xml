@@ -21,6 +21,15 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <com.github.chrisbanes.photoview.PhotoView
+                android:id="@+id/topo_image"
+                android:layout_width="wrap_content"
+                android:layout_height="220dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/bg_grey_light"
+                app:imageUri="@{vm.topoImage}"
+                app:placeholder="@{@drawable/ic_photo}" />
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/topo_name_input_layout"
                 android:layout_width="match_parent"
@@ -38,32 +47,6 @@
                     android:theme="@style/Wcr_EditText" />
 
             </android.support.design.widget.TextInputLayout>
-
-            <!--<Button-->
-            <!--android:id="@+id/add_image"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:onClick="@{viewModel::onAddImageButtonClick}"-->
-            <!--android:text="@string/submission_button_text_select_image"-->
-            <!--android:visibility="@{viewModel.selectedImageUri != null ? View.GONE : View.VISIBLE}" />-->
-
-            <!--<ImageView-->
-            <!--android:id="@+id/selected_image"-->
-            <!--android:layout_width="150dp"-->
-            <!--android:layout_height="150dp"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:background="@color/bg_grey"-->
-            <!--android:visibility="@{viewModel.selectedImageUri != null  ? View.VISIBLE : View.GONE}" />-->
-
-            <!--<Button-->
-            <!--android:id="@+id/draw_image"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:onClick="@{viewModel::onDrawOnImageButtonClick}"-->
-            <!--android:text="@string/submission_button_text_draw_route"-->
-            <!--android:visibility="@{viewModel.selectedImageUri != null ? View.VISIBLE : View.GONE}" />-->
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/route_pager"

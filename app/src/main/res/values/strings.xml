@@ -9,6 +9,7 @@
 
     <!--SUBMIT-->
     <string name="button_submit">Submit</string>
+    <string name="button_select_topo_image">Select topo image</string>
     <string name="submission_text_input_crag_name">Enter the crag name</string>
     <string name="submission_text_input_sector_name">Enter the sector name</string>
 

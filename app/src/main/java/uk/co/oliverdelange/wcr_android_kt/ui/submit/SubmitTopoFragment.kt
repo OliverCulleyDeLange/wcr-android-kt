@@ -1,9 +1,11 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
+import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
@@ -14,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_submit_topo.*
+import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
@@ -24,6 +27,7 @@ import uk.co.oliverdelange.wcr_android_kt.util.fontToV
 import uk.co.oliverdelange.wcr_android_kt.util.vToFont
 import javax.inject.Inject
 
+val SELECT_PICTURE = 999
 
 class SubmitTopoFragment : Fragment(), Injectable {
     companion object {
@@ -36,14 +40,13 @@ class SubmitTopoFragment : Fragment(), Injectable {
         fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, Array<Long>>?)
     }
 
+    var sectorId: Long = -1
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private var activityInteractor: ActivityInteractor? = null
     private var routeFragments: MutableList<SubmitRouteFragment> = mutableListOf(SubmitRouteFragment.newRouteFragment())
-
-    var sectorId: Long = -1
-
     private lateinit var binding: FragmentSubmitTopoBinding
 
     override fun onAttach(context: Context?) {
@@ -68,6 +71,8 @@ class SubmitTopoFragment : Fragment(), Injectable {
                 }
             })
         }
+
+        binding.topoImage.setOnClickListener { selectImage() }
 
         viewModel.topoNameError.observe(this, Observer { _ ->
             topo_name_input_layout.error = binding.vm?.topoNameError?.value
@@ -111,6 +116,21 @@ class SubmitTopoFragment : Fragment(), Injectable {
         route_pager.adapter?.notifyDataSetChanged()
     }
 
+    fun selectImage() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Timber.d("User selected picture: %s", data.data)
+                binding.vm?.topoImage?.value = data.data
+            }
+        }
+    }
 }
 
 class SubmitRoutePagerAdapter(fragmentManager: FragmentManager, val routeFragments: List<SubmitRouteFragment>) : FragmentPagerAdapter(fragmentManager) {
