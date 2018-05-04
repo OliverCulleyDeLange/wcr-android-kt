@@ -16,11 +16,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.fragment_submit_location.*
-import uk.co.oliverdelange.wcr_android_kt.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitLocationBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.map.IconHelper
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
+import uk.co.oliverdelange.wcr_android_kt.ui.map.MapsActivity
 import javax.inject.Inject
 
 class SubmitLocationFragment : Fragment(), Injectable {

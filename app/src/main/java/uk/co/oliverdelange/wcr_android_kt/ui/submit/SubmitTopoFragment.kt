@@ -17,12 +17,12 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_submit_topo.*
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.FontGrade
 import uk.co.oliverdelange.wcr_android_kt.model.GradeType
 import uk.co.oliverdelange.wcr_android_kt.model.VGrade
+import uk.co.oliverdelange.wcr_android_kt.ui.map.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.util.fontToV
 import uk.co.oliverdelange.wcr_android_kt.util.vToFont
 import javax.inject.Inject
@@ -31,8 +31,8 @@ val SELECT_PICTURE = 999
 
 class SubmitTopoFragment : Fragment(), Injectable {
     companion object {
-        fun newTopoSubmission(): SubmitTopoFragment {
-            return SubmitTopoFragment()
+        fun newTopoSubmissionFor(sectorId: Long): SubmitTopoFragment {
+            return SubmitTopoFragment().withSectorId(sectorId)
         }
     }
 
@@ -40,7 +40,8 @@ class SubmitTopoFragment : Fragment(), Injectable {
         fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, Array<Long>>?)
     }
 
-    var sectorId: Long = -1
+    var sectorId: Long? = null
+    private fun withSectorId(id: Long): SubmitTopoFragment = apply { this.sectorId = id }
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -62,14 +63,16 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.vm = viewModel
 
         binding.submit.setOnClickListener { _: View? ->
-            binding.vm?.submit(sectorId)?.observe(this, Observer {
-                if (it != null) {
-                    Snackbar.make(binding.submit, "topo submitted!", Snackbar.LENGTH_SHORT).show()
-                    activityInteractor?.onTopoSubmitted(it)
-                } else {
-                    Snackbar.make(binding.submit, "failed to submit topo!", Snackbar.LENGTH_SHORT).show()
-                }
-            })
+            sectorId?.let { sectorId ->
+                binding.vm?.submit(sectorId)?.observe(this, Observer {
+                    if (it != null) {
+                        Snackbar.make(binding.submit, "topo submitted!", Snackbar.LENGTH_SHORT).show()
+                        activityInteractor?.onTopoSubmitted(it)
+                    } else {
+                        Snackbar.make(binding.submit, "failed to submit topo!", Snackbar.LENGTH_SHORT).show()
+                    }
+                })
+            }
         }
 
         binding.topoImage.setOnClickListener { selectImage() }
@@ -123,11 +126,11 @@ class SubmitTopoFragment : Fragment(), Injectable {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
-                Timber.d("User selected picture: %s", data.data)
-                binding.vm?.topoImage?.value = data.data
+                Timber.d("User selected picture: %s", data?.data)
+                binding.vm?.topoImage?.value = data?.data
             }
         }
     }

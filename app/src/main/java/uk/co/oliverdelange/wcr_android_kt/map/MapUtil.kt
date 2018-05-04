@@ -4,7 +4,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import uk.co.oliverdelange.wcr_android_kt.MAP_ANIMATION_DURATION
+import uk.co.oliverdelange.wcr_android_kt.ui.map.MAP_ANIMATION_DURATION
 
 fun GoogleMap.animate(latlng: LatLng, zoom: Float) {
     this.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom), MAP_ANIMATION_DURATION, null)

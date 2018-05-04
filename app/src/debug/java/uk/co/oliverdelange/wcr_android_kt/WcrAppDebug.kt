@@ -9,7 +9,13 @@ class WcrAppDebug : WcrApp(), HasActivityInjector {
     override fun onCreate() {
         super.onCreate()
         AppInjector.init(this)
-        Timber.plant(Timber.DebugTree())
+        Timber.plant(CustomDebugTree())
         Stetho.initializeWithDefaults(this)
+    }
+}
+
+class CustomDebugTree : Timber.DebugTree() {
+    override fun createStackElementTag(element: StackTraceElement): String? {
+        return ":::WCR:::" + super.createStackElementTag(element)
     }
 }

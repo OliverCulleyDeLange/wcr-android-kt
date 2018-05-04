@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import uk.co.oliverdelange.wcr_android_kt.ui.map.MapsActivity
 
 @RunWith(AndroidJUnit4::class)
 class SearchDrawerTest {

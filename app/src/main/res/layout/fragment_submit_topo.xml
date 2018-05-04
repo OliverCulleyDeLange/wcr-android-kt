@@ -11,10 +11,6 @@
             type="uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoViewModel" />
     </data>
 
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <LinearLayout
             style="@style/Wcr_Container"
             android:layout_width="match_parent"
@@ -68,5 +64,4 @@
                 android:enabled="@{vm.submitButtonEnabled}"
                 android:text="@string/button_submit" />
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
 </layout>

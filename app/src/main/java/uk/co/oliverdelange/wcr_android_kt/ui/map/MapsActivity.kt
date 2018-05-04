@@ -1,8 +1,10 @@
-package uk.co.oliverdelange.wcr_android_kt
+package uk.co.oliverdelange.wcr_android_kt.ui.map
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -36,15 +38,14 @@ import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_maps.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
 import uk.co.oliverdelange.wcr_android_kt.map.*
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
-import uk.co.oliverdelange.wcr_android_kt.ui.map.ToposFragment
+import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
-import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoFragment
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import java.lang.Math.round
 import javax.inject.Inject
@@ -54,7 +55,10 @@ const val CRAG_ZOOM = 14f
 const val MAP_ANIMATION_DURATION = 400
 const val MAP_PADDING_TOP = 150
 
-class MapsActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteractor,
+const val EXTRA_SECTOR_ID = "EXTRA_SECTOR_ID"
+const val REQUEST_SUBMIT = 999
+
+class MapsActivity : AppCompatActivity(),
         HasSupportFragmentInjector,
         OnMapReadyCallback,
         ClusterManager.OnClusterItemClickListener<CragClusterItem>,
@@ -73,7 +77,6 @@ class MapsActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteractor,
 
     private val submitCragFragment = SubmitLocationFragment.newCragSubmission()
     private val submitSectorFragment = SubmitLocationFragment.newSectorSubmission()
-    private val submitTopoFragment = SubmitTopoFragment.newTopoSubmission()
     private val viewToposFragment = ToposFragment.newToposFragment()
 
     internal lateinit var map: GoogleMap
@@ -103,6 +106,16 @@ class MapsActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteractor,
 
     override fun onBackPressed() {
         binding.vm?.back()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_SUBMIT) {
+            binding.vm?.mapMode?.value = SECTOR_MODE
+            if (resultCode == Activity.RESULT_OK) {
+                Timber.d("User submitted topo: %s", data?.data)
+                // TODO expand bottom sheet?
+            }
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -146,10 +159,6 @@ class MapsActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteractor,
             binding.vm?.mapMode?.value = SECTOR_MODE
         }
         binding.vm?.selectedLocationId?.value = submittedLocationId
-    }
-
-    override fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, Array<Long>>?) {
-        // TODO
     }
 
     private fun observeViewModel() {
@@ -212,8 +221,9 @@ class MapsActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteractor,
                 }
                 SUBMIT_TOPO_MODE -> {
                     binding.vm?.selectedLocation?.value?.id?.let {
-                        submitTopoFragment.sectorId = it
-                        replaceFragment(submitTopoFragment, R.id.bottom_sheet_content_container)
+                        val intent = Intent(this, SubmitActivity::class.java)
+                        intent.putExtra(EXTRA_SECTOR_ID, it)
+                        startActivityForResult(intent, REQUEST_SUBMIT)
                     }
                 }
             }
