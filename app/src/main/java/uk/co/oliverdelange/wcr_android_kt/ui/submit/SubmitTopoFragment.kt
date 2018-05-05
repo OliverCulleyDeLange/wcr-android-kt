@@ -132,6 +132,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
             if (requestCode == SELECT_PICTURE) {
                 Timber.d("User selected picture: %s", data?.data)
                 binding.vm?.topoImage?.value = data?.data
+                binding.vm?.setEnableSubmit()
             }
         }
     }

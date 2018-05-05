@@ -1,8 +1,9 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
-import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
+import android.databinding.ObservableBoolean
 import android.databinding.ObservableInt
 import android.net.Uri
 import android.view.View
@@ -19,24 +20,30 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
 
     var topoImage = MutableLiveData<Uri>()
     val topoName = MutableLiveData<String>()
-    val topoNameError = MutableLiveData<String>()
+    val topoNameError = Transformations.map(topoName) {
+        setEnableSubmit()
+        if (it.isEmpty()) "Can not be empty"
+        else null
+    }
 
-    val routes = MutableLiveData<MutableMap<Int, Route>>().also { it.value = mutableMapOf() }
+    val routes = HashMap<Int, Route>()
 
     fun routeNameChanged(fragmentId: Int, text: CharSequence) {
-        routes.value?.get(fragmentId)?.let {
+        routes[fragmentId]?.let {
             it.name = text.toString()
         }
+        setEnableSubmit()
     }
 
     fun routeDescriptionChanged(fragmentId: Int, text: CharSequence) {
-        routes.value?.get(fragmentId)?.let {
+        routes[fragmentId]?.let {
             it.description = text.toString()
         }
+        setEnableSubmit()
     }
 
     fun routeTypeChanged(fragmentId: Int, position: Int) {
-        routes.value?.get(fragmentId)?.let {
+        routes[fragmentId]?.let {
             val routeType = RouteType.values()[position]
             it.type = routeType
             setGradeVisibility(fragmentId, routeType)
@@ -61,7 +68,7 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     val boulderingGradeType = MutableLiveData<GradeType>()
     var autoGradeChange = false
     fun gradeChanged(fragmentId: Int, position: Int, gradeDropDown: GradeDropDown) {
-        routes.value?.get(fragmentId)?.let { route ->
+        routes[fragmentId]?.let { route ->
             when (gradeDropDown) {
                 GradeDropDown.V -> {
                     if (!autoGradeChange) {
@@ -110,22 +117,22 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
                 }
     }
 
-    val submitButtonEnabled = MediatorLiveData<Boolean>().also {
-        it.value = false
-        it.addSource(topoName) { locationName: String? ->
-            if (locationName == null || locationName.isBlank()) {
-                it.value = false; topoNameError.value = "Can not be empty"
-            } else {
-                it.value = true; topoNameError.value = null
-            }
-        }
+    val submitButtonEnabled = ObservableBoolean(false)
+
+    fun setEnableSubmit() {
+        submitButtonEnabled.set(!topoName.value.isNullOrEmpty() &&
+                topoImage.value != null &&
+                routes.none {
+                    it.value.name.isNullOrEmpty() ||
+                            it.value.description.isNullOrEmpty()
+                })
     }
 
     fun submit(sectorId: Long): MutableLiveData<Pair<Long, Array<Long>>> {
         val topoName = topoName.value
         if (topoName != null) {
             val topo = Topo(name = topoName, locationId = sectorId)
-            val savedIds = topoRepository.save(topo, routes.value?.values ?: emptyList())
+            val savedIds = topoRepository.save(topo, routes.values)
             workerService.updateRouteInfo(sectorId)
             return savedIds
         } else {

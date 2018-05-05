@@ -45,8 +45,8 @@ class SubmitRouteFragment : Fragment(), Injectable {
         binding.tradTechnicalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradTechnicalGrade.values().map { it.textRepresentation })
 
         fragmentId?.let {
-            if (binding.vm?.routes?.value?.containsKey(it) == false) {
-                binding.vm?.routes?.value?.put(it, Route())
+            if (binding.vm?.routes?.containsKey(it) == false) {
+                binding.vm?.routes?.put(it, Route())
             }
             binding.fragmentId = fragmentId
         }
@@ -56,7 +56,7 @@ class SubmitRouteFragment : Fragment(), Injectable {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.vm?.routes?.value?.remove(fragmentId)
+        binding.vm?.routes?.remove(fragmentId)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
