@@ -24,6 +24,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.GradeType
 import uk.co.oliverdelange.wcr_android_kt.model.VGrade
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.util.fontToV
+import uk.co.oliverdelange.wcr_android_kt.util.inTransaction
 import uk.co.oliverdelange.wcr_android_kt.util.vToFont
 import javax.inject.Inject
 
@@ -115,6 +116,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
     fun removeRouteFragment(routeFragment: SubmitRouteFragment) {
         routeFragments.remove(routeFragment)
+        fragmentManager?.inTransaction { remove(routeFragment) }
         binding.routePager.adapter?.notifyDataSetChanged()
     }
 

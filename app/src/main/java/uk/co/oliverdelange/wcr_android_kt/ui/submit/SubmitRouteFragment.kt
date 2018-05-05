@@ -44,7 +44,19 @@ class SubmitRouteFragment : Fragment(), Injectable {
         binding.tradAdjectivalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradAdjectivalGrade.values().map { it.textRepresentation })
         binding.tradTechnicalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradTechnicalGrade.values().map { it.textRepresentation })
 
+        fragmentId?.let {
+            if (binding.vm?.routes?.value?.containsKey(it) == false) {
+                binding.vm?.routes?.value?.put(it, Route())
+            }
+            binding.fragmentId = fragmentId
+        }
+
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.vm?.routes?.value?.remove(fragmentId)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -53,14 +65,7 @@ class SubmitRouteFragment : Fragment(), Injectable {
         if (parent is SubmitTopoFragment) {
             remove_fragment.setOnClickListener({
                 parent.removeRouteFragment(this)
-                binding.vm?.routes?.value?.remove(fragmentId)
             })
-        }
-        fragmentId?.let {
-            if (binding.vm?.routes?.value?.containsKey(it) == false) {
-                binding.vm?.routes?.value?.put(it, Route())
-            }
-            binding.fragmentId = fragmentId
         }
     }
 }
