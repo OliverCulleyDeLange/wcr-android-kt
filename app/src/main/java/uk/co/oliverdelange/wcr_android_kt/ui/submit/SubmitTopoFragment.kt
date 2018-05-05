@@ -78,22 +78,19 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.topoImage.setOnClickListener { selectImage() }
 
         viewModel.topoNameError.observe(this, Observer { _ ->
-            topo_name_input_layout.error = binding.vm?.topoNameError?.value
+            binding.topoNameInputLayout.error = binding.vm?.topoNameError?.value
         })
 
-        return binding.root
-    }
+        val pagerAdapter = SubmitRoutePagerAdapter(childFragmentManager, routeFragments)
+        binding.routePager.adapter = pagerAdapter
+        binding.routePager.clipToPadding = false
+        binding.routePager.setPadding(100, 20, 100, 20)
+        binding.routePager.pageMargin = 25
+        binding.routePager.offscreenPageLimit = 99 // TODO More elegant way of fixing this
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        route_pager.adapter = SubmitRoutePagerAdapter(childFragmentManager, routeFragments)
-        route_pager.clipToPadding = false
-        route_pager.setPadding(100, 20, 100, 20)
-        route_pager.pageMargin = 25
-
-        add_route.setOnClickListener({
+        binding.addRoute.setOnClickListener({
             routeFragments.add(SubmitRouteFragment.newRouteFragment())
-            route_pager.adapter?.notifyDataSetChanged()
+            pagerAdapter.notifyDataSetChanged()
         })
 
         binding.vm?.boulderingGradeType?.observe(this, Observer {
@@ -112,11 +109,13 @@ class SubmitTopoFragment : Fragment(), Injectable {
                 }
             }
         })
+
+        return binding.root
     }
 
     fun removeRouteFragment(routeFragment: SubmitRouteFragment) {
         routeFragments.remove(routeFragment)
-        route_pager.adapter?.notifyDataSetChanged()
+        binding.routePager.adapter?.notifyDataSetChanged()
     }
 
     fun selectImage() {
