@@ -130,8 +130,9 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
 
     fun submit(sectorId: Long): MutableLiveData<Pair<Long, Array<Long>>> {
         val topoName = topoName.value
-        if (topoName != null) {
-            val topo = Topo(name = topoName, locationId = sectorId)
+        val topoImage = topoImage.value
+        if (topoName != null && topoImage != null) {
+            val topo = Topo(name = topoName, locationId = sectorId, image = topoImage.toString())
             val savedIds = topoRepository.save(topo, routes.values)
             workerService.updateRouteInfo(sectorId)
             return savedIds

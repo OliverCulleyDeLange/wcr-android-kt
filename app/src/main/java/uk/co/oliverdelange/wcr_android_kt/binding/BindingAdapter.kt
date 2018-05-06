@@ -47,11 +47,11 @@ fun setmapModeTextColour(textView: TextView, mapMode: MapMode) {
     }
 }
 
-@BindingAdapter("imageUrl")
-fun loadImage(view: ImageView, imageUrl: String) {
+@BindingAdapter("app:imageUrl", "app:placeholder")
+fun loadImage(view: ImageView, imageUrl: String, placeholder: Drawable) {
     Picasso.with(view.context)
             .load(imageUrl)
-            .placeholder(R.drawable.topo_placeholder)
+            .placeholder(placeholder)
             .into(view)
 }
 

@@ -35,7 +35,8 @@ class TopoAndRoutes {
 @Entity
 data class Topo(@PrimaryKey(autoGenerate = true) var id: Long? = null,
                 var locationId: Long,
-                var name: String)
+                var name: String,
+                var image: String)
 
 @Entity(foreignKeys = [(
         ForeignKey(entity = Topo::class, parentColumns = arrayOf("id"), childColumns = arrayOf("topoId"))
