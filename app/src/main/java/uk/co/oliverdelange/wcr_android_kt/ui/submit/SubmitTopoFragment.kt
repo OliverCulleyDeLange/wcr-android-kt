@@ -7,7 +7,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -22,7 +21,6 @@ import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.FontGrade
 import uk.co.oliverdelange.wcr_android_kt.model.GradeType
 import uk.co.oliverdelange.wcr_android_kt.model.VGrade
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.util.fontToV
 import uk.co.oliverdelange.wcr_android_kt.util.inTransaction
 import uk.co.oliverdelange.wcr_android_kt.util.vToFont
@@ -53,7 +51,6 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is MapsActivity) context.bottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
         if (context is ActivityInteractor) activityInteractor = context
     }
 
@@ -97,15 +94,17 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.vm?.boulderingGradeType?.observe(this, Observer {
             it?.let {
                 val submitRouteFragment = routeFragments[route_pager.currentItem]
-                binding.vm?.autoGradeChange = true
-                when (it) {
-                    GradeType.FONT -> {
-                        val convertedGrade = fontToV(FontGrade.values()[submitRouteFragment.binding.fGradeSpinner.selectedItemPosition])
-                        submitRouteFragment.binding.vGradeSpinner.setSelection(convertedGrade.ordinal, false)
-                    }
-                    GradeType.V -> {
-                        val convertedGrade = vToFont(VGrade.values()[submitRouteFragment.binding.vGradeSpinner.selectedItemPosition])
-                        submitRouteFragment.binding.fGradeSpinner.setSelection(convertedGrade.ordinal, false)
+                submitRouteFragment.binding?.let {
+                    binding.vm?.autoGradeChange = true
+                    when (it) {
+                        GradeType.FONT -> {
+                            val convertedGrade = fontToV(FontGrade.values()[it.fGradeSpinner.selectedItemPosition])
+                            it.vGradeSpinner.setSelection(convertedGrade.ordinal, false)
+                        }
+                        GradeType.V -> {
+                            val convertedGrade = vToFont(VGrade.values()[it.vGradeSpinner.selectedItemPosition])
+                            it.fGradeSpinner.setSelection(convertedGrade.ordinal, false)
+                        }
                     }
                 }
             }

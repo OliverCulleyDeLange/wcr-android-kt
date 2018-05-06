@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -51,7 +50,6 @@ class SubmitLocationFragment : Fragment(), Injectable {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is MapsActivity) context.bottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
         if (context is ActivityInteractor) activityInteractor = context
     }
 
@@ -85,11 +83,7 @@ class SubmitLocationFragment : Fragment(), Injectable {
 
         val mapsActivity = activity
         if (mapsActivity is MapsActivity) {
-            mapsActivity.binding.vm?.bottomSheetState?.observe(this, Observer {
-                if (it == BottomSheetBehavior.STATE_EXPANDED && newLocationMarker == null) {
-                    setupMarker(mapsActivity.map, mapsActivity)
-                }
-            })
+            setupMarker(mapsActivity.map, mapsActivity)
             mapsActivity.map.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
                 override fun onMarkerDragStart(marker: Marker) {}
                 override fun onMarkerDrag(marker: Marker) {}

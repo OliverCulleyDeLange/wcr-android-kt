@@ -37,7 +37,7 @@ var View.gone
     }
 
 @BindingAdapter("mapModeTextColour")
-fun setmapModeTextColour(textView: TextView, mapMode: MapMode) {
+fun setmapModeTextColour(textView: TextView, mapMode: MapMode?) {
     val context = textView.context
     val resources = context.resources
     when (mapMode) {

@@ -14,9 +14,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_view_topos.*
 import uk.co.oliverdelange.wcr_android_kt.R
-import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentViewToposBinding
+import uk.co.oliverdelange.wcr_android_kt.databinding.BottomSheetBinding
 import uk.co.oliverdelange.wcr_android_kt.databinding.RouteCardBinding
 import uk.co.oliverdelange.wcr_android_kt.databinding.TopoCardBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
@@ -34,26 +33,26 @@ class ToposFragment : Fragment(), Injectable {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var binding: FragmentViewToposBinding
+    private var binding: BottomSheetBinding? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = BottomSheetBinding.inflate(layoutInflater, container, false)
+        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
+        binding?.vm = viewModel
+        binding?.setLifecycleOwner(this)
+        return binding?.root
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
-
-        topo_recycler.layoutManager = LinearLayoutManager(activity)
+        binding?.topoRecycler?.layoutManager = LinearLayoutManager(activity)
         val recyclerAdapter = TopoRecyclerAdapter(activity)
-        topo_recycler.adapter = recyclerAdapter
-        viewModel.topos.observe(this, Observer {
+        binding?.topoRecycler?.adapter = recyclerAdapter
+        binding?.vm?.topos?.observe(this, Observer {
             recyclerAdapter.updateTopos(it ?: emptyList())
-            binding.executePendingBindings()
-            topo_recycler.scrollToPosition(0)
+            binding?.executePendingBindings()
+            binding?.topoRecycler?.scrollToPosition(0)
         })
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentViewToposBinding.inflate(layoutInflater, container, false)
-        binding.setLifecycleOwner(this)
-        return binding.root
     }
 }
 

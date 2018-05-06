@@ -36,7 +36,6 @@ import com.squareup.picasso.Picasso
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_maps.*
-import kotlinx.android.synthetic.main.bottom_sheet.*
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
@@ -81,7 +80,7 @@ class MapsActivity : AppCompatActivity(),
 
     internal lateinit var map: GoogleMap
     private val defaultLatLng = LatLng(54.056, -3.155)
-    internal var bottomSheet: BottomSheetBehavior<LinearLayout>? = null
+    private var bottomSheet: BottomSheetBehavior<LinearLayout>? = null
 
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
     private lateinit var sectorMarkers: MarkerManager.Collection
@@ -120,7 +119,7 @@ class MapsActivity : AppCompatActivity(),
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        setMapBottomPadding(bottom_sheet_peek.height)
+        setMapBottomPadding(bottomSheet?.peekHeight ?: 0)
 
         val markerManager = MarkerManager(map)
         sectorMarkers = markerManager.newCollection()
@@ -196,27 +195,27 @@ class MapsActivity : AppCompatActivity(),
                     fabStyle(R.drawable.add_crag_button, R.color.fab_new_crag)
                     refreshCragClusterItems()
                     map.animateCamera(newLatLngZoom(defaultLatLng, DEFAULT_ZOOM))
-                    replaceFragment(viewToposFragment, R.id.bottom_sheet_content_container)
+                    replaceFragment(viewToposFragment, R.id.bottom_sheet)
                 }
                 CRAG_MODE -> {
                     fabStyle(R.drawable.add_sector_button, R.color.fab_new_sector)
                     refreshCragClusterItems()
-                    replaceFragment(viewToposFragment, R.id.bottom_sheet_content_container)
+                    replaceFragment(viewToposFragment, R.id.bottom_sheet)
                 }
                 SECTOR_MODE -> {
                     fabStyle(R.drawable.add_topo_button, R.color.fab_new_topo)
                     refreshCragClusterItems()
-                    replaceFragment(viewToposFragment, R.id.bottom_sheet_content_container)
+                    replaceFragment(viewToposFragment, R.id.bottom_sheet)
                 }
                 TOPO_MODE -> {
                 }
                 SUBMIT_CRAG_MODE -> {
-                    replaceFragment(submitCragFragment, R.id.bottom_sheet_content_container)
+                    replaceFragment(submitCragFragment, R.id.bottom_sheet)
                     refreshCragClusterItems()
                 }
                 SUBMIT_SECTOR_MODE -> {
                     submitSectorFragment.parentId = binding.vm?.selectedLocationId?.value
-                    replaceFragment(submitSectorFragment, R.id.bottom_sheet_content_container)
+                    replaceFragment(submitSectorFragment, R.id.bottom_sheet)
                     refreshCragClusterItems()
                 }
                 SUBMIT_TOPO_MODE -> {
@@ -315,17 +314,19 @@ class MapsActivity : AppCompatActivity(),
             override fun onStateChanged(bottomSheetView: View, newState: Int) {
                 when (newState) {
                     STATE_EXPANDED -> {
-                        setMapBottomPadding(bottom_sheet_content_container.measuredHeight + bottom_sheet_peek.height)
+                        setMapBottomPadding(bottom_sheet.measuredHeight)
                     }
                     STATE_COLLAPSED -> {
-                        setMapBottomPadding(bottom_sheet_peek.height)
+                        setMapBottomPadding(bottomSheet?.peekHeight ?: 0)
                     }
                 }
                 binding.vm?.bottomSheetState?.value = newState
             }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                setMapBottomPadding(round(bottom_sheet_content_container.height * slideOffset + bottom_sheet_peek.height))
+            override fun onSlide(bottomSheetView: View, slideOffset: Float) {
+                val peek = bottomSheet?.peekHeight ?: 0
+                setMapBottomPadding(round((bottom_sheet.height - peek) * slideOffset + peek))
+                fab.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start()
             }
         })
     }

@@ -29,34 +29,35 @@ class SubmitRouteFragment : Fragment(), Injectable {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    lateinit var binding: FragmentSubmitRouteBinding
+
+    var binding: FragmentSubmitRouteBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSubmitRouteBinding.inflate(layoutInflater, container, false)
-        binding.setLifecycleOwner(this)
+        binding?.setLifecycleOwner(this)
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitTopoViewModel::class.java)
-        binding.vm = viewModel
+        binding?.vm = viewModel
 
-        binding.routeTypeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, RouteType.values())
-        binding.vGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, VGrade.values().map { it.textRepresentation })
-        binding.fGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, FontGrade.values().map { it.textRepresentation })
-        binding.sportGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, SportGrade.values().map { it.textRepresentation })
-        binding.tradAdjectivalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradAdjectivalGrade.values().map { it.textRepresentation })
-        binding.tradTechnicalGradeSpinner.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradTechnicalGrade.values().map { it.textRepresentation })
+        binding?.routeTypeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, RouteType.values())
+        binding?.vGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, VGrade.values().map { it.textRepresentation })
+        binding?.fGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, FontGrade.values().map { it.textRepresentation })
+        binding?.sportGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, SportGrade.values().map { it.textRepresentation })
+        binding?.tradAdjectivalGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradAdjectivalGrade.values().map { it.textRepresentation })
+        binding?.tradTechnicalGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradTechnicalGrade.values().map { it.textRepresentation })
 
         fragmentId?.let {
-            if (binding.vm?.routes?.containsKey(it) == false) {
-                binding.vm?.routes?.put(it, Route())
+            if (binding?.vm?.routes?.containsKey(it) == false) {
+                binding?.vm?.routes?.put(it, Route())
             }
-            binding.fragmentId = fragmentId
+            binding?.fragmentId = fragmentId
         }
 
-        return binding.root
+        return binding?.root
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.vm?.routes?.remove(fragmentId)
+        binding?.vm?.routes?.remove(fragmentId)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
