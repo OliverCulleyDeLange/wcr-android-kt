@@ -83,7 +83,6 @@ class SubmitTopoFragment : Fragment(), Injectable {
                 animation.duration = 5000 // in milliseconds
                 animation.interpolator = DecelerateInterpolator()
                 animation.repeatCount = Animation.INFINITE
-                animation.repeatMode
                 animation.start()
             } else {
                 topo_submit_progress.clearAnimation()
@@ -110,18 +109,18 @@ class SubmitTopoFragment : Fragment(), Injectable {
         })
 
         binding.vm?.boulderingGradeType?.observe(this, Observer {
-            it?.let {
-                val submitRouteFragment = routeFragments[route_pager.currentItem]
-                submitRouteFragment.binding?.let {
+            it?.let { gradeType ->
+                val submitRouteFragment = routeFragments[binding.routePager.currentItem]
+                submitRouteFragment.binding?.let { binding ->
                     binding.vm?.autoGradeChange = true
-                    when (it) {
+                    when (gradeType) {
                         GradeType.FONT -> {
-                            val convertedGrade = fontToV(FontGrade.values()[it.fGradeSpinner.selectedItemPosition])
-                            it.vGradeSpinner.setSelection(convertedGrade.ordinal, false)
+                            val convertedGrade = fontToV(FontGrade.values()[binding.fGradeSpinner.selectedItemPosition])
+                            binding.vGradeSpinner.setSelection(convertedGrade.ordinal, false)
                         }
                         GradeType.V -> {
-                            val convertedGrade = vToFont(VGrade.values()[it.vGradeSpinner.selectedItemPosition])
-                            it.fGradeSpinner.setSelection(convertedGrade.ordinal, false)
+                            val convertedGrade = vToFont(VGrade.values()[binding.vGradeSpinner.selectedItemPosition])
+                            binding.fGradeSpinner.setSelection(convertedGrade.ordinal, false)
                         }
                     }
                 }

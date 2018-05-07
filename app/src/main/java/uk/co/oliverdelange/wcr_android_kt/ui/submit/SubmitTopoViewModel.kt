@@ -152,7 +152,6 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                     .option("folder", "topo/$sectorId")
                     .option("public_id", topoName)
                     .preprocess(ImagePreprocessChain.limitDimensionsChain(640, 640)
-//                            .addStep(DimensionsValidator(240, 240, 1000, 1000))
                             .saveWith(BitmapEncoder(BitmapEncoder.Format.WEBP, 80)))
                     .callback(object : UploadCallback {
                         override fun onStart(requestId: String) {
@@ -160,7 +159,6 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
                         override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
                             val progress = bytes.toDouble() / totalBytes
-//                            submitProgress.set((progress * 100).toInt())
                             Timber.d("Image upload progress: %s", progress.toString())
                         }
 
