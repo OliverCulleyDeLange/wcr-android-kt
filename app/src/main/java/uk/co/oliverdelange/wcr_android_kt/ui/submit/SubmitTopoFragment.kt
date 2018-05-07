@@ -26,6 +26,7 @@ import uk.co.oliverdelange.wcr_android_kt.util.inTransaction
 import uk.co.oliverdelange.wcr_android_kt.util.vToFont
 import javax.inject.Inject
 
+
 val SELECT_PICTURE = 999
 
 class SubmitTopoFragment : Fragment(), Injectable {
@@ -122,16 +123,22 @@ class SubmitTopoFragment : Fragment(), Injectable {
     fun selectImage() {
         val intent = Intent()
         intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
+        intent.action = Intent.ACTION_OPEN_DOCUMENT
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
-                Timber.d("User selected picture: %s", data?.data)
-                binding.vm?.topoImage?.value = data?.data
-                binding.vm?.setEnableSubmit()
+                data?.let { intent ->
+                    val uri = intent.data
+                    Timber.d("User selected picture: %s", uri)
+                    val takeFlags = intent.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                    activity?.contentResolver?.takePersistableUriPermission(uri, takeFlags)
+
+                    binding.vm?.topoImage?.value = uri
+                    binding.vm?.setEnableSubmit()
+                }
             }
         }
     }

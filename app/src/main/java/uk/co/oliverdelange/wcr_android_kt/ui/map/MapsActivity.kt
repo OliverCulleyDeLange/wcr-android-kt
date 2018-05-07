@@ -116,7 +116,7 @@ class MapsActivity : AppCompatActivity(),
         if (requestCode == REQUEST_SUBMIT) {
             binding.vm?.mapMode?.value = SECTOR_MODE
             if (resultCode == Activity.RESULT_OK) {
-                Timber.d("User submitted topo: %s", data?.data)
+                Timber.d("User submitted topo")
                 // TODO expand bottom sheet?
             }
         }
