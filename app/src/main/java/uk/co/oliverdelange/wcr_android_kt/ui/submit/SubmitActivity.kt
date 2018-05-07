@@ -29,7 +29,7 @@ class SubmitActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteracto
         addFragment(fragment, R.id.submit_topo_container)
     }
 
-    override fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, Array<Long>>?) {
+    override fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, List<Long>>?) {
         setResult(Activity.RESULT_OK)
         finish()
     }

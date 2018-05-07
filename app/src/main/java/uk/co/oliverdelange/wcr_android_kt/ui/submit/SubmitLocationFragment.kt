@@ -69,7 +69,6 @@ class SubmitLocationFragment : Fragment(), Injectable {
         binding.submit.setOnClickListener { _: View? ->
             binding.vm?.submit(parentId)?.observe(this, Observer {
                 if (it != null) {
-                    Snackbar.make(binding.submit, locationType.name.toLowerCase() + " submitted!", Snackbar.LENGTH_SHORT).show()
                     activityInteractor?.onLocationSubmitted(locationType, it)
                 } else {
                     Snackbar.make(binding.submit, "Failed to submit location!", Snackbar.LENGTH_SHORT).show()

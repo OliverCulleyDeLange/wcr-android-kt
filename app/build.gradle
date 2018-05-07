@@ -54,6 +54,7 @@ versions.retrofit = "2.3.0"
 versions.okhttp_logging_interceptor = "3.9.0"
 versions.photoview = "2.1.3"
 versions.picasso = "2.5.2"
+versions.cloudinary = "1.24.0"
 versions.butterknife = "8.8.1"
 versions.timber = "4.7.0"
 versions.dagger = "2.14.1"
@@ -63,6 +64,7 @@ versions.lombok = "1.16.20"
 versions.rxjava2 = "2.1.3"
 versions.rx_android = "2.0.1"
 versions.room = "1.1.0-alpha1"
+versions.anko = "0.10.5"
 versions.material_drawer_kt = "1.3.3"
 versions.material_drawer = "6.0.6@aar"
 versions.about_libraries = "6.0.6@aar"
@@ -76,6 +78,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.anko:anko-commons:${versions.anko}"
     implementation "com.google.firebase:firebase-core:${versions.play_services}"
 
     implementation "com.android.support:appcompat-v7:${versions.support}"
@@ -105,6 +108,7 @@ dependencies {
 
     implementation "com.github.chrisbanes:PhotoView:${versions.photoview}"
     implementation "com.squareup.picasso:picasso:${versions.picasso}"
+    implementation "com.cloudinary:cloudinary-android:${versions.cloudinary}"
 
     implementation "com.jakewharton.timber:timber:${versions.timber}"
 

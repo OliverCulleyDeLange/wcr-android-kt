@@ -37,7 +37,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
     }
 
     interface ActivityInteractor {
-        fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, Array<Long>>?)
+        fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, List<Long>>?)
     }
 
     var sectorId: Long? = null
@@ -65,7 +65,6 @@ class SubmitTopoFragment : Fragment(), Injectable {
             sectorId?.let { sectorId ->
                 binding.vm?.submit(sectorId)?.observe(this, Observer {
                     if (it != null) {
-                        Snackbar.make(binding.submit, "topo submitted!", Snackbar.LENGTH_SHORT).show()
                         activityInteractor?.onTopoSubmitted(it)
                     } else {
                         Snackbar.make(binding.submit, "failed to submit topo!", Snackbar.LENGTH_SHORT).show()
@@ -136,7 +135,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
                     val takeFlags = intent.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                     activity?.contentResolver?.takePersistableUriPermission(uri, takeFlags)
 
-                    binding.vm?.topoImage?.value = uri
+                    binding.vm?.localTopoImage?.value = uri
                     binding.vm?.setEnableSubmit()
                 }
             }

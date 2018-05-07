@@ -1,12 +1,19 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableInt
 import android.net.Uri
 import android.view.View
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
+import com.cloudinary.android.preprocess.BitmapEncoder
+import com.cloudinary.android.preprocess.ImagePreprocessChain
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
@@ -15,10 +22,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRepository,
-                                              private val workerService: WorkerService) : ViewModel() {
+class SubmitTopoViewModel @Inject constructor(application: Application,
+                                              private val topoRepository: TopoRepository,
+                                              private val workerService: WorkerService) : AndroidViewModel(application) {
 
-    var topoImage = MutableLiveData<Uri>()
+    var localTopoImage = MutableLiveData<Uri>()
     val topoName = MutableLiveData<String>()
     val topoNameError = Transformations.map(topoName) {
         setEnableSubmit()
@@ -121,24 +129,59 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
 
     fun setEnableSubmit() {
         submitButtonEnabled.set(!topoName.value.isNullOrEmpty() &&
-                topoImage.value != null &&
+                localTopoImage.value != null &&
                 routes.none {
                     it.value.name.isNullOrEmpty() ||
                             it.value.description.isNullOrEmpty()
                 })
     }
 
-    fun submit(sectorId: Long): MutableLiveData<Pair<Long, Array<Long>>> {
+    fun submit(sectorId: Long): MutableLiveData<Pair<Long, List<Long>>> {
         val topoName = topoName.value
-        val topoImage = topoImage.value
-        if (topoName != null && topoImage != null) {
-            val topo = Topo(name = topoName, locationId = sectorId, image = topoImage.toString())
-            val savedIds = topoRepository.save(topo, routes.values)
-            workerService.updateRouteInfo(sectorId)
-            return savedIds
+        val topoImage = localTopoImage.value
+        return if (topoName != null && topoImage != null) {
+            val mediator = MediatorLiveData<Pair<Long, List<Long>>>()
+            MediaManager.get().upload(topoImage)
+                    .unsigned("wcr_topo_upload")
+                    .option("folder", "topo/$sectorId")
+                    .option("public_id", topoName)
+                    .preprocess(ImagePreprocessChain.limitDimensionsChain(640, 640)
+//                            .addStep(DimensionsValidator(240, 240, 1000, 1000))
+                            .saveWith(BitmapEncoder(BitmapEncoder.Format.WEBP, 80)))
+                    .callback(object : UploadCallback {
+                        override fun onStart(requestId: String) {
+                            // your code here
+                        }
+
+                        override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
+                            val progress = bytes.toDouble() / totalBytes
+                            Timber.d("Image upload progress: %s", progress.toString())
+                        }
+
+                        override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                            Timber.d("Image upload success: %s", resultData)
+                            val imageUrl = resultData["secure_url"] as String
+                            val topo = Topo(name = topoName, locationId = sectorId, image = imageUrl)
+                            val saved = topoRepository.save(topo, routes.values)
+                            workerService.updateRouteInfo(sectorId)
+                            mediator.addSource(saved) {
+                                mediator.value = it
+                            }
+                        }
+
+                        override fun onError(requestId: String, error: ErrorInfo) {
+                            // your code here
+                        }
+
+                        override fun onReschedule(requestId: String, error: ErrorInfo) {
+                            // your code here
+                        }
+                    })
+                    .dispatch(getApplication())
+            mediator
         } else {
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
-            return MutableLiveData()
+            MutableLiveData()
         }
     }
 }

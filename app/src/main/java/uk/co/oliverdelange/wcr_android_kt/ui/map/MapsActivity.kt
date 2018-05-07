@@ -317,7 +317,7 @@ class MapsActivity : AppCompatActivity(),
 
     private fun initialiseBottomSheet() {
         bottomSheet = BottomSheetBehavior.from(bottom_sheet)
-
+        binding.vm?.bottomSheetState?.value = bottomSheet?.state
         bottomSheet?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheetView: View, newState: Int) {
                 when (newState) {

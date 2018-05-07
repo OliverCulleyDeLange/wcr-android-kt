@@ -23,7 +23,7 @@
                 android:layout_height="220dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@color/bg_grey_light"
-                app:imageUri="@{vm.topoImage}"
+                app:imageUri="@{vm.localTopoImage}"
                 app:placeholder="@{@drawable/ic_photo}" />
 
             <android.support.design.widget.TextInputLayout

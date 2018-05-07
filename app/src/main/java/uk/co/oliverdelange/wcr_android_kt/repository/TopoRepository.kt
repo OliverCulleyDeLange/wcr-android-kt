@@ -18,16 +18,16 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
                                          val locationDao: LocationDao,
                                          val appExecutors: AppExecutors) {
 
-    fun save(topo: Topo, routes: Collection<Route>): MutableLiveData<Pair<Long, Array<Long>>> {
-        val result = MutableLiveData<Pair<Long, Array<Long>>>()
+    fun save(topo: Topo, routes: Collection<Route>): MutableLiveData<Pair<Long, List<Long>>> {
+        val result = MutableLiveData<Pair<Long, List<Long>>>()
         appExecutors.diskIO().execute {
             Timber.d("Saving topo: %s", topo)
             val topoId = topoDao.insert(topo)
-            val routeIds = emptyArray<Long>()
+            val routeIds = mutableListOf<Long>()
             for (route in routes) {
                 route.topoId = topoId
                 Timber.d("Saving route: %s", route)
-                routeIds.plus(routeDao.insert(route))
+                routeIds.add(routeDao.insert(route))
             }
             // Saved topo and all routes so notify observer
             appExecutors.mainThread().execute({ result.value = Pair(topoId, routeIds) })
