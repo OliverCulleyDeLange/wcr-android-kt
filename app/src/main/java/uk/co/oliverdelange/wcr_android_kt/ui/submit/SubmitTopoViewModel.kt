@@ -136,6 +136,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                 })
     }
 
+    val submitProgress = ObservableInt(0)
     fun submit(sectorId: Long): MutableLiveData<Pair<Long, List<Long>>> {
         val topoName = topoName.value
         val topoImage = localTopoImage.value
@@ -150,11 +151,12 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                             .saveWith(BitmapEncoder(BitmapEncoder.Format.WEBP, 80)))
                     .callback(object : UploadCallback {
                         override fun onStart(requestId: String) {
-                            // your code here
+                            submitButtonEnabled.set(false)
                         }
 
                         override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
                             val progress = bytes.toDouble() / totalBytes
+                            submitProgress.set((progress * 100).toInt())
                             Timber.d("Image upload progress: %s", progress.toString())
                         }
 
@@ -170,7 +172,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                         }
 
                         override fun onError(requestId: String, error: ErrorInfo) {
-                            // your code here
+                            submitButtonEnabled.set(true)
                         }
 
                         override fun onReschedule(requestId: String, error: ErrorInfo) {

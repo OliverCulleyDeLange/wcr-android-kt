@@ -89,6 +89,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.addRoute.setOnClickListener({
             routeFragments.add(SubmitRouteFragment.newRouteFragment())
             pagerAdapter.notifyDataSetChanged()
+            binding.vm?.setEnableSubmit()
         })
 
         binding.vm?.boulderingGradeType?.observe(this, Observer {
