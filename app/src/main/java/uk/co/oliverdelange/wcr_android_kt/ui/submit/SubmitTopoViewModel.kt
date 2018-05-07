@@ -136,11 +136,16 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                 })
     }
 
-    val submitProgress = ObservableInt(0)
+    val submitting = MutableLiveData<Boolean>().also {
+        it.value = false
+    }
     fun submit(sectorId: Long): MutableLiveData<Pair<Long, List<Long>>> {
         val topoName = topoName.value
         val topoImage = localTopoImage.value
         return if (topoName != null && topoImage != null) {
+            Timber.i("Submission started")
+            submitButtonEnabled.set(false)
+            submitting.value = true
             val mediator = MediatorLiveData<Pair<Long, List<Long>>>()
             MediaManager.get().upload(topoImage)
                     .unsigned("wcr_topo_upload")
@@ -151,12 +156,11 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                             .saveWith(BitmapEncoder(BitmapEncoder.Format.WEBP, 80)))
                     .callback(object : UploadCallback {
                         override fun onStart(requestId: String) {
-                            submitButtonEnabled.set(false)
                         }
 
                         override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
                             val progress = bytes.toDouble() / totalBytes
-                            submitProgress.set((progress * 100).toInt())
+//                            submitProgress.set((progress * 100).toInt())
                             Timber.d("Image upload progress: %s", progress.toString())
                         }
 
@@ -169,10 +173,12 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                             mediator.addSource(saved) {
                                 mediator.value = it
                             }
+                            submitting.value = false
                         }
 
                         override fun onError(requestId: String, error: ErrorInfo) {
                             submitButtonEnabled.set(true)
+                            submitting.value = false
                         }
 
                         override fun onReschedule(requestId: String, error: ErrorInfo) {

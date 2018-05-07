@@ -1,5 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
+import android.animation.ObjectAnimator
 import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
@@ -14,6 +15,8 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.DecelerateInterpolator
 import kotlinx.android.synthetic.main.fragment_submit_topo.*
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
@@ -65,13 +68,27 @@ class SubmitTopoFragment : Fragment(), Injectable {
             sectorId?.let { sectorId ->
                 binding.vm?.submit(sectorId)?.observe(this, Observer {
                     if (it != null) {
+                        Timber.i("Submission Succeeded")
                         activityInteractor?.onTopoSubmitted(it)
                     } else {
-                        Snackbar.make(binding.submit, "failed to submit topo!", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(binding.submit, "Failed to submit topo!", Snackbar.LENGTH_SHORT).show()
                     }
                 })
             }
         }
+
+        viewModel.submitting.observe(this, Observer {
+            if (it == true) {
+                val animation = ObjectAnimator.ofInt(topo_submit_progress, "progress", 0, 500)
+                animation.duration = 5000 // in milliseconds
+                animation.interpolator = DecelerateInterpolator()
+                animation.repeatCount = Animation.INFINITE
+                animation.repeatMode
+                animation.start()
+            } else {
+                topo_submit_progress.clearAnimation()
+            }
+        })
 
         binding.topoImage.setOnClickListener { selectImage() }
 

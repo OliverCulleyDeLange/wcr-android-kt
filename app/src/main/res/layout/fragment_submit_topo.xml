@@ -56,27 +56,30 @@
             android:src="@drawable/ic_action_add" />
 
         <RelativeLayout
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
             android:layout_gravity="right">
 
             <Button
                 android:id="@+id/submit"
                 style="@style/Wcr_Button"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
                 android:enabled="@{vm.submitButtonEnabled}"
                 android:text="@string/button_submit" />
+
 
             <ProgressBar
                 android:id="@+id/topo_submit_progress"
                 style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/submit"
-                android:progress="@{vm.submitProgress}"
-                app:show="@{vm.submitProgress &gt; 0 &amp;&amp; vm.submitProgress &lt; 100}" />
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerInParent="true"
+                android:max="500"
+                android:progress="0"
+                android:progressDrawable="@drawable/spinner"
+                app:show="@{vm.submitting}" />
         </RelativeLayout>
-
     </LinearLayout>
 </layout>
