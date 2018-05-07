@@ -53,10 +53,17 @@ interface TopoDao : BaseDao<Topo> {
     @WorkerThread
     @Query("SELECT * from topo where locationId = :locationId")
     fun getTopoAndRoutes(locationId: Long): List<TopoAndRoutes>
+
+    //https://developer.android.com/training/data-storage/room/accessing-data
+    @Query("SELECT * FROM topo WHERE name LIKE :search")
+    fun searchOnName(search: String): LiveData<List<Topo>>
 }
 
 @Dao
 interface RouteDao : BaseDao<Route> {
     @Query("SELECT * from route where topoId = :topoId")
     fun loadWithTopoId(topoId: Long): LiveData<List<Route>>
+
+    @Query("SELECT * FROM route WHERE name LIKE :search")
+    fun searchOnName(search: String): LiveData<List<Route>>
 }

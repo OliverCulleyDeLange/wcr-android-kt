@@ -53,4 +53,8 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
         }
         return toposAndRoutes
     }
+
+    fun search(query: String): LiveData<List<Topo>> {
+        return topoDao.searchOnName("%$query%")
+    }
 }

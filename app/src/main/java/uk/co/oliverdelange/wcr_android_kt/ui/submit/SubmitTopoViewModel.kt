@@ -131,7 +131,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         submitButtonEnabled.set(!topoName.value.isNullOrEmpty() &&
                 localTopoImage.value != null &&
                 routes.none {
-                    it.value.name.isNullOrEmpty() ||
+                    it.value.name.isEmpty() ||
                             it.value.description.isNullOrEmpty()
                 })
     }

@@ -47,6 +47,7 @@ import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
 import uk.co.oliverdelange.wcr_android_kt.map.*
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
+import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
@@ -325,9 +326,9 @@ class MapsActivity : AppCompatActivity(),
                     floating_search_view.clearSuggestions()
                     floating_search_view.clearSearchFocus()
 
-                    if (searchSuggestion.location.type == LocationType.CRAG) {
+                    if (searchSuggestion.type == LocationType.CRAG) {
                         TODO("Go to crag")
-                    } else if (searchSuggestion.location.type == LocationType.SECTOR) {
+                    } else if (searchSuggestion.type == LocationType.SECTOR) {
                         TODO("Go to sector")
                     }
                 }
@@ -346,7 +347,7 @@ class MapsActivity : AppCompatActivity(),
         // React to new search results
         binding.vm?.searchResults?.observe(this, Observer {
             if (it != null && it.isNotEmpty()) {
-                floating_search_view.swapSuggestions(it)
+                floating_search_view.swapSuggestions(it) // TODO Don't swap, do diff
             } else {
                 floating_search_view.clearSuggestions()
             }
@@ -355,10 +356,11 @@ class MapsActivity : AppCompatActivity(),
         // Set appropriate icons for search item
         floating_search_view.setOnBindSuggestionCallback(SearchSuggestionsAdapter.OnBindSuggestionCallback { _, leftIcon, _, item, _ ->
             if (item is SearchSuggestionItem) {
-                if (item.location.type == LocationType.CRAG) {
-                    Picasso.with(this).load(R.drawable.location_marker_crag_no_text).into(leftIcon)
-                } else if (item.location.type == LocationType.SECTOR) {
-                    Picasso.with(this).load(R.drawable.location_marker_sector_no_text).into(leftIcon)
+                when (item.type) {
+                    SearchResultType.CRAG -> Picasso.with(this).load(R.drawable.location_marker_crag_no_text).into(leftIcon)
+                    SearchResultType.SECTOR -> Picasso.with(this).load(R.drawable.location_marker_sector_no_text).into(leftIcon)
+                    SearchResultType.TOPO -> Picasso.with(this).load(R.drawable.add_topo_button).into(leftIcon) //TODO Icon
+                    SearchResultType.ROUTE -> Picasso.with(this).load(R.drawable.ic_boulder).into(leftIcon)
                 }
             }
         })

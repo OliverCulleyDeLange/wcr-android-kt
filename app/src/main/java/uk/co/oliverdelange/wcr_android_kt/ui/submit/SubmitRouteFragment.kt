@@ -47,7 +47,7 @@ class SubmitRouteFragment : Fragment(), Injectable {
 
         fragmentId?.let {
             if (binding?.vm?.routes?.containsKey(it) == false) {
-                binding?.vm?.routes?.put(it, Route())
+                binding?.vm?.routes?.put(it, Route(name = ""))
             }
             binding?.fragmentId = fragmentId
         }

@@ -8,8 +8,16 @@ import kotlinx.android.parcel.Parcelize
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
-@Entity
 @Parcelize
+@Entity
+//(foreignKeys = (arrayOf(
+//        ForeignKey(
+//                entity = Location::class,
+//                parentColumns = arrayOf("id"),
+//                childColumns = arrayOf("parentId"),
+//                onUpdate = ForeignKey.CASCADE
+//        )
+//)))
 data class Location(@PrimaryKey(autoGenerate = true) val id: Long? = null,
                     val parentId: Long? = null,
                     var name: String,
@@ -34,18 +42,28 @@ class TopoAndRoutes {
     lateinit var routes: List<Route>
 }
 
-@Entity
+@Entity(foreignKeys = (arrayOf(
+        ForeignKey(
+                entity = Location::class,
+                onUpdate = ForeignKey.CASCADE,
+                parentColumns = arrayOf("id"),
+                childColumns = arrayOf("locationId")
+        )
+)))
 data class Topo(@PrimaryKey(autoGenerate = true) var id: Long? = null,
                 var locationId: Long,
                 var name: String,
                 var image: String)
 
 @Entity(foreignKeys = [(
-        ForeignKey(entity = Topo::class, parentColumns = arrayOf("id"), childColumns = arrayOf("topoId"))
+        ForeignKey(
+                entity = Topo::class,
+                parentColumns = arrayOf("id"),
+                childColumns = arrayOf("topoId"))
         )])
 data class Route(@PrimaryKey var id: Long? = null,
                  var topoId: Long? = null,
-                 var name: String? = null,
+                 var name: String,
                  @Embedded(prefix = "grade_") var grade: Grade? = null,
                  var type: RouteType? = null,
                  var description: String? = null)

@@ -6,10 +6,8 @@ import android.support.design.widget.BottomSheetBehavior
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.model.Location
-import uk.co.oliverdelange.wcr_android_kt.model.LocationType
-import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
-import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
+import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
+import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
@@ -18,7 +16,8 @@ import javax.inject.Singleton
 
 @Singleton
 class MapViewModel @Inject constructor(val locationRepository: LocationRepository,
-                                       val topoRepository: TopoRepository) : ViewModel() {
+                                       val topoRepository: TopoRepository,
+                                       val routeDao: RouteDao) : ViewModel() {
 
     val showFab = ObservableBoolean(true)
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
@@ -113,17 +112,28 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         val trimmedQuery = query.trim()
         if (trimmedQuery.isNotEmpty()) {
             val mediator = MediatorLiveData<List<SearchSuggestionItem>>()
-            mediator.addSource(locationRepository.search(query)) { locations ->
-                val existing = mediator.value
-                val new = locations?.map { SearchSuggestionItem(it.name, it) }
-                if (existing != null && new != null) mediator.value = new + existing
-                else mediator.value = new
+            mediator.addSource(locationRepository.search(query)) { locations: List<Location>? ->
+                addToSearchItems(mediator, locations?.map {
+                    val type = if (it.type == LocationType.CRAG) SearchResultType.CRAG else SearchResultType.SECTOR
+                    SearchSuggestionItem(it.name, type, it.id)
+                })
             }
-//            mediator.addSource(topoRepository) //TODO
+            mediator.addSource(topoRepository.search(query)) { topos: List<Topo>? ->
+                addToSearchItems(mediator, topos?.map { SearchSuggestionItem(it.name, SearchResultType.TOPO, it.id) })
+            }
+            mediator.addSource(routeDao.searchOnName("%$query%")) { routes: List<Route>? ->
+                addToSearchItems(mediator, routes?.map { SearchSuggestionItem(it.name, SearchResultType.ROUTE, it.id) })
+            }
             mediator
         } else {
             AbsentLiveData.create<List<SearchSuggestionItem>>()
         }
+    }
+
+    private fun addToSearchItems(mediator: MediatorLiveData<List<SearchSuggestionItem>>, new: List<SearchSuggestionItem>?) {
+        val existing = mediator.value
+        if (existing != null && new != null) mediator.value = new + existing
+        else mediator.value = new
     }
 
     fun back() {
