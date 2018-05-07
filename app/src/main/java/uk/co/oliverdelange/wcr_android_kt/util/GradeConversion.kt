@@ -48,7 +48,7 @@ fun vToFont(vGrade: VGrade): FontGrade {
         V13 -> return FontGrade.fEightB
         V14 -> return FontGrade.fEightBP
         V15 -> return FontGrade.fEightC
-        else -> return FontGrade.fThree // FIXME have an unknown grade state to fall back onto?
+        else -> return FontGrade.fThree
     }
 }
 

@@ -1,26 +1,28 @@
 package uk.co.oliverdelange.wcr_android_kt.model
 
 import android.arch.persistence.room.*
+import android.os.Parcelable
 import android.support.annotation.DrawableRes
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.android.parcel.Parcelize
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
 @Entity
+@Parcelize
 data class Location(@PrimaryKey(autoGenerate = true) val id: Long? = null,
                     val parentId: Long? = null,
                     var name: String,
                     var lat: Double,
                     var lng: Double,
-                    val type: LocationType) {
-    var greens: Int = 0
-    var oranges: Int = 0
-    var reds: Int = 0
-    var blacks: Int = 0
-    var boulders: Int = 0
-    var sports: Int = 0
-    var trads: Int = 0
-
+                    val type: LocationType,
+                    var greens: Int = 0,
+                    var oranges: Int = 0,
+                    var reds: Int = 0,
+                    var blacks: Int = 0,
+                    var boulders: Int = 0,
+                    var sports: Int = 0,
+                    var trads: Int = 0) : Parcelable {
     @Ignore
     val latlng: LatLng = LatLng(lat, lng)
 }

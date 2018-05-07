@@ -40,6 +40,9 @@ android {
     dexOptions {
         javaMaxHeapSize "2g"
     }
+    androidExtensions {
+        experimental = true
+    }
 }
 
 def versions = [:]

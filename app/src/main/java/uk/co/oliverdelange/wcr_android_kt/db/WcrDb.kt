@@ -40,6 +40,9 @@ interface LocationDao : BaseDao<Location> {
 
     @Query("UPDATE location SET boulders = :boulders, sports = :sports, trads = :trads, greens = :greens, oranges = :oranges, reds = :reds, blacks = :blacks WHERE id =:id")
     fun updateRouteInfo(id: Long, boulders: Int, sports: Int, trads: Int, greens: Int, oranges: Int, reds: Int, blacks: Int)
+
+    @Query("SELECT * FROM location WHERE name LIKE :search")
+    fun searchOnName(search: String): LiveData<List<Location>>
 }
 
 @Dao

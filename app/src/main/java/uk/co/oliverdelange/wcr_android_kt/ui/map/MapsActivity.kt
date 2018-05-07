@@ -23,6 +23,8 @@ import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
+import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -45,6 +47,7 @@ import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
 import uk.co.oliverdelange.wcr_android_kt.map.*
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
+import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
@@ -311,6 +314,52 @@ class MapsActivity : AppCompatActivity(),
             override fun onFocusCleared() {}
             override fun onFocus() {
                 bottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+        })
+
+        floating_search_view.setOnSearchListener(object : FloatingSearchView.OnSearchListener {
+            override fun onSuggestionClicked(searchSuggestion: SearchSuggestion) {
+                Timber.i("Search suggestion clicked: $searchSuggestion")
+                if (searchSuggestion is SearchSuggestionItem) {
+                    floating_search_view.clearQuery()
+                    floating_search_view.clearSuggestions()
+                    floating_search_view.clearSearchFocus()
+
+                    if (searchSuggestion.location.type == LocationType.CRAG) {
+                        TODO("Go to crag")
+                    } else if (searchSuggestion.location.type == LocationType.SECTOR) {
+                        TODO("Go to sector")
+                    }
+                }
+            }
+
+            override fun onSearchAction(currentQuery: String) {
+                // no op
+            }
+        })
+
+        // React to search term changing
+        floating_search_view.setOnQueryChangeListener({ _, newQuery ->
+            binding.vm?.searchQuery?.value = newQuery
+        })
+
+        // React to new search results
+        binding.vm?.searchResults?.observe(this, Observer {
+            if (it != null && it.isNotEmpty()) {
+                floating_search_view.swapSuggestions(it)
+            } else {
+                floating_search_view.clearSuggestions()
+            }
+        })
+
+        // Set appropriate icons for search item
+        floating_search_view.setOnBindSuggestionCallback(SearchSuggestionsAdapter.OnBindSuggestionCallback { _, leftIcon, _, item, _ ->
+            if (item is SearchSuggestionItem) {
+                if (item.location.type == LocationType.CRAG) {
+                    Picasso.with(this).load(R.drawable.location_marker_crag_no_text).into(leftIcon)
+                } else if (item.location.type == LocationType.SECTOR) {
+                    Picasso.with(this).load(R.drawable.location_marker_sector_no_text).into(leftIcon)
+                }
             }
         })
     }

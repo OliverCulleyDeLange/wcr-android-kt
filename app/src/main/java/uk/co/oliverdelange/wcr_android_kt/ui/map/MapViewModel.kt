@@ -5,8 +5,10 @@ import android.databinding.ObservableBoolean
 import android.support.design.widget.BottomSheetBehavior
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
+import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
+import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
 import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
@@ -103,6 +105,25 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     fun onSectorClick(location: Location) {
         selectedLocationId.value = location.id
         mapMode.value = MapMode.SECTOR_MODE
+    }
+
+    val searchQuery = MutableLiveData<String>()
+    val searchResults: LiveData<List<SearchSuggestionItem>> = Transformations.switchMap(searchQuery) { query ->
+        Timber.i("Search query changed to: $query")
+        val trimmedQuery = query.trim()
+        if (trimmedQuery.isNotEmpty()) {
+            val mediator = MediatorLiveData<List<SearchSuggestionItem>>()
+            mediator.addSource(locationRepository.search(query)) { locations ->
+                val existing = mediator.value
+                val new = locations?.map { SearchSuggestionItem(it.name, it) }
+                if (existing != null && new != null) mediator.value = new + existing
+                else mediator.value = new
+            }
+//            mediator.addSource(topoRepository) //TODO
+            mediator
+        } else {
+            AbsentLiveData.create<List<SearchSuggestionItem>>()
+        }
     }
 
     fun back() {

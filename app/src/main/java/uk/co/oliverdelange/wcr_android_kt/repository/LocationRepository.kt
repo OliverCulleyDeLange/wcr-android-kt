@@ -62,4 +62,8 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
         }
         locationDao.updateRouteInfo(locationId, boulders, sports, trads, greens, oranges, reds, blacks)
     }
+
+    fun search(query: String): LiveData<List<Location>> {
+        return locationDao.searchOnName("%$query%")
+    }
 }
