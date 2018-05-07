@@ -4,6 +4,7 @@ import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.databinding.DataBindingUtil
@@ -14,6 +15,8 @@ import android.support.design.widget.BottomSheetBehavior.STATE_EXPANDED
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.view.animation.BounceInterpolator
+import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
 import co.zsmb.materialdrawerkt.builders.accountHeader
 import co.zsmb.materialdrawerkt.builders.drawer
@@ -56,6 +59,8 @@ const val MAP_PADDING_TOP = 150
 
 const val EXTRA_SECTOR_ID = "EXTRA_SECTOR_ID"
 const val REQUEST_SUBMIT = 999
+
+const val BOTTOM_SHEET_OPENED = "BOTTOM_SHEET_OPENED"
 
 class MapsActivity : AppCompatActivity(),
         HasSupportFragmentInjector,
@@ -229,6 +234,9 @@ class MapsActivity : AppCompatActivity(),
             when (it) {
                 DEFAULT_MODE, CRAG_MODE, SECTOR_MODE, TOPO_MODE -> {
                     binding.vm?.showFab?.set(true)
+                    val bottomSheetOpened = getPreferences(Context.MODE_PRIVATE)
+                            .getBoolean(BOTTOM_SHEET_OPENED, false)
+                    if (!bottomSheetOpened) bounceBottomSheet()
                 }
                 SUBMIT_CRAG_MODE, SUBMIT_SECTOR_MODE, SUBMIT_TOPO_MODE -> {
                     binding.vm?.showFab?.set(false)
@@ -315,6 +323,10 @@ class MapsActivity : AppCompatActivity(),
                 when (newState) {
                     STATE_EXPANDED -> {
                         setMapBottomPadding(bottom_sheet.measuredHeight)
+                        with(getPreferences(Context.MODE_PRIVATE).edit()) {
+                            putBoolean(BOTTOM_SHEET_OPENED, true)
+                            apply()
+                        }
                     }
                     STATE_COLLAPSED -> {
                         setMapBottomPadding(bottomSheet?.peekHeight ?: 0)
@@ -329,6 +341,13 @@ class MapsActivity : AppCompatActivity(),
                 fab.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start()
             }
         })
+    }
+
+    private fun bounceBottomSheet() {
+        val animation = TranslateAnimation(0f, 0f, -100f, 0f)
+        animation.duration = 1000
+        animation.interpolator = BounceInterpolator()
+        bottom_sheet.startAnimation(animation)
     }
 
     private fun setMapBottomPadding(padding: Int) {
