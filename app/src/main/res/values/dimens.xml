@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Minimum span required to process scale gesture for API >= 24-->
+    <dimen name="wcr_internalScaleMinSpan24">6mm</dimen>
+    <!--Minimum span required to process scale gesture for API < 24-->
+    <dimen name="wcr_internalScaleMinSpan23">10mm</dimen>
+</resources>

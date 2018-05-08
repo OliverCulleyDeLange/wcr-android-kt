@@ -34,9 +34,14 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.OverScroller;
 import android.widget.Scroller;
+
+import java.lang.reflect.Field;
+
+import uk.co.oliverdelange.wcr_android_kt.R;
 
 public class TouchImageView extends android.support.v7.widget.AppCompatImageView {
 
@@ -106,10 +111,14 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     private void sharedConstructing(Context context) {
         super.setClickable(true);
         this.context = context;
-        //https://github.com/mapbox/mapbox-gestures-android/pull/30/files
-        //https://issuetracker.google.com/issues/37137502
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(context, new GestureListener());
+        try {
+            modifyInternalMinSpanValues();
+        } catch (NoSuchFieldException | IllegalAccessException ex) {
+            // ignore
+        }
+
         matrix = new Matrix();
         prevMatrix = new Matrix();
         m = new float[9];
@@ -126,6 +135,28 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
         setState(State.NONE);
         onDrawReady = false;
         super.setOnTouchListener(new PrivateOnTouchListener());
+    }
+
+
+    /**
+     * Workaround to allow scaling when pointers are close to each other.
+     * References https://github.com/mapbox/mapbox-gestures-android/issues/15
+     * and https://issuetracker.google.com/issues/37131665.
+     * https://github.com/mapbox/mapbox-gestures-android/blob/396106f0b7ce2906194f4a1ec30bff0903c08a45/library/src/main/java/com/mapbox/android/gestures/StandardScaleGestureDetector.java
+     * https://github.com/mapbox/mapbox-gestures-android/pull/30/files
+     * https://issuetracker.google.com/issues/37137502
+     */
+    void modifyInternalMinSpanValues() throws NoSuchFieldException, IllegalAccessException {
+        final Field minSpanField = mScaleDetector.getClass().getDeclaredField("mMinSpan");
+        minSpanField.setAccessible(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            minSpanField.set(mScaleDetector, (int) context.getResources().getDimension(R.dimen.wcr_internalScaleMinSpan24));
+        } else {
+            minSpanField.set(mScaleDetector, (int) context.getResources().getDimension(R.dimen.wcr_internalScaleMinSpan23));
+        }
+        final Field spanSlopField = mScaleDetector.getClass().getDeclaredField("mSpanSlop");
+        spanSlopField.setAccessible(true);
+        spanSlopField.set(mScaleDetector, ViewConfiguration.get(context).getScaledTouchSlop());
     }
 
     @Override
@@ -916,7 +947,7 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
 
-            if (state == State.NONE || state == State.DRAG || state == State.FLING) {
+            if (state == State.NONE || state == State.DRAG || state == State.FLING || state == State.ZOOM) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         last.set(curr);
@@ -926,7 +957,7 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
                         break;
 
                     case MotionEvent.ACTION_MOVE:
-                        if (state == State.DRAG) {
+                        if (state == State.DRAG || state == State.ZOOM) {
                             float deltaX = curr.x - last.x;
                             float deltaY = curr.y - last.y;
                             float fixTransX = getFixDragTrans(deltaX, viewWidth, getImageWidth());
