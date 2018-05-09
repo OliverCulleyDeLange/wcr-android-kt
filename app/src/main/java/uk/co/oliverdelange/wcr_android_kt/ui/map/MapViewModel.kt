@@ -8,6 +8,7 @@ import com.google.android.gms.maps.GoogleMap
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
 import uk.co.oliverdelange.wcr_android_kt.model.*
+import uk.co.oliverdelange.wcr_android_kt.model.RouteType.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
@@ -122,7 +123,15 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
                 addToSearchItems(mediator, topos?.map { SearchSuggestionItem(it.name, SearchResultType.TOPO, it.id) })
             }
             mediator.addSource(routeDao.searchOnName("%$query%")) { routes: List<Route>? ->
-                addToSearchItems(mediator, routes?.map { SearchSuggestionItem(it.name, SearchResultType.ROUTE, it.id) })
+                addToSearchItems(mediator, routes?.map {
+                    val type = when (it.type) {
+                        TRAD -> SearchResultType.ROUTE_TRAD
+                        SPORT -> SearchResultType.ROUTE_SPORT
+                        BOULDERING -> SearchResultType.ROUTE_BOULDER
+                        else -> SearchResultType.ROUTE
+                    }
+                    SearchSuggestionItem(it.name, type, it.id)
+                })
             }
             mediator
         } else {

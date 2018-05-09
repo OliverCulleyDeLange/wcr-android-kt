@@ -47,7 +47,7 @@ import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
 import uk.co.oliverdelange.wcr_android_kt.map.*
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
-import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType
+import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
@@ -201,18 +201,18 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.mapMode?.observe(this, Observer {
             when (it) {
                 DEFAULT_MODE -> {
-                    fabStyle(R.drawable.add_crag_button, R.color.fab_new_crag)
+                    fabStyle(R.drawable.ic_add_crag, R.color.fab_new_crag)
                     refreshCragClusterItems()
                     map.animateCamera(newLatLngZoom(defaultLatLng, DEFAULT_ZOOM))
                     replaceFragment(viewToposFragment, R.id.bottom_sheet)
                 }
                 CRAG_MODE -> {
-                    fabStyle(R.drawable.add_sector_button, R.color.fab_new_sector)
+                    fabStyle(R.drawable.ic_add_sector, R.color.fab_new_sector)
                     refreshCragClusterItems()
                     replaceFragment(viewToposFragment, R.id.bottom_sheet)
                 }
                 SECTOR_MODE -> {
-                    fabStyle(R.drawable.add_topo_button, R.color.fab_new_topo)
+                    fabStyle(R.drawable.ic_add_topo, R.color.fab_new_topo)
                     refreshCragClusterItems()
                     replaceFragment(viewToposFragment, R.id.bottom_sheet)
                 }
@@ -357,10 +357,12 @@ class MapsActivity : AppCompatActivity(),
         floating_search_view.setOnBindSuggestionCallback(SearchSuggestionsAdapter.OnBindSuggestionCallback { _, leftIcon, _, item, _ ->
             if (item is SearchSuggestionItem) {
                 when (item.type) {
-                    SearchResultType.CRAG -> Picasso.with(this).load(R.drawable.location_marker_crag_no_text).into(leftIcon)
-                    SearchResultType.SECTOR -> Picasso.with(this).load(R.drawable.location_marker_sector_no_text).into(leftIcon)
-                    SearchResultType.TOPO -> Picasso.with(this).load(R.drawable.add_topo_button).into(leftIcon) //TODO Icon
-                    SearchResultType.ROUTE -> Picasso.with(this).load(R.drawable.ic_boulder).into(leftIcon)
+                    CRAG -> Picasso.with(this).load(R.drawable.location_marker_crag_no_text).into(leftIcon)
+                    SECTOR -> Picasso.with(this).load(R.drawable.location_marker_sector_no_text).into(leftIcon)
+                    TOPO -> leftIcon.setImageResource(R.drawable.ic_topo)
+                    ROUTE_BOULDER -> Picasso.with(this).load(R.drawable.ic_boulder).into(leftIcon)
+                    ROUTE_TRAD -> Picasso.with(this).load(R.drawable.ic_cam).into(leftIcon)
+                    ROUTE_SPORT -> Picasso.with(this).load(R.drawable.ic_quick_draw).into(leftIcon)
                 }
             }
         })

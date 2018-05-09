@@ -25,6 +25,7 @@
     <color name="crag_light">#FEBDBE</color>
     <color name="sector_accent">#7525db</color>
     <color name="sector_light">#c7a7f0</color>
+    <color name="topo_accent">#001284</color>
 
     <!--FAB colours-->
     <color name="fab_new_crag">@color/crag_light</color>

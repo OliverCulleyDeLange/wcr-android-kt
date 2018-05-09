@@ -4,7 +4,7 @@ import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import kotlinx.android.parcel.Parcelize
 
 enum class SearchResultType {
-    CRAG, SECTOR, TOPO, ROUTE
+    CRAG, SECTOR, TOPO, ROUTE, ROUTE_BOULDER, ROUTE_TRAD, ROUTE_SPORT
 }
 
 @Parcelize
