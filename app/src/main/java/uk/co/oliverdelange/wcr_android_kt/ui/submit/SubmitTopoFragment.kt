@@ -89,7 +89,9 @@ class SubmitTopoFragment : Fragment(), Injectable {
             }
         })
 
-        binding.topoImage.setOnClickListener { selectImage() }
+        binding.topoImageOverlay.setOnClickListener { selectImage() }
+        binding.topoImage.setOnTouchImageViewListener { binding.topoImageOverlay.setZoom(binding.topoImage) }
+        binding.topoImageOverlay.setOnTouchImageViewListener { binding.topoImage.setZoom(binding.topoImageOverlay) }
 
         viewModel.topoNameError.observe(this, Observer { _ ->
             binding.topoNameInputLayout.error = binding.vm?.topoNameError?.value
