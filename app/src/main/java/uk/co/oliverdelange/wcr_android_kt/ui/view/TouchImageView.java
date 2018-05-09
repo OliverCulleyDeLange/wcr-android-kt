@@ -16,6 +16,7 @@ package uk.co.oliverdelange.wcr_android_kt.ui.view;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -54,6 +55,11 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     //
     private static final float SUPER_MIN_MULTIPLIER = .75f;
     private static final float SUPER_MAX_MULTIPLIER = 1.25f;
+
+
+    // The minimum number of pointers needed to react to a touch event.
+    // Defaults to 1
+    private int minPointers;
 
     //
     // Scale of image ranges from minScale to maxScale, where minScale == 1
@@ -101,11 +107,13 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     public TouchImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         sharedConstructing(context);
+        captureAttributes(attrs);
     }
 
     public TouchImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         sharedConstructing(context);
+        captureAttributes(attrs);
     }
 
     private void sharedConstructing(Context context) {
@@ -137,6 +145,13 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
         super.setOnTouchListener(new PrivateOnTouchListener());
     }
 
+    private void captureAttributes(AttributeSet attrs) {
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.TouchImageView);
+
+        minPointers = a.getInt(R.styleable.TouchImageView_minPointers, 1);
+
+        a.recycle();
+    }
 
     /**
      * Workaround to allow scaling when pointers are close to each other.
@@ -945,6 +960,9 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
         public boolean onTouch(View v, MotionEvent event) {
             mScaleDetector.onTouchEvent(event);
             mGestureDetector.onTouchEvent(event);
+            if (event.getPointerCount() < minPointers) {
+                return false;
+            }
             PointF curr = new PointF(event.getX(), event.getY());
 
             if (state == State.NONE || state == State.DRAG || state == State.FLING || state == State.ZOOM) {

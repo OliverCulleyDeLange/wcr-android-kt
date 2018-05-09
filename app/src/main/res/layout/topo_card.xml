@@ -30,6 +30,7 @@
                 android:layout_height="220dp"
                 android:adjustViewBounds="true"
                 app:imageUri="@{topo.image}"
+                app:minPointers="2"
                 app:placeholder="@{@drawable/topo_placeholder}" />
 
             <TextView
