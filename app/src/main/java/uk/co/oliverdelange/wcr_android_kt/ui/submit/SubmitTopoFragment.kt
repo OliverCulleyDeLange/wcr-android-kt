@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -100,14 +101,29 @@ class SubmitTopoFragment : Fragment(), Injectable {
         val pagerAdapter = SubmitRoutePagerAdapter(childFragmentManager, routeFragments)
         binding.routePager.adapter = pagerAdapter
         binding.routePager.clipToPadding = false
-        binding.routePager.setPadding(100, 20, 100, 20)
+        binding.routePager.setPadding(120, 0, 120, 20)
         binding.routePager.pageMargin = 25
         binding.routePager.offscreenPageLimit = 99 // TODO More elegant way of fixing this
+        binding.routePager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageSelected(position: Int) {}
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                val routeCount = binding.routePager.adapter?.count
+                if (routeCount == 0) binding.vm?.shouldShowAddRouteButton?.value = true
+                if (positionOffset > 0) {
+                    val onLastRoute = routeCount == position + 2
+                    binding.vm?.shouldShowAddRouteButton?.value = onLastRoute && positionOffset > 0.99
+                } else {
+                    binding.vm?.shouldShowAddRouteButton?.value = routeCount == position + 1
+                }
+            }
+        })
 
         binding.addRoute.setOnClickListener({
             routeFragments.add(SubmitRouteFragment.newRouteFragment())
             pagerAdapter.notifyDataSetChanged()
             binding.vm?.setEnableSubmit()
+            binding.vm?.shouldShowAddRouteButton?.value = false
         })
 
         binding.vm?.boulderingGradeType?.observe(this, Observer {

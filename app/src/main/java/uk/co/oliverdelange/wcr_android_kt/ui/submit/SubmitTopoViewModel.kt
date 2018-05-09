@@ -34,6 +34,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         else null
     }
 
+    val shouldShowAddRouteButton = MutableLiveData<Boolean>().also { it.value = true }
     val routes = HashMap<Int, Route>()
 
     fun routeNameChanged(fragmentId: Int, text: CharSequence) {
@@ -139,6 +140,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
     val submitting = MutableLiveData<Boolean>().also {
         it.value = false
     }
+
     fun submit(sectorId: Long): MutableLiveData<Pair<Long, List<Long>>> {
         val topoName = topoName.value
         val topoImage = localTopoImage.value
