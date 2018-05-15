@@ -7,12 +7,18 @@ import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private val IO_EXECUTOR = Executors.newSingleThreadExecutor()
+
+fun ioThread(f: () -> Unit) {
+    IO_EXECUTOR.execute(f)
+}
+
 @Singleton
 open class AppExecutors(private val diskIO: Executor, private val networkIO: Executor, private val mainThread: Executor) {
 
     @Inject
     constructor() : this(
-            Executors.newSingleThreadExecutor(),
+            IO_EXECUTOR,
             Executors.newFixedThreadPool(3),
             MainThreadExecutor()
     )

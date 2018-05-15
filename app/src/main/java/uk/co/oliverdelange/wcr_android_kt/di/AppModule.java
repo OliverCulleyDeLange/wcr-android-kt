@@ -1,7 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.di;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
 
 import javax.inject.Singleton;
 
@@ -17,7 +16,7 @@ class AppModule {
     @Singleton
     @Provides
     WcrDb provideDb(Application app) {
-        return Room.databaseBuilder(app, WcrDb.class, "wcr.db").build();
+        return WcrDb.Companion.getInstance(app);
     }
 
     @Singleton
