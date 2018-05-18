@@ -40,6 +40,11 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_route_point" />
 
+            <uk.co.oliverdelange.wcr_android_kt.ui.view.PaintingView
+                android:id="@+id/fingerpaint"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
         </FrameLayout>
 
         <android.support.design.widget.TextInputLayout

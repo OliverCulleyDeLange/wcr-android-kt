@@ -7,6 +7,10 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -28,6 +32,9 @@ import uk.co.oliverdelange.wcr_android_kt.model.VGrade
 import uk.co.oliverdelange.wcr_android_kt.util.fontToV
 import uk.co.oliverdelange.wcr_android_kt.util.inTransaction
 import uk.co.oliverdelange.wcr_android_kt.util.vToFont
+import java.io.File
+import java.io.FileOutputStream
+import java.util.*
 import javax.inject.Inject
 
 
@@ -57,6 +64,11 @@ class SubmitTopoFragment : Fragment(), Injectable {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is ActivityInteractor) activityInteractor = context
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        initFingerPainting()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -174,6 +186,42 @@ class SubmitTopoFragment : Fragment(), Injectable {
                     binding.vm?.setEnableSubmit()
                 }
             }
+        }
+    }
+
+
+    fun initFingerPainting() {
+        val paint = Paint()
+        paint.isAntiAlias = true
+        paint.isDither = true
+        paint.color = -0x10000
+        paint.style = Paint.Style.STROKE
+        paint.strokeJoin = Paint.Join.ROUND
+        paint.strokeCap = Paint.Cap.ROUND
+        paint.strokeWidth = 20f
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
+        paint.alpha = 0x80
+
+        fingerpaint.setPaint(paint)
+    }
+
+    private fun saveDrawnOnImage() {
+        val bitmap = fingerpaint.drawnOnBitmap
+
+        val filesPath = context?.cacheDir?.absolutePath
+        val timestamp = Date().time
+        val file = File("$filesPath/wcr-topo-$timestamp.jpg")
+        try {
+            if (!file.exists()) {
+                file.createNewFile()
+            }
+            val ostream = FileOutputStream(file)
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 10, ostream)
+            ostream.close()
+            fingerpaint.invalidate()
+            Timber.d("Saved drawn on image to %s", file.absolutePath)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to save edited topo image")
         }
     }
 }
