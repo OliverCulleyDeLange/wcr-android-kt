@@ -8,9 +8,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -66,11 +63,6 @@ class SubmitTopoFragment : Fragment(), Injectable {
         if (context is ActivityInteractor) activityInteractor = context
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        initFingerPainting()
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSubmitTopoBinding.inflate(layoutInflater, container, false)
         binding.setLifecycleOwner(this)
@@ -102,9 +94,9 @@ class SubmitTopoFragment : Fragment(), Injectable {
             }
         })
 
-        binding.topoImageOverlay.setOnClickListener { selectImage() }
-        binding.topoImage.setOnTouchImageViewListener { binding.topoImageOverlay.setZoom(binding.topoImage) }
-        binding.topoImageOverlay.setOnTouchImageViewListener { binding.topoImage.setZoom(binding.topoImageOverlay) }
+        binding.selectTopoImage.setOnClickListener {
+            if (viewModel.localTopoImage.value == null) selectImage()
+        }
 
         viewModel.topoNameError.observe(this, Observer { _ ->
             binding.topoNameInputLayout.error = binding.vm?.topoNameError?.value
@@ -189,24 +181,8 @@ class SubmitTopoFragment : Fragment(), Injectable {
         }
     }
 
-
-    fun initFingerPainting() {
-        val paint = Paint()
-        paint.isAntiAlias = true
-        paint.isDither = true
-        paint.color = -0x10000
-        paint.style = Paint.Style.STROKE
-        paint.strokeJoin = Paint.Join.ROUND
-        paint.strokeCap = Paint.Cap.ROUND
-        paint.strokeWidth = 20f
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
-        paint.alpha = 0x80
-
-        fingerpaint.setPaint(paint)
-    }
-
     private fun saveDrawnOnImage() {
-        val bitmap = fingerpaint.drawnOnBitmap
+        val bitmap = topo_image.drawnOnBitmap
 
         val filesPath = context?.cacheDir?.absolutePath
         val timestamp = Date().time
@@ -218,7 +194,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
             val ostream = FileOutputStream(file)
             bitmap?.compress(Bitmap.CompressFormat.JPEG, 10, ostream)
             ostream.close()
-            fingerpaint.invalidate()
+            topo_image.invalidate()
             Timber.d("Saved drawn on image to %s", file.absolutePath)
         } catch (e: Exception) {
             Timber.e(e, "Failed to save edited topo image")

@@ -55,11 +55,10 @@ fun loadImageUrl(view: ImageView, imageUrl: String, placeholder: Drawable) {
             .into(view)
 }
 
-@BindingAdapter("app:imageUri", "app:placeholder")
-fun loadImageUri(view: ImageView, uri: Uri?, placeholder: Drawable) {
+@BindingAdapter("app:imageUri")
+fun loadImageUri(view: ImageView, uri: Uri?) {
     Picasso.with(view.context)
             .load(uri)
-            .placeholder(placeholder)
             .into(view)
 }
 

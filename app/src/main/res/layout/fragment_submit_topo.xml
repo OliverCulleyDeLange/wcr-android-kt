@@ -21,7 +21,15 @@
             android:layout_width="match_parent"
             android:layout_height="300dp">
 
-            <uk.co.oliverdelange.wcr_android_kt.ui.view.TouchImageView
+            <ImageView
+                android:id="@+id/select_topo_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_photo"
+                app:gone="@{vm.localTopoImage != null}" />
+
+            <uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTouchImageView
                 android:id="@+id/topo_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -29,21 +37,7 @@
                 android:background="@color/bg_grey_light"
                 android:scaleType="fitCenter"
                 app:imageUri="@{vm.localTopoImage}"
-                app:placeholder="@{@drawable/ic_photo}"
                 tools:src="@drawable/nature" />
-
-            <uk.co.oliverdelange.wcr_android_kt.ui.view.TouchImageView
-                android:id="@+id/topo_image_overlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_route_point" />
-
-            <uk.co.oliverdelange.wcr_android_kt.ui.view.PaintingView
-                android:id="@+id/fingerpaint"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
 
         </FrameLayout>
 

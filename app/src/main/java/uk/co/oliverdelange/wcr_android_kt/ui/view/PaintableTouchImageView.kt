@@ -1,55 +1,48 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.view
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
+import timber.log.Timber
 
 const val POINT_CAPTURE_TOLERANCE = 50f
 const val DRAW_TOLERANCE = 5f
 
-class PaintingView(c: Context, attributeSet: AttributeSet) : View(c, attributeSet) {
+class PaintableTouchImageView : TouchImageView {
+    constructor(c: Context) : super(c)
+    constructor(c: Context, att: AttributeSet) : super(c, att) {
+        setOnTouchListener { v, event ->
+            onTouch(event)
+        }
+    }
+
+    constructor(c: Context, att: AttributeSet, defStyle: Int) : super(c, att, defStyle)
+
     var drawnOnBitmap: Bitmap? = null
     private var canvas: Canvas? = null
     private val path: Path = Path()
     private val bitmapPaint: Paint = Paint(Paint.DITHER_FLAG)
+    private var paint = Paint().also {
+        it.isAntiAlias = true
+        it.isDither = true
+        it.color = -0x10000
+        it.style = Paint.Style.STROKE
+        it.strokeJoin = Paint.Join.ROUND
+        it.strokeCap = Paint.Cap.ROUND
+        it.strokeWidth = 20f
+        it.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
+        it.alpha = 0x80
+    }
     private var currX: Float = 0f
     private var currY: Float = 0f
-    //    private var originalBitmap: Bitmap? = null
-    private var paint: Paint? = null
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-
-//        val bmpWidth = originalBitmap?.width
-//        val bmpHeight = originalBitmap?.height
-
-//        val widthRatio = w.toFloat() / bmpWidth.toFloat()
-//        val heightRatio = h.toFloat() / bmpHeight.toFloat()
-
-//        val width: Int
-//        val height: Int
-//        if (widthRatio < heightRatio) {
-//            width = Math.round(bmpWidth * widthRatio)
-//            height = Math.round(bmpHeight * widthRatio)
-//        } else {
-//            width = Math.round(bmpWidth * heightRatio)
-//            height = Math.round(bmpHeight * heightRatio)
-//        }
-
-//        drawnOnBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, true)
-//        if (originalBitmap == drawnOnBitmap) {
-        // Bitmap is still immutable as no scaling has been done
-//            drawnOnBitmap = originalBitmap?.copy(Bitmap.Config.ARGB_8888, true)
-//        }
+        Timber.d("TopoImage size changed: w:$w, h:$h")
         drawnOnBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         canvas = Canvas(drawnOnBitmap)
     }
-
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -58,12 +51,13 @@ class PaintingView(c: Context, attributeSet: AttributeSet) : View(c, attributeSe
     }
 
     private fun touch_start(x: Float, y: Float) {
-        //showDialog();
-        path.reset()
-        path.moveTo(x, y)
+        if (path.isEmpty) {
+            path.moveTo(x, y)
+        } else {
+            path.lineTo(x, y)
+        }
         currX = x
         currY = y
-
     }
 
     private fun touch_move(x: Float, y: Float) {
@@ -78,13 +72,10 @@ class PaintingView(c: Context, attributeSet: AttributeSet) : View(c, attributeSe
 
     private fun touch_up() {
         path.lineTo(currX, currY)
-        // commit the path to our offscreen
-        canvas?.drawPath(path, paint)
-        // kill this so we don't double draw
-        path.reset()
+//        canvas?.drawPath(path, paint)
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
+    fun onTouch(event: MotionEvent): Boolean {
         val x = event.x
         val y = event.y
 
@@ -105,12 +96,7 @@ class PaintingView(c: Context, attributeSet: AttributeSet) : View(c, attributeSe
         return true
     }
 
-//    fun setBackgroundBitmap(originalBitmap: Bitmap) {
-//        this.originalBitmap = originalBitmap
-//    }
-
     fun setPaint(paint: Paint) {
         this.paint = paint
     }
-
 }
