@@ -90,6 +90,7 @@ class ToposFragment : Fragment(), Injectable {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val topoAndRoutes = topos.get(position)
             holder.binding.topo = topoAndRoutes.topo
+            holder.binding.topoImage.routes.addAll(topoAndRoutes.routes)
             holder.binding.routeRecycler.adapter = RouteRecyclerAdapter(topoAndRoutes.routes)
         }
 

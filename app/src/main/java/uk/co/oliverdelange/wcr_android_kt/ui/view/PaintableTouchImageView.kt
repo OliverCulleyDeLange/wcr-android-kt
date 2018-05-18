@@ -4,15 +4,13 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
-import timber.log.Timber
 
 const val DRAW_TOLERANCE = 5f
 
 class PaintableTouchImageView(c: Context, att: AttributeSet) : TouchImageView(c, att) {
 
-    private var canvas: Canvas? = null
     private var path = PathCapture()
-    private val paths: MutableMap<Int, PathCapture> = mutableMapOf(Pair(0, path))
+    val paths: MutableMap<Int, PathCapture> = mutableMapOf(Pair(0, path))
     private var currX: Float = 0f
     private var currY: Float = 0f
     private var paint = Paint().also {
@@ -27,9 +25,6 @@ class PaintableTouchImageView(c: Context, att: AttributeSet) : TouchImageView(c,
         it.alpha = 0x80
     }
 
-    fun getPaths(): MutableMap<Int, PathCapture> {
-        return paths
-    }
 
     fun controlPath(id: Int) {
         if (!paths.containsKey(id)) paths[id] = PathCapture()
@@ -39,12 +34,6 @@ class PaintableTouchImageView(c: Context, att: AttributeSet) : TouchImageView(c,
     fun removePath(id: Int?) {
         paths.remove(id)
         invalidate()
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        Timber.d("TopoImage size changed: w:$w, h:$h")
-        canvas = Canvas()
     }
 
     override fun onDraw(canvas: Canvas) {
