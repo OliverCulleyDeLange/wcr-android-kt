@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import timber.log.Timber
 
-const val POINT_CAPTURE_TOLERANCE = 50f
 const val DRAW_TOLERANCE = 5f
 
 class PaintableTouchImageView : TouchImageView {
@@ -21,8 +20,10 @@ class PaintableTouchImageView : TouchImageView {
 
     var drawnOnBitmap: Bitmap? = null
     private var canvas: Canvas? = null
-    private val path: Path = Path()
-    private val bitmapPaint: Paint = Paint(Paint.DITHER_FLAG)
+    private var path = Path()
+    private val paths: MutableMap<Int, Path> = mutableMapOf(Pair(0, path))
+    private var currX: Float = 0f
+    private var currY: Float = 0f
     private var paint = Paint().also {
         it.isAntiAlias = true
         it.isDither = true
@@ -34,8 +35,6 @@ class PaintableTouchImageView : TouchImageView {
         it.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
         it.alpha = 0x80
     }
-    private var currX: Float = 0f
-    private var currY: Float = 0f
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -46,8 +45,19 @@ class PaintableTouchImageView : TouchImageView {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawBitmap(drawnOnBitmap, 0f, 0f, bitmapPaint)
-        canvas.drawPath(path, paint)
+        paths.forEach {
+            canvas.drawPath(it.value, paint)
+        }
+    }
+
+    fun controlPath(id: Int) {
+        if (!paths.containsKey(id)) paths[id] = Path()
+        paths[id]?.let { path = it }
+    }
+
+    fun removePath(id: Int?) {
+        paths.remove(id)
+        invalidate()
     }
 
     private fun touch_start(x: Float, y: Float) {
@@ -72,7 +82,6 @@ class PaintableTouchImageView : TouchImageView {
 
     private fun touch_up() {
         path.lineTo(currX, currY)
-//        canvas?.drawPath(path, paint)
     }
 
     fun onTouch(event: MotionEvent): Boolean {

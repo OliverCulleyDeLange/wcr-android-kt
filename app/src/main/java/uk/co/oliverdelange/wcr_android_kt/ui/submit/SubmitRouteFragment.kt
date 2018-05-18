@@ -17,9 +17,9 @@ import javax.inject.Inject
 
 class SubmitRouteFragment : Fragment(), Injectable {
     companion object {
-        private var id: Int = 0
+        var routeFragmentIdCounter: Int = 0
         fun newRouteFragment(): SubmitRouteFragment {
-            return SubmitRouteFragment().withId(id++)
+            return SubmitRouteFragment().withId(routeFragmentIdCounter++)
         }
     }
 

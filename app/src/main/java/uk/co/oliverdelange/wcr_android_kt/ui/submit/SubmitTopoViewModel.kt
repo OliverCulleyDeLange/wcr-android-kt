@@ -29,26 +29,41 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
     var localTopoImage = MutableLiveData<Uri>()
     val topoName = MutableLiveData<String>()
     val topoNameError = Transformations.map(topoName) {
-        setEnableSubmit()
+        tryEnableSubmit()
         if (it.isEmpty()) "Can not be empty"
         else null
     }
 
     val shouldShowAddRouteButton = MutableLiveData<Boolean>().also { it.value = true }
+    fun setShouldShowAddRouteButton(routeCount: Int?) {
+        if (routeCount == 0) shouldShowAddRouteButton.value = true
+    }
+
+    fun setShouldShowAddRouteButton(routeCount: Int?, position: Int, positionOffset: Float) {
+        setShouldShowAddRouteButton(routeCount)
+        if (positionOffset > 0) {
+            val onLastRoute = routeCount == position + 2
+            shouldShowAddRouteButton.value = onLastRoute && positionOffset > 0.99
+        } else {
+            shouldShowAddRouteButton.value = routeCount == position + 1
+        }
+    }
+
+    val activeRoute = MutableLiveData<Int>()
     val routes = HashMap<Int, Route>()
 
     fun routeNameChanged(fragmentId: Int, text: CharSequence) {
         routes[fragmentId]?.let {
             it.name = text.toString()
         }
-        setEnableSubmit()
+        tryEnableSubmit()
     }
 
     fun routeDescriptionChanged(fragmentId: Int, text: CharSequence) {
         routes[fragmentId]?.let {
             it.description = text.toString()
         }
-        setEnableSubmit()
+        tryEnableSubmit()
     }
 
     fun routeTypeChanged(fragmentId: Int, position: Int) {
@@ -128,7 +143,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
     val submitButtonEnabled = ObservableBoolean(false)
 
-    fun setEnableSubmit() {
+    fun tryEnableSubmit() {
         submitButtonEnabled.set(!topoName.value.isNullOrEmpty() &&
                 localTopoImage.value != null &&
                 routes.none {

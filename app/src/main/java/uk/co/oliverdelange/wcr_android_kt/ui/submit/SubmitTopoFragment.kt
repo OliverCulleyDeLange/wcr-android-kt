@@ -7,7 +7,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -29,9 +28,6 @@ import uk.co.oliverdelange.wcr_android_kt.model.VGrade
 import uk.co.oliverdelange.wcr_android_kt.util.fontToV
 import uk.co.oliverdelange.wcr_android_kt.util.inTransaction
 import uk.co.oliverdelange.wcr_android_kt.util.vToFont
-import java.io.File
-import java.io.FileOutputStream
-import java.util.*
 import javax.inject.Inject
 
 
@@ -61,6 +57,11 @@ class SubmitTopoFragment : Fragment(), Injectable {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is ActivityInteractor) activityInteractor = context
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        SubmitRouteFragment.routeFragmentIdCounter = 0
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -109,25 +110,27 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.routePager.pageMargin = 25
         binding.routePager.offscreenPageLimit = 99 // TODO More elegant way of fixing this
         binding.routePager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageSelected(position: Int) {}
             override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageSelected(position: Int) {
+                binding.vm?.activeRoute?.value = pagerAdapter.getItemId(position).toInt()
+            }
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 val routeCount = binding.routePager.adapter?.count
-                if (routeCount == 0) binding.vm?.shouldShowAddRouteButton?.value = true
-                if (positionOffset > 0) {
-                    val onLastRoute = routeCount == position + 2
-                    binding.vm?.shouldShowAddRouteButton?.value = onLastRoute && positionOffset > 0.99
-                } else {
-                    binding.vm?.shouldShowAddRouteButton?.value = routeCount == position + 1
-                }
+                binding.vm?.setShouldShowAddRouteButton(routeCount, position, positionOffset)
             }
         })
 
+        binding.vm?.activeRoute?.observe(this, Observer { activeRouteId ->
+            activeRouteId?.let { binding.topoImage.controlPath(it) }
+        })
+
         binding.addRoute.setOnClickListener({
-            routeFragments.add(SubmitRouteFragment.newRouteFragment())
+            val routeFragment = SubmitRouteFragment.newRouteFragment()
+            routeFragments.add(routeFragment)
             pagerAdapter.notifyDataSetChanged()
-            binding.vm?.setEnableSubmit()
-            binding.vm?.shouldShowAddRouteButton?.value = false
+            val activeRouteFragId = pagerAdapter.getItemId(binding.routePager.currentItem).toInt()
+            binding.vm?.activeRoute?.value = activeRouteFragId
+            binding.vm?.tryEnableSubmit()
         })
 
         binding.vm?.boulderingGradeType?.observe(this, Observer {
@@ -156,6 +159,8 @@ class SubmitTopoFragment : Fragment(), Injectable {
         routeFragments.remove(routeFragment)
         fragmentManager?.inTransaction { remove(routeFragment) }
         binding.routePager.adapter?.notifyDataSetChanged()
+        binding.topoImage.removePath(routeFragment.fragmentId)
+        binding.vm?.setShouldShowAddRouteButton(binding.routePager.adapter?.count)
     }
 
     fun selectImage() {
@@ -175,29 +180,9 @@ class SubmitTopoFragment : Fragment(), Injectable {
                     activity?.contentResolver?.takePersistableUriPermission(uri, takeFlags)
 
                     binding.vm?.localTopoImage?.value = uri
-                    binding.vm?.setEnableSubmit()
+                    binding.vm?.tryEnableSubmit()
                 }
             }
-        }
-    }
-
-    private fun saveDrawnOnImage() {
-        val bitmap = topo_image.drawnOnBitmap
-
-        val filesPath = context?.cacheDir?.absolutePath
-        val timestamp = Date().time
-        val file = File("$filesPath/wcr-topo-$timestamp.jpg")
-        try {
-            if (!file.exists()) {
-                file.createNewFile()
-            }
-            val ostream = FileOutputStream(file)
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 10, ostream)
-            ostream.close()
-            topo_image.invalidate()
-            Timber.d("Saved drawn on image to %s", file.absolutePath)
-        } catch (e: Exception) {
-            Timber.e(e, "Failed to save edited topo image")
         }
     }
 }
