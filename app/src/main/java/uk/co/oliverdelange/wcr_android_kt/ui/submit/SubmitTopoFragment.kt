@@ -128,6 +128,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
             val routeFragment = SubmitRouteFragment.newRouteFragment()
             routeFragments.add(routeFragment)
             pagerAdapter.notifyDataSetChanged()
+            binding.routePager.currentItem = pagerAdapter.count
             val activeRouteFragId = pagerAdapter.getItemId(binding.routePager.currentItem).toInt()
             binding.vm?.activeRoute?.value = activeRouteFragId
             binding.vm?.tryEnableSubmit()
