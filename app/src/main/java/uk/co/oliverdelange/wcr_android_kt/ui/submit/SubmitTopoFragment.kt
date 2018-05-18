@@ -51,7 +51,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private var activityInteractor: ActivityInteractor? = null
-    private var routeFragments: MutableList<SubmitRouteFragment> = mutableListOf(SubmitRouteFragment.newRouteFragment())
+    private var routeFragments: MutableList<SubmitRouteFragment> = mutableListOf()
     private lateinit var binding: FragmentSubmitTopoBinding
 
     override fun onAttach(context: Context?) {
@@ -114,30 +114,18 @@ class SubmitTopoFragment : Fragment(), Injectable {
             override fun onPageSelected(position: Int) {
                 binding.vm?.activeRoute?.value = pagerAdapter.getItemId(position).toInt()
             }
+
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 val routeCount = binding.routePager.adapter?.count
                 binding.vm?.setShouldShowAddRouteButton(routeCount, position, positionOffset)
             }
         })
 
+        addRoute(pagerAdapter)
+        binding.addRoute.setOnClickListener { addRoute(pagerAdapter) }
+
         binding.vm?.activeRoute?.observe(this, Observer { activeRouteId ->
             activeRouteId?.let { binding.topoImage.controlPath(it) }
-        })
-
-        binding.addRoute.setOnClickListener({
-            //Create the new route fragment and add it to the view pager
-            val routeFragment = SubmitRouteFragment.newRouteFragment()
-            routeFragments.add(routeFragment)
-            pagerAdapter.notifyDataSetChanged()
-            // Automatically scroll to the new route fragment
-            binding.routePager.setCurrentItem(pagerAdapter.count, true)
-            // Get the fragment ID and set it as active so we control the right topo route path
-            val activeRouteFragId = pagerAdapter.getItemId(binding.routePager.currentItem).toInt()
-            binding.vm?.activeRoute?.value = activeRouteFragId
-            // Link the route path capture to the Route in the view model
-            binding.vm?.routes?.get(activeRouteFragId)?.path = binding.topoImage.getPaths()[activeRouteFragId]?.capture
-            // We probably need to disable the submit button if a new route has been added without filled in info.
-            binding.vm?.tryEnableSubmit()
         })
 
         binding.vm?.boulderingGradeType?.observe(this, Observer {
@@ -170,7 +158,19 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.vm?.setShouldShowAddRouteButton(binding.routePager.adapter?.count)
     }
 
-    fun selectImage() {
+    private fun addRoute(pagerAdapter: SubmitRoutePagerAdapter) {
+        //Create the new route fragment and add it to the view pager
+        val routeFragment = SubmitRouteFragment.newRouteFragment()
+        routeFragments.add(routeFragment)
+        pagerAdapter.notifyDataSetChanged()
+        // Automatically scroll to the new route fragment
+        binding.routePager.setCurrentItem(pagerAdapter.count, true)
+        // Get the fragment ID and set it as active so we control the right topo route path
+        val activeRouteFragId = pagerAdapter.getItemId(binding.routePager.currentItem).toInt()
+        binding.vm?.addRoute(activeRouteFragId, binding.topoImage.getPaths())
+    }
+
+    private fun selectImage() {
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_OPEN_DOCUMENT

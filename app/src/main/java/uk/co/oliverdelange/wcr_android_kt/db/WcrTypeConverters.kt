@@ -1,6 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.db
 
 import android.arch.persistence.room.TypeConverter
+import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.model.GradeType
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
@@ -9,15 +10,28 @@ import uk.co.oliverdelange.wcr_android_kt.model.RouteType
 class WcrTypeConverters {
 
     @TypeConverter
-    fun coordsSetToString(coords: Set<Pair<Float, Float>>?): String? {
+    fun coordsSetToString(coords: Set<Pair<Int, Int>>?): String? {
         return coords?.let {
-            "[0.1:0.2]"
+            it.joinToString(",", transform = { pair -> "${pair.first}:${pair.second}" })
         }
     }
 
     @TypeConverter
-    fun stringToCoordsSet(coords: String?): Set<Pair<Float, Float>>? {
-        return setOf(Pair(0.1f, 0.2f))
+    fun stringToCoordsSet(coords: String?): Set<Pair<Int, Int>>? {
+        return coords?.let {
+            try {
+
+                val stringPairs = coords.split(",")
+                val pairs = stringPairs.map {
+                    val parts = it.split(":").map { it.toInt() }
+                    Pair(parts[0], parts[1])
+                }
+                pairs.toSet()
+            } catch (e: Exception) {
+                Timber.e(e, "Error whilst converting topo route path string into Set<Pair<Int, Int>>")
+                emptySet()
+            }
+        }
     }
 
     @TypeConverter

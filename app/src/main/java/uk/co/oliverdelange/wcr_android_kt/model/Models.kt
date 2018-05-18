@@ -68,7 +68,7 @@ data class Route(@PrimaryKey var id: Long? = null,
                  var grade: Grade? = null,
                  var type: RouteType? = null,
                  var description: String? = null,
-                 var path: Set<Pair<Float, Float>>? = null)
+                 var path: Set<Pair<Int, Int>>? = null)
 
 
 @Entity

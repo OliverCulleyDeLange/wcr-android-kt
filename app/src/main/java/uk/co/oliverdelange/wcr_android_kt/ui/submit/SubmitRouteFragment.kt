@@ -45,12 +45,7 @@ class SubmitRouteFragment : Fragment(), Injectable {
         binding?.tradAdjectivalGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradAdjectivalGrade.values().map { it.textRepresentation })
         binding?.tradTechnicalGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradTechnicalGrade.values().map { it.textRepresentation })
 
-        fragmentId?.let {
-            if (binding?.vm?.routes?.containsKey(it) == false) {
-                binding?.vm?.routes?.put(it, Route(name = ""))
-            }
-            binding?.fragmentId = fragmentId
-        }
+        binding?.fragmentId = fragmentId
 
         return binding?.root
     }

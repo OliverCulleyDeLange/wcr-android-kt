@@ -9,15 +9,11 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableInt
 import android.net.Uri
 import android.view.View
-import com.cloudinary.android.MediaManager
-import com.cloudinary.android.callback.ErrorInfo
-import com.cloudinary.android.callback.UploadCallback
-import com.cloudinary.android.preprocess.BitmapEncoder
-import com.cloudinary.android.preprocess.ImagePreprocessChain
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.WorkerService
+import uk.co.oliverdelange.wcr_android_kt.ui.view.PathCapture
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -51,6 +47,16 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
     val activeRoute = MutableLiveData<Int>()
     val routes = HashMap<Int, Route>()
+    fun addRoute(activeRouteFragId: Int, paths: MutableMap<Int, PathCapture>) {
+        activeRoute.value = activeRouteFragId
+        // Link the route path capture to the Route in the view model
+        if (!routes.containsKey(activeRouteFragId)) {
+            routes[activeRouteFragId] = Route(name = "")
+        }
+        routes[activeRouteFragId]?.path = paths[activeRouteFragId]?.capture
+        // We probably need to disable the submit button if a new route has been added without filled in info.
+        tryEnableSubmit()
+    }
 
     fun routeNameChanged(fragmentId: Int, text: CharSequence) {
         routes[fragmentId]?.let {
@@ -164,43 +170,43 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
             submitButtonEnabled.set(false)
             submitting.value = true
             val mediator = MediatorLiveData<Pair<Long, List<Long>>>()
-            MediaManager.get().upload(topoImage)
-                    .unsigned("wcr_topo_upload")
-                    .option("folder", "topo/$sectorId")
-                    .option("public_id", topoName)
-                    .preprocess(ImagePreprocessChain.limitDimensionsChain(640, 640)
-                            .saveWith(BitmapEncoder(BitmapEncoder.Format.WEBP, 80)))
-                    .callback(object : UploadCallback {
-                        override fun onStart(requestId: String) {
-                        }
-
-                        override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
-                            val progress = bytes.toDouble() / totalBytes
-                            Timber.d("Image upload progress: %s", progress.toString())
-                        }
-
-                        override fun onSuccess(requestId: String, resultData: Map<*, *>) {
-                            Timber.d("Image upload success: %s", resultData)
-                            val imageUrl = resultData["secure_url"] as String
-                            val topo = Topo(name = topoName, locationId = sectorId, image = imageUrl)
+//            MediaManager.get().upload(topoImage)
+//                    .unsigned("wcr_topo_upload")
+//                    .option("folder", "topo/$sectorId")
+//                    .option("public_id", topoName)
+//                    .preprocess(ImagePreprocessChain.limitDimensionsChain(640, 640)
+//                            .saveWith(BitmapEncoder(BitmapEncoder.Format.WEBP, 80)))
+//                    .callback(object : UploadCallback {
+//                        override fun onStart(requestId: String) {
+//                        }
+//
+//                        override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
+//                            val progress = bytes.toDouble() / totalBytes
+//                            Timber.d("Image upload progress: %s", progress.toString())
+//                        }
+//
+//                        override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+//                            Timber.d("Image upload success: %s", resultData)
+//                            val imageUrl = resultData["secure_url"] as String
+            val topo = Topo(name = topoName, locationId = sectorId, image = "dummy")
                             val saved = topoRepository.save(topo, routes.values)
                             workerService.updateRouteInfo(sectorId)
                             mediator.addSource(saved) {
                                 mediator.value = it
                             }
                             submitting.value = false
-                        }
-
-                        override fun onError(requestId: String, error: ErrorInfo) {
-                            submitButtonEnabled.set(true)
-                            submitting.value = false
-                        }
-
-                        override fun onReschedule(requestId: String, error: ErrorInfo) {
-                            // your code here
-                        }
-                    })
-                    .dispatch(getApplication())
+//                        }
+//
+//                        override fun onError(requestId: String, error: ErrorInfo) {
+//                            submitButtonEnabled.set(true)
+//                            submitting.value = false
+//                        }
+//
+//                        override fun onReschedule(requestId: String, error: ErrorInfo) {
+//                            // your code here
+//                        }
+//                    })
+//                    .dispatch(getApplication())
             mediator
         } else {
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
