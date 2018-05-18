@@ -9,6 +9,18 @@ import uk.co.oliverdelange.wcr_android_kt.model.RouteType
 class WcrTypeConverters {
 
     @TypeConverter
+    fun coordsSetToString(coords: Set<Pair<Float, Float>>?): String? {
+        return coords?.let {
+            "[0.1:0.2]"
+        }
+    }
+
+    @TypeConverter
+    fun stringToCoordsSet(coords: String?): Set<Pair<Float, Float>>? {
+        return setOf(Pair(0.1f, 0.2f))
+    }
+
+    @TypeConverter
     fun enumTypeToString(enum: Enum<*>?): String {
         return enum?.name ?: ""
     }

@@ -8,20 +8,11 @@ import timber.log.Timber
 
 const val DRAW_TOLERANCE = 5f
 
-class PaintableTouchImageView : TouchImageView {
-    constructor(c: Context) : super(c)
-    constructor(c: Context, att: AttributeSet) : super(c, att) {
-        setOnTouchListener { v, event ->
-            onTouch(event)
-        }
-    }
+class PaintableTouchImageView(c: Context, att: AttributeSet) : TouchImageView(c, att) {
 
-    constructor(c: Context, att: AttributeSet, defStyle: Int) : super(c, att, defStyle)
-
-    var drawnOnBitmap: Bitmap? = null
     private var canvas: Canvas? = null
-    private var path = Path()
-    private val paths: MutableMap<Int, Path> = mutableMapOf(Pair(0, path))
+    private var path = PathCapture()
+    private val paths: MutableMap<Int, PathCapture> = mutableMapOf(Pair(0, path))
     private var currX: Float = 0f
     private var currY: Float = 0f
     private var paint = Paint().also {
@@ -36,11 +27,24 @@ class PaintableTouchImageView : TouchImageView {
         it.alpha = 0x80
     }
 
+    fun getPaths(): MutableMap<Int, PathCapture> {
+        return paths
+    }
+
+    fun controlPath(id: Int) {
+        if (!paths.containsKey(id)) paths[id] = PathCapture()
+        paths[id]?.let { path = it }
+    }
+
+    fun removePath(id: Int?) {
+        paths.remove(id)
+        invalidate()
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         Timber.d("TopoImage size changed: w:$w, h:$h")
-        drawnOnBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        canvas = Canvas(drawnOnBitmap)
+        canvas = Canvas()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -48,16 +52,6 @@ class PaintableTouchImageView : TouchImageView {
         paths.forEach {
             canvas.drawPath(it.value, paint)
         }
-    }
-
-    fun controlPath(id: Int) {
-        if (!paths.containsKey(id)) paths[id] = Path()
-        paths[id]?.let { path = it }
-    }
-
-    fun removePath(id: Int?) {
-        paths.remove(id)
-        invalidate()
     }
 
     private fun touch_start(x: Float, y: Float) {
@@ -107,5 +101,35 @@ class PaintableTouchImageView : TouchImageView {
 
     fun setPaint(paint: Paint) {
         this.paint = paint
+    }
+
+    init {
+        setOnTouchListener { v, event ->
+            onTouch(event)
+        }
+    }
+}
+
+class PathCapture : Path() {
+    val capture = mutableSetOf<Pair<Float, Float>>()
+
+    override fun reset() {
+        super.reset()
+        capture.clear()
+    }
+
+    override fun moveTo(x: Float, y: Float) {
+        super.moveTo(x, y)
+        capture.add(Pair(x, y))
+    }
+
+    override fun quadTo(x1: Float, y1: Float, x2: Float, y2: Float) {
+        super.quadTo(x1, y1, x2, y2)
+        capture.add(Pair(x2, y2))
+    }
+
+    override fun lineTo(x: Float, y: Float) {
+        super.lineTo(x, y)
+        capture.add(Pair(x, y))
     }
 }

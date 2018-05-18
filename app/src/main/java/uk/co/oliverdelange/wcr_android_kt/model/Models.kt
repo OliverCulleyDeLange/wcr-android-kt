@@ -64,9 +64,12 @@ data class Topo(@PrimaryKey(autoGenerate = true) var id: Long? = null,
 data class Route(@PrimaryKey var id: Long? = null,
                  var topoId: Long? = null,
                  var name: String,
-                 @Embedded(prefix = "grade_") var grade: Grade? = null,
+                 @Embedded(prefix = "grade_")
+                 var grade: Grade? = null,
                  var type: RouteType? = null,
-                 var description: String? = null)
+                 var description: String? = null,
+                 var path: Set<Pair<Float, Float>>? = null)
+
 
 @Entity
 data class Grade(@PrimaryKey var string: String,
