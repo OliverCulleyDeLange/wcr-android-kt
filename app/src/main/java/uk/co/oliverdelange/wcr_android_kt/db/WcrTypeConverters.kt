@@ -10,20 +10,20 @@ import uk.co.oliverdelange.wcr_android_kt.model.RouteType
 class WcrTypeConverters {
 
     @TypeConverter
-    fun coordsSetToString(coords: Set<Pair<Int, Int>>?): String? {
+    fun coordsSetToString(coords: Set<Pair<Float, Float>>?): String? {
         return coords?.let {
             it.joinToString(",", transform = { pair -> "${pair.first}:${pair.second}" })
         }
     }
 
     @TypeConverter
-    fun stringToCoordsSet(coords: String?): Set<Pair<Int, Int>>? {
+    fun stringToCoordsSet(coords: String?): Set<Pair<Float, Float>>? {
         return coords?.let {
             try {
 
                 val stringPairs = coords.split(",")
                 val pairs = stringPairs.map {
-                    val parts = it.split(":").map { it.toInt() }
+                    val parts = it.split(":").map { it.toFloat() }
                     Pair(parts[0], parts[1])
                 }
                 pairs.toSet()

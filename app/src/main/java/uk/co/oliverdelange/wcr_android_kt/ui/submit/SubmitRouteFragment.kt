@@ -18,10 +18,15 @@ import javax.inject.Inject
 class SubmitRouteFragment : Fragment(), Injectable {
     companion object {
         var routeFragmentIdCounter: Int = 0
-        fun newRouteFragment(): SubmitRouteFragment {
-            return SubmitRouteFragment().withId(routeFragmentIdCounter++)
+        fun newRouteFragment(submitTopoFragment: SubmitTopoFragment): SubmitRouteFragment {
+            return SubmitRouteFragment()
+                    .withId(routeFragmentIdCounter++)
+                    .inFragment(submitTopoFragment)
         }
     }
+
+    lateinit var submitTopoFragment: SubmitTopoFragment
+    private fun inFragment(f: SubmitTopoFragment): SubmitRouteFragment = apply { this.submitTopoFragment = f }
 
     var fragmentId: Int? = null
     private fun withId(id: Int): SubmitRouteFragment = apply { this.fragmentId = id }
@@ -35,7 +40,7 @@ class SubmitRouteFragment : Fragment(), Injectable {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSubmitRouteBinding.inflate(layoutInflater, container, false)
         binding?.setLifecycleOwner(this)
-        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitTopoViewModel::class.java)
+        val viewModel = ViewModelProviders.of(submitTopoFragment, viewModelFactory).get(SubmitTopoViewModel::class.java)
         binding?.vm = viewModel
 
         binding?.routeTypeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, RouteType.values())

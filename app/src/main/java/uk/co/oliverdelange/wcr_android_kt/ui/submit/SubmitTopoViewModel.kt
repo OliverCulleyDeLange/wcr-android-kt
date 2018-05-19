@@ -18,20 +18,19 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.WorkerService
-import uk.co.oliverdelange.wcr_android_kt.ui.view.PathCapture
+import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTouchImageView
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+//@Singleton
 class SubmitTopoViewModel @Inject constructor(application: Application,
                                               private val topoRepository: TopoRepository,
                                               private val workerService: WorkerService) : AndroidViewModel(application) {
 
-    var localTopoImage = MutableLiveData<Uri>()
-    val topoName = MutableLiveData<String>()
+    val localTopoImage = MutableLiveData<Uri?>()
+    val topoName = MutableLiveData<String?>()
     val topoNameError = Transformations.map(topoName) {
         tryEnableSubmit()
-        if (it.isEmpty()) "Can not be empty"
+        if (it?.isEmpty() == true) "Can not be empty"
         else null
     }
 
@@ -52,7 +51,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
     val activeRoute = MutableLiveData<Int>()
     val routes = HashMap<Int, Route>()
-    fun addRoute(activeRouteFragId: Int, paths: MutableMap<Int, PathCapture>) {
+    fun addRoute(activeRouteFragId: Int, paths: MutableMap<Int, PaintableTouchImageView.PathCapture>) {
         activeRoute.value = activeRouteFragId
         // Link the route path capture to the Route in the view model
         if (!routes.containsKey(activeRouteFragId)) {
@@ -217,5 +216,10 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
             MutableLiveData()
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Timber.d("SubmitTopoViewModel is being destroyed...")
     }
 }

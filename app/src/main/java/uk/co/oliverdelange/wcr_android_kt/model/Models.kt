@@ -69,7 +69,7 @@ data class Route(@PrimaryKey var id: Long? = null,
                  var grade: Grade? = null,
                  var type: RouteType? = null,
                  var description: String? = null,
-                 var path: Set<Pair<Int, Int>>? = null) {
+                 var path: Set<Pair<Float, Float>>? = null) {
 
     fun getRoutePath(): Path {
         val rtnPath = Path()
@@ -77,10 +77,10 @@ data class Route(@PrimaryKey var id: Long? = null,
         if (routePath != null && routePath.size > 1) {
             val iterator = routePath.iterator()
             val firstPoint = iterator.next()
-            rtnPath.moveTo(firstPoint.first.toFloat(), firstPoint.second.toFloat())
+            rtnPath.moveTo(firstPoint.first, firstPoint.second)
             while (iterator.hasNext()) {
                 val next = iterator.next()
-                rtnPath.lineTo(next.first.toFloat(), next.second.toFloat())
+                rtnPath.lineTo(next.first, next.second)
             }
         }
         return rtnPath

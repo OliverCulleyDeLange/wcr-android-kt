@@ -160,7 +160,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
     private fun addRoute(pagerAdapter: SubmitRoutePagerAdapter) {
         //Create the new route fragment and add it to the view pager
-        val routeFragment = SubmitRouteFragment.newRouteFragment()
+        val routeFragment = SubmitRouteFragment.newRouteFragment(this)
         routeFragments.add(routeFragment)
         pagerAdapter.notifyDataSetChanged()
         // Automatically scroll to the new route fragment

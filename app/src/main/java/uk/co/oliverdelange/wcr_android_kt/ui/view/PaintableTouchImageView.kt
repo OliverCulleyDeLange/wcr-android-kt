@@ -97,28 +97,28 @@ class PaintableTouchImageView(c: Context, att: AttributeSet) : TouchImageView(c,
             onTouch(event)
         }
     }
-}
 
-class PathCapture : Path() {
-    val capture = mutableSetOf<Pair<Int, Int>>()
+    inner class PathCapture : Path() {
+        val capture = mutableSetOf<Pair<Float, Float>>()
 
-    override fun reset() {
-        super.reset()
-        capture.clear()
-    }
+        override fun reset() {
+            super.reset()
+            capture.clear()
+        }
 
-    override fun moveTo(x: Float, y: Float) {
-        super.moveTo(x, y)
-        capture.add(Pair(x.toInt(), y.toInt()))
-    }
+        override fun moveTo(x: Float, y: Float) {
+            super.moveTo(x, y)
+            capture.add(Pair(x / width, y / height))
+        }
 
-    override fun quadTo(x1: Float, y1: Float, x2: Float, y2: Float) {
-        super.quadTo(x1, y1, x2, y2)
-        capture.add(Pair(x2.toInt(), y2.toInt()))
-    }
+        override fun quadTo(x1: Float, y1: Float, x2: Float, y2: Float) {
+            super.quadTo(x1, y1, x2, y2)
+            capture.add(Pair(x2 / width, y2 / height))
+        }
 
-    override fun lineTo(x: Float, y: Float) {
-        super.lineTo(x, y)
-        capture.add(Pair(x.toInt(), y.toInt()))
+        override fun lineTo(x: Float, y: Float) {
+            super.lineTo(x, y)
+            capture.add(Pair(x / width, y / height))
+        }
     }
 }

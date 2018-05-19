@@ -10,9 +10,8 @@ import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+//@Singleton
 class SubmitLocationViewModel @Inject constructor(private val locationRepository: LocationRepository) : ViewModel() {
 
     lateinit var locationType: LocationType
