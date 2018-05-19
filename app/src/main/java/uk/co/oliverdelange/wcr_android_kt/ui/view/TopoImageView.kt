@@ -5,6 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import uk.co.oliverdelange.wcr_android_kt.model.Route
 
+//TODO Open source this extension?
 class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
 
     val routes: MutableList<Route> = mutableListOf()
