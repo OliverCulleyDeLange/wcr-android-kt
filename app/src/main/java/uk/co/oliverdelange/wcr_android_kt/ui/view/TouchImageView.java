@@ -72,7 +72,7 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     // MTRANS_X and MTRANS_Y are the other values used. prevMatrix is the matrix
     // saved prior to the screen rotating.
     //
-    private Matrix matrix, prevMatrix;
+    protected Matrix matrix, prevMatrix;
     private State state;
     private float minScale;
     private float maxScale;

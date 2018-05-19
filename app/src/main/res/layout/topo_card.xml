@@ -29,6 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
                 app:imageUri="@{topo.image}"
                 app:minPointers="2"
                 app:placeholder="@{@drawable/topo_placeholder}" />

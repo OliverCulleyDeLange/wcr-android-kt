@@ -39,14 +39,18 @@ abstract class WcrDb : RoomDatabase() {
                                     Location(2, 0, "The Arch - Biscuit Factory", 51.494365, -0.062352, SECTOR, greens = 3, reds = 1)
                             )
                             getInstance(context).topoDao().insertMany(
-                                    Topo(0, 2, "Buttery Biscuit Base", "http://res.cloudinary.com/he5sr1yd9/image/upload/v1525733335/topo/4/Topo.webp"),
-                                    Topo(1, 2, "The Dunker", "http://res.cloudinary.com/he5sr1yd9/image/upload/v1525731153/topo/3/Topo1.webp")
+                                    Topo(0, 2, "Buttery Biscuit Base", "http://via.placeholder.com/640x480"),
+                                    Topo(1, 2, "The Dunker", "http://via.placeholder.com/480x640")
                             )
                             getInstance(context).routeDao().insertMany(
-                                    Route(0, 0, "A biscuit in the mouth is worth two in the hand", Grade.Companion.from(VGrade.V3), RouteType.BOULDERING, "Eating biscuits is good for you"),
-                                    Route(1, 0, "Custard Creams", Grade.Companion.from(FontGrade.fFour), RouteType.BOULDERING, "Mmmmm creamy custard"),
-                                    Route(2, 0, "Bourbons", Grade.Companion.from(TradAdjectivalGrade.E1, TradTechnicalGrade.FiveB), RouteType.TRAD, "Traditional Rich Tea or Digestive?"),
-                                    Route(3, 1, "Fox's Biscuits", Grade.Companion.from(SportGrade.FourB), RouteType.SPORT, "Excuisite")
+                                    Route(0, 0, "A biscuit in the mouth is worth two in the hand", Grade.Companion.from(VGrade.V3), RouteType.BOULDERING, "Eating biscuits is good for you",
+                                            setOf(Pair(0.25f, 0.25f), Pair(0.75f, 0.25f), Pair(0.75f, 0.75f), Pair(0.25f, 0.75f))),
+                                    Route(1, 0, "Custard Creams", Grade.Companion.from(FontGrade.fFour), RouteType.BOULDERING, "Mmmmm creamy custard",
+                                            setOf(Pair(0.4f, 0.4f), Pair(0.6f, 0.4f), Pair(0.6f, 0.6f), Pair(0.4f, 0.6f))),
+                                    Route(2, 0, "Bourbons", Grade.Companion.from(TradAdjectivalGrade.E1, TradTechnicalGrade.FiveB), RouteType.TRAD, "Traditional Rich Tea or Digestive?",
+                                            setOf(Pair(0f, 0f), Pair(1f, 0f), Pair(1f, 1f), Pair(0f, 1f))),
+                                    Route(3, 1, "Fox's Biscuits", Grade.Companion.from(SportGrade.FourB), RouteType.SPORT, "Excuisite",
+                                            setOf(Pair(0.25f, 0.25f), Pair(0.75f, 0.25f), Pair(0.75f, 0.75f), Pair(0.25f, 0.75f)))
                             )
                         }
                     }

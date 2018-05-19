@@ -146,20 +146,24 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     fun back() {
-        when (mapMode.value) {
-            MapMode.DEFAULT_MODE -> bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
-            MapMode.CRAG_MODE -> {
-                mapMode.value = MapMode.DEFAULT_MODE
-                selectedLocationId.value = null
+        if (bottomSheetState.value == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
+        } else {
+            when (mapMode.value) {
+                MapMode.DEFAULT_MODE -> bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
+                MapMode.CRAG_MODE -> {
+                    mapMode.value = MapMode.DEFAULT_MODE
+                    selectedLocationId.value = null
+                }
+                MapMode.SUBMIT_CRAG_MODE -> mapMode.value = MapMode.DEFAULT_MODE
+                MapMode.SECTOR_MODE -> {
+                    mapMode.value = MapMode.CRAG_MODE
+                    selectedLocation.value?.parentId?.let { selectedLocationId.value = it }
+                }
+                MapMode.SUBMIT_SECTOR_MODE -> mapMode.value = MapMode.CRAG_MODE
+                MapMode.TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE
+                MapMode.SUBMIT_TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE
             }
-            MapMode.SUBMIT_CRAG_MODE -> mapMode.value = MapMode.DEFAULT_MODE
-            MapMode.SECTOR_MODE -> {
-                mapMode.value = MapMode.CRAG_MODE
-                selectedLocation.value?.parentId?.let { selectedLocationId.value = it }
-            }
-            MapMode.SUBMIT_SECTOR_MODE -> mapMode.value = MapMode.CRAG_MODE
-            MapMode.TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE
-            MapMode.SUBMIT_TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE
         }
     }
 }
