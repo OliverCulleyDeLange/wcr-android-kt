@@ -13,28 +13,14 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.save()
-        val zoomedRectangle = zoomedRect
-        val drawableW = drawable.intrinsicWidth
-        val drawableH = drawable.intrinsicHeight
-//        canvas.concat(matrix)
-
-        val right = zoomedRectangle.right * width
-        val left = zoomedRectangle.left * width
-        val top = zoomedRectangle.top * height
-        val bottom = zoomedRectangle.bottom * height
-
-        val px = (right + left) / 2
-        val py = (bottom + top) / 2
-
-//        canvas.clipRect(left, top, right, bottom)
-        canvas.scale(currentZoom, currentZoom, px, py)
+        canvas.concat(matrix)
         routes.forEach {
             path.reset()
             //FIXME Logic on draw - prepopulate paths somewhere
-            canvas.drawPath(getRoutePath(path, it.path, width, height), paint)
+            canvas.drawPath(getRoutePath(path, it.path, drawable.intrinsicWidth, drawable.intrinsicHeight), paint)
         }
-//            canvas.translate()
         canvas.restore()
+        printMatrixInfo()
     }
 
     private var paint = Paint().also {
