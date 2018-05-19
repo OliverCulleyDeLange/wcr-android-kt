@@ -1,10 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.view
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
+import android.graphics.*
 import android.util.AttributeSet
 import uk.co.oliverdelange.wcr_android_kt.model.Route
 
@@ -15,8 +12,23 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
         super.onDraw(canvas)
         routes.forEach {
             //FIXME Logic on draw - prepopulate paths somewhere
-            canvas.drawPath(it.getRoutePath(), paint)
+            canvas.drawPath(getRoutePath(it), paint)
         }
+    }
+
+    fun getRoutePath(it: Route): Path {
+        val rtnPath = Path()
+        val routePath = it.path
+        if (routePath != null && routePath.size > 1) {
+            val iterator = routePath.iterator()
+            val firstPoint = iterator.next()
+            rtnPath.moveTo(firstPoint.first * width, firstPoint.second * height)
+            while (iterator.hasNext()) {
+                val next = iterator.next()
+                rtnPath.lineTo(next.first * width, next.second * height)
+            }
+        }
+        return rtnPath
     }
 
     private var paint = Paint().also {
