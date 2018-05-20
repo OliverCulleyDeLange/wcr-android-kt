@@ -1,13 +1,12 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.view
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Path
 import android.util.AttributeSet
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.model.Route
 
-
-//TODO Open source this extension?
 class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
 
     var routes: List<Route> = emptyList()
@@ -39,25 +38,15 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
                 }
             }
             when (it.grade?.colour) {
-                GradeColour.GREEN -> paint.setARGB(100, 80, 220, 20)
-                GradeColour.ORANGE -> paint.setARGB(100, 220, 110, 0)
-                GradeColour.RED -> paint.setARGB(100, 255, 0, 0)
-                GradeColour.BLACK -> paint.setARGB(100, 0, 0, 0)
+                GradeColour.GREEN -> canvas.drawPath(routePath, greenRoutePaint)
+                GradeColour.ORANGE -> canvas.drawPath(routePath, orangeRoutePaint)
+                GradeColour.RED -> canvas.drawPath(routePath, redRoutePaint)
+                GradeColour.BLACK -> canvas.drawPath(routePath, blackRoutePaint)
             }
-            paint.pathEffect = null
-            if (selectedRoute?.id == it.id) paint.pathEffect = DashPathEffect(floatArrayOf(20f, 20f), 0f)
-            canvas.drawPath(routePath, paint)
+            if (selectedRoute?.id == it.id) canvas.drawPath(routePath, selectedRoutePaint)
         }
         printMatrixInfo()
     }
 
-    private var paint = Paint().also {
-        it.isAntiAlias = true
-        it.isDither = true
-        it.style = Paint.Style.STROKE
-        it.strokeJoin = Paint.Join.ROUND
-        it.strokeCap = Paint.Cap.ROUND
-        it.strokeWidth = 10f
-        it.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
-    }
+
 }
