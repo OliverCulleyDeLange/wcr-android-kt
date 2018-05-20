@@ -6,10 +6,21 @@ import android.util.AttributeSet
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.model.Route
 
+
 //TODO Open source this extension?
 class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
 
-    val routes: MutableList<Route> = mutableListOf()
+    var routes: List<Route> = emptyList()
+        set(value) {
+            field = value
+            selectedRoute = routes[0]
+        }
+
+    var selectedRoute: Route? = null
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -33,6 +44,8 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
                 GradeColour.RED -> paint.setARGB(100, 255, 0, 0)
                 GradeColour.BLACK -> paint.setARGB(100, 0, 0, 0)
             }
+            paint.pathEffect = null
+            if (selectedRoute?.id == it.id) paint.pathEffect = DashPathEffect(floatArrayOf(20f, 20f), 0f)
             canvas.drawPath(routePath, paint)
         }
         printMatrixInfo()

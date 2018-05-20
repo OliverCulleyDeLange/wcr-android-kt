@@ -12,6 +12,8 @@ import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearSnapHelper
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RecyclerView.NO_POSITION
+import android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_MASK
@@ -90,8 +92,20 @@ class ToposFragment : Fragment(), Injectable {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val topoAndRoutes = topos.get(position)
             holder.binding.topo = topoAndRoutes.topo
-            holder.binding.topoImage.routes.addAll(topoAndRoutes.routes)
+            holder.binding.topoImage.routes = topoAndRoutes.routes
             holder.binding.routeRecycler.adapter = RouteRecyclerAdapter(topoAndRoutes.routes)
+            holder.binding.routeRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (newState == SCROLL_STATE_IDLE) {
+                        val selectedRoutePosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                        if (selectedRoutePosition != NO_POSITION) {
+                            val route = topoAndRoutes.routes[selectedRoutePosition]
+                            holder.binding.topoImage.selectedRoute = route
+                        }
+                    }
+                }
+            })
         }
 
         fun updateTopos(newTopos: List<TopoAndRoutes>) {
@@ -140,7 +154,7 @@ class ToposFragment : Fragment(), Injectable {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val route = routes.get(position)
+            val route = routes[position]
             holder.binding.route = route
         }
 
