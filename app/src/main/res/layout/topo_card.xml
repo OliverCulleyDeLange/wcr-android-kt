@@ -41,7 +41,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/topo_image"
                 android:text="@{topo.name}"
-                tools:text="Topo name" />
+                android:singleLine="true"
+                tools:text="Topo name that is really long so we see the wrapping behaviour" />
 
             <View
                 android:id="@+id/divider"
