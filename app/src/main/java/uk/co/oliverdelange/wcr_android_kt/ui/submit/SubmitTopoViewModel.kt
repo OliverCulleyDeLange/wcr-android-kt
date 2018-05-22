@@ -67,6 +67,23 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         tryEnableSubmit()
     }
 
+    fun removeRoute(fragmentId: Int?) {
+        routes.remove(fragmentId)
+
+        // Now set active route to right or left sibling
+        val activeRouteVal = activeRoute.value
+        activeRouteVal?.let { activeRouteFragmentId ->
+            if (routes.size > 1) {
+                val firstRouteToRight = routes.keys.firstOrNull { it > activeRouteFragmentId }
+                val firstRouteToLeft = routes.keys.firstOrNull { it < activeRouteFragmentId }
+                if (firstRouteToRight != null) activeRoute.value = firstRouteToRight
+                else activeRoute.value = firstRouteToLeft
+            } else if (routes.size == 1) {
+                activeRoute.value = routes.keys.first()
+            }
+        }
+    }
+
     fun routeNameChanged(fragmentId: Int, text: CharSequence) {
         routes[fragmentId]?.let {
             Timber.d("Route fragment $fragmentId (${it.name}) name changed to $text")
@@ -114,7 +131,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
     }
 
     val halfFinishedTradGrades = mutableMapOf<Long, Pair<TradAdjectivalGrade?, TradTechnicalGrade?>>()
-    val boulderingGradeType = MutableLiveData<GradeType>()
+    val useVGradeForBouldering = getApplication<WcrApp>().prefs.getBoolean(USE_V_GRADE_FOR_BOULDERING, true)
     val routeColourUpdate = MutableLiveData<Int>()
     fun gradeChanged(fragmentId: Int, position: Int, gradeDropDown: GradeDropDown) {
         routeColourUpdate.value = fragmentId
@@ -123,12 +140,10 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                 GradeDropDown.V -> {
                     route.grade = Grade.from(VGrade.values()[position])
                     Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
-                    boulderingGradeType.value = GradeType.V
                 }
                 GradeDropDown.FONT -> {
                     route.grade = Grade.from(FontGrade.values()[position])
                     Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
-                    boulderingGradeType.value = GradeType.FONT
                 }
                 GradeDropDown.SPORT -> {
                     route.grade = Grade.from(SportGrade.values()[position])

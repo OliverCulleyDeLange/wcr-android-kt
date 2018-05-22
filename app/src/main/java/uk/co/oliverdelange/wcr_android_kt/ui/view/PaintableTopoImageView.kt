@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Path
 import android.util.AttributeSet
 import android.view.MotionEvent
+import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.model.Route
 
@@ -21,6 +22,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
     private var selectedRoute: Int = -1
 
     fun refresh() {
+        Timber.d("Refreshing topo drawings")
         invalidate()
     }
 
@@ -29,12 +31,14 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
         paths[routeFragmentId]?.let { path = it }
         routes[routeFragmentId] = route
         selectedRoute = routeFragmentId
+        Timber.d("Controlling topo route path for Fragment with ID $routeFragmentId")
         invalidate()
     }
 
     fun removePath(id: Int?) {
         paths.remove(id)
         routes.remove(id)
+        Timber.d("Removing topo route path $id")
         invalidate()
     }
 

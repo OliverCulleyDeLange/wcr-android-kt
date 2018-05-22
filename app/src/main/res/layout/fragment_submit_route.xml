@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:spinner="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -104,8 +103,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="6"
                     android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.V)}"
-                    android:visibility="@{vm.shouldShow(fragmentId, GradeType.V)}"
-                    spinner:highlighted="@{vm.boulderingGradeType == GradeType.V}" />
+                    android:visibility="@{vm.shouldShow(fragmentId, GradeType.V)}" />
 
                 <Spinner
                     android:id="@+id/f_grade_spinner"
@@ -113,8 +111,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="6"
                     android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.FONT)}"
-                    android:visibility="@{vm.shouldShow(fragmentId, GradeType.FONT)}"
-                    spinner:highlighted="@{vm.boulderingGradeType == GradeType.FONT}" />
+                    android:visibility="@{vm.shouldShow(fragmentId, GradeType.FONT)}" />
 
                 <Spinner
                     android:id="@+id/trad_adjectival_grade_spinner"

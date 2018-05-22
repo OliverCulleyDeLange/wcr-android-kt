@@ -7,7 +7,6 @@ import android.support.annotation.ColorInt
 import android.view.View
 import android.view.View.*
 import android.widget.ImageView
-import android.widget.Spinner
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 import uk.co.oliverdelange.wcr_android_kt.R
@@ -68,15 +67,6 @@ fun loadImageUri(view: ImageView, uri: String?, placeholder: Drawable) {
             .load(Uri.parse(uri))
             .placeholder(placeholder)
             .into(view)
-}
-
-@BindingAdapter("spinner:highlighted")
-fun setSpinnerHighlight(spinner: Spinner?, highlighted: Boolean) {
-    val spinnerItem = spinner?.selectedView as TextView?
-    spinnerItem?.let {
-        if (highlighted) spinnerItem.setTextColor(spinnerItem.resources.getColor(R.color.dark_gray))
-        else spinnerItem.setTextColor(spinnerItem.resources.getColor(R.color.text_grey_light))
-    }
 }
 
 @BindingAdapter("android:src")

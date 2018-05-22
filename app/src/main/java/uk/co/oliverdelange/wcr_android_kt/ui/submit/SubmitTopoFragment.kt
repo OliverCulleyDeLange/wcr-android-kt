@@ -124,8 +124,8 @@ class SubmitTopoFragment : Fragment(), Injectable {
             activeRouteFragmentId?.let { routeFragmentId ->
                 val route = binding.vm?.routes?.get(routeFragmentId)
                 route?.let { route ->
+                    Timber.d("Active route fragment changed: $activeRouteFragmentId - route name: ${route.name}")
                     binding.topoImage.controlPath(routeFragmentId, route)
-                    Timber.d("Controlling route fragment $activeRouteFragmentId - route name: ${route.name}")
                 }
             } //FragmentID
         })
@@ -157,7 +157,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
                         routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedSportGrade.ordinal, GradeDropDown.SPORT)
                     }
                     RouteType.BOULDERING -> {
-                        if (binding.vm?.boulderingGradeType == GradeType.V) {
+                        if (binding.vm?.useVGradeForBouldering == true) {
                             Timber.d("Route type now BOULDERING, setting V grade")
                             val selectedVGrade = VGrade.values()[routeFragmentBinding.vGradeSpinner.selectedItemPosition]
 //                        routeFragmentBinding.vGradeSpinner.setSelection(selectedVGrade.ordinal, false)
@@ -178,10 +178,14 @@ class SubmitTopoFragment : Fragment(), Injectable {
     }
 
     fun removeRouteFragment(routeFragment: SubmitRouteFragment) {
+        binding.vm?.removeRoute(routeFragment.fragmentId)
+        // Remove path from topo
+        binding.topoImage.removePath(routeFragment.fragmentId)
+        // Remove the fragment
         routeFragments.remove(routeFragment)
         fragmentManager?.inTransaction { remove(routeFragment) }
         binding.routePager.adapter?.notifyDataSetChanged()
-        binding.topoImage.removePath(routeFragment.fragmentId)
+        // Check if we should now show the add route button
         binding.vm?.setShouldShowAddRouteButton(binding.routePager.adapter?.count)
     }
 

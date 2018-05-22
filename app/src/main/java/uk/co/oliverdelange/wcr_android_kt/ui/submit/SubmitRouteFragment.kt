@@ -55,11 +55,6 @@ class SubmitRouteFragment : Fragment(), Injectable {
         return binding?.root
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        binding?.vm?.routes?.remove(fragmentId)
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val parent = parentFragment
