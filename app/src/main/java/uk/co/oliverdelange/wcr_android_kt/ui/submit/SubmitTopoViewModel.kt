@@ -18,7 +18,7 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.WorkerService
-import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTouchImageView
+import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTopoImageView
 import javax.inject.Inject
 
 //@Singleton
@@ -51,19 +51,23 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
     val activeRoute = MutableLiveData<Int>()
     val routes = HashMap<Int, Route>()
-    fun addRoute(activeRouteFragId: Int, paths: MutableMap<Int, PaintableTouchImageView.PathCapture>) {
-        activeRoute.value = activeRouteFragId
-        // Link the route path capture to the Route in the view model
+    fun addRoute(activeRouteFragId: Int, paths: MutableMap<Int, PaintableTopoImageView.PathCapture>) {
         if (!routes.containsKey(activeRouteFragId)) {
             routes[activeRouteFragId] = Route(name = "")
+            Timber.d("Added empty route to view model with fragment id $activeRouteFragId")
         }
-        routes[activeRouteFragId]?.path = paths[activeRouteFragId]?.capture
+        activeRoute.value = activeRouteFragId
+        // Link the route path capture to the Route in the view model
+        val pathCapture = paths[activeRouteFragId]?.capture
+        routes[activeRouteFragId]?.path = pathCapture
+        Timber.d("Set route $activeRouteFragId path to $pathCapture")
         // We probably need to disable the submit button if a new route has been added without filled in info.
         tryEnableSubmit()
     }
 
     fun routeNameChanged(fragmentId: Int, text: CharSequence) {
         routes[fragmentId]?.let {
+            Timber.d("Route fragment $fragmentId (${it.name}) name changed to $text")
             it.name = text.toString()
         }
         tryEnableSubmit()
@@ -72,23 +76,27 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
     fun routeDescriptionChanged(fragmentId: Int, text: CharSequence) {
         routes[fragmentId]?.let {
             it.description = text.toString()
+            Timber.d("Route fragment $fragmentId (${it.name}) description changed to ${it.description}")
         }
         tryEnableSubmit()
     }
 
+    val routeTypeUpdate = MutableLiveData<RouteType>()
     fun routeTypeChanged(fragmentId: Int, position: Int) {
         routes[fragmentId]?.let {
             val routeType = RouteType.values()[position]
             it.type = routeType
+            Timber.d("Route fragment $fragmentId (${it.name}) type changed to ${it.type}")
             setGradeVisibility(fragmentId, routeType)
+            routeTypeUpdate.value = routeType
         }
     }
 
-    private fun setGradeVisibility(fragmentId: Int, routeType: RouteType): Unit? {
+    private fun setGradeVisibility(fragmentId: Int, routeType: RouteType) {
         for (gradeType in GradeType.values()) {
             visibilityTracker[Pair(fragmentId, gradeType)]?.set(View.GONE)
         }
-        return when (routeType) {
+        when (routeType) {
             RouteType.TRAD -> visibilityTracker[Pair(fragmentId, GradeType.TRAD)]?.set(View.VISIBLE)
             RouteType.SPORT -> visibilityTracker[Pair(fragmentId, GradeType.SPORT)]?.set(View.VISIBLE)
             RouteType.BOULDERING -> {
@@ -100,13 +108,16 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
     val halfFinishedTradGrades = mutableMapOf<Long, Pair<TradAdjectivalGrade?, TradTechnicalGrade?>>()
     val boulderingGradeType = MutableLiveData<GradeType>()
+    val routeColourUpdate = MutableLiveData<Int>()
     var autoGradeChange = false
     fun gradeChanged(fragmentId: Int, position: Int, gradeDropDown: GradeDropDown) {
+        routeColourUpdate.value = fragmentId
         routes[fragmentId]?.let { route ->
             when (gradeDropDown) {
                 GradeDropDown.V -> {
                     if (!autoGradeChange) {
                         route.grade = Grade.from(VGrade.values()[position])
+                        Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
                         boulderingGradeType.value = GradeType.V
                     } else {
                         autoGradeChange = false
@@ -115,18 +126,23 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                 GradeDropDown.FONT -> {
                     if (!autoGradeChange) {
                         route.grade = Grade.from(FontGrade.values()[position])
+                        Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
                         boulderingGradeType.value = GradeType.FONT
                     } else {
                         autoGradeChange = false
                     }
                 }
-                GradeDropDown.SPORT -> route.grade = Grade.from(SportGrade.values()[position])
+                GradeDropDown.SPORT -> {
+                    route.grade = Grade.from(SportGrade.values()[position])
+                    Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
+                }
                 GradeDropDown.TRAD_ADJ -> {
                     val routeId = fragmentId.toLong()
                     val chosenTradAdjGrade = TradAdjectivalGrade.values()[position]
                     val halfFinishedTradGrade = halfFinishedTradGrades[routeId]
                     if (halfFinishedTradGrade?.second != null) {
                         route.grade = Grade.from(chosenTradAdjGrade, halfFinishedTradGrade.second!!)
+                        Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
                     }
                     halfFinishedTradGrades[routeId] = Pair(chosenTradAdjGrade, halfFinishedTradGrades[routeId]?.second)
                 }
@@ -136,6 +152,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                     val halfFinishedTradGrade = halfFinishedTradGrades[routeId]
                     if (halfFinishedTradGrade?.first != null) {
                         route.grade = Grade.from(halfFinishedTradGrade.first!!, chosenTradTechGrade)
+                        Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
                     }
                     halfFinishedTradGrades[routeId] = Pair(halfFinishedTradGrades[routeId]?.first, chosenTradTechGrade)
                 }

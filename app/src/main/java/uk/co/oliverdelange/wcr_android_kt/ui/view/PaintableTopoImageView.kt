@@ -1,45 +1,54 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.view
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Path
 import android.util.AttributeSet
 import android.view.MotionEvent
+import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
+import uk.co.oliverdelange.wcr_android_kt.model.Route
 
 const val DRAW_TOLERANCE = 5f
 
-class PaintableTouchImageView(c: Context, att: AttributeSet) : TouchImageView(c, att) {
+class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, att) {
 
     private var path = PathCapture()
     val paths: MutableMap<Int, PathCapture> = mutableMapOf(Pair(0, path))
+    val routes = mutableMapOf<Int, Route>()
     private var currX: Float = 0f
     private var currY: Float = 0f
-    private var paint = Paint().also {
-        it.isAntiAlias = true
-        it.isDither = true
-        it.color = -0x10000
-        it.style = Paint.Style.STROKE
-        it.strokeJoin = Paint.Join.ROUND
-        it.strokeCap = Paint.Cap.ROUND
-        it.strokeWidth = 20f
-        it.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
-        it.alpha = 0x80
+
+    private var selectedRoute: Int = -1
+
+    fun refresh() {
+        invalidate()
     }
 
-
-    fun controlPath(id: Int) {
-        if (!paths.containsKey(id)) paths[id] = PathCapture()
-        paths[id]?.let { path = it }
+    fun controlPath(routeFragmentId: Int, route: Route) {
+        if (!paths.containsKey(routeFragmentId)) paths[routeFragmentId] = PathCapture()
+        paths[routeFragmentId]?.let { path = it }
+        routes[routeFragmentId] = route
+        selectedRoute = routeFragmentId
+        invalidate()
     }
 
     fun removePath(id: Int?) {
         paths.remove(id)
+        routes.remove(id)
         invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        paths.forEach {
-            canvas.drawPath(it.value, paint)
+        routes.forEach { routeFragmentId, route ->
+            val routePath = paths[routeFragmentId]
+            when (route.grade?.colour) {
+                GradeColour.GREEN -> canvas.drawPath(routePath, greenRoutePaint)
+                GradeColour.ORANGE -> canvas.drawPath(routePath, orangeRoutePaint)
+                GradeColour.RED -> canvas.drawPath(routePath, redRoutePaint)
+                GradeColour.BLACK -> canvas.drawPath(routePath, blackRoutePaint)
+            }
+            if (selectedRoute == routeFragmentId) canvas.drawPath(routePath, selectedRoutePaint)
         }
     }
 
@@ -86,10 +95,6 @@ class PaintableTouchImageView(c: Context, att: AttributeSet) : TouchImageView(c,
             }
         }
         return true
-    }
-
-    fun setPaint(paint: Paint) {
-        this.paint = paint
     }
 
     init {

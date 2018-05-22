@@ -22,9 +22,7 @@ import kotlinx.android.synthetic.main.fragment_submit_topo.*
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
-import uk.co.oliverdelange.wcr_android_kt.model.FontGrade
-import uk.co.oliverdelange.wcr_android_kt.model.GradeType
-import uk.co.oliverdelange.wcr_android_kt.model.VGrade
+import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.util.fontToV
 import uk.co.oliverdelange.wcr_android_kt.util.inTransaction
 import uk.co.oliverdelange.wcr_android_kt.util.vToFont
@@ -124,26 +122,76 @@ class SubmitTopoFragment : Fragment(), Injectable {
         addRoute(pagerAdapter)
         binding.addRoute.setOnClickListener { addRoute(pagerAdapter) }
 
-        binding.vm?.activeRoute?.observe(this, Observer { activeRouteId ->
-            activeRouteId?.let { binding.topoImage.controlPath(it) }
+        binding.vm?.activeRoute?.observe(this, Observer { activeRouteFragmentId ->
+            activeRouteFragmentId?.let { routeFragmentId ->
+                val route = binding.vm?.routes?.get(routeFragmentId)
+                route?.let { route ->
+                    binding.topoImage.controlPath(routeFragmentId, route)
+                    Timber.d("Controlling route fragment $activeRouteFragmentId - route name: ${route.name}")
+                }
+            } //FragmentID
         })
 
         binding.vm?.boulderingGradeType?.observe(this, Observer {
             it?.let { gradeType ->
                 val submitRouteFragment = routeFragments[binding.routePager.currentItem]
-                submitRouteFragment.binding?.let { binding ->
-                    binding.vm?.autoGradeChange = true
+                submitRouteFragment.binding?.let { routeFragmentBinding ->
+                    routeFragmentBinding.vm?.autoGradeChange = true
                     when (gradeType) {
                         GradeType.FONT -> {
-                            val convertedGrade = fontToV(FontGrade.values()[binding.fGradeSpinner.selectedItemPosition])
-                            binding.vGradeSpinner.setSelection(convertedGrade.ordinal, false)
+                            val convertedGrade = fontToV(FontGrade.values()[routeFragmentBinding.fGradeSpinner.selectedItemPosition])
+                            routeFragmentBinding.vGradeSpinner.setSelection(convertedGrade.ordinal, false)
                         }
                         GradeType.V -> {
-                            val convertedGrade = vToFont(VGrade.values()[binding.vGradeSpinner.selectedItemPosition])
-                            binding.fGradeSpinner.setSelection(convertedGrade.ordinal, false)
+                            val convertedGrade = vToFont(VGrade.values()[routeFragmentBinding.vGradeSpinner.selectedItemPosition])
+                            routeFragmentBinding.fGradeSpinner.setSelection(convertedGrade.ordinal, false)
                         }
                     }
                 }
+            }
+        })
+
+        // Update the route line colour on the topo
+        binding.vm?.routeColourUpdate?.observe(this, Observer {
+            binding.topoImage.refresh()
+            Timber.d("Refreshed topo due to grade change")
+        })
+
+        // Update the grade if the route type changes
+        binding.vm?.routeTypeUpdate?.observe(this, Observer { routeType ->
+            // Force select the right grade
+            Timber.d("Route type changed, force selected the grade")
+            val submitRouteFragment = routeFragments[binding.routePager.currentItem]
+            submitRouteFragment.binding?.let { routeFragmentBinding ->
+                when (routeType) {
+                    RouteType.TRAD -> {
+                        // Only have to do one, as the grade gets set when either are selected
+                        Timber.d("Route type now TRAD, setting trad adj grade")
+                        val selectedTradAdjectivalGrade = TradAdjectivalGrade.values()[routeFragmentBinding.tradAdjectivalGradeSpinner.selectedItemPosition]
+//                        routeFragmentBinding.tradAdjectivalGradeSpinner.setSelection(selectedTradAdjectivalGrade.ordinal, false)
+                        routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedTradAdjectivalGrade.ordinal, GradeDropDown.TRAD_ADJ)
+                    }
+                    RouteType.SPORT -> {
+                        Timber.d("Route type now SPORT, setting sport grade")
+                        val selectedSportGrade = SportGrade.values()[routeFragmentBinding.sportGradeSpinner.selectedItemPosition]
+//                        routeFragmentBinding.sportGradeSpinner.setSelection(selectedSportGrade.ordinal, false)
+                        routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedSportGrade.ordinal, GradeDropDown.SPORT)
+                    }
+                    RouteType.BOULDERING -> {
+                        if (binding.vm?.boulderingGradeType == GradeType.V) {
+                            Timber.d("Route type now BOULDERING, setting V grade")
+                            val selectedVGrade = VGrade.values()[routeFragmentBinding.vGradeSpinner.selectedItemPosition]
+//                        routeFragmentBinding.vGradeSpinner.setSelection(selectedVGrade.ordinal, false)
+                            routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedVGrade.ordinal, GradeDropDown.V)
+                        } else {
+                            Timber.d("Route type now BOULDERING, setting FONT grade")
+                            val selectedFGrade = FontGrade.values()[routeFragmentBinding.fGradeSpinner.selectedItemPosition]
+//                        routeFragmentBinding.vGradeSpinner.setSelection(selectedVGrade.ordinal, false)
+                            routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedFGrade.ordinal, GradeDropDown.FONT)
+                        }
+                    }
+                }
+                Unit // .let must return something
             }
         })
 

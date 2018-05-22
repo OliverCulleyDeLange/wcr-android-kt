@@ -29,7 +29,7 @@
                 android:src="@drawable/ic_photo"
                 app:gone="@{vm.localTopoImage != null}" />
 
-            <uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTouchImageView
+            <uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTopoImageView
                 android:id="@+id/topo_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

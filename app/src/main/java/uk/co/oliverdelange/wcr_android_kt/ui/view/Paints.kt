@@ -8,7 +8,7 @@ val baseRoutePaint = Paint().also {
     it.style = Paint.Style.STROKE
     it.strokeJoin = Paint.Join.ROUND
     it.strokeCap = Paint.Cap.ROUND
-    it.strokeWidth = 10f
+    it.strokeWidth = 8f
     it.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
 }
 
