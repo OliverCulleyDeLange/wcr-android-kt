@@ -130,6 +130,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
             } //FragmentID
         })
 
+        binding.topoImage.setOnTouchImageViewListener { binding.vm?.tryEnableSubmit() }
         // Update the route line colour on the topo
         binding.vm?.routeColourUpdate?.observe(this, Observer {
             binding.topoImage.refresh()
@@ -187,6 +188,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.routePager.adapter?.notifyDataSetChanged()
         // Check if we should now show the add route button
         binding.vm?.setShouldShowAddRouteButton(binding.routePager.adapter?.count)
+        binding.vm?.tryEnableSubmit()
     }
 
     private fun addRoute(pagerAdapter: SubmitRoutePagerAdapter) {
