@@ -15,6 +15,8 @@ import com.cloudinary.android.callback.UploadCallback
 import com.cloudinary.android.preprocess.BitmapEncoder
 import com.cloudinary.android.preprocess.ImagePreprocessChain
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.USE_V_GRADE_FOR_BOULDERING
+import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.WorkerService
@@ -100,8 +102,13 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
             RouteType.TRAD -> visibilityTracker[Pair(fragmentId, GradeType.TRAD)]?.set(View.VISIBLE)
             RouteType.SPORT -> visibilityTracker[Pair(fragmentId, GradeType.SPORT)]?.set(View.VISIBLE)
             RouteType.BOULDERING -> {
-                visibilityTracker[Pair(fragmentId, GradeType.FONT)]?.set(View.VISIBLE)
-                visibilityTracker[Pair(fragmentId, GradeType.V)]?.set(View.VISIBLE)
+                val prefs = getApplication<WcrApp>().prefs
+                //TODO Settings toggle for USE_V_GRADE_FOR_BOULDERING
+                if (prefs.getBoolean(USE_V_GRADE_FOR_BOULDERING, true)) {
+                    visibilityTracker[Pair(fragmentId, GradeType.V)]?.set(View.VISIBLE)
+                } else {
+                    visibilityTracker[Pair(fragmentId, GradeType.FONT)]?.set(View.VISIBLE)
+                }
             }
         }
     }
@@ -109,28 +116,19 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
     val halfFinishedTradGrades = mutableMapOf<Long, Pair<TradAdjectivalGrade?, TradTechnicalGrade?>>()
     val boulderingGradeType = MutableLiveData<GradeType>()
     val routeColourUpdate = MutableLiveData<Int>()
-    var autoGradeChange = false
     fun gradeChanged(fragmentId: Int, position: Int, gradeDropDown: GradeDropDown) {
         routeColourUpdate.value = fragmentId
         routes[fragmentId]?.let { route ->
             when (gradeDropDown) {
                 GradeDropDown.V -> {
-                    if (!autoGradeChange) {
-                        route.grade = Grade.from(VGrade.values()[position])
-                        Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
-                        boulderingGradeType.value = GradeType.V
-                    } else {
-                        autoGradeChange = false
-                    }
+                    route.grade = Grade.from(VGrade.values()[position])
+                    Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
+                    boulderingGradeType.value = GradeType.V
                 }
                 GradeDropDown.FONT -> {
-                    if (!autoGradeChange) {
-                        route.grade = Grade.from(FontGrade.values()[position])
-                        Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
-                        boulderingGradeType.value = GradeType.FONT
-                    } else {
-                        autoGradeChange = false
-                    }
+                    route.grade = Grade.from(FontGrade.values()[position])
+                    Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
+                    boulderingGradeType.value = GradeType.FONT
                 }
                 GradeDropDown.SPORT -> {
                     route.grade = Grade.from(SportGrade.values()[position])

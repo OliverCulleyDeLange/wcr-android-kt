@@ -23,9 +23,7 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.*
-import uk.co.oliverdelange.wcr_android_kt.util.fontToV
 import uk.co.oliverdelange.wcr_android_kt.util.inTransaction
-import uk.co.oliverdelange.wcr_android_kt.util.vToFont
 import javax.inject.Inject
 
 
@@ -130,25 +128,6 @@ class SubmitTopoFragment : Fragment(), Injectable {
                     Timber.d("Controlling route fragment $activeRouteFragmentId - route name: ${route.name}")
                 }
             } //FragmentID
-        })
-
-        binding.vm?.boulderingGradeType?.observe(this, Observer {
-            it?.let { gradeType ->
-                val submitRouteFragment = routeFragments[binding.routePager.currentItem]
-                submitRouteFragment.binding?.let { routeFragmentBinding ->
-                    routeFragmentBinding.vm?.autoGradeChange = true
-                    when (gradeType) {
-                        GradeType.FONT -> {
-                            val convertedGrade = fontToV(FontGrade.values()[routeFragmentBinding.fGradeSpinner.selectedItemPosition])
-                            routeFragmentBinding.vGradeSpinner.setSelection(convertedGrade.ordinal, false)
-                        }
-                        GradeType.V -> {
-                            val convertedGrade = vToFont(VGrade.values()[routeFragmentBinding.vGradeSpinner.selectedItemPosition])
-                            routeFragmentBinding.fGradeSpinner.setSelection(convertedGrade.ordinal, false)
-                        }
-                    }
-                }
-            }
         })
 
         // Update the route line colour on the topo
