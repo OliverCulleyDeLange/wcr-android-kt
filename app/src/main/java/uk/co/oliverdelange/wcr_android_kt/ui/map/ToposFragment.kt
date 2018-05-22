@@ -70,6 +70,18 @@ class ToposFragment : Fragment(), Injectable {
             val routeBinding: TopoCardBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.topo_card, parent, false)
             routeBinding.routeRecycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             LinearSnapHelper().attachToRecyclerView(routeBinding.routeRecycler)
+            routeBinding.routeRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (newState == SCROLL_STATE_IDLE) {
+                        val selectedRoutePosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                        if (selectedRoutePosition != NO_POSITION) {
+                            val route = (routeBinding.routeRecycler.adapter as RouteRecyclerAdapter).routes[selectedRoutePosition]
+                            routeBinding.topoImage.selectedRoute = route
+                        }
+                    }
+                }
+            })
             // Enable two finger gestures on topo images
             routeBinding.topoImage.setOnTouchListener { _, event ->
                 if (event.pointerCount > 1) {
@@ -94,18 +106,6 @@ class ToposFragment : Fragment(), Injectable {
             holder.binding.topo = topoAndRoutes.topo
             holder.binding.topoImage.routes = topoAndRoutes.routes
             holder.binding.routeRecycler.adapter = RouteRecyclerAdapter(topoAndRoutes.routes)
-            holder.binding.routeRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    if (newState == SCROLL_STATE_IDLE) {
-                        val selectedRoutePosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
-                        if (selectedRoutePosition != NO_POSITION) {
-                            val route = topoAndRoutes.routes[selectedRoutePosition]
-                            holder.binding.topoImage.selectedRoute = route
-                        }
-                    }
-                }
-            })
         }
 
         fun updateTopos(newTopos: List<TopoAndRoutes>) {

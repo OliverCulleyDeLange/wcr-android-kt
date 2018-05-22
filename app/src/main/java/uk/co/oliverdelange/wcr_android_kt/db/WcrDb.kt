@@ -41,19 +41,30 @@ abstract class WcrDb : RoomDatabase() {
                             getInstance(context).topoDao().insertMany(
                                     Topo(0, 2, "Buttery Biscuit Base", "http://via.placeholder.com/640x480"),
                                     Topo(1, 2, "The Dunker", "http://via.placeholder.com/480x640"),
-                                    Topo(2, 2, "Rich T", "http://via.placeholder.com/1280x480")
+                                    Topo(2, 2, "Rich T", "http://via.placeholder.com/1280x480"),
+                                    Topo(3, 2, "Caramel Digestif", "http://via.placeholder.com/1280x480")
                             )
                             getInstance(context).routeDao().insertMany(
                                     Route(0, 0, "GREEN ROUTE", Grade.Companion.from(VGrade.V0), RouteType.BOULDERING, "Eating biscuits is good for you",
-                                            setOf(Pair(0.25f, 0.25f), Pair(0.75f, 0.25f), Pair(0.75f, 0.75f), Pair(0.25f, 0.75f))),
+                                            setOf(Pair(0.25f, 0.25f), Pair(0.25f, 0.90f))),
                                     Route(1, 0, "ORANGE ROUTE", Grade.Companion.from(FontGrade.fFourP), RouteType.BOULDERING, "Mmmmm creamy custard",
-                                            setOf(Pair(0.4f, 0.4f), Pair(0.6f, 0.4f), Pair(0.6f, 0.6f), Pair(0.4f, 0.6f))),
+                                            setOf(Pair(0.35f, 0.25f), Pair(0.35f, 0.90f))),
                                     Route(2, 0, "RED ROUTE", Grade.Companion.from(TradAdjectivalGrade.E1, TradTechnicalGrade.FiveB), RouteType.TRAD, "Traditional Rich Tea or Digestive?",
-                                            setOf(Pair(0f, 0f), Pair(1f, 0f), Pair(1f, 1f), Pair(0f, 1f))),
-                                    Route(3, 1, "BLACK ROUTE", Grade.Companion.from(SportGrade.EightA), RouteType.SPORT, "Excuisite",
-                                            setOf(Pair(0f, 0f), Pair(1f, 0f), Pair(1f, 1f), Pair(0f, 1f))),
-                                    Route(4, 2, "A biscuit based name that is really long so we know if things look okay when there are really long names", Grade.Companion.from(SportGrade.FourB), RouteType.SPORT, "Lol...",
-                                            setOf(Pair(0f, 0f), Pair(1f, 0f), Pair(1f, 1f), Pair(0f, 1f)))
+                                            setOf(Pair(0.45f, 0.25f), Pair(0.45f, 0.90f))),
+                                    Route(3, 0, "BLACK ROUTE", Grade.Companion.from(SportGrade.EightA), RouteType.SPORT, "Excuisite",
+                                            setOf(Pair(0.55f, 0.25f), Pair(0.55f, 0.90f))),
+                                    Route(4, 1, "A biscuit based name that is really long so we know if things look okay when there are really long names", Grade.Companion.from(SportGrade.FourB), RouteType.SPORT, "Lol...",
+                                            setOf(Pair(0.65f, 0.25f), Pair(0.65f, 0.90f))),
+                                    Route(5, 2, "GREEN ROUTE", Grade.Companion.from(VGrade.V0), RouteType.BOULDERING, "Eating biscuits is good for you",
+                                            setOf(Pair(0.25f, 0.25f), Pair(0.25f, 0.90f))),
+                                    Route(6, 2, "ORANGE ROUTE", Grade.Companion.from(FontGrade.fFourP), RouteType.BOULDERING, "Mmmmm creamy custard",
+                                            setOf(Pair(0.35f, 0.25f), Pair(0.35f, 0.90f))),
+                                    Route(7, 2, "RED ROUTE", Grade.Companion.from(TradAdjectivalGrade.E1, TradTechnicalGrade.FiveB), RouteType.TRAD, "Traditional Rich Tea or Digestive?",
+                                            setOf(Pair(0.45f, 0.25f), Pair(0.45f, 0.90f))),
+                                    Route(8, 2, "BLACK ROUTE", Grade.Companion.from(SportGrade.EightA), RouteType.SPORT, "Excuisite",
+                                            setOf(Pair(0.55f, 0.25f), Pair(0.55f, 0.90f))),
+                                    Route(9, 3, "A biscuit based name that is really long so we know if things look okay when there are really long names", Grade.Companion.from(SportGrade.FourB), RouteType.SPORT, "Lol...",
+                                            setOf(Pair(0.75f, 0.25f), Pair(0.75f, 0.90f)))
                             )
                         }
                     }
