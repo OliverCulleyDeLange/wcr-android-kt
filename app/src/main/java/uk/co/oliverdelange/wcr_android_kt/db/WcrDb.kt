@@ -34,36 +34,36 @@ abstract class WcrDb : RoomDatabase() {
                         // insert the data on the IO Thread
                         ioThread {
                             getInstance(context).locationDao().insertMany(
-                                    Location(0, null, "London", 51.507363, -0.127755, CRAG),
-                                    Location(1, null, "Derby", 52.923429, -1.471682, CRAG),
-                                    Location(2, 0, "The Arch - Biscuit Factory", 51.494365, -0.062352, SECTOR)
+                                    Location(0, null, "L0 London", 51.507363, -0.127755, CRAG),
+                                    Location(1, null, "L1 Derby", 52.923429, -1.471682, CRAG),
+                                    Location(2, 0, "L2 The Arch - Biscuit Factory", 51.494365, -0.062352, SECTOR)
                             )
                             getInstance(context).topoDao().insertMany(
-                                    Topo(0, 2, "Buttery Biscuit Base", "http://via.placeholder.com/640x480"),
-                                    Topo(1, 2, "The Dunker", "http://via.placeholder.com/480x640"),
-                                    Topo(2, 2, "Rich T", "http://via.placeholder.com/1280x480"),
-                                    Topo(3, 2, "Caramel Digestif", "http://via.placeholder.com/1280x480")
+                                    Topo(0, 2, "T0 Buttery Biscuit Base", "http://via.placeholder.com/640x480"),
+                                    Topo(1, 2, "T1 The Dunker", "http://via.placeholder.com/480x640"),
+                                    Topo(2, 2, "T2 Rich T", "http://via.placeholder.com/1280x480"),
+                                    Topo(3, 2, "T3 Caramel Digestif", "http://via.placeholder.com/1280x480")
                             )
                             getInstance(context).routeDao().insertMany(
-                                    Route(0, 0, "GREEN ROUTE", Grade.Companion.from(VGrade.V0), RouteType.BOULDERING, "Eating biscuits is good for you",
+                                    Route(0, 0, "0GREEN ROUTE", Grade.Companion.from(VGrade.V0), RouteType.BOULDERING, "Eating biscuits is good for you",
                                             setOf(Pair(0.25f, 0.25f), Pair(0.25f, 0.90f))),
-                                    Route(1, 0, "ORANGE ROUTE", Grade.Companion.from(FontGrade.fFourP), RouteType.BOULDERING, "Mmmmm creamy custard",
+                                    Route(1, 0, "0ORANGE ROUTE", Grade.Companion.from(FontGrade.fFourP), RouteType.BOULDERING, "Mmmmm creamy custard",
                                             setOf(Pair(0.35f, 0.25f), Pair(0.35f, 0.90f))),
-                                    Route(2, 0, "RED ROUTE", Grade.Companion.from(TradAdjectivalGrade.E1, TradTechnicalGrade.FiveB), RouteType.TRAD, "Traditional Rich Tea or Digestive?",
+                                    Route(2, 0, "0RED ROUTE", Grade.Companion.from(TradAdjectivalGrade.E1, TradTechnicalGrade.FiveB), RouteType.TRAD, "Traditional Rich Tea or Digestive?",
                                             setOf(Pair(0.45f, 0.25f), Pair(0.45f, 0.90f))),
-                                    Route(3, 0, "BLACK ROUTE", Grade.Companion.from(SportGrade.EightA), RouteType.SPORT, "Excuisite",
+                                    Route(3, 0, "0BLACK ROUTE", Grade.Companion.from(SportGrade.EightA), RouteType.SPORT, "Excuisite",
                                             setOf(Pair(0.55f, 0.25f), Pair(0.55f, 0.90f))),
-                                    Route(4, 1, "A biscuit based name that is really long so we know if things look okay when there are really long names", Grade.Companion.from(SportGrade.FourB), RouteType.SPORT, "Lol...",
+                                    Route(4, 1, "1A biscuit based name that is really long so we know if things look okay when there are really long names", Grade.Companion.from(SportGrade.FourB), RouteType.SPORT, "Lol...",
                                             setOf(Pair(0.65f, 0.25f), Pair(0.65f, 0.90f))),
-                                    Route(5, 2, "GREEN ROUTE", Grade.Companion.from(VGrade.V0), RouteType.BOULDERING, "Eating biscuits is good for you",
+                                    Route(5, 2, "2GREEN ROUTE", Grade.Companion.from(VGrade.V0), RouteType.BOULDERING, "Eating biscuits is good for you",
                                             setOf(Pair(0.25f, 0.25f), Pair(0.25f, 0.90f))),
-                                    Route(6, 2, "ORANGE ROUTE", Grade.Companion.from(FontGrade.fFourP), RouteType.BOULDERING, "Mmmmm creamy custard",
+                                    Route(6, 2, "2ORANGE ROUTE", Grade.Companion.from(FontGrade.fFourP), RouteType.BOULDERING, "Mmmmm creamy custard",
                                             setOf(Pair(0.35f, 0.25f), Pair(0.35f, 0.90f))),
-                                    Route(7, 2, "RED ROUTE", Grade.Companion.from(TradAdjectivalGrade.E1, TradTechnicalGrade.FiveB), RouteType.TRAD, "Traditional Rich Tea or Digestive?",
+                                    Route(7, 2, "2RED ROUTE", Grade.Companion.from(TradAdjectivalGrade.E1, TradTechnicalGrade.FiveB), RouteType.TRAD, "Traditional Rich Tea or Digestive?",
                                             setOf(Pair(0.45f, 0.25f), Pair(0.45f, 0.90f))),
-                                    Route(8, 2, "BLACK ROUTE", Grade.Companion.from(SportGrade.EightA), RouteType.SPORT, "Excuisite",
+                                    Route(8, 2, "2BLACK ROUTE", Grade.Companion.from(SportGrade.EightA), RouteType.SPORT, "Excuisite",
                                             setOf(Pair(0.55f, 0.25f), Pair(0.55f, 0.90f))),
-                                    Route(9, 3, "A biscuit based name that is really long so we know if things look okay when there are really long names", Grade.Companion.from(SportGrade.FourB), RouteType.SPORT, "Lol...",
+                                    Route(9, 3, "3A biscuit based name that is really long so we know if things look okay when there are really long names", Grade.Companion.from(SportGrade.FourB), RouteType.SPORT, "Lol...",
                                             setOf(Pair(0.75f, 0.25f), Pair(0.75f, 0.90f)))
                             )
                         }
@@ -110,6 +110,10 @@ interface LocationDao : BaseDao<Location> {
 
 @Dao
 interface TopoDao : BaseDao<Topo> {
+    @WorkerThread
+    @Query("SELECT * from topo where id = :id")
+    fun get(id: Long): Topo
+
     @Query("SELECT * from topo where locationId = :locationId")
     fun loadTopoAndRoutes(locationId: Long): LiveData<List<TopoAndRoutes>>
 

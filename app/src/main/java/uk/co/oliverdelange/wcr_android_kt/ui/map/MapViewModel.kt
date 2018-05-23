@@ -12,6 +12,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.RouteType.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
+import uk.co.oliverdelange.wcr_android_kt.util.ioThread
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -50,6 +51,8 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
             null -> AbsentLiveData.create()
         }
     }
+
+    val selectedTopoId = MutableLiveData<Long>()
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) {
         when (it?.type) {
             LocationType.SECTOR -> it.id?.let { topoRepository.loadToposForLocation(it) }
@@ -63,14 +66,18 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         val loadSectorsForCrag = locationRepository.loadSectorsFor(cragId)
         topos.addSource(loadSectorsForCrag) { sectorsForCrag ->
             topos.removeSource(loadSectorsForCrag)
-            sectorsForCrag?.forEach { sector ->
-                sector.id?.let { sectorId ->
-                    topos.addSource(topoRepository.loadToposForLocation(sectorId)) {
-                        it?.let { newToposAndRoutes ->
-                            topos.value = newToposAndRoutes.plus(topos.value ?: emptyList())
+            if (sectorsForCrag?.isNotEmpty() == true) {
+                sectorsForCrag.forEach { sector ->
+                    sector.id?.let { sectorId ->
+                        topos.addSource(topoRepository.loadToposForLocation(sectorId)) {
+                            it?.let { newToposAndRoutes ->
+                                topos.value = newToposAndRoutes.plus(topos.value ?: emptyList())
+                            }
                         }
                     }
                 }
+            } else {
+                topos.value = null
             }
         }
         return topos
@@ -97,14 +104,32 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         }
     }
 
+    fun selectCrag(id: Long?) {
+        selectedLocationId.postValue(id)
+        mapMode.postValue(MapMode.CRAG_MODE)
+    }
+
+    fun selectSector(id: Long?) {
+        selectedLocationId.postValue(id)
+        mapMode.postValue(MapMode.SECTOR_MODE)
+    }
+
+    fun selectTopo(id: Long?) {
+        ioThread {
+            id?.let {
+                val topo = topoRepository.topoDao.get(it)
+                selectSector(topo.locationId)
+                selectedTopoId.postValue(topo.id)
+            }
+        }
+    }
+
     fun onCragClick(location: Location) {
-        selectedLocationId.value = location.id
-        mapMode.value = MapMode.CRAG_MODE
+        selectCrag(location.id)
     }
 
     fun onSectorClick(location: Location) {
-        selectedLocationId.value = location.id
-        mapMode.value = MapMode.SECTOR_MODE
+        selectSector(location.id)
     }
 
     val searchQuery = MutableLiveData<String>()

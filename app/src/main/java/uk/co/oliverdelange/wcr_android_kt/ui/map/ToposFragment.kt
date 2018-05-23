@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v7.util.DiffUtil
@@ -49,15 +50,26 @@ class ToposFragment : Fragment(), Injectable {
         return binding?.root
     }
 
+    var selectedTopoPosition: Int? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding?.topoRecycler?.layoutManager = DeScrollLinearLayoutManager(activity)
         val recyclerAdapter = TopoRecyclerAdapter(activity)
         binding?.topoRecycler?.adapter = recyclerAdapter
+        binding?.vm?.selectedTopoId?.observe(this, Observer { selectedTopoId ->
+            val position = recyclerAdapter.topos.indexOfFirst { it.topo.id == selectedTopoId }
+            binding?.vm?.bottomSheetState?.value = BottomSheetBehavior.STATE_EXPANDED
+            if (position != -1) {
+                binding?.topoRecycler?.smoothScrollToPosition(position)
+                selectedTopoPosition = position
+            }
+        })
+
         binding?.vm?.topos?.observe(this, Observer {
             recyclerAdapter.updateTopos(it ?: emptyList())
             binding?.executePendingBindings()
-            binding?.topoRecycler?.scrollToPosition(0)
+            binding?.topoRecycler?.scrollToPosition(selectedTopoPosition ?: 0)
+            selectedTopoPosition = null
         })
     }
 

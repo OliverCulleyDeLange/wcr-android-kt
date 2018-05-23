@@ -326,10 +326,14 @@ class MapsActivity : AppCompatActivity(),
                     floating_search_view.clearSuggestions()
                     floating_search_view.clearSearchFocus()
 
-                    if (searchSuggestion.type == LocationType.CRAG) {
-                        TODO("Go to crag")
-                    } else if (searchSuggestion.type == LocationType.SECTOR) {
-                        TODO("Go to sector")
+                    when (searchSuggestion.type) {
+                        CRAG -> binding.vm?.selectCrag(searchSuggestion.id)
+                        SECTOR -> binding.vm?.selectSector(searchSuggestion.id)
+                        TOPO -> binding.vm?.selectTopo(searchSuggestion.id)
+                        ROUTE_BOULDER -> TODO()
+                        ROUTE_TRAD -> TODO()
+                        ROUTE_SPORT -> TODO()
+                        ROUTE -> TODO()
                     }
                 }
             }
