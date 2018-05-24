@@ -87,7 +87,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
 
     val bottomSheetState: MutableLiveData<Int> = MutableLiveData()
     val bottomSheetTitle: LiveData<String> = Transformations.map(selectedLocation) {
-        it?.name ?: "Select a crag or search"
+        it?.name
     }
 
     fun submit(view: View) {
@@ -181,7 +181,8 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     fun back() {
-        if (bottomSheetState.value == BottomSheetBehavior.STATE_EXPANDED) {
+        if (bottomSheetState.value == BottomSheetBehavior.STATE_EXPANDED ||
+                bottomSheetState.value == BottomSheetBehavior.STATE_HIDDEN) {
             bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             when (mapMode.value) {

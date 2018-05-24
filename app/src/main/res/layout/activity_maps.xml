@@ -36,11 +36,13 @@
             android:id="@+id/floating_search_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:floatingSearch_close_search_on_keyboard_dismiss="true"
+            app:floatingSearch_close_search_on_keyboard_dismiss="false"
             app:floatingSearch_leftActionMode="showHamburger"
             app:floatingSearch_searchBarMarginLeft="8dp"
             app:floatingSearch_searchBarMarginRight="8dp"
             app:floatingSearch_searchBarMarginTop="8dp"
+            app:floatingSearch_searchInputTextSize="10sp"
+            app:floatingSearch_searchSuggestionTextSize="12sp"
             app:floatingSearch_searchHint="@string/map_search_hint"
             app:floatingSearch_showSearchKey="false"
             app:floatingSearch_suggestionsListAnimDuration="250" />
@@ -51,9 +53,9 @@
             android:layout_height="wrap_content"
             android:background="@color/bg_grey_light"
             android:orientation="vertical"
-            app:behavior_hideable="false"
+            app:behavior_hideable="true"
             app:behavior_peekHeight="80dp"
-            app:layout_behavior="android.support.design.widget.BottomSheetBehavior"></LinearLayout>
+            app:layout_behavior="android.support.design.widget.BottomSheetBehavior" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"

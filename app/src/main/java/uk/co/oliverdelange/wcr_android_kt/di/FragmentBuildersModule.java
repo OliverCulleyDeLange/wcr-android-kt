@@ -2,7 +2,8 @@ package uk.co.oliverdelange.wcr_android_kt.di;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
-import uk.co.oliverdelange.wcr_android_kt.ui.map.ToposFragment;
+import uk.co.oliverdelange.wcr_android_kt.ui.map.BottomSheetFragment;
+import uk.co.oliverdelange.wcr_android_kt.ui.map.WelcomeFragment;
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment;
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitRouteFragment;
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoFragment;
@@ -19,5 +20,8 @@ public abstract class FragmentBuildersModule {
     abstract SubmitRouteFragment contributeSubmitRouteFragment();
 
     @ContributesAndroidInjector
-    abstract ToposFragment contributeToposFragment();
+    abstract BottomSheetFragment contributeBottomSheetFragment();
+
+    @ContributesAndroidInjector
+    abstract WelcomeFragment contributeWelcomeFragment();
 }

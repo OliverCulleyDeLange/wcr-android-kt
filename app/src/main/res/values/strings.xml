@@ -19,4 +19,8 @@
     <string name="submission_label_route_type">Route type: </string>
     <string name="submission_label_grade">Grade:</string>
 
+    <!--WELCOME-->
+    <string name="welcome_title">Select a crag or search</string>
+    <string name="welcome_text">Or swipe up to learn more</string>
+
 </resources>

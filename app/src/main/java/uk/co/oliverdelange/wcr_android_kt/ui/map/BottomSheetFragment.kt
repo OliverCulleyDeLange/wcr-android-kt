@@ -17,29 +17,29 @@ import android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE
 import android.view.*
 import android.view.MotionEvent.ACTION_MASK
 import uk.co.oliverdelange.wcr_android_kt.R
-import uk.co.oliverdelange.wcr_android_kt.databinding.BottomSheetBinding
-import uk.co.oliverdelange.wcr_android_kt.databinding.RouteCardBinding
-import uk.co.oliverdelange.wcr_android_kt.databinding.TopoCardBinding
+import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentBottomSheetBinding
+import uk.co.oliverdelange.wcr_android_kt.databinding.LayoutRouteCardBinding
+import uk.co.oliverdelange.wcr_android_kt.databinding.LayoutTopoCardBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.Route
 import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
-import uk.co.oliverdelange.wcr_android_kt.ui.map.ToposFragment.RouteRecyclerAdapter.ViewHolder
+import uk.co.oliverdelange.wcr_android_kt.ui.map.BottomSheetFragment.RouteRecyclerAdapter.ViewHolder
 import javax.inject.Inject
 
-class ToposFragment : Fragment(), Injectable {
+class BottomSheetFragment : Fragment(), Injectable {
     companion object {
-        fun newToposFragment(): ToposFragment {
-            return ToposFragment()
+        fun newBottomSheet(): BottomSheetFragment {
+            return BottomSheetFragment()
         }
     }
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private var binding: BottomSheetBinding? = null
+    private var binding: FragmentBottomSheetBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = BottomSheetBinding.inflate(layoutInflater, container, false)
+        binding = FragmentBottomSheetBinding.inflate(layoutInflater, container, false)
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
         binding?.vm = viewModel
         binding?.setLifecycleOwner(this)
@@ -78,7 +78,7 @@ class ToposFragment : Fragment(), Injectable {
 
         @SuppressLint("ClickableViewAccessibility")
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val routeBinding: TopoCardBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.topo_card, parent, false)
+            val routeBinding: LayoutTopoCardBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.layout_topo_card, parent, false)
             routeBinding.routeRecycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             LinearSnapHelper().attachToRecyclerView(routeBinding.routeRecycler)
             routeBinding.routeRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -150,13 +150,13 @@ class ToposFragment : Fragment(), Injectable {
             }
         }
 
-        inner class ViewHolder(var binding: TopoCardBinding) : RecyclerView.ViewHolder(binding.root)
+        inner class ViewHolder(var binding: LayoutTopoCardBinding) : RecyclerView.ViewHolder(binding.root)
     }
 
     inner class RouteRecyclerAdapter(val routes: List<Route>) : RecyclerView.Adapter<ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val binding: RouteCardBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.route_card, parent, false)
+            val binding: LayoutRouteCardBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.layout_route_card, parent, false)
             return ViewHolder(binding)
         }
 
@@ -169,7 +169,7 @@ class ToposFragment : Fragment(), Injectable {
             holder.binding.route = route
         }
 
-        inner class ViewHolder(var binding: RouteCardBinding) : RecyclerView.ViewHolder(binding.root)
+        inner class ViewHolder(var binding: LayoutRouteCardBinding) : RecyclerView.ViewHolder(binding.root)
     }
 }
 

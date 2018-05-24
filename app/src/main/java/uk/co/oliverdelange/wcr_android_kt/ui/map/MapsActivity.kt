@@ -28,7 +28,10 @@ import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.MarkerManager
 import com.google.maps.android.clustering.ClusterManager
 import com.mikepenz.aboutlibraries.Libs
@@ -84,10 +87,10 @@ class MapsActivity : AppCompatActivity(),
 
     private val submitCragFragment = SubmitLocationFragment.newCragSubmission()
     private val submitSectorFragment = SubmitLocationFragment.newSectorSubmission()
-    private val viewToposFragment = ToposFragment.newToposFragment()
+    private val bottomSheetFragment = BottomSheetFragment.newBottomSheet()
+    private val welcomeFragment = WelcomeFragment.newWelcomeFragment()
 
     internal lateinit var map: GoogleMap
-    private val defaultLatLng = LatLng(54.056, -3.155)
     private var bottomSheet: BottomSheetBehavior<LinearLayout>? = null
 
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
@@ -102,6 +105,7 @@ class MapsActivity : AppCompatActivity(),
         binding.setLifecycleOwner(this)
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
         binding.vm = viewModel
+        binding.floatingSearchView.setQueryTextSize(14)
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -202,18 +206,18 @@ class MapsActivity : AppCompatActivity(),
                     refreshCragClusterItems()
                     val latlngs = binding.vm?.crags?.value?.map { it.latlng }
                     latlngs?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
-                    replaceFragment(viewToposFragment, R.id.bottom_sheet)
+                    replaceFragment(welcomeFragment, R.id.bottom_sheet)
                 }
                 CRAG_MODE -> {
                     fabStyle(R.drawable.ic_add_sector, R.color.fab_new_sector)
                     refreshCragClusterItems()
                     refreshSectorsForCrag(binding.vm?.sectors?.value)
-                    replaceFragment(viewToposFragment, R.id.bottom_sheet)
+                    replaceFragment(bottomSheetFragment, R.id.bottom_sheet)
                 }
                 SECTOR_MODE, TOPO_MODE -> {
                     fabStyle(R.drawable.ic_add_topo, R.color.fab_new_topo)
                     refreshCragClusterItems()
-                    replaceFragment(viewToposFragment, R.id.bottom_sheet)
+                    replaceFragment(bottomSheetFragment, R.id.bottom_sheet)
                 }
                 SUBMIT_CRAG_MODE -> {
                     replaceFragment(submitCragFragment, R.id.bottom_sheet)
@@ -311,9 +315,12 @@ class MapsActivity : AppCompatActivity(),
     private fun initialiseFloatingSearchBar() {
         floating_search_view.attachNavigationDrawerToMenuButton(slidingDrawer.drawerLayout)
         floating_search_view.setOnFocusChangeListener(object : FloatingSearchView.OnFocusChangeListener {
-            override fun onFocusCleared() {}
-            override fun onFocus() {
+            override fun onFocusCleared() {
                 bottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+
+            override fun onFocus() {
+                bottomSheet?.state = BottomSheetBehavior.STATE_HIDDEN
             }
         })
 
@@ -392,8 +399,13 @@ class MapsActivity : AppCompatActivity(),
 
             override fun onSlide(bottomSheetView: View, slideOffset: Float) {
                 val peek = bottomSheet?.peekHeight ?: 0
-                setMapBottomPadding(round((bottom_sheet.height - peek) * slideOffset + peek))
-                fab.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start()
+                if (slideOffset >= 0) {
+                    setMapBottomPadding(round((bottom_sheet.height - peek) * slideOffset + peek))
+                    fab.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start()
+                } else {
+                    setMapBottomPadding(round(peek - (peek * -slideOffset)))
+                    fab.animate().scaleX(1 + slideOffset).scaleY(1 + slideOffset).setDuration(0).start()
+                }
             }
         })
     }
