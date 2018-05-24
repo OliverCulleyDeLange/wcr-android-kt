@@ -25,7 +25,6 @@ import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
-import com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -144,9 +143,7 @@ class MapsActivity : AppCompatActivity(),
         map.setOnMarkerClickListener(markerManager)
         map.setOnCameraIdleListener(clusterManager)
 
-
         observeViewModel()
-        map.moveCamera(newLatLngZoom(defaultLatLng, DEFAULT_ZOOM))
     }
 
     override fun onClusterItemClick(clusterItem: CragClusterItem): Boolean {
@@ -186,6 +183,7 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
             Timber.d("New crag location to display. Locations: %s", crags)
             refreshCragClusterItems()
+            crags?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
         })
 
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
@@ -202,7 +200,8 @@ class MapsActivity : AppCompatActivity(),
                 DEFAULT_MODE -> {
                     fabStyle(R.drawable.ic_add_crag, R.color.fab_new_crag)
                     refreshCragClusterItems()
-                    map.animateCamera(newLatLngZoom(defaultLatLng, DEFAULT_ZOOM))
+                    val latlngs = binding.vm?.crags?.value?.map { it.latlng }
+                    latlngs?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
                     replaceFragment(viewToposFragment, R.id.bottom_sheet)
                 }
                 CRAG_MODE -> {
@@ -249,6 +248,7 @@ class MapsActivity : AppCompatActivity(),
     private fun refreshSectorsForCrag(sectors: List<Location>?) {
         sectorMarkers.clear()
         sectors?.forEach {
+            //TODO Grey out on add location
             val icon = IconHelper(this).getIcon(it.name, Icon.SECTOR)
             val marker = sectorMarkers.addMarker(MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromBitmap(icon))

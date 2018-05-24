@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +26,11 @@ import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.util.inTransaction
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 
-val SELECT_PICTURE = 999
+const val SELECT_PICTURE = 999
+const val ROUTE_PADDING = 0.15
 
 class SubmitTopoFragment : Fragment(), Injectable {
     companion object {
@@ -102,7 +105,10 @@ class SubmitTopoFragment : Fragment(), Injectable {
         val pagerAdapter = SubmitRoutePagerAdapter(childFragmentManager, routeFragments)
         binding.routePager.adapter = pagerAdapter
         binding.routePager.clipToPadding = false
-        binding.routePager.setPadding(120, 0, 120, 20)
+        val displayMetrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
+        val paddinglr = (displayMetrics.widthPixels * ROUTE_PADDING).roundToInt()
+        binding.routePager.setPadding(paddinglr, 0, paddinglr, 10)
         binding.routePager.pageMargin = 25
         binding.routePager.offscreenPageLimit = 99 // TODO More elegant way of fixing this
         binding.routePager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

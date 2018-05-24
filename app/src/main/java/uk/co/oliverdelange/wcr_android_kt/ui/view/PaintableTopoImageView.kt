@@ -45,7 +45,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.concat(matrix)
-        routes.forEach { routeFragmentId, route ->
+        routes.forEach { (routeFragmentId, route) ->
             val routePath = paths[routeFragmentId]
             routePath?.let { routePath ->
                 val routePoints = routePath.capture.toSet()
