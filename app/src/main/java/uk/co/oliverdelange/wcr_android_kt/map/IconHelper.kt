@@ -38,5 +38,6 @@ enum class Icon constructor(@DrawableRes val iconDrawable: Int, @DrawableRes val
     CRAG(R.drawable.location_marker_crag, R.drawable.location_marker_crag_no_text, R.style.Wcr_GeneratedCragIconText),
     CRAG_DIMMED(R.drawable.location_marker_crag_dimmed, R.drawable.location_marker_crag_dimmed_no_text, R.style.Wcr_GeneratedCragIconTextDimmed),
     SECTOR(R.drawable.location_marker_sector, R.drawable.location_marker_sector_no_text, R.style.Wcr_GeneratedSectorIconText),
+    SECTOR_DIMMED(R.drawable.location_marker_sector_dimmed, R.drawable.location_marker_sector_dimmed_no_text, R.style.Wcr_GeneratedSectorIconTextDimmed),
     SECTOR_SELECTED(R.drawable.location_marker_sector_selected, R.drawable.location_marker_sector_selected_no_text, R.style.Wcr_GeneratedSectorIconText)
 }

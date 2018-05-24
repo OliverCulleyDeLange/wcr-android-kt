@@ -207,6 +207,7 @@ class MapsActivity : AppCompatActivity(),
                 CRAG_MODE -> {
                     fabStyle(R.drawable.ic_add_sector, R.color.fab_new_sector)
                     refreshCragClusterItems()
+                    refreshSectorsForCrag(binding.vm?.sectors?.value)
                     replaceFragment(viewToposFragment, R.id.bottom_sheet)
                 }
                 SECTOR_MODE, TOPO_MODE -> {
@@ -222,6 +223,7 @@ class MapsActivity : AppCompatActivity(),
                     submitSectorFragment.parentId = binding.vm?.selectedLocationId?.value
                     replaceFragment(submitSectorFragment, R.id.bottom_sheet)
                     refreshCragClusterItems()
+                    refreshSectorsForCrag(binding.vm?.sectors?.value)
                 }
                 SUBMIT_TOPO_MODE -> {
                     binding.vm?.selectedLocation?.value?.id?.let {
@@ -248,8 +250,8 @@ class MapsActivity : AppCompatActivity(),
     private fun refreshSectorsForCrag(sectors: List<Location>?) {
         sectorMarkers.clear()
         sectors?.forEach {
-            //TODO Grey out on add location
-            val icon = IconHelper(this).getIcon(it.name, Icon.SECTOR)
+            val iconStyle = if (binding.vm?.mapMode?.value == SUBMIT_SECTOR_MODE) Icon.SECTOR_DIMMED else Icon.SECTOR
+            val icon = IconHelper(this).getIcon(it.name, iconStyle)
             val marker = sectorMarkers.addMarker(MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromBitmap(icon))
                     .position(it.latlng)
