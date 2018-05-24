@@ -44,16 +44,35 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        canvas.concat(matrix)
         routes.forEach { routeFragmentId, route ->
             val routePath = paths[routeFragmentId]
-            when (route.grade?.colour) {
-                GradeColour.GREEN -> canvas.drawPath(routePath, greenRoutePaint)
-                GradeColour.ORANGE -> canvas.drawPath(routePath, orangeRoutePaint)
-                GradeColour.RED -> canvas.drawPath(routePath, redRoutePaint)
-                GradeColour.BLACK -> canvas.drawPath(routePath, blackRoutePaint)
+            routePath?.let { routePath ->
+                val routePoints = routePath.capture.toSet()
+                val scaledRoutePath = scalePath(routePoints)
+                when (route.grade?.colour) {
+                    GradeColour.GREEN -> canvas.drawPath(scaledRoutePath, greenRoutePaint)
+                    GradeColour.ORANGE -> canvas.drawPath(scaledRoutePath, orangeRoutePaint)
+                    GradeColour.RED -> canvas.drawPath(scaledRoutePath, redRoutePaint)
+                    GradeColour.BLACK -> canvas.drawPath(scaledRoutePath, blackRoutePaint)
+                }
+                if (selectedRoute == routeFragmentId) canvas.drawPath(scaledRoutePath, selectedRoutePaint)
             }
-            if (selectedRoute == routeFragmentId) canvas.drawPath(routePath, selectedRoutePaint)
         }
+    }
+
+    private fun scalePath(routePoints: Set<Pair<Float, Float>>): Path {
+        val routePath = Path()
+        if (routePoints.size > 1) {
+            val iterator = routePoints.iterator()
+            val firstPoint = iterator.next()
+            routePath.moveTo(firstPoint.first * drawable.intrinsicWidth, firstPoint.second * drawable.intrinsicHeight)
+            while (iterator.hasNext()) {
+                val next = iterator.next()
+                routePath.lineTo(next.first * drawable.intrinsicWidth, next.second * drawable.intrinsicHeight)
+            }
+        }
+        return routePath
     }
 
     private fun touch_start(x: Float, y: Float) {
@@ -117,17 +136,23 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
 
         override fun moveTo(x: Float, y: Float) {
             super.moveTo(x, y)
-            capture.add(Pair(x / width, y / height))
+            val imagePoint = transformCoordTouchToBitmap(x, y, true)
+            capture.add(Pair(imagePoint.x / drawable.intrinsicWidth,
+                    imagePoint.y / drawable.intrinsicHeight))
         }
 
         override fun quadTo(x1: Float, y1: Float, x2: Float, y2: Float) {
             super.quadTo(x1, y1, x2, y2)
-            capture.add(Pair(x2 / width, y2 / height))
+            val imagePoint = transformCoordTouchToBitmap(x2, y2, true)
+            capture.add(Pair(imagePoint.x / drawable.intrinsicWidth,
+                    imagePoint.y / drawable.intrinsicHeight))
         }
 
         override fun lineTo(x: Float, y: Float) {
             super.lineTo(x, y)
-            capture.add(Pair(x / width, y / height))
+            val imagePoint = transformCoordTouchToBitmap(x, y, true)
+            capture.add(Pair(imagePoint.x / drawable.intrinsicWidth,
+                    imagePoint.y / drawable.intrinsicHeight))
         }
     }
 }

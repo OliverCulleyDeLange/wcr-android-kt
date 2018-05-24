@@ -13,6 +13,7 @@ import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
+import uk.co.oliverdelange.wcr_android_kt.ui.submit.MAX_TOPO_SIZE_PX
 
 @set:BindingAdapter("show")
 var View.visibleOrGone
@@ -55,9 +56,11 @@ fun loadImageUrl(view: ImageView, imageUrl: String, placeholder: Drawable) {
 }
 
 @BindingAdapter("app:imageUri")
-fun loadImageUri(view: ImageView, uri: Uri?) {
+fun loadTopoSubmissionImageFromUri(view: ImageView, uri: Uri?) {
     Picasso.with(view.context)
             .load(uri)
+            .resize(MAX_TOPO_SIZE_PX, MAX_TOPO_SIZE_PX)
+            .centerInside()
             .into(view)
 }
 

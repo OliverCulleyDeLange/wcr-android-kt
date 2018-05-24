@@ -23,6 +23,7 @@ import uk.co.oliverdelange.wcr_android_kt.service.WorkerService
 import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTopoImageView
 import javax.inject.Inject
 
+const val MAX_TOPO_SIZE_PX = 640
 //@Singleton
 class SubmitTopoViewModel @Inject constructor(application: Application,
                                               private val topoRepository: TopoRepository,
@@ -210,7 +211,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                     .unsigned("wcr_topo_upload")
                     .option("folder", "topo/$sectorId")
                     .option("public_id", topoName)
-                    .preprocess(ImagePreprocessChain.limitDimensionsChain(640, 640)
+                    .preprocess(ImagePreprocessChain.limitDimensionsChain(MAX_TOPO_SIZE_PX, MAX_TOPO_SIZE_PX)
                             .saveWith(BitmapEncoder(BitmapEncoder.Format.WEBP, 80)))
                     .callback(object : UploadCallback {
                         override fun onStart(requestId: String) {

@@ -53,17 +53,21 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
             val routePoints = it.path
             val routeId = it.id
             if (routePoints != null && routePoints.size > 1 && routeId != null) {
-                val routePath = Path()
-                val iterator = routePoints.iterator()
-                val firstPoint = iterator.next()
-                routePath.moveTo(firstPoint.first * drawable.intrinsicWidth, firstPoint.second * drawable.intrinsicHeight)
-                while (iterator.hasNext()) {
-                    val next = iterator.next()
-                    routePath.lineTo(next.first * drawable.intrinsicWidth, next.second * drawable.intrinsicHeight)
-                }
-                paths[routeId] = routePath
+                paths[routeId] = scalePath(routePoints)
             }
         }
+    }
+
+    private fun scalePath(routePoints: Set<Pair<Float, Float>>): Path {
+        val routePath = Path()
+        val iterator = routePoints.iterator()
+        val firstPoint = iterator.next()
+        routePath.moveTo(firstPoint.first * drawable.intrinsicWidth, firstPoint.second * drawable.intrinsicHeight)
+        while (iterator.hasNext()) {
+            val next = iterator.next()
+            routePath.lineTo(next.first * drawable.intrinsicWidth, next.second * drawable.intrinsicHeight)
+        }
+        return routePath
     }
 
     override fun onDraw(canvas: Canvas) {
