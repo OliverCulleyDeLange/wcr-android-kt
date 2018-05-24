@@ -150,13 +150,12 @@ class MapsActivity : AppCompatActivity(),
     }
 
     override fun onClusterItemClick(clusterItem: CragClusterItem): Boolean {
-        binding.vm?.onCragClick(clusterItem.location)
+        binding.vm?.selectCrag(clusterItem.location.id)
         return true
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        binding.vm?.onSectorClick(marker.tag as Location)
-//        topo_recycler.scrollToPosition(0)
+        binding.vm?.selectSector((marker.tag as Location).id)
         return true
     }
 
@@ -211,12 +210,10 @@ class MapsActivity : AppCompatActivity(),
                     refreshCragClusterItems()
                     replaceFragment(viewToposFragment, R.id.bottom_sheet)
                 }
-                SECTOR_MODE -> {
+                SECTOR_MODE, TOPO_MODE -> {
                     fabStyle(R.drawable.ic_add_topo, R.color.fab_new_topo)
                     refreshCragClusterItems()
                     replaceFragment(viewToposFragment, R.id.bottom_sheet)
-                }
-                TOPO_MODE -> {
                 }
                 SUBMIT_CRAG_MODE -> {
                     replaceFragment(submitCragFragment, R.id.bottom_sheet)
@@ -330,10 +327,9 @@ class MapsActivity : AppCompatActivity(),
                         CRAG -> binding.vm?.selectCrag(searchSuggestion.id)
                         SECTOR -> binding.vm?.selectSector(searchSuggestion.id)
                         TOPO -> binding.vm?.selectTopo(searchSuggestion.id)
-                        ROUTE_BOULDER -> TODO()
-                        ROUTE_TRAD -> TODO()
-                        ROUTE_SPORT -> TODO()
-                        ROUTE -> TODO()
+                        ROUTE, ROUTE_BOULDER, ROUTE_TRAD, ROUTE_SPORT -> {
+                            binding.vm?.selectRoute(searchSuggestion.id)
+                        }
                     }
                 }
             }

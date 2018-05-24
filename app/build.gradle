@@ -63,8 +63,8 @@ versions.dagger = "2.14.1"
 versions.stetho = "1.5.0"
 versions.mapstruct = "1.2.0.CR1"
 versions.lombok = "1.16.20"
-versions.rxjava2 = "2.1.3"
-versions.rx_android = "2.0.1"
+versions.rxjava2 = "2.1.14"
+versions.rxandroid = "2.0.2"
 versions.room = "1.1.0-alpha1"
 versions.anko = "0.10.5"
 versions.material_drawer_kt = "1.3.3"
@@ -96,7 +96,8 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:${versions.play_services}"
     implementation "com.google.maps.android:android-maps-utils:${versions.maps_utils}"
 
-//    implementation "com.drewnoakes:metadata-extractor:${versions.metadata_extractor}"
+    implementation "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}"
+    implementation "io.reactivex.rxjava2:rxjava:${versions.rxjava2}"
 
     implementation "com.github.arimorty:floatingsearchview:${versions.floating_search_view}"
 

@@ -128,6 +128,10 @@ interface TopoDao : BaseDao<Topo> {
 
 @Dao
 interface RouteDao : BaseDao<Route> {
+    @WorkerThread
+    @Query("SELECT * from route where id = :id")
+    fun get(id: Long): Route
+
     @Query("SELECT * from route where topoId = :topoId")
     fun loadWithTopoId(topoId: Long): LiveData<List<Route>>
 

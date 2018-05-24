@@ -42,7 +42,7 @@ fun setmapModeTextColour(textView: TextView, mapMode: MapMode?) {
     when (mapMode) {
         DEFAULT_MODE -> textView.setTextColor(resources.getColor(R.color.text_grey_dark))
         CRAG_MODE -> textView.setTextColor(resources.getColor(R.color.crag_accent))
-        SECTOR_MODE -> textView.setTextColor(resources.getColor(R.color.sector_accent))
+        SECTOR_MODE, TOPO_MODE -> textView.setTextColor(resources.getColor(R.color.sector_accent))
     }
 }
 

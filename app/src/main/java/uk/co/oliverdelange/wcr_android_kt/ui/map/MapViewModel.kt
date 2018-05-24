@@ -5,6 +5,9 @@ import android.databinding.ObservableBoolean
 import android.support.design.widget.BottomSheetBehavior
 import android.view.View
 import com.google.android.gms.maps.GoogleMap
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
 import uk.co.oliverdelange.wcr_android_kt.model.*
@@ -12,7 +15,6 @@ import uk.co.oliverdelange.wcr_android_kt.model.RouteType.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
-import uk.co.oliverdelange.wcr_android_kt.util.ioThread
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -106,30 +108,38 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
 
     fun selectCrag(id: Long?) {
         selectedLocationId.postValue(id)
-        mapMode.postValue(MapMode.CRAG_MODE)
+        mapMode.value = MapMode.CRAG_MODE
     }
 
     fun selectSector(id: Long?) {
         selectedLocationId.postValue(id)
-        mapMode.postValue(MapMode.SECTOR_MODE)
+        mapMode.value = MapMode.SECTOR_MODE
     }
 
     fun selectTopo(id: Long?) {
-        ioThread {
-            id?.let {
-                val topo = topoRepository.topoDao.get(it)
-                selectSector(topo.locationId)
-                selectedTopoId.postValue(topo.id)
-            }
+        id?.let {
+            bottomSheetState.value = BottomSheetBehavior.STATE_EXPANDED
+            mapMode.value = MapMode.TOPO_MODE
+            Observable.fromCallable { topoRepository.topoDao.get(it) }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ topo ->
+                        selectedLocationId.value = topo.locationId
+                        selectedTopoId.value = topo.id
+                    })
         }
     }
 
-    fun onCragClick(location: Location) {
-        selectCrag(location.id)
-    }
-
-    fun onSectorClick(location: Location) {
-        selectSector(location.id)
+    fun selectRoute(id: Long?) {
+        id?.let { routeId ->
+            Observable.fromCallable { routeDao.get(routeId) }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ route ->
+                        selectTopo(route.topoId)
+                        //TODO Select route in route pager
+                    })
+        }
     }
 
     val searchQuery = MutableLiveData<String>()
@@ -181,12 +191,11 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
                     selectedLocationId.value = null
                 }
                 MapMode.SUBMIT_CRAG_MODE -> mapMode.value = MapMode.DEFAULT_MODE
-                MapMode.SECTOR_MODE -> {
+                MapMode.SECTOR_MODE, MapMode.TOPO_MODE -> {
                     mapMode.value = MapMode.CRAG_MODE
                     selectedLocation.value?.parentId?.let { selectedLocationId.value = it }
                 }
                 MapMode.SUBMIT_SECTOR_MODE -> mapMode.value = MapMode.CRAG_MODE
-                MapMode.TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE
                 MapMode.SUBMIT_TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE
             }
         }

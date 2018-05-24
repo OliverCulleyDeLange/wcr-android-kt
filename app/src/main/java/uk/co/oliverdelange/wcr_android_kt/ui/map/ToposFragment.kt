@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v7.util.DiffUtil
@@ -15,11 +14,8 @@ import android.support.v7.widget.LinearSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.NO_POSITION
 import android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE
-import android.view.LayoutInflater
-import android.view.MotionEvent
+import android.view.*
 import android.view.MotionEvent.ACTION_MASK
-import android.view.View
-import android.view.ViewGroup
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.databinding.BottomSheetBinding
 import uk.co.oliverdelange.wcr_android_kt.databinding.RouteCardBinding
@@ -50,26 +46,29 @@ class ToposFragment : Fragment(), Injectable {
         return binding?.root
     }
 
-    var selectedTopoPosition: Int? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding?.topoRecycler?.layoutManager = DeScrollLinearLayoutManager(activity)
         val recyclerAdapter = TopoRecyclerAdapter(activity)
         binding?.topoRecycler?.adapter = recyclerAdapter
-        binding?.vm?.selectedTopoId?.observe(this, Observer { selectedTopoId ->
-            val position = recyclerAdapter.topos.indexOfFirst { it.topo.id == selectedTopoId }
-            binding?.vm?.bottomSheetState?.value = BottomSheetBehavior.STATE_EXPANDED
-            if (position != -1) {
-                binding?.topoRecycler?.smoothScrollToPosition(position)
-                selectedTopoPosition = position
-            }
-        })
 
         binding?.vm?.topos?.observe(this, Observer {
             recyclerAdapter.updateTopos(it ?: emptyList())
-            binding?.executePendingBindings()
-            binding?.topoRecycler?.scrollToPosition(selectedTopoPosition ?: 0)
-            selectedTopoPosition = null
+//            binding?.executePendingBindings()
+
+            binding?.topoRecycler?.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    binding?.vm?.selectedTopoId?.value?.let { selectedTopoId ->
+                        val position = recyclerAdapter.topos.indexOfFirst { it.topo.id == selectedTopoId }
+                        if (position != -1) {
+                            binding?.topoRecycler?.scrollToPosition(position)
+                        } else {
+                            binding?.topoRecycler?.scrollToPosition(0)
+                        }
+                    }
+                    binding?.topoRecycler?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
+                }
+            })
         })
     }
 
