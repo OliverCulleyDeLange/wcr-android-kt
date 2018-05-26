@@ -23,6 +23,8 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
                                        val topoRepository: TopoRepository,
                                        val routeDao: RouteDao) : ViewModel() {
 
+    val userSignedIn = MutableLiveData<Boolean>().also { it.value = false }
+
     val showFab = ObservableBoolean(true)
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
         it.value = GoogleMap.MAP_TYPE_NORMAL

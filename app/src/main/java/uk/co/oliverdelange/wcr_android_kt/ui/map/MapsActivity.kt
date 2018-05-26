@@ -1,6 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.map
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -25,6 +26,8 @@ import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -32,12 +35,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.maps.android.MarkerManager
 import com.google.maps.android.clustering.ClusterManager
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.util.DrawerUIUtils
 import com.squareup.picasso.Picasso
 import dagger.android.DispatchingAndroidInjector
@@ -56,6 +61,7 @@ import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import java.lang.Math.round
+import java.util.Arrays.asList
 import javax.inject.Inject
 
 const val DEFAULT_ZOOM = 6f
@@ -65,6 +71,10 @@ const val MAP_PADDING_TOP = 150
 
 const val EXTRA_SECTOR_ID = "EXTRA_SECTOR_ID"
 const val REQUEST_SUBMIT = 999
+const val REQUEST_SIGNIN = 998
+
+const val MENU_SIGN_IN_ID = 1L
+const val MENU_SIGN_OUT_ID = 2L
 
 const val BOTTOM_SHEET_OPENED = "BOTTOM_SHEET_OPENED"
 
@@ -96,6 +106,8 @@ class MapsActivity : AppCompatActivity(),
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
     private lateinit var sectorMarkers: MarkerManager.Collection
     private lateinit var slidingDrawer: Drawer
+    private lateinit var signInDrawerItem: PrimaryDrawerItem
+    private lateinit var signOutDrawerItem: PrimaryDrawerItem
     internal lateinit var binding: ActivityMapsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,11 +132,30 @@ class MapsActivity : AppCompatActivity(),
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_SUBMIT) {
-            binding.vm?.mapMode?.value = SECTOR_MODE
-            if (resultCode == Activity.RESULT_OK) {
-                Timber.d("User submitted topo")
-                // TODO expand bottom sheet?
+        when (requestCode) {
+            REQUEST_SUBMIT -> {
+                binding.vm?.mapMode?.value = SECTOR_MODE
+                if (resultCode == Activity.RESULT_OK) {
+                    Timber.d("User submitted topo")
+                    // TODO expand bottom sheet?
+                }
+            }
+            REQUEST_SIGNIN -> {
+                val response = IdpResponse.fromResultIntent(data)
+
+                if (resultCode == RESULT_OK) {
+                    // Successfully signed in
+                    val user = FirebaseAuth.getInstance().currentUser
+                    binding.vm?.userSignedIn?.value = true
+                    Timber.d("User successfully signed in: ${user?.email}")
+                    // ...
+                } else {
+                    Timber.d("User sign in failed")
+                    // Sign in failed. If response is null the user canceled the
+                    // sign-in flow using the back button. Otherwise check
+                    // response.getError().getErrorCode() and handle the error.
+                    // ...
+                }
             }
         }
     }
@@ -170,6 +201,16 @@ class MapsActivity : AppCompatActivity(),
     }
 
     private fun observeViewModel() {
+        binding.vm?.userSignedIn?.observe(this, Observer {
+            slidingDrawer.removeItem(MENU_SIGN_IN_ID)
+            slidingDrawer.removeItem(MENU_SIGN_OUT_ID)
+            if (it == true) {
+                slidingDrawer.setItemAtPosition(signOutDrawerItem, 1)
+            } else {
+                slidingDrawer.setItemAtPosition(signInDrawerItem, 1)
+            }
+        })
+
         binding.vm?.mapType?.observe(this, Observer {
             if (GoogleMap.MAP_TYPE_NORMAL == it) {
                 map.mapType = GoogleMap.MAP_TYPE_NORMAL
@@ -274,10 +315,46 @@ class MapsActivity : AppCompatActivity(),
     }
 
     private fun initialiseDrawer() {
-        val activity = this
         slidingDrawer = drawer {
+            selectedItem = -1
             accountHeader {
                 background = R.drawable.nature
+            }
+            signInDrawerItem = primaryItem(R.string.menu_signin) {
+                identifier = MENU_SIGN_IN_ID
+                iicon = GoogleMaterial.Icon.gmd_account_circle
+                selectable = false
+                onClick { _ ->
+                    startActivityForResult(AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setAvailableProviders(asList(
+//                                    AuthUI.IdpConfig.FacebookBuilder().build(),//TODO FB integration
+                                    AuthUI.IdpConfig.EmailBuilder().build()
+                            ))
+                            .build(),
+                            REQUEST_SIGNIN
+                    )
+                    false
+                }
+            }
+            signOutDrawerItem = primaryItem(R.string.menu_signout) {
+                identifier = MENU_SIGN_OUT_ID
+                iicon = GoogleMaterial.Icon.gmd_exit_to_app
+                selectable = false
+                onClick { _ ->
+                    AlertDialog.Builder(this@MapsActivity)
+                            .setMessage(R.string.signout_prompt)
+                            .setNegativeButton("No") { _, _ -> }
+                            .setPositiveButton("Yes") { _, _ ->
+                                AuthUI.getInstance()
+                                        .signOut(this@MapsActivity)
+                                        .addOnCompleteListener({
+                                            binding.vm?.userSignedIn?.value = false
+                                        })
+                            }
+                            .show()
+                    false
+                }
             }
             primaryItem(R.string.menu_about) {
                 iicon = GoogleMaterial.Icon.gmd_help
@@ -294,7 +371,7 @@ class MapsActivity : AppCompatActivity(),
                                     "<br /><b>For support, email <a href='mailto:weclimbrocks@oliverdelange.co.uk'>weclimbrocks@oliverdelange.co.uk</a></b>" +
                                     "<br /><br />" +
                                     "Below is a list of Open Source libraries used in this app.")
-                            .start(activity)
+                            .start(this@MapsActivity)
                     false
                 }
             }
