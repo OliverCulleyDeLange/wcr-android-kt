@@ -25,16 +25,21 @@
             android:text="@string/welcome_text" />
     </LinearLayout>
 
-    <LinearLayout
-        style="@style/Wcr_Container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <TextView
-            style="@style/Wcr_Text"
+        <LinearLayout
+            style="@style/Wcr_Container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/welcome_detail" />
-    </LinearLayout>
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Wcr_Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_detail" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

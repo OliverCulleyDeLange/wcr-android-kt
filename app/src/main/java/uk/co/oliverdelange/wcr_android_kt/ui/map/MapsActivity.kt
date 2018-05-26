@@ -274,6 +274,7 @@ class MapsActivity : AppCompatActivity(),
     }
 
     private fun initialiseDrawer() {
+        val activity = this
         slidingDrawer = drawer {
             accountHeader {
                 background = R.drawable.nature
@@ -293,7 +294,7 @@ class MapsActivity : AppCompatActivity(),
                                     "<br /><b>For support, email <a href='mailto:weclimbrocks@oliverdelange.co.uk'>weclimbrocks@oliverdelange.co.uk</a></b>" +
                                     "<br /><br />" +
                                     "Below is a list of Open Source libraries used in this app.")
-                            .start(applicationContext)
+                            .start(activity)
                     false
                 }
             }
