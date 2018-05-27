@@ -23,12 +23,17 @@ import co.zsmb.materialdrawerkt.builders.accountHeader
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
+import com.amazonaws.auth.AWSCredentialsProvider
+import com.amazonaws.mobile.auth.core.IdentityHandler
+import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.auth.core.SignInStateChangeListener
+import com.amazonaws.mobile.auth.ui.AuthUIConfiguration
+import com.amazonaws.mobile.auth.ui.SignInUI
 import com.amazonaws.mobile.client.AWSMobileClient
+import com.amazonaws.mobile.config.AWSConfiguration
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -36,7 +41,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.maps.android.MarkerManager
 import com.google.maps.android.clustering.ClusterManager
 import com.mikepenz.aboutlibraries.Libs
@@ -62,7 +66,6 @@ import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import java.lang.Math.round
-import java.util.Arrays.asList
 import javax.inject.Inject
 
 const val DEFAULT_ZOOM = 6f
@@ -72,7 +75,6 @@ const val MAP_PADDING_TOP = 150
 
 const val EXTRA_SECTOR_ID = "EXTRA_SECTOR_ID"
 const val REQUEST_SUBMIT = 999
-const val REQUEST_SIGNIN = 998
 
 const val MENU_SIGN_IN_ID = 1L
 const val MENU_SIGN_OUT_ID = 2L
@@ -111,12 +113,11 @@ class MapsActivity : AppCompatActivity(),
     private lateinit var signOutDrawerItem: PrimaryDrawerItem
     internal lateinit var binding: ActivityMapsBinding
 
+    private var credentialsProvider: AWSCredentialsProvider? = null
+    private var awsConfiguration: AWSConfiguration? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AWSMobileClient.getInstance().initialize(this) {
-            Timber.d("AWSMobileClient is initialized")
-        }.execute()
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
         binding.setLifecycleOwner(this)
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
@@ -129,6 +130,36 @@ class MapsActivity : AppCompatActivity(),
         initialiseDrawer()
         initialiseFloatingSearchBar()
         initialiseBottomSheet()
+
+        AWSMobileClient.getInstance().initialize(this) {
+            Timber.d("AWSMobileClient is initialized")
+            credentialsProvider = AWSMobileClient.getInstance().credentialsProvider
+            awsConfiguration = AWSMobileClient.getInstance().configuration
+
+            IdentityManager.getDefaultIdentityManager().getUserID(object : IdentityHandler {
+                override fun handleError(exception: Exception?) {
+                    Timber.e(exception, "Retrieving identity: ${exception?.message}")
+                }
+
+                override fun onIdentityId(identityId: String?) {
+                    Timber.d("Identity = $identityId")
+                    val cachedIdentityId = IdentityManager.getDefaultIdentityManager().cachedUserID
+                    // Do something with the identity here
+                }
+            })
+        }.execute()
+
+        IdentityManager.getDefaultIdentityManager().addSignInStateChangeListener(
+                object : SignInStateChangeListener {
+                    override fun onUserSignedIn() {
+                        binding.vm?.userSignedIn?.value = true
+                    }
+
+                    override fun onUserSignedOut() {
+                        binding.vm?.userSignedIn?.value = false
+                    }
+                }
+        )
     }
 
     override fun onBackPressed() {
@@ -142,23 +173,6 @@ class MapsActivity : AppCompatActivity(),
                 if (resultCode == Activity.RESULT_OK) {
                     Timber.d("User submitted topo")
                     // TODO expand bottom sheet?
-                }
-            }
-            REQUEST_SIGNIN -> {
-                val response = IdpResponse.fromResultIntent(data)
-
-                if (resultCode == RESULT_OK) {
-                    // Successfully signed in
-                    val user = FirebaseAuth.getInstance().currentUser
-                    binding.vm?.userSignedIn?.value = true
-                    Timber.d("User successfully signed in: ${user?.email}")
-                    // ...
-                } else {
-                    Timber.d("User sign in failed")
-                    // Sign in failed. If response is null the user canceled the
-                    // sign-in flow using the back button. Otherwise check
-                    // response.getError().getErrorCode() and handle the error.
-                    // ...
                 }
             }
         }
@@ -329,15 +343,16 @@ class MapsActivity : AppCompatActivity(),
                 iicon = GoogleMaterial.Icon.gmd_account_circle
                 selectable = false
                 onClick { _ ->
-                    startActivityForResult(AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setAvailableProviders(asList(
-//                                    AuthUI.IdpConfig.FacebookBuilder().build(),//TODO FB integration
-                                    AuthUI.IdpConfig.EmailBuilder().build()
-                            ))
-                            .build(),
-                            REQUEST_SIGNIN
-                    )
+                    // TODO to customise, maybe re-create SignInUI?
+                    val ui: SignInUI = AWSMobileClient.getInstance().getClient(this@MapsActivity, SignInUI::class.java) as SignInUI
+                    ui.login(this@MapsActivity, MapsActivity::class.java)
+                            .authUIConfiguration(AuthUIConfiguration.Builder()
+                                    .userPools(true)
+                                    .canCancel(true)
+                                    .logoResId(R.mipmap.ic_launcher)
+//                                    .signInButton(FacebookButton.class) // com.amazonaws.mobile.auth.facebook.FacebookButton
+                                    .build())
+                            .execute()
                     false
                 }
             }
@@ -350,11 +365,7 @@ class MapsActivity : AppCompatActivity(),
                             .setMessage(R.string.signout_prompt)
                             .setNegativeButton("No") { _, _ -> }
                             .setPositiveButton("Yes") { _, _ ->
-                                AuthUI.getInstance()
-                                        .signOut(this@MapsActivity)
-                                        .addOnCompleteListener({
-                                            binding.vm?.userSignedIn?.value = false
-                                        })
+                                IdentityManager.getDefaultIdentityManager().signOut()
                             }
                             .show()
                     false

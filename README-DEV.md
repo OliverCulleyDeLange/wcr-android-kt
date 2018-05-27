@@ -25,6 +25,8 @@ Options:
     - *Setup of server required - Heroku / ElasticBeanstalk + MongoDB hosted*
 
 - [AWS Mobile Hub](https://docs.aws.amazon.com/aws-mobile/latest/developerguide/getting-started.html)
+    - Drop in Auth UI - Customizable?
+
 
 Scenarios to consider:
 - Multiple users submitting stuff at the same time, IDs, overwrites etc
