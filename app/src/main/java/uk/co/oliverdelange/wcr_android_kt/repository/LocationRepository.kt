@@ -2,6 +2,7 @@ package uk.co.oliverdelange.wcr_android_kt.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.FirebaseFirestore
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.model.*
@@ -9,15 +10,27 @@ import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
 
 class LocationRepository @Inject constructor(val locationDao: LocationDao,
-                                             val appExecutors: AppExecutors) {
+                                             val appExecutors: AppExecutors,
+                                             val firebaseFirestore: FirebaseFirestore) {
 
     fun save(location: Location): LiveData<Long> {
         Timber.d("Saving %s: %s", location.type, location.name)
         val result = MutableLiveData<Long>()
-        appExecutors.diskIO().execute {
-            val locationId = locationDao.insert(location)
-            Timber.d("Saved %s to db: %s", location.type, locationId)
-            appExecutors.mainThread().execute { result.value = locationId }
+        appExecutors.networkIO().execute {
+            firebaseFirestore.collection("locations")
+                    .add(location)
+                    .addOnSuccessListener {
+                        Timber.d("Location added to firestore: ${it.id}")
+                        appExecutors.diskIO().execute {
+                            //                            location.id = it.id // TODO sort IDs out
+                            Timber.d("Saving location to local db: %s", location)
+                            val locationId = locationDao.insert(location)
+                            appExecutors.mainThread().execute({ result.value = locationId })
+                        }
+                    }
+                    .addOnFailureListener {
+                        Timber.e(it, "failed to add location to firestore ")
+                    }
         }
         return result
     }

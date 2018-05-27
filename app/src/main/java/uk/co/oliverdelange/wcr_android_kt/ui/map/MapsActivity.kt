@@ -335,6 +335,7 @@ class MapsActivity : AppCompatActivity(),
                 onClick { _ ->
                     startActivityForResult(AuthUI.getInstance()
                             .createSignInIntentBuilder()
+                            .setIsSmartLockEnabled(false)
                             .setAvailableProviders(asList(
 //                                    AuthUI.IdpConfig.FacebookBuilder().build(),//TODO FB integration
                                     AuthUI.IdpConfig.EmailBuilder().build()
