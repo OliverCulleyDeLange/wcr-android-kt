@@ -23,6 +23,7 @@ import co.zsmb.materialdrawerkt.builders.accountHeader
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
@@ -112,6 +113,9 @@ class MapsActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AWSMobileClient.getInstance().initialize(this) {
+            Timber.d("AWSMobileClient is initialized")
+        }.execute()
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
         binding.setLifecycleOwner(this)
