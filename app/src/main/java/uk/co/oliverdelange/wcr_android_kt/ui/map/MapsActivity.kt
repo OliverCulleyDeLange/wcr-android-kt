@@ -26,8 +26,6 @@ import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -35,7 +33,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.maps.android.MarkerManager
 import com.google.maps.android.clustering.ClusterManager
 import com.mikepenz.aboutlibraries.Libs
@@ -44,6 +41,8 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.util.DrawerUIUtils
+import com.parse.ParseUser
+import com.parse.ui.ParseLoginBuilder
 import com.squareup.picasso.Picasso
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
@@ -61,7 +60,6 @@ import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import java.lang.Math.round
-import java.util.Arrays.asList
 import javax.inject.Inject
 
 const val DEFAULT_ZOOM = 6f
@@ -141,20 +139,12 @@ class MapsActivity : AppCompatActivity(),
                 }
             }
             REQUEST_SIGNIN -> {
-                val response = IdpResponse.fromResultIntent(data)
-
                 if (resultCode == RESULT_OK) {
-                    // Successfully signed in
-                    val user = FirebaseAuth.getInstance().currentUser
                     binding.vm?.userSignedIn?.value = true
-                    Timber.d("User successfully signed in: ${user?.email}")
-                    // ...
+                    val user = ParseUser.getCurrentUser()
+                    Timber.d("User successfully signed in: ${user.email}")
                 } else {
                     Timber.d("User sign in failed")
-                    // Sign in failed. If response is null the user canceled the
-                    // sign-in flow using the back button. Otherwise check
-                    // response.getError().getErrorCode() and handle the error.
-                    // ...
                 }
             }
         }
@@ -325,15 +315,10 @@ class MapsActivity : AppCompatActivity(),
                 iicon = GoogleMaterial.Icon.gmd_account_circle
                 selectable = false
                 onClick { _ ->
-                    startActivityForResult(AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setAvailableProviders(asList(
-//                                    AuthUI.IdpConfig.FacebookBuilder().build(),//TODO FB integration
-                                    AuthUI.IdpConfig.EmailBuilder().build()
-                            ))
-                            .build(),
-                            REQUEST_SIGNIN
-                    )
+                    val builder = ParseLoginBuilder(this@MapsActivity)
+                            .setParseLoginEnabled(true)
+                            .setParseLoginEmailAsUsername(true)
+                    startActivityForResult(builder.build(), REQUEST_SIGNIN)
                     false
                 }
             }
@@ -346,11 +331,8 @@ class MapsActivity : AppCompatActivity(),
                             .setMessage(R.string.signout_prompt)
                             .setNegativeButton("No") { _, _ -> }
                             .setPositiveButton("Yes") { _, _ ->
-                                AuthUI.getInstance()
-                                        .signOut(this@MapsActivity)
-                                        .addOnCompleteListener({
-                                            binding.vm?.userSignedIn?.value = false
-                                        })
+                                ParseUser.logOut()
+                                binding.vm?.userSignedIn?.value = false
                             }
                             .show()
                     false
