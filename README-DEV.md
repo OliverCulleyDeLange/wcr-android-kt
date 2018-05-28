@@ -1,3 +1,6 @@
+To read:
+https://aws.amazon.com/blogs/mobile/an-introduction-to-the-sync-framework-for-android/
+
 ### Cloud storage decision
 Wants:
 - Low maintainance, low cost, quick turnaround, easy implementation

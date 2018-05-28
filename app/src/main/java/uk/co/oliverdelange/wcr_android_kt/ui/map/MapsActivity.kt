@@ -23,7 +23,6 @@ import co.zsmb.materialdrawerkt.builders.accountHeader
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
-import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.mobile.auth.core.DefaultSignInResultHandler
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.mobile.auth.core.IdentityProvider
@@ -31,7 +30,6 @@ import com.amazonaws.mobile.auth.core.SignInStateChangeListener
 import com.amazonaws.mobile.auth.ui.AuthUIConfiguration
 import com.amazonaws.mobile.auth.ui.SignInActivity
 import com.amazonaws.mobile.client.AWSMobileClient
-import com.amazonaws.mobile.config.AWSConfiguration
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
@@ -114,15 +112,12 @@ class MapsActivity : AppCompatActivity(),
     private lateinit var signOutDrawerItem: PrimaryDrawerItem
     internal lateinit var binding: ActivityMapsBinding
 
-    private var credentialsProvider: AWSCredentialsProvider? = null
-    private var awsConfiguration: AWSConfiguration? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
         binding.setLifecycleOwner(this)
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
-        binding.vm = viewModel
+        binding.vm = viewModel //.apply { init() }
         binding.floatingSearchView.setQueryTextSize(14)
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -134,33 +129,14 @@ class MapsActivity : AppCompatActivity(),
 
         AWSMobileClient.getInstance().initialize(this) {
             Timber.d("AWSMobileClient is initialized")
-            credentialsProvider = AWSMobileClient.getInstance().credentialsProvider
-            awsConfiguration = AWSMobileClient.getInstance().configuration
-
-//            IdentityManager.getDefaultIdentityManager().getUserID(object : IdentityHandler {
-//                override fun handleError(exception: Exception?) {
-//                    Timber.e(exception, "Retrieving identity: ${exception?.message}")
-//                }
-//
-//                override fun onIdentityId(identityId: String?) {
-//                    Timber.d("Identity = $identityId")
-//                    val cachedIdentityId = IdentityManager.getDefaultIdentityManager().cachedUserID
-//                    // Do something with the identity here
-//                }
-//            })
-
-//            val identityManager = IdentityManager.getDefaultIdentityManager()
-//            if (identityManager.isUserSignedIn) {
-
-
             IdentityManager.getDefaultIdentityManager().addSignInStateChangeListener(
                     object : SignInStateChangeListener {
                         override fun onUserSignedIn() {
-                            binding.vm?.userSignedIn?.postValue(true)
+                            binding.vm?.userSignedIn?.value = true
                         }
 
                         override fun onUserSignedOut() {
-                            binding.vm?.userSignedIn?.postValue(false)
+                            binding.vm?.userSignedIn?.value = false
                         }
                     }
             )

@@ -2,11 +2,17 @@ package uk.co.oliverdelange.wcr_android_kt.repository
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import com.amazonaws.mobile.client.AWSMobileClient
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper
+import com.amazonaws.regions.Region
+import com.amazonaws.regions.Regions
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class LocationRepository @Inject constructor(val locationDao: LocationDao,
                                              val appExecutors: AppExecutors) {
@@ -17,6 +23,21 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
             Timber.d("Saving location: %s", location)
             val locationId = locationDao.insert(location)
             appExecutors.mainThread().execute({ result.value = locationId })
+
+            //TODO Tidy up. Inject etc
+            val credentials = AWSMobileClient.getInstance().credentialsProvider
+            val config = AWSMobileClient.getInstance().configuration
+            val ddbClient = AmazonDynamoDBClient(credentials)
+            ddbClient.setRegion(Region.getRegion(Regions.EU_WEST_2))
+            val dynamoDBMapper = DynamoDBMapper.builder()
+                    .awsConfiguration(config)
+                    .dynamoDBClient(ddbClient)
+                    .build()
+
+            thread(start = true) {
+                //TODO Look at the ID clash scenario - is it possible?
+                dynamoDBMapper.save(get(locationId))
+            }
         }
         return result
     }

@@ -3,6 +3,7 @@ package uk.co.oliverdelange.wcr_android_kt.model
 import android.arch.persistence.room.*
 import android.os.Parcelable
 import android.support.annotation.DrawableRes
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.*
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.parcel.Parcelize
 import uk.co.oliverdelange.wcr_android_kt.R
@@ -10,28 +11,34 @@ import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
 @Parcelize
 @Entity
-//(foreignKeys = (arrayOf(
-//        ForeignKey(
-//                entity = Location::class,
-//                parentColumns = arrayOf("id"),
-//                childColumns = arrayOf("parentId"),
-//                onUpdate = ForeignKey.CASCADE
-//        )
-//)))
-data class Location(@PrimaryKey(autoGenerate = true) val id: Long? = null,
+@DynamoDBTable(tableName = "wcr-mobilehub-1605209796-Locations")
+data class Location(@PrimaryKey(autoGenerate = true)
+                    @DynamoDBHashKey(attributeName = "id")
+                    @DynamoDBAttribute(attributeName = "id")
+                    val id: Long? = null,
                     val parentId: Long? = null,
                     var name: String,
                     var lat: Double,
                     var lng: Double,
+                    @DynamoDBMarshalling(marshallerClass = LocationTypeMarshaller::class)
                     val type: LocationType,
+                    val userId: String? = null,
+                    @DynamoDBIgnore
                     var greens: Int = 0,
+                    @DynamoDBIgnore
                     var oranges: Int = 0,
+                    @DynamoDBIgnore
                     var reds: Int = 0,
+                    @DynamoDBIgnore
                     var blacks: Int = 0,
+                    @DynamoDBIgnore
                     var boulders: Int = 0,
+                    @DynamoDBIgnore
                     var sports: Int = 0,
+                    @DynamoDBIgnore
                     var trads: Int = 0) : Parcelable {
     @Ignore
+    @DynamoDBIgnore
     val latlng: LatLng = LatLng(lat, lng)
 }
 
@@ -112,4 +119,3 @@ enum class GradeType {
 enum class GradeColour {
     GREEN, ORANGE, RED, BLACK
 }
-
