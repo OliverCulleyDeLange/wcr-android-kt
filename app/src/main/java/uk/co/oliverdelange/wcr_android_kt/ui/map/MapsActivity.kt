@@ -24,11 +24,12 @@ import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.amazonaws.auth.AWSCredentialsProvider
-import com.amazonaws.mobile.auth.core.IdentityHandler
+import com.amazonaws.mobile.auth.core.DefaultSignInResultHandler
 import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.auth.core.IdentityProvider
 import com.amazonaws.mobile.auth.core.SignInStateChangeListener
 import com.amazonaws.mobile.auth.ui.AuthUIConfiguration
-import com.amazonaws.mobile.auth.ui.SignInUI
+import com.amazonaws.mobile.auth.ui.SignInActivity
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.config.AWSConfiguration
 import com.arlib.floatingsearchview.FloatingSearchView
@@ -136,30 +137,34 @@ class MapsActivity : AppCompatActivity(),
             credentialsProvider = AWSMobileClient.getInstance().credentialsProvider
             awsConfiguration = AWSMobileClient.getInstance().configuration
 
-            IdentityManager.getDefaultIdentityManager().getUserID(object : IdentityHandler {
-                override fun handleError(exception: Exception?) {
-                    Timber.e(exception, "Retrieving identity: ${exception?.message}")
-                }
+//            IdentityManager.getDefaultIdentityManager().getUserID(object : IdentityHandler {
+//                override fun handleError(exception: Exception?) {
+//                    Timber.e(exception, "Retrieving identity: ${exception?.message}")
+//                }
+//
+//                override fun onIdentityId(identityId: String?) {
+//                    Timber.d("Identity = $identityId")
+//                    val cachedIdentityId = IdentityManager.getDefaultIdentityManager().cachedUserID
+//                    // Do something with the identity here
+//                }
+//            })
 
-                override fun onIdentityId(identityId: String?) {
-                    Timber.d("Identity = $identityId")
-                    val cachedIdentityId = IdentityManager.getDefaultIdentityManager().cachedUserID
-                    // Do something with the identity here
-                }
-            })
+//            val identityManager = IdentityManager.getDefaultIdentityManager()
+//            if (identityManager.isUserSignedIn) {
+
+
+            IdentityManager.getDefaultIdentityManager().addSignInStateChangeListener(
+                    object : SignInStateChangeListener {
+                        override fun onUserSignedIn() {
+                            binding.vm?.userSignedIn?.postValue(true)
+                        }
+
+                        override fun onUserSignedOut() {
+                            binding.vm?.userSignedIn?.postValue(false)
+                        }
+                    }
+            )
         }.execute()
-
-        IdentityManager.getDefaultIdentityManager().addSignInStateChangeListener(
-                object : SignInStateChangeListener {
-                    override fun onUserSignedIn() {
-                        binding.vm?.userSignedIn?.value = true
-                    }
-
-                    override fun onUserSignedOut() {
-                        binding.vm?.userSignedIn?.value = false
-                    }
-                }
-        )
     }
 
     override fun onBackPressed() {
@@ -246,7 +251,7 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
             Timber.d("New crag location to display. Locations: %s", crags)
             refreshCragClusterItems()
-            crags?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
+            crags?.map { location -> location.latlng }?.let { if (it.isNotEmpty()) map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
         })
 
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
@@ -343,16 +348,28 @@ class MapsActivity : AppCompatActivity(),
                 iicon = GoogleMaterial.Icon.gmd_account_circle
                 selectable = false
                 onClick { _ ->
-                    // TODO to customise, maybe re-create SignInUI?
-                    val ui: SignInUI = AWSMobileClient.getInstance().getClient(this@MapsActivity, SignInUI::class.java) as SignInUI
-                    ui.login(this@MapsActivity, MapsActivity::class.java)
-                            .authUIConfiguration(AuthUIConfiguration.Builder()
-                                    .userPools(true)
-                                    .canCancel(true)
-                                    .logoResId(R.mipmap.ic_launcher)
-//                                    .signInButton(FacebookButton.class) // com.amazonaws.mobile.auth.facebook.FacebookButton
-                                    .build())
-                            .execute()
+                    val identityManager = IdentityManager.getDefaultIdentityManager()
+                    identityManager.login(this@MapsActivity, object : DefaultSignInResultHandler() {
+                        override fun onSuccess(activity: Activity, identityProvider: IdentityProvider?) {
+                            if (identityProvider != null) {
+                                Timber.d("Sign-in succeeded. The identity provider name is available here using: ${identityProvider.displayName}")
+                            }
+                        }
+
+                        override fun onCancel(activity: Activity): Boolean {
+                            // Return false to prevent the user from dismissing the sign in screen by pressing back button.
+                            // Return true to allow this.
+                            return true
+                        }
+                    })
+
+                    SignInActivity.startSignInActivity(this@MapsActivity, AuthUIConfiguration.Builder()
+                            .userPools(true)
+                            .canCancel(true)
+                            .logoResId(R.mipmap.ic_launcher)
+                            .build())
+
+
                     false
                 }
             }
