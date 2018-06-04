@@ -14,9 +14,25 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
     fun save(location: Location): LiveData<Long> {
         val result = MutableLiveData<Long>()
         appExecutors.diskIO().execute {
-            Timber.d("Saving location: %s", location)
             val locationId = locationDao.insert(location)
-            appExecutors.mainThread().execute({ result.value = locationId })
+            appExecutors.mainThread().execute({
+                Timber.d("Saved location to room: $locationId")
+                result.value = locationId
+                //TODO Create network bound resource to tidy up this logic.
+                val parseLocation = ParseLocation(locationId,
+                        location.parentId,
+                        location.name,
+                        location.lat,
+                        location.lng,
+                        location.type.name)
+                parseLocation.saveInBackground {
+                    if (it != null) {
+                        Timber.e(it, "Failed to save ParseLocation")
+                    } else {
+                        Timber.d("ParseLocation saved: ${parseLocation.id}")
+                    }
+                }
+            })
         }
         return result
     }
