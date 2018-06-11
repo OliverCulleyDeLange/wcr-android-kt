@@ -28,16 +28,8 @@ import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.maps.android.MarkerManager
-import com.google.maps.android.clustering.ClusterManager
+import com.mapbox.mapboxsdk.Mapbox
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
@@ -51,7 +43,6 @@ import kotlinx.android.synthetic.main.activity_maps.*
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
-import uk.co.oliverdelange.wcr_android_kt.map.*
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
@@ -80,9 +71,9 @@ const val BOTTOM_SHEET_OPENED = "BOTTOM_SHEET_OPENED"
 
 class MapsActivity : AppCompatActivity(),
         HasSupportFragmentInjector,
-        OnMapReadyCallback,
-        ClusterManager.OnClusterItemClickListener<CragClusterItem>,
-        GoogleMap.OnMarkerClickListener,
+//        OnMapReadyCallback,
+//        ClusterManager.OnClusterItemClickListener<CragClusterItem>,
+//        GoogleMap.OnMarkerClickListener,
         SubmitLocationFragment.ActivityInteractor {
 
     @Inject
@@ -100,11 +91,11 @@ class MapsActivity : AppCompatActivity(),
     private val bottomSheetFragment = BottomSheetFragment.newBottomSheet()
     private val welcomeFragment = WelcomeFragment.newWelcomeFragment()
 
-    internal lateinit var map: GoogleMap
+    //    internal lateinit var map: GoogleMap
     private var bottomSheet: BottomSheetBehavior<LinearLayout>? = null
 
-    private lateinit var clusterManager: ClusterManager<CragClusterItem>
-    private lateinit var sectorMarkers: MarkerManager.Collection
+    //    private lateinit var clusterManager: ClusterManager<CragClusterItem>
+//    private lateinit var sectorMarkers: MarkerManager.Collection
     private lateinit var slidingDrawer: Drawer
     private lateinit var signInDrawerItem: PrimaryDrawerItem
     private lateinit var signOutDrawerItem: PrimaryDrawerItem
@@ -119,9 +110,12 @@ class MapsActivity : AppCompatActivity(),
         binding.vm = viewModel
         binding.floatingSearchView.setQueryTextSize(14)
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+//        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+//        mapFragment.getMapAsync(this)
 
+        Mapbox.getInstance(this, "pk.eyJ1Ijoib2xpdmVyZGVsYW5nZSIsImEiOiJjamlhZzNydnQwMHdvM3ZwY3o1NXRsbXF0In0.hxkqmnzrAyrooJix_YK04w")
+        map.onCreate(savedInstanceState)
+        map.getMapAsync({ onMapReady() })
         initialiseDrawer()
         initialiseFloatingSearchBar()
         initialiseBottomSheet()
@@ -160,36 +154,36 @@ class MapsActivity : AppCompatActivity(),
         }
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
-        setMapBottomPadding(bottomSheet?.peekHeight ?: 0)
+    fun onMapReady() {
+        //        map = googleMap
+//        setMapBottomPadding(bottomSheet?.peekHeight ?: 0)
 
-        val markerManager = MarkerManager(map)
-        sectorMarkers = markerManager.newCollection()
-        sectorMarkers.setOnMarkerClickListener(this)
-        clusterManager = ClusterManager(applicationContext, map, markerManager)
-        clusterManager.renderer = CustomRenderer(binding.vm, applicationContext, map, clusterManager)
-        clusterManager.setOnClusterItemClickListener(this)
-        clusterManager.setOnClusterClickListener {
-            val bounds: LatLngBounds = LatLngUtil.getBoundsForLatLngs(it.items.map { it.position })
-            map.animate(bounds)
-            true
-        }
-        map.setOnMarkerClickListener(markerManager)
-        map.setOnCameraIdleListener(clusterManager)
+//        val markerManager = MarkerManager(map)
+//        sectorMarkers = markerManager.newCollection()
+//        sectorMarkers.setOnMarkerClickListener(this)
+//        clusterManager = ClusterManager(applicationContext, map, markerManager)
+//        clusterManager.renderer = CustomRenderer(binding.vm, applicationContext, map, clusterManager)
+//        clusterManager.setOnClusterItemClickListener(this)
+//        clusterManager.setOnClusterClickListener {
+//            val bounds: LatLngBounds = LatLngUtil.getBoundsForLatLngs(it.items.map { it.position })
+//            map.animate(bounds)
+//            true
+//        }
+//        map.setOnMarkerClickListener(markerManager)
+//        map.setOnCameraIdleListener(clusterManager)
 
         observeViewModel()
     }
 
-    override fun onClusterItemClick(clusterItem: CragClusterItem): Boolean {
-        binding.vm?.selectCrag(clusterItem.location.id)
-        return true
-    }
-
-    override fun onMarkerClick(marker: Marker): Boolean {
-        binding.vm?.selectSector((marker.tag as Location).id)
-        return true
-    }
+//    override fun onClusterItemClick(clusterItem: CragClusterItem): Boolean {
+//        binding.vm?.selectCrag(clusterItem.location.id)
+//        return true
+//    }
+//
+//    override fun onMarkerClick(marker: Marker): Boolean {
+//        binding.vm?.selectSector((marker.tag as Location).id)
+//        return true
+//    }
 
     override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: Long) {
         if (locationType == LocationType.CRAG) {
@@ -211,13 +205,13 @@ class MapsActivity : AppCompatActivity(),
             }
         })
 
-        binding.vm?.mapType?.observe(this, Observer {
-            if (GoogleMap.MAP_TYPE_NORMAL == it) {
-                map.mapType = GoogleMap.MAP_TYPE_NORMAL
-            } else {
-                map.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            }
-        })
+//        binding.vm?.mapType?.observe(this, Observer {
+//            if (GoogleMap.MAP_TYPE_NORMAL == it) {
+//                map.mapType = GoogleMap.MAP_TYPE_NORMAL
+//            } else {
+//                map.mapType = GoogleMap.MAP_TYPE_SATELLITE
+//            }
+//        })
 
         binding.vm?.bottomSheetState?.observe(this, Observer {
             it?.let {
@@ -228,7 +222,9 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
             Timber.d("New crag location to display. Locations: %s", crags)
             refreshCragClusterItems()
-            crags?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
+            crags?.map { location -> location.latlng }?.let {
+                //                map.animate(LatLngUtil.getBoundsForLatLngs(it))
+            }
         })
 
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
@@ -236,7 +232,9 @@ class MapsActivity : AppCompatActivity(),
             refreshSectorsForCrag(sectors)
             if (binding.vm?.selectedLocation?.value?.type == LocationType.CRAG) {
                 val locations = sectors?.plus(binding.vm!!.selectedLocation.value!!)
-                locations?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
+                locations?.map { location -> location.latlng }?.let {
+                    //                    map.animate(LatLngUtil.getBoundsForLatLngs(it))
+                }
             }
         })
 
@@ -246,7 +244,9 @@ class MapsActivity : AppCompatActivity(),
                     fabStyle(R.drawable.ic_add_crag, R.color.fab_new_crag)
                     refreshCragClusterItems()
                     val latlngs = binding.vm?.crags?.value?.map { it.latlng }
-                    latlngs?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
+                    latlngs?.let {
+                        //                        map.animate(LatLngUtil.getBoundsForLatLngs(it))
+                    }
                     replaceFragment(welcomeFragment, R.id.bottom_sheet)
                 }
                 CRAG_MODE -> {
@@ -293,25 +293,25 @@ class MapsActivity : AppCompatActivity(),
     }
 
     private fun refreshSectorsForCrag(sectors: List<Location>?) {
-        sectorMarkers.clear()
-        sectors?.forEach {
-            val iconStyle = if (binding.vm?.mapMode?.value == SUBMIT_SECTOR_MODE) Icon.SECTOR_DIMMED else Icon.SECTOR
-            val icon = IconHelper(this).getIcon(it.name, iconStyle)
-            val marker = sectorMarkers.addMarker(MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromBitmap(icon))
-                    .position(it.latlng)
-                    .draggable(false))
-            marker.tag = it
-        }
+//        sectorMarkers.clear()
+//        sectors?.forEach {
+//            val iconStyle = if (binding.vm?.mapMode?.value == SUBMIT_SECTOR_MODE) Icon.SECTOR_DIMMED else Icon.SECTOR
+//            val icon = IconHelper(this).getIcon(it.name, iconStyle)
+//            val marker = sectorMarkers.addMarker(MarkerOptions()
+//                    .icon(BitmapDescriptorFactory.fromBitmap(icon))
+//                    .position(it.latlng)
+//                    .draggable(false))
+//            marker.tag = it
+//        }
     }
 
     private fun refreshCragClusterItems() {
-        val cragClusterItems = binding.vm?.crags?.value?.map { CragClusterItem(it) }
-        cragClusterItems?.let {
-            clusterManager.clearItems()
-            clusterManager.addItems(cragClusterItems)
-            clusterManager.cluster()
-        }
+//        val cragClusterItems = binding.vm?.crags?.value?.map { CragClusterItem(it) }
+//        cragClusterItems?.let {
+//            clusterManager.clearItems()
+//            clusterManager.addItems(cragClusterItems)
+//            clusterManager.cluster()
+//        }
     }
 
     private fun initialiseDrawer() {
@@ -496,11 +496,46 @@ class MapsActivity : AppCompatActivity(),
     }
 
     private fun setMapBottomPadding(padding: Int) {
-        if (::map.isInitialized) map.setPadding(/*Left*/ 0, MAP_PADDING_TOP, /*Right*/ 0, /*Bottom*/ padding)
+//        if (::map.isInitialized) map.setPadding(/*Left*/ 0, MAP_PADDING_TOP, /*Right*/ 0, /*Bottom*/ padding)
     }
 
     private fun fabStyle(iconId: Int, colourId: Int) {
         fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(colourId))
         fab.setImageResource(iconId)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        map.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        map.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        map.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        map.onStop()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        map.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        map.onLowMemory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        map.onDestroy()
     }
 }

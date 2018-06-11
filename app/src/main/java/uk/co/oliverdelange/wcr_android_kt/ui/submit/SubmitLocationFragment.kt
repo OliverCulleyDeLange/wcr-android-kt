@@ -82,14 +82,14 @@ class SubmitLocationFragment : Fragment(), Injectable {
 
         val mapsActivity = activity
         if (mapsActivity is MapsActivity) {
-            setupMarker(mapsActivity.map, mapsActivity)
-            mapsActivity.map.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
-                override fun onMarkerDragStart(marker: Marker) {}
-                override fun onMarkerDrag(marker: Marker) {}
-                override fun onMarkerDragEnd(marker: Marker) {
-                    binding.vm?.locationLatLng?.value = marker.position
-                }
-            })
+//            setupMarker(mapsActivity.map, mapsActivity)
+//            mapsActivity.map.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
+//                override fun onMarkerDragStart(marker: Marker) {}
+//                override fun onMarkerDrag(marker: Marker) {}
+//                override fun onMarkerDragEnd(marker: Marker) {
+//                    binding.vm?.locationLatLng?.value = marker.position
+//                }
+//            })
         }
 
         return binding.root

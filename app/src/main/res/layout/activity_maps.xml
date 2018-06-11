@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -14,11 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <fragment
+        <com.mapbox.mapboxsdk.maps.MapView
             android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            mapbox:mapbox_cameraZoom="11"
+            mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10"
             tools:context=".ui.map.MapsActivity">
 
             <Button
@@ -30,7 +32,7 @@
                 android:layout_marginBottom="7dp"
                 android:onClick="@{vm::toggleMap}"
                 android:text="@{vm.mapLabel}" />
-        </fragment>
+        </com.mapbox.mapboxsdk.maps.MapView>
 
         <com.arlib.floatingsearchview.FloatingSearchView
             android:id="@+id/floating_search_view"
