@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "uk.co.oliverdelange.wcr_android_kt"
         minSdkVersion 21
@@ -19,7 +19,7 @@ android {
     signingConfigs {
         releaseDevelop {
             keyAlias "WCR Release"
-            storeFile file("/Users/ocd/.ssh/wcr_signing.jks")
+            storeFile file("/Users/culleyo1/.ssh/wcr_signing.jks")
             keyPassword KEYPWD //These come from <USER_HOME>/.gradle/gradle.properties
             storePassword KSTOREPWD
         }
@@ -61,7 +61,7 @@ versions.picasso = "2.5.2"
 versions.cloudinary = "1.24.0"
 versions.butterknife = "8.8.1"
 versions.timber = "4.7.0"
-versions.dagger = "2.14.1"
+versions.dagger = "2.15"
 versions.stetho = "1.5.0"
 versions.mapstruct = "1.2.0.CR1"
 versions.lombok = "1.16.20"
@@ -132,8 +132,6 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 //    annotationProcessor "android.arch.lifecycle:compiler:${versions.arch_core}"
 //    annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
-
-    kapt "com.android.databinding:compiler:$gradle_plugin_version"
 
     testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
     testImplementation 'org.objenesis:objenesis:2.6'
