@@ -382,10 +382,14 @@ class MapsActivity : AppCompatActivity(),
                 DrawerUIUtils.getPlaceHolder(ctx)
             }
             set { imageView, uri, placeholder, _ ->
-                Picasso.with(imageView.context).load(uri).placeholder(placeholder).into(imageView)
+                val req = Picasso.get().load(uri)
+                placeholder?.let {
+                    req.placeholder(placeholder)
+                }
+                req.into(imageView)
             }
             cancel { imageView ->
-                Picasso.with(imageView.context).cancelRequest(imageView)
+                Picasso.get().cancelRequest(imageView)
             }
         }
     }
@@ -441,18 +445,18 @@ class MapsActivity : AppCompatActivity(),
         })
 
         // Set appropriate icons for search item
-        floating_search_view.setOnBindSuggestionCallback(SearchSuggestionsAdapter.OnBindSuggestionCallback { _, leftIcon, _, item, _ ->
+        floating_search_view.setOnBindSuggestionCallback { _, leftIcon, _, item, _ ->
             if (item is SearchSuggestionItem) {
                 when (item.type) {
-                    CRAG -> Picasso.with(this).load(R.drawable.location_marker_crag_no_text).into(leftIcon)
-                    SECTOR -> Picasso.with(this).load(R.drawable.location_marker_sector_no_text).into(leftIcon)
+                    CRAG -> Picasso.get().load(R.drawable.location_marker_crag_no_text).into(leftIcon)
+                    SECTOR -> Picasso.get().load(R.drawable.location_marker_sector_no_text).into(leftIcon)
                     TOPO -> leftIcon.setImageResource(R.drawable.ic_topo)
-                    ROUTE_BOULDER -> Picasso.with(this).load(R.drawable.ic_boulder).into(leftIcon)
-                    ROUTE_TRAD -> Picasso.with(this).load(R.drawable.ic_cam).into(leftIcon)
-                    ROUTE_SPORT -> Picasso.with(this).load(R.drawable.ic_quick_draw).into(leftIcon)
+                    ROUTE_BOULDER -> Picasso.get().load(R.drawable.ic_boulder).into(leftIcon)
+                    ROUTE_TRAD -> Picasso.get().load(R.drawable.ic_cam).into(leftIcon)
+                    ROUTE_SPORT -> Picasso.get().load(R.drawable.ic_quick_draw).into(leftIcon)
                 }
             }
-        })
+        }
     }
 
     private fun initialiseBottomSheet() {

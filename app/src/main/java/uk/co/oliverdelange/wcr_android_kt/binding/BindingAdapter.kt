@@ -49,7 +49,7 @@ fun setmapModeTextColour(textView: TextView, mapMode: MapMode?) {
 
 @BindingAdapter("app:imageUrl", "app:placeholder")
 fun loadImageUrl(view: ImageView, imageUrl: String, placeholder: Drawable) {
-    Picasso.with(view.context)
+    Picasso.get()
             .load(imageUrl)
             .placeholder(placeholder)
             .into(view)
@@ -57,7 +57,7 @@ fun loadImageUrl(view: ImageView, imageUrl: String, placeholder: Drawable) {
 
 @BindingAdapter("app:imageUri")
 fun loadTopoSubmissionImageFromUri(view: ImageView, uri: Uri?) {
-    Picasso.with(view.context)
+    Picasso.get()
             .load(uri)
             .resize(MAX_TOPO_SIZE_PX, MAX_TOPO_SIZE_PX)
             .centerInside()
@@ -66,7 +66,7 @@ fun loadTopoSubmissionImageFromUri(view: ImageView, uri: Uri?) {
 
 @BindingAdapter("app:imageUri", "app:placeholder")
 fun loadImageUri(view: ImageView, uri: String?, placeholder: Drawable) {
-    Picasso.with(view.context)
+    Picasso.get()
             .load(Uri.parse(uri))
             .placeholder(placeholder)
             .into(view)
