@@ -112,7 +112,7 @@ class MapsActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Timber.d("MapsActivity : onCreate")
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
         binding.setLifecycleOwner(this)
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
@@ -161,6 +161,7 @@ class MapsActivity : AppCompatActivity(),
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        Timber.d("Google map ready")
         map = googleMap
         setMapBottomPadding(bottomSheet?.peekHeight ?: 0)
 
@@ -193,8 +194,10 @@ class MapsActivity : AppCompatActivity(),
 
     override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: Long) {
         if (locationType == LocationType.CRAG) {
+            Timber.d("Crag submitted, changing map mode")
             binding.vm?.mapMode?.value = CRAG_MODE
         } else {
+            Timber.d("Sector submitted, changing map mode")
             binding.vm?.mapMode?.value = SECTOR_MODE
         }
         binding.vm?.selectedLocationId?.value = submittedLocationId
@@ -226,13 +229,13 @@ class MapsActivity : AppCompatActivity(),
         })
 
         binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
-            Timber.d("New crag location to display. Locations: %s", crags)
+            Timber.d("New crag location to display. Crags: %s", crags?.map { it.name })
             refreshCragClusterItems()
             crags?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
         })
 
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
-            Timber.d("New sector location to display. Locations: %s", sectors)
+            Timber.d("New sector location to display. Sectors: %s", sectors?.map { it.name })
             refreshSectorsForCrag(sectors)
             if (binding.vm?.selectedLocation?.value?.type == LocationType.CRAG) {
                 val locations = sectors?.plus(binding.vm!!.selectedLocation.value!!)
@@ -243,6 +246,7 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.mapMode?.observe(this, Observer {
             when (it) {
                 DEFAULT_MODE -> {
+                    Timber.d("mapMode changed to DEFAULT_MODE")
                     fabStyle(R.drawable.ic_add_crag, R.color.fab_new_crag)
                     refreshCragClusterItems()
                     val latlngs = binding.vm?.crags?.value?.map { it.latlng }
@@ -250,27 +254,32 @@ class MapsActivity : AppCompatActivity(),
                     replaceFragment(welcomeFragment, R.id.bottom_sheet)
                 }
                 CRAG_MODE -> {
+                    Timber.d("mapMode changed to CRAG_MODE")
                     fabStyle(R.drawable.ic_add_sector, R.color.fab_new_sector)
                     refreshCragClusterItems()
                     refreshSectorsForCrag(binding.vm?.sectors?.value)
                     replaceFragment(bottomSheetFragment, R.id.bottom_sheet)
                 }
                 SECTOR_MODE, TOPO_MODE -> {
+                    Timber.d("mapMode changed to SECTOR_MODE || TOPO MODE")
                     fabStyle(R.drawable.ic_add_topo, R.color.fab_new_topo)
                     refreshCragClusterItems()
                     replaceFragment(bottomSheetFragment, R.id.bottom_sheet)
                 }
                 SUBMIT_CRAG_MODE -> {
+                    Timber.d("mapMode changed to SUBMIT_CRAG_MODE")
                     replaceFragment(submitCragFragment, R.id.bottom_sheet)
                     refreshCragClusterItems()
                 }
                 SUBMIT_SECTOR_MODE -> {
+                    Timber.d("mapMode changed to SUBMIT_SECTOR_MODE")
                     submitSectorFragment.parentId = binding.vm?.selectedLocationId?.value
                     replaceFragment(submitSectorFragment, R.id.bottom_sheet)
                     refreshCragClusterItems()
                     refreshSectorsForCrag(binding.vm?.sectors?.value)
                 }
                 SUBMIT_TOPO_MODE -> {
+                    Timber.d("mapMode changed to SUBMIT_TOPO_MODE")
                     binding.vm?.selectedLocation?.value?.id?.let {
                         val intent = Intent(this, SubmitActivity::class.java)
                         intent.putExtra(EXTRA_SECTOR_ID, it)

@@ -19,14 +19,15 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
                                          val appExecutors: AppExecutors) {
 
     fun save(topo: Topo, routes: Collection<Route>): MutableLiveData<Pair<Long, List<Long>>> {
+        Timber.d("Saving topo")
         val result = MutableLiveData<Pair<Long, List<Long>>>()
         appExecutors.diskIO().execute {
-            Timber.d("Saving topo: %s", topo)
+            Timber.d("Saving topo to db: %s", topo)
             val topoId = topoDao.insert(topo)
             val routeIds = mutableListOf<Long>()
             for (route in routes) {
                 route.topoId = topoId
-                Timber.d("Saving route: %s", route)
+                Timber.d("Saving route to db: %s", route)
                 routeIds.add(routeDao.insert(route))
             }
             // Saved topo and all routes so notify observer
@@ -36,16 +37,19 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
     }
 
     fun loadToposForLocation(locationId: Long): LiveData<List<TopoAndRoutes>> {
+        Timber.d("Loading topos for location with id: %s", locationId)
         return topoDao.loadTopoAndRoutes(locationId)
     }
 
     @WorkerThread
     fun getToposForLocation(locationId: Long): List<TopoAndRoutes> {
+        Timber.d("Getting topos for location with id: %s", locationId)
         return topoDao.getTopoAndRoutes(locationId)
     }
 
     @WorkerThread
     fun getToposForCrag(cragId: Long): List<TopoAndRoutes> {
+        Timber.d("Getting topos for crag with id: %s", cragId)
         val toposAndRoutes = ArrayList<TopoAndRoutes>()
         val sectorsForCrag = locationDao.getWithParentId(cragId)
         for (sector in sectorsForCrag) {
@@ -55,6 +59,7 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
     }
 
     fun search(query: String): LiveData<List<Topo>> {
+        Timber.d("Search topos: %s", query)
         return topoDao.searchOnName("%$query%")
     }
 }

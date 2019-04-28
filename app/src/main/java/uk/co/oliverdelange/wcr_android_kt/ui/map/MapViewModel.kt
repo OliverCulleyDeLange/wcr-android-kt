@@ -41,6 +41,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
     val selectedLocation: LiveData<Location?> = Transformations.switchMap(selectedLocationId) {
         if (it != null) {
+            Timber.d("SelectedLocationId changed: Updating 'selectedLocation'")
             locationRepository.load(it)
         } else {
             AbsentLiveData.create()
@@ -49,6 +50,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
 
     val crags: LiveData<List<Location>> = locationRepository.loadCrags()
     val sectors: LiveData<List<Location>> = Transformations.switchMap(selectedLocation) {
+        Timber.d("selectedLocation changed to %s : %s: Updating 'sectors'", it?.id, it?.name)
         when (it?.type) {
             LocationType.CRAG -> it.id?.let { locationRepository.loadSectorsFor(it) }
             LocationType.SECTOR -> it.parentId?.let { locationRepository.loadSectorsFor(it) }
@@ -58,6 +60,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
 
     val selectedTopoId = MutableLiveData<Long>()
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) {
+        Timber.d("selectedLocation changed to %s : %s: Updating 'topos'", it?.id, it?.name)
         when (it?.type) {
             LocationType.SECTOR -> it.id?.let { topoRepository.loadToposForLocation(it) }
             LocationType.CRAG -> it.id?.let { cragId -> getToposForCrag(cragId) }
@@ -66,6 +69,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     private fun getToposForCrag(cragId: Long): LiveData<List<TopoAndRoutes>> {
+        Timber.d("Getting topos for crag with id: %s", cragId)
         val topos: MediatorLiveData<List<TopoAndRoutes>> = MediatorLiveData()
         val loadSectorsForCrag = locationRepository.loadSectorsFor(cragId)
         topos.addSource(loadSectorsForCrag) { sectorsForCrag ->
@@ -101,6 +105,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     fun toggleMap(view: View) {
+        Timber.d("Toggling map type")
         if (GoogleMap.MAP_TYPE_NORMAL == mapType.value) {
             mapType.value = GoogleMap.MAP_TYPE_SATELLITE
         } else {
@@ -109,16 +114,19 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     fun selectCrag(id: Long?) {
+        Timber.d("Selecting crag with id %s", id)
         selectedLocationId.postValue(id)
         mapMode.value = MapMode.CRAG_MODE
     }
 
     fun selectSector(id: Long?) {
+        Timber.d("Selecting sector with id %s", id)
         selectedLocationId.postValue(id)
         mapMode.value = MapMode.SECTOR_MODE
     }
 
     fun selectTopo(id: Long?) {
+        Timber.d("Selecting topo with id %s", id)
         id?.let {
             bottomSheetState.value = BottomSheetBehavior.STATE_EXPANDED
             mapMode.value = MapMode.TOPO_MODE
@@ -133,6 +141,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     fun selectRoute(id: Long?) {
+        Timber.d("Selecting route with id %s", id)
         id?.let { routeId ->
             Observable.fromCallable { routeDao.get(routeId) }
                     .subscribeOn(Schedulers.io())

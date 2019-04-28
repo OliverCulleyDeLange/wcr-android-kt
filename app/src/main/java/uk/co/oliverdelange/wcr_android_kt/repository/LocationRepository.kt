@@ -12,32 +12,38 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
                                              val appExecutors: AppExecutors) {
 
     fun save(location: Location): LiveData<Long> {
+        Timber.d("Saving %s: %s", location.type, location.name)
         val result = MutableLiveData<Long>()
         appExecutors.diskIO().execute {
-            Timber.d("Saving location: %s", location)
             val locationId = locationDao.insert(location)
-            appExecutors.mainThread().execute({ result.value = locationId })
+            Timber.d("Saved %s to db: %s", location.type, locationId)
+            appExecutors.mainThread().execute { result.value = locationId }
         }
         return result
     }
 
     fun load(selectedLocationId: Long): LiveData<Location> {
+        Timber.d("Loading location from id: %s", selectedLocationId)
         return locationDao.load(selectedLocationId)
     }
 
     fun get(locationId: Long): Location? {
+        Timber.d("Getting Location from id: %s", locationId)
         return locationDao.get(locationId)
     }
 
     fun loadCrags(): LiveData<List<Location>> {
+        Timber.d("Loading crags")
         return locationDao.load(LocationType.CRAG)
     }
 
     fun loadSectorsFor(cragId: Long): LiveData<List<Location>> {
+        Timber.d("Loading sectors for cragId: %s", cragId)
         return locationDao.loadWithParentId(cragId)
     }
 
     fun updateLocationRouteInfo(toposAndRoutes: List<TopoAndRoutes>, locationId: Long) {
+        Timber.d("Updating route info for location with id %s", locationId)
         var boulders = 0
         var sports = 0
         var trads = 0
@@ -64,6 +70,7 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
     }
 
     fun search(query: String): LiveData<List<Location>> {
+        Timber.d("Search locations: %s", query)
         return locationDao.searchOnName("%$query%")
     }
 }
