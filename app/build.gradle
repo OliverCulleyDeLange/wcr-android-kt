@@ -81,7 +81,7 @@ versions.espresso = '3.1.0-alpha4'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.anko:anko-commons:${versions.anko}"
     implementation "com.firebaseui:firebase-ui-auth:${versions.firebase_auth_ui}"
 //    implementation "com.facebook.android:facebook-android-sdk:${versions.facebook}"
