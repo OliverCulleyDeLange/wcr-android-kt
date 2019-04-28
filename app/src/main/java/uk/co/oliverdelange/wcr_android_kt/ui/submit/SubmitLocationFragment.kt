@@ -1,19 +1,18 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_submit_location.*
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitLocationBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
@@ -22,7 +21,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapsActivity
 import javax.inject.Inject
 
-class SubmitLocationFragment : Fragment(), Injectable {
+class SubmitLocationFragment : androidx.fragment.app.Fragment(), Injectable {
     companion object {
         fun newCragSubmission(): SubmitLocationFragment {
             return SubmitLocationFragment().also { it.locationType = LocationType.CRAG }
@@ -61,7 +60,7 @@ class SubmitLocationFragment : Fragment(), Injectable {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSubmitLocationBinding.inflate(layoutInflater, container, false)
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitLocationViewModel::class.java)
         binding.vm = viewModel
         binding.vm?.locationType = locationType

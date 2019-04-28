@@ -1,24 +1,21 @@
 package uk.co.oliverdelange.wcr_android_kt.util
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 
 // Simplifies fragment transactions
-inline fun FragmentManager.inTransaction(func: FragmentTransaction.() -> FragmentTransaction) {
+inline fun androidx.fragment.app.FragmentManager.inTransaction(func: androidx.fragment.app.FragmentTransaction.() -> androidx.fragment.app.FragmentTransaction) {
     beginTransaction().func().commit()
 }
 
-fun AppCompatActivity.addFragment(fragment: Fragment, frameId: Int) {
+fun AppCompatActivity.addFragment(fragment: androidx.fragment.app.Fragment, frameId: Int) {
     supportFragmentManager.inTransaction { add(frameId, fragment) }
 }
 
-fun AppCompatActivity.replaceFragment(fragment: Fragment, frameId: Int) {
+fun AppCompatActivity.replaceFragment(fragment: androidx.fragment.app.Fragment, frameId: Int) {
     supportFragmentManager.inTransaction { replace(frameId, fragment) }
 }
 
-fun AppCompatActivity.removeFragment(fragment: Fragment) {
+fun AppCompatActivity.removeFragment(fragment: androidx.fragment.app.Fragment) {
     supportFragmentManager.inTransaction {
         remove(fragment)
     }

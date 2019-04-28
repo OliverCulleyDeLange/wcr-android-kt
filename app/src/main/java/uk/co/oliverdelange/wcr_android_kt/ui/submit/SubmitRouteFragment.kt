@@ -1,13 +1,12 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_submit_route.*
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitRouteBinding
@@ -15,7 +14,7 @@ import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import javax.inject.Inject
 
-class SubmitRouteFragment : Fragment(), Injectable {
+class SubmitRouteFragment : androidx.fragment.app.Fragment(), Injectable {
     companion object {
         var routeFragmentIdCounter: Int = 0
         fun newRouteFragment(submitTopoFragment: SubmitTopoFragment): SubmitRouteFragment {
@@ -39,7 +38,7 @@ class SubmitRouteFragment : Fragment(), Injectable {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSubmitRouteBinding.inflate(layoutInflater, container, false)
-        binding?.setLifecycleOwner(this)
+        binding?.lifecycleOwner = this
         val viewModel = ViewModelProviders.of(submitTopoFragment, viewModelFactory).get(SubmitTopoViewModel::class.java)
         binding?.vm = viewModel
 

@@ -1,21 +1,21 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.map
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.LinearSnapHelper
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.NO_POSITION
-import android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE
 import android.view.*
 import android.view.MotionEvent.ACTION_MASK
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.NO_POSITION
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentBottomSheetBinding
@@ -45,7 +45,7 @@ class BottomSheetFragment : Fragment(), Injectable {
         binding = FragmentBottomSheetBinding.inflate(layoutInflater, container, false)
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
         binding?.vm = viewModel
-        binding?.setLifecycleOwner(this)
+        binding?.lifecycleOwner = this
         return binding?.root
     }
 

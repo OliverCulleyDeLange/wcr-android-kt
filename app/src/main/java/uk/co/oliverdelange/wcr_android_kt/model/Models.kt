@@ -1,8 +1,8 @@
 package uk.co.oliverdelange.wcr_android_kt.model
 
-import android.arch.persistence.room.*
 import android.os.Parcelable
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
+import androidx.room.*
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.parcel.Parcelize
 import uk.co.oliverdelange.wcr_android_kt.R

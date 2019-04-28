@@ -2,7 +2,7 @@ package uk.co.oliverdelange.wcr_android_kt.map
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.ui.IconGenerator

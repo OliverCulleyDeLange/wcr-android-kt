@@ -2,29 +2,25 @@ package uk.co.oliverdelange.wcr_android_kt.ui.map
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetBehavior.STATE_COLLAPSED
-import android.support.design.widget.BottomSheetBehavior.STATE_EXPANDED
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.animation.BounceInterpolator
 import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import co.zsmb.materialdrawerkt.builders.accountHeader
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
-import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -35,6 +31,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.firebase.auth.FirebaseAuth
 import com.google.maps.android.MarkerManager
 import com.google.maps.android.clustering.ClusterManager
@@ -114,7 +113,7 @@ class MapsActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         Timber.d("MapsActivity : onCreate")
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
         binding.vm = viewModel
         binding.floatingSearchView.setQueryTextSize(14)

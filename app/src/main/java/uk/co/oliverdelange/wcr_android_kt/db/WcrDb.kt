@@ -1,10 +1,10 @@
 package uk.co.oliverdelange.wcr_android_kt.db
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.room.*
 import android.content.Context
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
+import androidx.lifecycle.LiveData
+import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteDatabase
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType.CRAG
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType.SECTOR

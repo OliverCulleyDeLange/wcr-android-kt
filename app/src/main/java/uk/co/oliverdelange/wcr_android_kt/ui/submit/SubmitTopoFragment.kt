@@ -2,23 +2,23 @@ package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
 import android.animation.ObjectAnimator
 import android.app.Activity.RESULT_OK
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.DecelerateInterpolator
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_submit_topo.*
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
@@ -65,7 +65,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSubmitTopoBinding.inflate(layoutInflater, container, false)
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitTopoViewModel::class.java)
         binding.vm = viewModel
 

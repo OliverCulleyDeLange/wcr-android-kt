@@ -1,7 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.repository
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.model.*

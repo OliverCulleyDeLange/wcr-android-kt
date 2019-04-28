@@ -44,7 +44,7 @@ import java.lang.reflect.Field;
 import timber.log.Timber;
 import uk.co.oliverdelange.wcr_android_kt.R;
 
-public class TouchImageView extends android.support.v7.widget.AppCompatImageView {
+public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView {
 
     private static final String DEBUG = "DEBUG";
 

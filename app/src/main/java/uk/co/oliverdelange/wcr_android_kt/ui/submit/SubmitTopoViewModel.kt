@@ -1,14 +1,14 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
-import android.databinding.ObservableBoolean
-import android.databinding.ObservableInt
 import android.net.Uri
 import android.view.View
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableInt
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback

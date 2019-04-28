@@ -6,30 +6,30 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "uk.co.oliverdelange.wcr_android_kt"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    signingConfigs {
-        releaseDevelop {
-            keyAlias "WCR Release"
-            storeFile file("/Users/culleyo1/.ssh/wcr_signing.jks")
-            keyPassword KEYPWD //These come from <USER_HOME>/.gradle/gradle.properties
-            storePassword KSTOREPWD
-        }
-    }
+//    signingConfigs {
+//        releaseDevelop {
+//            keyAlias "WCR Release"
+//            storeFile file("/Users/culleyo1/.ssh/wcr_signing.jks")
+//            keyPassword KEYPWD //These come from <USER_HOME>/.gradle/gradle.properties
+//            storePassword KSTOREPWD
+//        }
+//    }
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.releaseDevelop
-        }
+//        release {
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.releaseDevelop
+//        }
         debug {
             applicationIdSuffix ".debug"
         }
@@ -46,8 +46,8 @@ android {
 }
 
 def versions = [:]
-versions.support = "27.1.0"
-versions.arch_core = "1.1.0"
+versions.support = '1.0.0-beta01'
+versions.arch_core = '2.0.0-beta01'
 versions.firebase_auth_ui = "4.0.0"
 //versions.facebook = "4.33.0"
 versions.gmaps = "15.0.1"
@@ -61,13 +61,13 @@ versions.picasso = "2.71828"
 versions.cloudinary = "1.24.0"
 versions.butterknife = "8.8.1"
 versions.timber = "4.7.0"
-versions.dagger = "2.15"
+versions.dagger = "2.16"
 versions.stetho = "1.5.0"
 versions.mapstruct = "1.2.0.CR1"
 versions.lombok = "1.16.20"
 versions.rxjava2 = "2.1.14"
 versions.rxandroid = "2.0.2"
-versions.room = "1.1.0-alpha1"
+versions.room = '2.0.0-beta01'
 versions.anko = "0.10.5"
 versions.material_drawer_kt = "1.3.3"
 versions.material_drawer = "6.0.6@aar"
@@ -75,8 +75,8 @@ versions.about_libraries = "6.0.6@aar"
 
 versions.junit = "4.12"
 versions.mockito_kotlin = "1.5.0"
-versions.testrunner = "1.0.1"
-versions.espresso = "3.0.1"
+versions.testrunner = '1.1.0-alpha4'
+versions.espresso = '3.1.0-alpha4'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -86,15 +86,15 @@ dependencies {
     implementation "com.firebaseui:firebase-ui-auth:${versions.firebase_auth_ui}"
 //    implementation "com.facebook.android:facebook-android-sdk:${versions.facebook}"
 
-    implementation "com.android.support:appcompat-v7:${versions.support}"
-    implementation "com.android.support:recyclerview-v7:${versions.support}"
-    implementation "com.android.support:support-annotations:${versions.support}"
-    implementation "com.android.support:design:${versions.support}"
-    implementation "com.android.support:cardview-v7:${versions.support}"
+    implementation "androidx.appcompat:appcompat:${versions.support}"
+    implementation "androidx.recyclerview:recyclerview:${versions.support}"
+    implementation "androidx.annotation:annotation:${versions.support}"
+    implementation "com.google.android.material:material:${versions.support}"
+    implementation "androidx.cardview:cardview:${versions.support}"
 //    implementation "com.android.support:support-core-utils:${versions.support}"
 
-    implementation "android.arch.persistence.room:runtime:$versions.room"
-    implementation "android.arch.lifecycle:extensions:${versions.arch_core}"
+    implementation "androidx.room:room-runtime:$versions.room"
+    implementation "androidx.lifecycle:lifecycle-extensions:${versions.arch_core}"
 
     implementation "com.google.android.gms:play-services-maps:${versions.gmaps}"
     implementation "com.google.maps.android:android-maps-utils:${versions.maps_utils}"
@@ -127,7 +127,7 @@ dependencies {
     implementation "com.mikepenz:google-material-typeface:3.0.1.2.original@aar"
     implementation "com.mikepenz:fontawesome-typeface:5.0.6.0@aar"
 
-    kapt "android.arch.persistence.room:compiler:$versions.room"
+    kapt "androidx.room:room-compiler:$versions.room"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 //    annotationProcessor "android.arch.lifecycle:compiler:${versions.arch_core}"
@@ -138,10 +138,10 @@ dependencies {
     testImplementation 'cglib:cglib-nodep:3.2.4'
     testImplementation "org.mockito:mockito-core:2.17.0"
     testImplementation 'org.codehaus.groovy:groovy:2.4.13:grooid'
-    testImplementation "android.arch.core:core-testing:${versions.arch_core}"
+    testImplementation "androidx.arch.core:core-testing:${versions.arch_core}"
 
-    androidTestImplementation "com.android.support.test:runner:${versions.testrunner}"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
+    androidTestImplementation "androidx.test:runner:${versions.testrunner}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
 }
 
 apply plugin: 'com.google.gms.google-services'

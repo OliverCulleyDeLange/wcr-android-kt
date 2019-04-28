@@ -1,6 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.db
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.model.GradeType

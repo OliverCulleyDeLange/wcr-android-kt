@@ -1,13 +1,13 @@
 package uk.co.oliverdelange.wcr_android_kt.binding
 
-import android.databinding.BindingAdapter
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.support.annotation.ColorInt
 import android.view.View
 import android.view.View.*
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour

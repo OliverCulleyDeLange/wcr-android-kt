@@ -1,10 +1,10 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.map
 
-import android.arch.lifecycle.*
-import android.databinding.ObservableBoolean
-import android.support.design.widget.BottomSheetBehavior
 import android.view.View
+import androidx.databinding.ObservableBoolean
+import androidx.lifecycle.*
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

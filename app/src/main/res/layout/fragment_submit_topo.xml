@@ -45,14 +45,14 @@
 
             </FrameLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/topo_name_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
                 app:hintTextAppearance="@style/Wcr_FloatingLabel">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/topo_name_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -61,13 +61,13 @@
                     android:text="@={vm.topoName}"
                     android:theme="@style/Wcr_EditText" />
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <android.support.v4.view.ViewPager
+                <androidx.viewpager.widget.ViewPager
                     android:id="@+id/route_pager"
                     android:layout_width="match_parent"
                     android:layout_height="180dp" />
