@@ -48,15 +48,15 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         }
     }
 
-    val crags: LiveData<List<Location>> = locationRepository.loadCrags()
-    val sectors: LiveData<List<Location>> = Transformations.switchMap(selectedLocation) {
+    val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
+    val sectors: LiveData<List<Location>> =Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) {
         Timber.d("selectedLocation changed to %s : %s: Updating 'sectors'", it?.id, it?.name)
         when (it?.type) {
             LocationType.CRAG -> it.id?.let { locationRepository.loadSectorsFor(it) }
             LocationType.SECTOR -> it.parentId?.let { locationRepository.loadSectorsFor(it) }
             null -> AbsentLiveData.create()
         }
-    }
+    })
 
     val selectedTopoId = MutableLiveData<Long>()
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) {

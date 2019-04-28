@@ -31,7 +31,7 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
                 routeIds.add(routeDao.insert(route))
             }
             // Saved topo and all routes so notify observer
-            appExecutors.mainThread().execute({ result.value = Pair(topoId, routeIds) })
+            appExecutors.mainThread().execute { result.value = Pair(topoId, routeIds) }
         }
         return result
     }

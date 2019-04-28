@@ -48,8 +48,8 @@ android {
 def versions = [:]
 versions.support = '1.0.0-beta01'
 versions.arch_core = '2.0.0-beta01'
-versions.firebase_auth_ui = "4.0.0"
-versions.firebase_firestore = "17.0.1"
+versions.firebase_auth_ui = "4.3.1"
+versions.firebase_firestore = "18.2.0"
 //versions.facebook = "4.33.0"
 versions.gmaps = "15.0.1"
 versions.maps_utils = "0.5"
@@ -96,7 +96,7 @@ dependencies {
 //    implementation "com.android.support:support-core-utils:${versions.support}"
 
     implementation "androidx.room:room-runtime:$versions.room"
-    implementation "androidx.lifecycle:lifecycle-extensions:${versions.arch_core}"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.1.0-alpha04"
 
     implementation "com.google.android.gms:play-services-maps:${versions.gmaps}"
     implementation "com.google.maps.android:android-maps-utils:${versions.maps_utils}"
