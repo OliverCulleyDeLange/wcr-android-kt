@@ -1,6 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.repository
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.junit.Rule
 import spock.lang.Specification
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao

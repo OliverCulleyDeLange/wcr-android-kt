@@ -140,8 +140,11 @@ dependencies {
     testImplementation 'org.codehaus.groovy:groovy:2.4.13:grooid'
     testImplementation "androidx.arch.core:core-testing:${versions.arch_core}"
 
+
     androidTestImplementation "androidx.test:runner:${versions.testrunner}"
     androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
+    androidTestImplementation "androidx.test:rules:${versions.testrunner}"
+
 }
 
 apply plugin: 'com.google.gms.google-services'

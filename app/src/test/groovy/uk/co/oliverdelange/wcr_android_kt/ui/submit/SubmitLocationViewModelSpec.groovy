@@ -1,7 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.view.View
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.android.gms.maps.model.LatLng
 import org.junit.Rule
 import org.mockito.ArgumentCaptor
