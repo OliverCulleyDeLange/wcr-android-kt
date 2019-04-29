@@ -19,6 +19,7 @@ export const recursiveDelete = functions
     timeoutSeconds: 540,
     memory: '2GB'
   })
+  // Callable functions: https://firebase.google.com/docs/functions/callable#call_the_function
   .https.onCall((data, context) => {
     // Only allow admin users to execute this function.
     if (!(context.auth && context.auth.token && context.auth.token.admin)) {
