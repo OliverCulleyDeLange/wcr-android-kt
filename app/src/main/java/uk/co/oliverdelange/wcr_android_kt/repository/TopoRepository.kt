@@ -29,21 +29,22 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
                 .collection("locations")
                 .document(topo.locationId)
                 .collection("topos")
-                .document(topo.name)
+                .document(topo.id)
                 .set(topo)
                 .addOnSuccessListener {
                     Timber.d("Topo saved to firestore: ${topo.name}")
                     appExecutors.diskIO().execute {
                         Timber.d("Saving topo to local db: %s", topo)
-                        val topoId = topoDao.insert(topo)
+                        val topoRowId = topoDao.insert(topo)
                         val routeIds = mutableListOf<Long>()
                         for (route in routes) {
-                            route.topoId = topoId
+                            route.topoId = topo.id
                             Timber.d("Saving route to db: %s", route)
-                            routeIds.add(routeDao.insert(route))
+                            val routeRowId = routeDao.insert(route)
+                            routeIds.add(routeRowId)
                         }
                         // Saved topo and all routes so notify observer
-                        appExecutors.mainThread().execute { result.value = Pair(topoId, routeIds) }
+                        appExecutors.mainThread().execute { result.value = Pair(topoRowId, routeIds) }
                     }
                 }
                 .addOnFailureListener {

@@ -50,7 +50,7 @@ class TopoAndRoutes {
                 childColumns = arrayOf("locationId")
         )
 )))
-data class Topo(@PrimaryKey(autoGenerate = true) var id: Long? = null,
+data class Topo(@PrimaryKey val id: String,
                 var locationId: String,
                 var name: String,
                 var image: String)
@@ -62,7 +62,7 @@ data class Topo(@PrimaryKey(autoGenerate = true) var id: Long? = null,
                 childColumns = arrayOf("topoId"))
         )])
 data class Route(@PrimaryKey var id: Long? = null,
-                 var topoId: Long? = null,
+                 var topoId: String? = null,
                  var name: String,
                  @Embedded(prefix = "grade_")
                  var grade: Grade? = null,

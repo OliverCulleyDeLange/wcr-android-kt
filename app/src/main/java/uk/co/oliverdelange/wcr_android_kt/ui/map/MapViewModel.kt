@@ -49,7 +49,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
-    val sectors: LiveData<List<Location>> =Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) {
+    val sectors: LiveData<List<Location>> = Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) {
         Timber.d("selectedLocation changed to %s : %s: Updating 'sectors'", it?.id, it?.name)
         when (it?.type) {
             LocationType.CRAG -> locationRepository.loadSectorsFor(it.id)
@@ -58,7 +58,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         }
     })
 
-    val selectedTopoId = MutableLiveData<Long>()
+    val selectedTopoId = MutableLiveData<String>()
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) {
         Timber.d("selectedLocation changed to %s : %s: Updating 'topos'", it?.id, it?.name)
         when (it?.type) {
@@ -125,7 +125,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         mapMode.value = MapMode.SECTOR_MODE
     }
 
-    fun selectTopo(id: Long?) {
+    fun selectTopo(id: String?) {
         Timber.d("Selecting topo with id %s", id)
         id?.let {
             bottomSheetState.value = BottomSheetBehavior.STATE_EXPANDED
@@ -159,27 +159,28 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         val trimmedQuery = query.trim()
         if (trimmedQuery.isNotEmpty()) {
             val mediator = MediatorLiveData<List<SearchSuggestionItem>>()
-            // TODO Uncomment once all primary keys strings
-//            mediator.addSource(locationRepository.search(query)) { locations: List<Location>? ->
-//                addToSearchItems(mediator, locations?.map {
-//                    val type = if (it.type == LocationType.CRAG) SearchResultType.CRAG else SearchResultType.SECTOR
-//                    SearchSuggestionItem(it.name, type, it.id)
-//                })
-//            }
-            mediator.addSource(topoRepository.search(query)) { topos: List<Topo>? ->
-                addToSearchItems(mediator, topos?.map { SearchSuggestionItem(it.name, SearchResultType.TOPO, it.id) })
-            }
-            mediator.addSource(routeDao.searchOnName("%$query%")) { routes: List<Route>? ->
-                addToSearchItems(mediator, routes?.map {
-                    val type = when (it.type) {
-                        TRAD -> SearchResultType.ROUTE_TRAD
-                        SPORT -> SearchResultType.ROUTE_SPORT
-                        BOULDERING -> SearchResultType.ROUTE_BOULDER
-                        else -> SearchResultType.ROUTE
-                    }
+            mediator.addSource(locationRepository.search(query)) { locations: List<Location>? ->
+                addToSearchItems(mediator, locations?.map {
+                    val type = if (it.type == LocationType.CRAG) SearchResultType.CRAG else SearchResultType.SECTOR
                     SearchSuggestionItem(it.name, type, it.id)
                 })
             }
+            mediator.addSource(topoRepository.search(query)) { topos: List<Topo>? ->
+                addToSearchItems(mediator, topos?.map { SearchSuggestionItem(it.name, SearchResultType.TOPO, it.id) })
+            }
+            // TODO Uncomment once all primary keys strings
+
+//            mediator.addSource(routeDao.searchOnName("%$query%")) { routes: List<Route>? ->
+//                addToSearchItems(mediator, routes?.map {
+//                    val type = when (it.type) {
+//                        TRAD -> SearchResultType.ROUTE_TRAD
+//                        SPORT -> SearchResultType.ROUTE_SPORT
+//                        BOULDERING -> SearchResultType.ROUTE_BOULDER
+//                        else -> SearchResultType.ROUTE
+//                    }
+//                    SearchSuggestionItem(it.name, type, it.id)
+//                })
+//            }
             mediator
         } else {
             AbsentLiveData.create<List<SearchSuggestionItem>>()

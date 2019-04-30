@@ -425,12 +425,12 @@ class MapsActivity : AppCompatActivity(),
 
                     when (searchSuggestion.type) {
                         //TODO Uncomment once IDs all strings
-//                        CRAG -> binding.vm?.selectCrag(searchSuggestion.id)
-//                        SECTOR -> binding.vm?.selectSector(searchSuggestion.id)
+                        CRAG -> binding.vm?.selectCrag(searchSuggestion.id)
+                        SECTOR -> binding.vm?.selectSector(searchSuggestion.id)
                         TOPO -> binding.vm?.selectTopo(searchSuggestion.id)
-                        ROUTE, ROUTE_BOULDER, ROUTE_TRAD, ROUTE_SPORT -> {
-                            binding.vm?.selectRoute(searchSuggestion.id)
-                        }
+//                        ROUTE, ROUTE_BOULDER, ROUTE_TRAD, ROUTE_SPORT -> {
+//                            binding.vm?.selectRoute(searchSuggestion.id)
+//                        }
                     }
                 }
             }
@@ -441,9 +441,9 @@ class MapsActivity : AppCompatActivity(),
         })
 
         // React to search term changing
-        floating_search_view.setOnQueryChangeListener({ _, newQuery ->
+        floating_search_view.setOnQueryChangeListener { _, newQuery ->
             binding.vm?.searchQuery?.value = newQuery
-        })
+        }
 
         // React to new search results
         binding.vm?.searchResults?.observe(this, Observer {
