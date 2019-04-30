@@ -10,14 +10,14 @@ class WorkerService @Inject constructor(val appExecutors: AppExecutors,
                                         val locationRepository: LocationRepository,
                                         val topoRepository: TopoRepository) {
 
-    fun updateRouteInfo(sectorId: Long) {
+    fun updateRouteInfo(sectorId: String) {
         Timber.d("Updating route info for sector with id: %s", sectorId)
         appExecutors.diskIO().execute {
             val sectorRoutes = topoRepository.getToposForLocation(sectorId)
             locationRepository.updateLocationRouteInfo(sectorRoutes, sectorId)
 
             val sector = locationRepository.get(sectorId)
-            sector?.parentId?.let { cragId ->
+            sector?.parentLocation?.let { cragId ->
                 val cragRoutes = topoRepository.getToposForCrag(cragId)
                 locationRepository.updateLocationRouteInfo(cragRoutes, cragId)
             }

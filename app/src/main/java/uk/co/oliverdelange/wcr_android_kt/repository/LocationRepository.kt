@@ -2,7 +2,6 @@ package uk.co.oliverdelange.wcr_android_kt.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import timber.log.Timber
@@ -15,20 +14,20 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
                                              val appExecutors: AppExecutors,
                                              val firebaseFirestore: FirebaseFirestore) {
 
-    fun save(location: Location): LiveData<Long> {
+    fun save(location: Location): LiveData<String> {
         Timber.d("Saving %s: %s", location.type, location.name)
-        val result = MutableLiveData<Long>()
+        val result = MutableLiveData<String>()
         appExecutors.networkIO().execute {
             firebaseFirestore.collection("locations")
-                    .document(location.name)
+                    .document(location.id)
                     .set(location)
                     .addOnSuccessListener {
-                        Timber.d("Location added to firestore: ${location.name}")
+                        Timber.d("Location saved to firestore: ${location.id}")
                         appExecutors.diskIO().execute {
-                            Timber.d("Saving location to local db: %s", location)
-                            val locationId = locationDao.insert(location)
-                            Timber.d("Saved location - its id id $locationId")
-                            appExecutors.mainThread().execute { result.value = locationId }
+                            Timber.d("Saving location to local db")
+                            val locationRowId = locationDao.insert(location)
+                            Timber.d("Saved location - its row-id id $locationRowId")
+                            appExecutors.mainThread().execute { result.value = location.id }
                         }
                     }
                     .addOnFailureListener {
@@ -43,12 +42,12 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
         return result
     }
 
-    fun load(selectedLocationId: Long): LiveData<Location> {
+    fun load(selectedLocationId: String): LiveData<Location> {
         Timber.d("Loading location from id: %s", selectedLocationId)
         return locationDao.load(selectedLocationId)
     }
 
-    fun get(locationId: Long): Location? {
+    fun get(locationId: String): Location? {
         Timber.d("Getting Location from id: %s", locationId)
         return locationDao.get(locationId)
     }
@@ -58,12 +57,12 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
         return locationDao.load(LocationType.CRAG)
     }
 
-    fun loadSectorsFor(cragId: Long): LiveData<List<Location>> {
+    fun loadSectorsFor(cragId: String): LiveData<List<Location>> {
         Timber.d("Loading sectors for cragId: %s", cragId)
         return locationDao.loadWithParentId(cragId)
     }
 
-    fun updateLocationRouteInfo(toposAndRoutes: List<TopoAndRoutes>, locationId: Long) {
+    fun updateLocationRouteInfo(toposAndRoutes: List<TopoAndRoutes>, locationId: String) {
         Timber.d("Updating route info for location with id %s", locationId)
         var boulders = 0
         var sports = 0

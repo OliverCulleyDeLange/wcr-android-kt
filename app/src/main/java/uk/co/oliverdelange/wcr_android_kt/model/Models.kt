@@ -14,12 +14,12 @@ import uk.co.oliverdelange.wcr_android_kt.map.Icon
 //        ForeignKey(
 //                entity = Location::class,
 //                parentColumns = arrayOf("id"),
-//                childColumns = arrayOf("parentId"),
+//                childColumns = arrayOf("parentLocation"),
 //                onUpdate = ForeignKey.CASCADE
 //        )
 //)))
-data class Location(@PrimaryKey(autoGenerate = true) val id: Long? = null,
-                    val parentId: Long? = null,
+data class Location(@PrimaryKey val id: String,
+                    val parentLocation: String? = null,
                     var name: String,
                     var lat: Double,
                     var lng: Double,
@@ -51,7 +51,7 @@ class TopoAndRoutes {
         )
 )))
 data class Topo(@PrimaryKey(autoGenerate = true) var id: Long? = null,
-                var locationId: Long,
+                var locationId: String,
                 var name: String,
                 var image: String)
 

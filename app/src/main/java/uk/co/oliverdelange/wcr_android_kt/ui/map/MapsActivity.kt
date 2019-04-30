@@ -191,7 +191,7 @@ class MapsActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: Long) {
+    override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: String) {
         if (locationType == LocationType.CRAG) {
             Timber.d("Crag submitted, changing map mode")
             binding.vm?.mapMode?.value = CRAG_MODE
@@ -424,8 +424,9 @@ class MapsActivity : AppCompatActivity(),
                     floating_search_view.clearSearchFocus()
 
                     when (searchSuggestion.type) {
-                        CRAG -> binding.vm?.selectCrag(searchSuggestion.id)
-                        SECTOR -> binding.vm?.selectSector(searchSuggestion.id)
+                        //TODO Uncomment once IDs all strings
+//                        CRAG -> binding.vm?.selectCrag(searchSuggestion.id)
+//                        SECTOR -> binding.vm?.selectSector(searchSuggestion.id)
                         TOPO -> binding.vm?.selectTopo(searchSuggestion.id)
                         ROUTE, ROUTE_BOULDER, ROUTE_TRAD, ROUTE_SPORT -> {
                             binding.vm?.selectRoute(searchSuggestion.id)

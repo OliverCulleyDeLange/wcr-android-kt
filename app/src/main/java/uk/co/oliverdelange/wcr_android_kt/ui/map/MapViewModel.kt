@@ -36,7 +36,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         it.value = MapMode.DEFAULT_MODE
     }
 
-    val selectedLocationId: MutableLiveData<Long?> = MutableLiveData<Long?>().also {
+    val selectedLocationId: MutableLiveData<String?> = MutableLiveData<String?>().also {
         it.value = null
     }
     val selectedLocation: LiveData<Location?> = Transformations.switchMap(selectedLocationId) {
@@ -52,8 +52,8 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     val sectors: LiveData<List<Location>> =Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) {
         Timber.d("selectedLocation changed to %s : %s: Updating 'sectors'", it?.id, it?.name)
         when (it?.type) {
-            LocationType.CRAG -> it.id?.let { locationRepository.loadSectorsFor(it) }
-            LocationType.SECTOR -> it.parentId?.let { locationRepository.loadSectorsFor(it) }
+            LocationType.CRAG -> locationRepository.loadSectorsFor(it.id)
+            LocationType.SECTOR -> it.parentLocation?.let { parentID -> locationRepository.loadSectorsFor(parentID) }
             null -> AbsentLiveData.create()
         }
     })
@@ -62,13 +62,13 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) {
         Timber.d("selectedLocation changed to %s : %s: Updating 'topos'", it?.id, it?.name)
         when (it?.type) {
-            LocationType.SECTOR -> it.id?.let { topoRepository.loadToposForLocation(it) }
-            LocationType.CRAG -> it.id?.let { cragId -> getToposForCrag(cragId) }
+            LocationType.SECTOR -> topoRepository.loadToposForLocation(it.id)
+            LocationType.CRAG -> getToposForCrag(it.id)
             null -> AbsentLiveData.create()
         }
     }
 
-    private fun getToposForCrag(cragId: Long): LiveData<List<TopoAndRoutes>> {
+    private fun getToposForCrag(cragId: String): LiveData<List<TopoAndRoutes>> {
         Timber.d("Getting topos for crag with id: %s", cragId)
         val topos: MediatorLiveData<List<TopoAndRoutes>> = MediatorLiveData()
         val loadSectorsForCrag = locationRepository.loadSectorsFor(cragId)
@@ -113,13 +113,13 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         }
     }
 
-    fun selectCrag(id: Long?) {
+    fun selectCrag(id: String?) {
         Timber.d("Selecting crag with id %s", id)
         selectedLocationId.postValue(id)
         mapMode.value = MapMode.CRAG_MODE
     }
 
-    fun selectSector(id: Long?) {
+    fun selectSector(id: String?) {
         Timber.d("Selecting sector with id %s", id)
         selectedLocationId.postValue(id)
         mapMode.value = MapMode.SECTOR_MODE
@@ -133,10 +133,10 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
             Observable.fromCallable { topoRepository.topoDao.get(it) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ topo ->
+                    .subscribe { topo ->
                         selectedLocationId.value = topo.locationId
                         selectedTopoId.value = topo.id
-                    })
+                    }
         }
     }
 
@@ -146,10 +146,10 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
             Observable.fromCallable { routeDao.get(routeId) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ route ->
+                    .subscribe { route ->
                         selectTopo(route.topoId)
                         //TODO Select route in route pager
-                    })
+                    }
         }
     }
 
@@ -159,12 +159,13 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         val trimmedQuery = query.trim()
         if (trimmedQuery.isNotEmpty()) {
             val mediator = MediatorLiveData<List<SearchSuggestionItem>>()
-            mediator.addSource(locationRepository.search(query)) { locations: List<Location>? ->
-                addToSearchItems(mediator, locations?.map {
-                    val type = if (it.type == LocationType.CRAG) SearchResultType.CRAG else SearchResultType.SECTOR
-                    SearchSuggestionItem(it.name, type, it.id)
-                })
-            }
+            // TODO Uncomment once all primary keys strings
+//            mediator.addSource(locationRepository.search(query)) { locations: List<Location>? ->
+//                addToSearchItems(mediator, locations?.map {
+//                    val type = if (it.type == LocationType.CRAG) SearchResultType.CRAG else SearchResultType.SECTOR
+//                    SearchSuggestionItem(it.name, type, it.id)
+//                })
+//            }
             mediator.addSource(topoRepository.search(query)) { topos: List<Topo>? ->
                 addToSearchItems(mediator, topos?.map { SearchSuggestionItem(it.name, SearchResultType.TOPO, it.id) })
             }
@@ -205,7 +206,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
                 MapMode.SUBMIT_CRAG_MODE -> mapMode.value = MapMode.DEFAULT_MODE
                 MapMode.SECTOR_MODE, MapMode.TOPO_MODE -> {
                     mapMode.value = MapMode.CRAG_MODE
-                    selectedLocation.value?.parentId?.let { selectedLocationId.value = it }
+                    selectedLocation.value?.parentLocation?.let { selectedLocationId.value = it }
                 }
                 MapMode.SUBMIT_SECTOR_MODE -> mapMode.value = MapMode.CRAG_MODE
                 MapMode.SUBMIT_TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE

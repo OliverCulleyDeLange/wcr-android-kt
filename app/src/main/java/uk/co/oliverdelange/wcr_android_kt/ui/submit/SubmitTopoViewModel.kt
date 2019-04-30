@@ -199,7 +199,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         it.value = false
     }
 
-    fun submit(sectorId: Long): MutableLiveData<Pair<Long, List<Long>>> {
+    fun submit(sectorId: String): MutableLiveData<Pair<Long, List<Long>>> {
         val topoName = topoName.value
         val topoImage = localTopoImage.value
         return if (topoName != null && topoImage != null) {

@@ -34,7 +34,7 @@ const val ROUTE_PADDING = 0.15
 
 class SubmitTopoFragment : Fragment(), Injectable {
     companion object {
-        fun newTopoSubmissionFor(sectorId: Long): SubmitTopoFragment {
+        fun newTopoSubmissionFor(sectorId: String): SubmitTopoFragment {
             return SubmitTopoFragment().withSectorId(sectorId)
         }
     }
@@ -43,8 +43,8 @@ class SubmitTopoFragment : Fragment(), Injectable {
         fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, List<Long>>?)
     }
 
-    var sectorId: Long? = null
-    private fun withSectorId(id: Long): SubmitTopoFragment = apply { this.sectorId = id }
+    var sectorId: String? = null
+    private fun withSectorId(id: String): SubmitTopoFragment = apply { this.sectorId = id }
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory

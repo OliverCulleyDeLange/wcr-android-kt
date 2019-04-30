@@ -30,12 +30,13 @@ class SubmitLocationViewModel @Inject constructor(private val locationRepository
         }
     }
 
-    fun submit(parentId: Long?): LiveData<Long> {
+    fun submit(parentId: String?): LiveData<String> {
         val locationName = locationName.value
         val lat = locationLatLng.value?.latitude
         val lng = locationLatLng.value?.longitude
         if (locationName != null && lat != null && lng != null) {
-            val location = Location(name = locationName, lat = lat, lng = lng, type = locationType, parentId = parentId)
+            // For now, using locationName as id (primary key)
+            val location = Location(name = locationName, lat = lat, lng = lng, type = locationType, parentLocation = parentId, id = locationName)
             return locationRepository.save(location)
         } else {
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
