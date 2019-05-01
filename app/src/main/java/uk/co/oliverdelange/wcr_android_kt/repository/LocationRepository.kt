@@ -2,10 +2,13 @@ package uk.co.oliverdelange.wcr_android_kt.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
+import uk.co.oliverdelange.wcr_android_kt.mapper.fromLocationDto
+import uk.co.oliverdelange.wcr_android_kt.mapper.toLocationDto
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
@@ -15,19 +18,20 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
                                              val firebaseFirestore: FirebaseFirestore) {
 
     fun save(location: Location): LiveData<String> {
-        Timber.d("Saving %s: %s", location.type, location.name)
+        val locationDTO = toLocationDto(location)
+        Timber.d("Saving %s: %s", locationDTO.type, locationDTO.name)
         val result = MutableLiveData<String>()
         appExecutors.networkIO().execute {
             firebaseFirestore.collection("locations")
-                    .document(location.id)
-                    .set(location)
+//                    .document(location.name)
+                    .add(locationDTO)
                     .addOnSuccessListener {
-                        Timber.d("Location saved to firestore: ${location.id}")
+                        Timber.d("Location saved to firestore: $it")
                         appExecutors.diskIO().execute {
                             Timber.d("Saving location to local db")
-                            val locationRowId = locationDao.insert(location)
+                            val locationRowId = locationDao.insert(locationDTO)
                             Timber.d("Saved location - its row-id id $locationRowId")
-                            appExecutors.mainThread().execute { result.value = location.id }
+                            appExecutors.mainThread().execute { result.value = locationDTO.id }
                         }
                     }
                     .addOnFailureListener {
@@ -44,22 +48,36 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
 
     fun load(selectedLocationId: String): LiveData<Location> {
         Timber.d("Loading location from id: %s", selectedLocationId)
-        return locationDao.load(selectedLocationId)
+        val liveLocationDTO = locationDao.load(selectedLocationId)
+        return Transformations.map(liveLocationDTO) {
+            fromLocationDto(it)
+        }
     }
 
     fun get(locationId: String): Location? {
         Timber.d("Getting Location from id: %s", locationId)
-        return locationDao.get(locationId)
+        val location = locationDao.get(locationId)
+        return location?.let { fromLocationDto(it) }
     }
 
     fun loadCrags(): LiveData<List<Location>> {
         Timber.d("Loading crags")
-        return locationDao.load(LocationType.CRAG)
+        val liveLocationDTOs = locationDao.loadByType(LocationType.CRAG.toString())
+        return Transformations.map(liveLocationDTOs) { locations ->
+            locations.map { location ->
+                fromLocationDto(location)
+            }
+        }
     }
 
     fun loadSectorsFor(cragId: String): LiveData<List<Location>> {
         Timber.d("Loading sectors for cragId: %s", cragId)
-        return locationDao.loadWithParentId(cragId)
+        val liveLocationDTOs = locationDao.loadWithParentId(cragId)
+        return Transformations.map(liveLocationDTOs) { locations ->
+            locations.map { location ->
+                fromLocationDto(location)
+            }
+        }
     }
 
     fun updateLocationRouteInfo(toposAndRoutes: List<TopoAndRoutes>, locationId: String) {
@@ -91,6 +109,11 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
 
     fun search(query: String): LiveData<List<Location>> {
         Timber.d("Search locations: %s", query)
-        return locationDao.searchOnName("%$query%")
+        val liveLocationDTOs = locationDao.searchOnName("%$query%")
+        return Transformations.map(liveLocationDTOs) { locations ->
+            locations.map { location ->
+                fromLocationDto(location)
+            }
+        }
     }
 }

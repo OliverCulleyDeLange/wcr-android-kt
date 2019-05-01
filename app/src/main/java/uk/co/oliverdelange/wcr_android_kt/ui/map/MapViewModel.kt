@@ -11,7 +11,6 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
 import uk.co.oliverdelange.wcr_android_kt.model.*
-import uk.co.oliverdelange.wcr_android_kt.model.RouteType.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
@@ -49,22 +48,24 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
-    val sectors: LiveData<List<Location>> = Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) {
-        Timber.d("selectedLocation changed to %s : %s: Updating 'sectors'", it?.id, it?.name)
-        when (it?.type) {
-            LocationType.CRAG -> locationRepository.loadSectorsFor(it.id)
-            LocationType.SECTOR -> it.parentLocation?.let { parentID -> locationRepository.loadSectorsFor(parentID) }
-            null -> AbsentLiveData.create()
+    val sectors: LiveData<List<Location>> = Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) { selectedLocation ->
+        Timber.d("selectedLocation changed to %s : %s: Updating 'sectors'", selectedLocation?.id, selectedLocation?.name)
+        selectedLocation?.id?.let {
+            when (selectedLocation.type) {
+                LocationType.CRAG -> locationRepository.loadSectorsFor(selectedLocation.id)
+                LocationType.SECTOR -> selectedLocation.parentLocation?.let { parentID -> locationRepository.loadSectorsFor(parentID) }
+            }
         }
     })
 
     val selectedTopoId = MutableLiveData<String>()
-    val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) {
-        Timber.d("selectedLocation changed to %s : %s: Updating 'topos'", it?.id, it?.name)
-        when (it?.type) {
-            LocationType.SECTOR -> topoRepository.loadToposForLocation(it.id)
-            LocationType.CRAG -> getToposForCrag(it.id)
-            null -> AbsentLiveData.create()
+    val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
+        Timber.d("selectedLocation changed to %s : %s: Updating 'topos'", selectedLocation?.id, selectedLocation?.name)
+        selectedLocation?.id?.let {
+            when (selectedLocation.type) {
+                LocationType.SECTOR -> topoRepository.loadToposForLocation(selectedLocation.id)
+                LocationType.CRAG -> getToposForCrag(selectedLocation.id)
+            }
         }
     }
 

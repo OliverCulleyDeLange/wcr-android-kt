@@ -89,8 +89,6 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         routes[fragmentId]?.let {
             Timber.d("Route fragment $fragmentId (${it.name}) name changed to $text")
             it.name = "$text"
-            //Fow now, ID is name
-//            it.id = "$text"
         }
         tryEnableSubmit()
     }
@@ -190,10 +188,10 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         submitButtonEnabled.set(!topoName.value.isNullOrEmpty() &&
                 localTopoImage.value != null &&
                 routes.size > 0 &&
-                routes.none {
-                    it.value.name.isEmpty() ||
-                            it.value.description.isNullOrEmpty() ||
-                            it.value.path?.size?.let { it < 2 } ?: false
+                routes.none { route ->
+                    route.value.name?.isEmpty() ?: true ||
+                            route.value.description.isNullOrEmpty() ||
+                            route.value.path?.size?.let { it < 2 } ?: false
                 })
     }
 
@@ -228,7 +226,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                             Timber.d("Image upload success: %s", resultData)
                             val imageUrl = resultData["secure_url"] as String
                             // For now the id is the sectorID and name concatenated with a hyphen
-                            val topo = Topo(name = topoName, locationId = sectorId, image = imageUrl, id = "$sectorId-$topoName")
+                            val topo = Topo(name = topoName, locationId = sectorId, image = imageUrl)
                             val saved = topoRepository.save(topo, routes.values)
                             workerService.updateRouteInfo(sectorId)
                             mediator.addSource(saved) {

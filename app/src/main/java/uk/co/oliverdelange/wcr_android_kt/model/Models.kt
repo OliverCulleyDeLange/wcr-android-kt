@@ -1,28 +1,14 @@
 package uk.co.oliverdelange.wcr_android_kt.model
 
-import android.os.Parcelable
 import androidx.annotation.DrawableRes
-import androidx.room.*
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.android.parcel.Parcelize
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
-@Parcelize
-@Entity
-//(foreignKeys = (arrayOf(
-//        ForeignKey(
-//                entity = Location::class,
-//                parentColumns = arrayOf("id"),
-//                childColumns = arrayOf("parentLocation"),
-//                onUpdate = ForeignKey.CASCADE
-//        )
-//)))
-data class Location(@PrimaryKey val id: String,
+data class Location(val id: String? = null,
                     val parentLocation: String? = null,
                     var name: String,
-                    var lat: Double,
-                    var lng: Double,
+                    val latlng: LatLng,
                     val type: LocationType,
                     var greens: Int = 0,
                     var oranges: Int = 0,
@@ -30,49 +16,28 @@ data class Location(@PrimaryKey val id: String,
                     var blacks: Int = 0,
                     var boulders: Int = 0,
                     var sports: Int = 0,
-                    var trads: Int = 0) : Parcelable {
-    @Ignore
-    val latlng: LatLng = LatLng(lat, lng)
-}
+                    var trads: Int = 0)
 
-class TopoAndRoutes {
-    @Embedded
-    lateinit var topo: Topo
-    @Relation(parentColumn = "id", entityColumn = "topoId")
-    lateinit var routes: List<Route>
-}
+data class TopoAndRoutes(
+        var topo: Topo,
+        var routes: List<Route>
+)
 
-@Entity(foreignKeys = (arrayOf(
-        ForeignKey(
-                entity = Location::class,
-                onUpdate = ForeignKey.CASCADE,
-                parentColumns = arrayOf("id"),
-                childColumns = arrayOf("locationId")
-        )
-)))
-data class Topo(@PrimaryKey val id: String,
+data class Topo(val id: String? = null,
                 var locationId: String,
                 var name: String,
                 var image: String)
 
-@Entity(foreignKeys = [(
-        ForeignKey(
-                entity = Topo::class,
-                parentColumns = arrayOf("id"),
-                childColumns = arrayOf("topoId"))
-        )])
-data class Route(@PrimaryKey var id: Long? = null,
+data class Route(val id: String? = null,
                  var topoId: String? = null,
-                 var name: String,
-                 @Embedded(prefix = "grade_")
+                 var name: String? = null,
                  var grade: Grade? = null,
                  var type: RouteType? = null,
                  var description: String? = null,
                  var path: Set<Pair<Float, Float>>? = null)
 
 
-@Entity
-data class Grade(@PrimaryKey var string: String,
+data class Grade(var string: String,
                  var type: GradeType,
                  var colour: GradeColour) {
     companion object {
