@@ -27,43 +27,59 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
                                          val appExecutors: AppExecutors) {
 
     fun save(topo: Topo, routes: Collection<Route>): MutableLiveData<Pair<Long, List<Long>>> {
-        Timber.d("Saving topo to firestore")
         val topoDTO = toTopoDto(topo)
         val result = MutableLiveData<Pair<Long, List<Long>>>()
 
-        firebaseFirestore
-                .collection("locations")
-                .document(topoDTO.locationId)
-                .collection("topos")
-                .document(topoDTO.id)
-                .set(topoDTO)
-                .addOnSuccessListener {
-                    Timber.d("Topo saved to firestore: ${topoDTO.name}")
-                    appExecutors.diskIO().execute {
-                        Timber.d("Saving topo to local db: %s", topoDTO)
-                        val topoRowId = topoDao.insert(topoDTO)
-                        val routeIds = mutableListOf<Long>()
-                        for (route in routes) {
-                            val routeDTO = toRouteDto(route)
-                            routeDTO.topoId = topoDTO.id
-                            Timber.d("Saving route to db: %s", routeDTO)
-                            val routeRowId = routeDao.insert(routeDTO)
-                            routeIds.add(routeRowId)
-                        }
-                        // Saved topo and all routes so notify observer
-                        appExecutors.mainThread().execute { result.value = Pair(topoRowId, routeIds) }
-                    }
-                }
-                .addOnFailureListener {
-                    // TODO DRY
-                    if (it is FirebaseFirestoreException && it.code == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
-                        Timber.d("User tried to submit when not logged in")
-                        // TODO show message
-                    } else {
-                        Timber.e(it, "failed to add location to firestore")
-                    }
-                }
+        Timber.d("Saving topo to firestore: ${topoDTO.name}")
+        appExecutors.networkIO().execute {
+            val topoFirestoreDocument = firebaseFirestore
+                    .collection("locations")
+                    .document(topoDTO.locationId)
+                    .collection("topos")
+                    .document(topoDTO.id)
 
+            topoFirestoreDocument.set(topoDTO)
+                    .addOnSuccessListener {
+                        Timber.d("Topo saved to firestore: ${topoDTO.name}")
+                        appExecutors.diskIO().execute {
+                            Timber.d("Saving topo to local db: %s", topoDTO)
+                            val topoRowId = topoDao.insert(topoDTO)
+                            val routeIds = mutableListOf<Long>()
+                            for (route in routes) {
+                                val routeDTO = toRouteDto(route)
+                                routeDTO.topoId = topoDTO.id
+                                Timber.d("Saving Route to firestore: ${routeDTO.name}")
+                                appExecutors.networkIO().execute {
+                                    topoFirestoreDocument.collection("routes")
+                                            .document(routeDTO.id)
+                                            .set(routeDTO)
+                                            .addOnSuccessListener {
+                                                Timber.d("Route saved to firestore: ${routeDTO.name}")
+                                                appExecutors.diskIO().execute {
+                                                    Timber.d("Saving route to local db: %s", routeDTO)
+                                                    val routeRowId = routeDao.insert(routeDTO)
+                                                    routeIds.add(routeRowId)
+                                                }
+                                            }
+                                            .addOnFailureListener {
+                                                Timber.e(it, "failed to add location to firestore")
+                                            }
+                                }
+                            }
+                            // Saved topo and all routes so notify observer
+                            appExecutors.mainThread().execute { result.value = Pair(topoRowId, routeIds) }
+                        }
+                    }
+                    .addOnFailureListener {
+                        // TODO DRY
+                        if (it is FirebaseFirestoreException && it.code == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
+                            Timber.d("User tried to submit when not logged in")
+                            // TODO show message
+                        } else {
+                            Timber.e(it, "failed to add location to firestore")
+                        }
+                    }
+        }
         return result
     }
 

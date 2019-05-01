@@ -23,8 +23,8 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
         val result = MutableLiveData<String>()
         appExecutors.networkIO().execute {
             firebaseFirestore.collection("locations")
-//                    .document(location.name)
-                    .add(locationDTO)
+                    .document(locationDTO.id)
+                    .set(locationDTO)
                     .addOnSuccessListener {
                         Timber.d("Location saved to firestore: $it")
                         appExecutors.diskIO().execute {
