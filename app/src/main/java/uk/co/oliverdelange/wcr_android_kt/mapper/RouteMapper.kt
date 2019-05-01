@@ -8,8 +8,8 @@ fun toRouteDto(route: Route): RouteDTO {
             route.name ?: "",
             route.topoId ?: "",
             route.name ?: "",
-            route.grade?.toString() ?: "",
-            route.type?.toString() ?: "",
+            route.grade?.string ?: "",
+            route.type?.name ?: "",
             route.description ?: "",
             coordsSetToString(route.path) ?: ""
     )
