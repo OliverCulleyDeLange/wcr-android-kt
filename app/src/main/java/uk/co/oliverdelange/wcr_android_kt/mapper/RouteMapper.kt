@@ -11,7 +11,7 @@ fun toRouteDto(route: Route): RouteDTO {
             route.grade?.toString() ?: "",
             route.type?.toString() ?: "",
             route.description ?: "",
-            route.path ?: emptySet()
+            coordsSetToString(route.path) ?: ""
     )
 }
 
@@ -35,6 +35,6 @@ fun fromRouteDto(route: RouteDTO): Route {
             grade,
             routeType,
             route.description,
-            route.path
+            stringToCoordsSet(route.path)
     )
 }

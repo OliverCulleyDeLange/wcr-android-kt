@@ -46,26 +46,16 @@ abstract class WcrDb : RoomDatabase() {
                                     Topo("3", "L2 The Arch - Biscuit Factory", "T3 Caramel Digestif", "http://via.placeholder.com/1280x480")
                             )
                             getInstance(context).routeDao().insertMany(
-                                    Route("0", "0", "0GREEN ROUTE", "V0", "BOULDERING", "Eating biscuits is good for you",
-                                            setOf(Pair(0.25f, 0.25f), Pair(0.25f, 0.90f))),
-                                    Route("1", "0", "0ORANGE ROUTE", "fFourP", "BOULDERING", "Mmmmm creamy custard",
-                                            setOf(Pair(0.35f, 0.25f), Pair(0.35f, 0.90f))),
-                                    Route("2", "0", "0RED ROUTE", "E1 FiveB", "TRAD", "Traditional Rich Tea or Digestive?",
-                                            setOf(Pair(0.45f, 0.25f), Pair(0.45f, 0.90f))),
-                                    Route("3", "0", "0BLACK ROUTE", "EightA", "SPORT", "Excuisite",
-                                            setOf(Pair(0.55f, 0.25f), Pair(0.55f, 0.90f))),
-                                    Route("4", "1", "1A biscuit based name that is really long so we know if things look okay when there are really long names", "FourB", "SPORT", "Lol...",
-                                            setOf(Pair(0.65f, 0.25f), Pair(0.65f, 0.90f))),
-                                    Route("5", "2", "2GREEN ROUTE", "V0", "BOULDERING", "Eating biscuits is good for you",
-                                            setOf(Pair(0.25f, 0.25f), Pair(0.25f, 0.90f))),
-                                    Route("6", "2", "2ORANGE ROUTE", "fFourP", "BOULDERING", "Mmmmm creamy custard",
-                                            setOf(Pair(0.35f, 0.25f), Pair(0.35f, 0.90f))),
-                                    Route("7", "2", "2RED ROUTE", "E1 FiveB", "TRAD", "Traditional Rich Tea or Digestive?",
-                                            setOf(Pair(0.45f, 0.25f), Pair(0.45f, 0.90f))),
-                                    Route("8", "2", "2BLACK ROUTE", "EightA", "SPORT", "Excuisite",
-                                            setOf(Pair(0.55f, 0.25f), Pair(0.55f, 0.90f))),
-                                    Route("9", "3", "3A biscuit based name that is really long so we know if things look okay when there are really long names", "FourB", "SPORT", "Lol...",
-                                            setOf(Pair(0.75f, 0.25f), Pair(0.75f, 0.90f)))
+                                    Route("0", "0", "0GREEN ROUTE", "V0", "BOULDERING", "Eating biscuits is good for you", "0.25:0.25,0.25:0.90"),
+                                    Route("1", "0", "0ORANGE ROUTE", "fFourP", "BOULDERING", "Mmmmm creamy custard", "0.35:0.25,0.35:0.90"),
+                                    Route("2", "0", "0RED ROUTE", "E1 FiveB", "TRAD", "Traditional Rich Tea or Digestive?", "0.45:0.25,0.45:0.90"),
+                                    Route("3", "0", "0BLACK ROUTE", "EightA", "SPORT", "Excuisite", "0.55:0.25,0.55:0.90"),
+                                    Route("4", "1", "1A biscuit based name that is really long so we know if things look okay when there are really long names", "FourB", "SPORT", "Lol...", "0.65:0.25,0.65:0.90"),
+                                    Route("5", "2", "2GREEN ROUTE", "V0", "BOULDERING", "Eating biscuits is good for you", "0.25:0.25,0.25:0.90"),
+                                    Route("6", "2", "2ORANGE ROUTE", "fFourP", "BOULDERING", "Mmmmm creamy custard", "0.35:0.25,0.35:0.90"),
+                                    Route("7", "2", "2RED ROUTE", "E1 FiveB", "TRAD", "Traditional Rich Tea or Digestive?", "0.45:0.25,0.45:0.90"),
+                                    Route("8", "2", "2BLACK ROUTE", "EightA", "SPORT", "Excuisite", "0.55:0.25,0.55:0.90"),
+                                    Route("9", "3", "3A biscuit based name that is really long so we know if things look okay when there are really long names", "FourB", "SPORT", "Lol...", "0.75:0.25,0.75:0.90")
                             )
                         }
                     }
@@ -192,4 +182,4 @@ data class Route(@PrimaryKey val id: String,
                  var grade: String,
                  var type: String,
                  var description: String,
-                 var path: Set<Pair<Float, Float>>)
+                 var path: String)
