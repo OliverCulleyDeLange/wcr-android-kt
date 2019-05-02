@@ -117,7 +117,7 @@ class BottomSheetFragment : Fragment(), Injectable {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val topoAndRoutes = topos.get(position)
+            val topoAndRoutes = topos[position]
             holder.binding.topo = topoAndRoutes.topo
             holder.binding.topoImage.routes = topoAndRoutes.routes
             holder.binding.routeRecycler.adapter = RouteRecyclerAdapter(topoAndRoutes.routes)

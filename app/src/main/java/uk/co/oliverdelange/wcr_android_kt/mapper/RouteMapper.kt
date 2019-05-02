@@ -16,17 +16,7 @@ fun toRouteDto(route: Route): RouteDTO {
 }
 
 fun fromRouteDto(route: RouteDTO): Route {
-    val grade = when {
-        route.grade.startsWith("V") -> Grade.from(VGrade.valueOf(route.grade))
-        route.grade.startsWith("f") -> Grade.from(FontGrade.valueOf(route.grade))
-        route.grade.contains(" ") -> {
-            val grades = route.grade.split(" ")
-            val adj = TradAdjectivalGrade.valueOf(grades[0])
-            val tech = TradTechnicalGrade.valueOf(grades[1])
-            Grade.from(adj, tech)
-        }
-        else -> Grade.from(SportGrade.valueOf(route.grade))
-    }
+    val grade = Grade.from(route.grade)
     val routeType = RouteType.valueOf(route.type)
     return Route(
             route.id,

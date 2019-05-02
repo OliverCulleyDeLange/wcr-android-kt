@@ -36,7 +36,7 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
     var routes: List<Route> = emptyList()
         set(value) {
             field = value
-            selectedRoute = routes[0]
+            selectedRoute = if (routes.isNotEmpty()) routes[0] else null
         }
 
     val paths = mutableMapOf<String, Path>()

@@ -1,3 +1,8 @@
+#TODO
+- Hide button whe not signed in
+- Fix crash when expand bottom sheet when no topos
+
+
 ### Cloud storage decision
 Wants:
 - Low maintainance, low cost, quick turnaround, easy implementation

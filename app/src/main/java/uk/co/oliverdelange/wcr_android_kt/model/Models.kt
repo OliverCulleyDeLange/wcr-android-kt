@@ -59,6 +59,20 @@ data class Grade(var string: String,
                     tradAdjectivalGrade.colour
             )
         }
+
+        fun from(textRepresentation: String): Grade {
+            return when {
+                textRepresentation.startsWith("V") -> from(VGrade.values().first { it.textRepresentation == textRepresentation })
+                textRepresentation.startsWith("f") -> from(FontGrade.values().first { it.textRepresentation == textRepresentation })
+                textRepresentation.contains(" ") -> {
+                    val grades = textRepresentation.split(" ")
+                    val adj = TradAdjectivalGrade.values().first { it.textRepresentation == grades[0] }
+                    val tech = TradTechnicalGrade.values().first { it.textRepresentation == grades[1] }
+                    from(adj, tech)
+                }
+                else -> from(SportGrade.values().first { it.textRepresentation == textRepresentation })
+            }
+        }
     }
 }
 
