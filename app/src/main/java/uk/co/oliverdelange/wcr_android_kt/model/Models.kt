@@ -2,6 +2,7 @@ package uk.co.oliverdelange.wcr_android_kt.model
 
 import androidx.annotation.DrawableRes
 import com.google.android.gms.maps.model.LatLng
+import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
@@ -60,7 +61,8 @@ data class Grade(var string: String,
             )
         }
 
-        fun from(textRepresentation: String): Grade {
+        fun from(textRepresentation: String): Grade? {
+            Timber.d("Converting $textRepresentation into a grade")
             return when {
                 textRepresentation.startsWith("V") -> from(VGrade.values().first { it.textRepresentation == textRepresentation })
                 textRepresentation.startsWith("f") -> from(FontGrade.values().first { it.textRepresentation == textRepresentation })
