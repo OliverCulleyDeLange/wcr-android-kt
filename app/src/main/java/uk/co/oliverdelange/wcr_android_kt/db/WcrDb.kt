@@ -170,7 +170,8 @@ class TopoAndRoutes {
 data class Topo(@PrimaryKey val id: String,
                 var locationId: String,
                 var name: String,
-                var image: String)
+                var image: String,
+                @get:Exclude val uploaded: Boolean = false)
 
 @Entity(foreignKeys = [(
         ForeignKey(
@@ -184,4 +185,5 @@ data class Route(@PrimaryKey val id: String,
                  var grade: String,
                  var type: String,
                  var description: String,
-                 var path: String)
+                 var path: String,
+                 @get:Exclude val uploaded: Boolean = false)
