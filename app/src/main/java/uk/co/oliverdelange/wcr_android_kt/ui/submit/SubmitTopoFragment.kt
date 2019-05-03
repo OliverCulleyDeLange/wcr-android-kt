@@ -40,7 +40,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
     }
 
     interface ActivityInteractor {
-        fun onTopoSubmitted(submittedTopoAndRouteIds: Pair<Long, List<Long>>?)
+        fun onTopoSubmitted(submittedTopoId: String?)
     }
 
     var sectorId: String? = null
@@ -71,10 +71,10 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
         binding.submit.setOnClickListener { _: View? ->
             sectorId?.let { sectorId ->
-                binding.vm?.submit(sectorId)?.observe(this, Observer {
-                    if (it != null) {
+                binding.vm?.submit(sectorId)?.observe(this, Observer { submittedTopoId ->
+                    if (submittedTopoId != null) {
                         Timber.i("Submission Succeeded")
-                        activityInteractor?.onTopoSubmitted(it)
+                        activityInteractor?.onTopoSubmitted(submittedTopoId)
                     } else {
                         Snackbar.make(binding.submit, "Failed to submit topo!", Snackbar.LENGTH_SHORT).show()
                     }

@@ -8,29 +8,36 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
-import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
 import uk.co.oliverdelange.wcr_android_kt.db.TopoDao
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromTopoAndRouteDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromTopoDto
-import uk.co.oliverdelange.wcr_android_kt.mapper.toRouteDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.toTopoDto
-import uk.co.oliverdelange.wcr_android_kt.model.Route
 import uk.co.oliverdelange.wcr_android_kt.model.Topo
 import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
 import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
 
 class TopoRepository @Inject constructor(val topoDao: TopoDao,
-                                         val routeDao: RouteDao,
                                          val locationDao: LocationDao,
                                          val firebaseFirestore: FirebaseFirestore,
                                          val appExecutors: AppExecutors) {
 
-    // TODO break down into smaller functions
-    fun save(topo: Topo, routes: Collection<Route>): MutableLiveData<Pair<Long, List<Long>>> {
+    fun save(topo: Topo): MutableLiveData<String> {
         val topoDTO = toTopoDto(topo)
-        val result = MutableLiveData<Pair<Long, List<Long>>>()
+        return saveToLocalDb(topoDTO)
+    }
 
+    private fun saveToLocalDb(topoDTO: uk.co.oliverdelange.wcr_android_kt.db.Topo): MutableLiveData<String> {
+        val result = MutableLiveData<String>()
+        appExecutors.diskIO().execute {
+            Timber.d("Saving topo to local db: %s", topoDTO)
+            topoDao.insert(topoDTO)
+            appExecutors.mainThread().execute { result.value = topoDTO.id }
+        }
+        return result
+    }
+
+    private fun saveToRemoteDb(topoDTO: uk.co.oliverdelange.wcr_android_kt.db.Topo) {
         Timber.d("Saving topo to firestore: ${topoDTO.name}")
         appExecutors.networkIO().execute {
             val topoFirestoreDocument = firebaseFirestore
@@ -42,34 +49,6 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
             topoFirestoreDocument.set(topoDTO)
                     .addOnSuccessListener {
                         Timber.d("Topo saved to firestore: ${topoDTO.name}")
-                        appExecutors.diskIO().execute {
-                            Timber.d("Saving topo to local db: %s", topoDTO)
-                            val topoRowId = topoDao.insert(topoDTO)
-                            val routeIds = mutableListOf<Long>()
-                            for (route in routes) {
-                                val routeDTO = toRouteDto(route)
-                                routeDTO.topoId = topoDTO.id
-                                Timber.d("Saving Route to firestore: ${routeDTO.name}")
-                                appExecutors.networkIO().execute {
-                                    topoFirestoreDocument.collection("routes")
-                                            .document(routeDTO.id)
-                                            .set(routeDTO)
-                                            .addOnSuccessListener {
-                                                Timber.d("Route saved to firestore: ${routeDTO.name}")
-                                                appExecutors.diskIO().execute {
-                                                    Timber.d("Saving route to local db: %s", routeDTO)
-                                                    val routeRowId = routeDao.insert(routeDTO)
-                                                    routeIds.add(routeRowId)
-                                                }
-                                            }
-                                            .addOnFailureListener {
-                                                Timber.e(it, "failed to add location to firestore")
-                                            }
-                                }
-                            }
-                            // Saved topo and all routes so notify observer
-                            appExecutors.mainThread().execute { result.value = Pair(topoRowId, routeIds) }
-                        }
                     }
                     .addOnFailureListener {
                         // TODO DRY
@@ -81,7 +60,6 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
                         }
                     }
         }
-        return result
     }
 
     fun loadToposForLocation(locationId: String): LiveData<List<TopoAndRoutes>> {

@@ -14,19 +14,25 @@ import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.cloudinary.android.preprocess.BitmapEncoder
 import com.cloudinary.android.preprocess.ImagePreprocessChain
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.USE_V_GRADE_FOR_BOULDERING
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.model.*
+import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.WorkerService
 import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTopoImageView
 import javax.inject.Inject
 
 const val MAX_TOPO_SIZE_PX = 640
+
 //@Singleton
 class SubmitTopoViewModel @Inject constructor(application: Application,
                                               private val topoRepository: TopoRepository,
+                                              private val routeRepository: RouteRepository,
                                               private val workerService: WorkerService) : AndroidViewModel(application) {
 
     val localTopoImage = MutableLiveData<Uri?>()
@@ -199,14 +205,15 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         it.value = false
     }
 
-    fun submit(sectorId: String): MutableLiveData<Pair<Long, List<Long>>> {
+    fun submit(sectorId: String): MutableLiveData<String> {
         val topoName = topoName.value
         val topoImage = localTopoImage.value
         return if (topoName != null && topoImage != null) {
             Timber.i("Submission started")
             submitButtonEnabled.set(false)
             submitting.value = true
-            val mediator = MediatorLiveData<Pair<Long, List<Long>>>()
+            val mediator = MediatorLiveData<String>()
+            // TODO extract out into a completable
             MediaManager.get().upload(topoImage)
                     .unsigned("wcr_topo_upload")
                     .option("folder", "topo/$sectorId")
@@ -225,14 +232,23 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                         override fun onSuccess(requestId: String, resultData: Map<*, *>) {
                             Timber.d("Image upload success: %s", resultData)
                             val imageUrl = resultData["secure_url"] as String
-                            // For now the id is the sectorID and name concatenated with a hyphen
                             val topo = Topo(name = topoName, locationId = sectorId, image = imageUrl)
-                            val saved = topoRepository.save(topo, routes.values)
-                            workerService.updateRouteInfo(sectorId)
-                            mediator.addSource(saved) {
-                                mediator.value = it
+                            val liveTopoId = topoRepository.save(topo)
+                            mediator.addSource(liveTopoId) { topoId ->
+                                Timber.d("Topo saved, we now have its ID: $topoId")
+                                // Update routes with topo ID and save
+                                val routes = routes.values.map { it.apply { it.topoId = topoId } }
+                                val saveRoutes = Completable.mergeDelayError(routes.map { routeRepository.save(it) })
+                                saveRoutes
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe {
+                                            Timber.d("All routes saved for topo $topoId")
+                                            mediator.value = topoId // Signifies the topo has been submitted
+                                            workerService.updateRouteInfo(sectorId)
+                                            submitting.value = false
+                                        }
                             }
-                            submitting.value = false
                         }
 
                         override fun onError(requestId: String, error: ErrorInfo) {
