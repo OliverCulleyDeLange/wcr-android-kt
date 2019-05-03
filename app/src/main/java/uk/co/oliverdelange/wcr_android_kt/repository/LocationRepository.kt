@@ -18,26 +18,36 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
                                              val firebaseFirestore: FirebaseFirestore) {
 
     fun save(location: Location): LiveData<String> {
+        Timber.d("Saving %s: %s", location.type, location.name)
         val locationDTO = toLocationDto(location)
-        Timber.d("Saving %s: %s", locationDTO.type, locationDTO.name)
+        return saveToLocalDb(locationDTO)
+    }
+
+    private fun saveToLocalDb(location: uk.co.oliverdelange.wcr_android_kt.db.Location): MutableLiveData<String> {
+        val result = MutableLiveData<String>()
+        appExecutors.diskIO().execute {
+            Timber.d("Saving location to local db")
+            val locationRowId = locationDao.insert(location)
+            Timber.d("Saved location - its row-id id $locationRowId")
+            appExecutors.mainThread().execute { result.value = location.id }
+        }
+        return result
+    }
+
+    private fun saveToRemoteDb(location: uk.co.oliverdelange.wcr_android_kt.db.Location): MutableLiveData<String> {
         val result = MutableLiveData<String>()
         appExecutors.networkIO().execute {
             firebaseFirestore.collection("locations")
-                    .document(locationDTO.id)
-                    .set(locationDTO)
+                    .document(location.id)
+                    .set(location)
                     .addOnSuccessListener {
-                        Timber.d("Location saved to firestore: $it")
-                        appExecutors.diskIO().execute {
-                            Timber.d("Saving location to local db")
-                            val locationRowId = locationDao.insert(locationDTO)
-                            Timber.d("Saved location - its row-id id $locationRowId")
-                            appExecutors.mainThread().execute { result.value = locationDTO.id }
-                        }
+                        result.value = location.id
+                        Timber.d("Location saved to firestore: ${location.id}")
                     }
                     .addOnFailureListener {
                         if (it is FirebaseFirestoreException && it.code == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
                             Timber.d("User tried to submit when not logged in")
-                            // TODO show message
+//                             TODO show message
                         } else {
                             Timber.e(it, "failed to add location to firestore")
                         }

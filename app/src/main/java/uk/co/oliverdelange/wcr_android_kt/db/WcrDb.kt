@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.google.firebase.firestore.Exclude
 import kotlinx.android.parcel.Parcelize
 import uk.co.oliverdelange.wcr_android_kt.util.ioThread
 
@@ -148,7 +149,8 @@ data class Location(@PrimaryKey val id: String,
                     var blacks: Int = 0,
                     var boulders: Int = 0,
                     var sports: Int = 0,
-                    var trads: Int = 0) : Parcelable
+                    var trads: Int = 0,
+                    @get:Exclude val uploaded: Boolean = false) : Parcelable
 
 class TopoAndRoutes {
     @Embedded

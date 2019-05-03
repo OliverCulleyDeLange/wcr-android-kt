@@ -26,6 +26,7 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
                                          val firebaseFirestore: FirebaseFirestore,
                                          val appExecutors: AppExecutors) {
 
+    // TODO break down into smaller functions
     fun save(topo: Topo, routes: Collection<Route>): MutableLiveData<Pair<Long, List<Long>>> {
         val topoDTO = toTopoDto(topo)
         val result = MutableLiveData<Pair<Long, List<Long>>>()

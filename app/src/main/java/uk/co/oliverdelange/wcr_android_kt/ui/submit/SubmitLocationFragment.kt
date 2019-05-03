@@ -65,10 +65,10 @@ class SubmitLocationFragment : androidx.fragment.app.Fragment(), Injectable {
         binding.vm = viewModel
         binding.vm?.locationType = locationType
 
-        binding.submit.setOnClickListener { _: View? ->
-            binding.vm?.submit(parentId)?.observe(this, Observer {
-                if (it != null) {
-                    activityInteractor?.onLocationSubmitted(locationType, it)
+        binding.submit.setOnClickListener {
+            binding.vm?.submit(parentId)?.observe(this, Observer { newLocationId ->
+                if (newLocationId != null) {
+                    activityInteractor?.onLocationSubmitted(locationType, newLocationId)
                 } else {
                     Snackbar.make(binding.submit, "Failed to submit location!", Snackbar.LENGTH_SHORT).show()
                 }

@@ -1,6 +1,10 @@
 #TODO
+- Get stuff from firestore after local db
+    - Background sync? or on request
 - Hide button whe not signed in
 - Fix crash when expand bottom sheet when no topos
+
+- Clean architecture? RxJava? Single responsibility?
 
 
 ### Cloud storage decision
