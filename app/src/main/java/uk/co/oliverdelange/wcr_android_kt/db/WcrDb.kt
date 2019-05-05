@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.firebase.firestore.Exclude
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import kotlinx.android.parcel.Parcelize
 import uk.co.oliverdelange.wcr_android_kt.util.ioThread
@@ -96,6 +97,9 @@ interface LocationDao : BaseDao<Location> {
 
     @Query("SELECT * FROM location where uploaded = :uploaded")
     fun loadWithUploaded(uploaded: Boolean): Maybe<List<Location>>
+
+    @Query("UPDATE location SET uploaded = 'true' where id = :id")
+    fun markAsUploaded(id: String): Completable
 
     @WorkerThread
     @Query("SELECT * FROM location where type = :type AND parentLocation = :parent")
