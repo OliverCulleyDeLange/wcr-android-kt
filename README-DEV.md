@@ -4,6 +4,9 @@
 - Hide button whe not signed in
 - Fix crash when expand bottom sheet when no topos
 
+Nice to haves:
+- https://developer.android.com/kotlin/ktx#core-packages
+
 - Clean architecture? RxJava? Single responsibility?
 
 

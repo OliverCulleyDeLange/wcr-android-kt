@@ -1,23 +1,25 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
+import io.reactivex.Single
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
-import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
+import uk.co.oliverdelange.wcr_android_kt.usecases.SubmitLocationUseCase
 import javax.inject.Inject
 
 //@Singleton
-class SubmitLocationViewModel @Inject constructor(private val locationRepository: LocationRepository) : ViewModel() {
+class SubmitLocationViewModel @Inject constructor(private val submitLocationUseCase: SubmitLocationUseCase) : ViewModel() {
 
     lateinit var locationType: LocationType
     val locationName = MutableLiveData<String>()
     val locationNameError = MutableLiveData<String>()
     val locationLatLng = MutableLiveData<LatLng>()
+
+//    private val disposables = CompositeDisposable()
 
     val submitButtonEnabled = MediatorLiveData<Boolean>().also {
         it.value = false
@@ -30,16 +32,18 @@ class SubmitLocationViewModel @Inject constructor(private val locationRepository
         }
     }
 
-    fun submit(parentId: String?): LiveData<String> {
+    fun submit(parentId: String?): Single<String> {
         val locationName = locationName.value
         val lat = locationLatLng.value?.latitude
         val lng = locationLatLng.value?.longitude
-        if (locationName != null && lat != null && lng != null) {
+
+        return if (locationName != null && lat != null && lng != null) {
             val location = Location(name = locationName, latlng = LatLng(lat, lng), type = locationType, parentLocation = parentId)
-            return locationRepository.save(location)
+            submitLocationUseCase.submitLocation(location)
         } else {
-            Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
-            return MutableLiveData()
+            val err = RuntimeException("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
+            Timber.e(err)
+            Single.error(err)
         }
     }
 }

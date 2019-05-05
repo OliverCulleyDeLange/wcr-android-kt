@@ -68,7 +68,7 @@ versions.mapstruct = "1.2.0.CR1"
 versions.lombok = "1.16.20"
 versions.rxjava2 = "2.1.14"
 versions.rxandroid = "2.0.2"
-versions.room = '2.0.0-beta01'
+versions.room = '2.1.0-alpha07'
 versions.anko = "0.10.5"
 versions.material_drawer_kt = "1.3.3"
 versions.material_drawer = "6.0.6@aar"
@@ -91,12 +91,17 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${versions.support}"
     implementation "androidx.recyclerview:recyclerview:${versions.support}"
     implementation "androidx.annotation:annotation:${versions.support}"
+    implementation "androidx.work:work-runtime-ktx:2.0.1"
+    implementation "androidx.work:work-rxjava2:2.0.1"
     implementation "com.google.android.material:material:${versions.support}"
     implementation "androidx.cardview:cardview:${versions.support}"
 //    implementation "com.android.support:support-core-utils:${versions.support}"
 
     implementation "androidx.room:room-runtime:$versions.room"
+    implementation "android.arch.persistence.room:rxjava2:1.1.1"
+
     implementation "androidx.lifecycle:lifecycle-extensions:2.1.0-alpha04"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.1.0-alpha04"
 
     implementation "com.google.android.gms:play-services-maps:${versions.gmaps}"
     implementation "com.google.maps.android:android-maps-utils:${versions.maps_utils}"

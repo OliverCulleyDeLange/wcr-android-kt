@@ -13,7 +13,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_submit_location.*
+import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitLocationBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.map.IconHelper
@@ -66,13 +69,18 @@ class SubmitLocationFragment : androidx.fragment.app.Fragment(), Injectable {
         binding.vm?.locationType = locationType
 
         binding.submit.setOnClickListener {
-            binding.vm?.submit(parentId)?.observe(this, Observer { newLocationId ->
-                if (newLocationId != null) {
-                    activityInteractor?.onLocationSubmitted(locationType, newLocationId)
-                } else {
-                    Snackbar.make(binding.submit, "Failed to submit location!", Snackbar.LENGTH_SHORT).show()
-                }
-            })
+            binding.vm?.submit(parentId)
+                    ?.subscribeOn(Schedulers.io())
+                    ?.observeOn(AndroidSchedulers.mainThread())
+                    ?.subscribe(
+                            {
+                                Timber.d("New location submitted, notifying activity")
+                                activityInteractor?.onLocationSubmitted(locationType, it)
+                            },
+                            {
+                                Timber.e(it)
+                                Snackbar.make(binding.submit, "Failed to submit location!", Snackbar.LENGTH_SHORT).show()
+                            })
         }
 
         viewModel.locationNameError.observe(this, Observer { _ ->

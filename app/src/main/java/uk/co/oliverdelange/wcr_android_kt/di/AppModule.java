@@ -3,7 +3,6 @@ package uk.co.oliverdelange.wcr_android_kt.di;
 import android.app.Application;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
 import javax.inject.Singleton;
 
@@ -44,10 +43,6 @@ class AppModule {
     @Provides
     FirebaseFirestore provideFirebaseFirestore() {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build();
-        firestore.setFirestoreSettings(settings);
         return firestore;
     }
 }

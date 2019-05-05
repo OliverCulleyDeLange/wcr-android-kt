@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.firebase.firestore.Exclude
+import io.reactivex.Maybe
 import kotlinx.android.parcel.Parcelize
 import uk.co.oliverdelange.wcr_android_kt.util.ioThread
 
@@ -92,6 +93,9 @@ interface LocationDao : BaseDao<Location> {
 
     @Query("SELECT * FROM location where type = :type AND parentLocation = :parent")
     fun loadWithParentId(parent: String, type: String = "SECTOR"): LiveData<List<Location>>
+
+    @Query("SELECT * FROM location where uploaded = :uploaded")
+    fun loadWithUploaded(uploaded: Boolean): Maybe<List<Location>>
 
     @WorkerThread
     @Query("SELECT * FROM location where type = :type AND parentLocation = :parent")

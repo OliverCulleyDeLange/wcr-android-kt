@@ -1,15 +1,19 @@
 package uk.co.oliverdelange.wcr_android_kt.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
+import io.reactivex.Single
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromLocationDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.toLocationDto
 import uk.co.oliverdelange.wcr_android_kt.model.*
+import uk.co.oliverdelange.wcr_android_kt.service.SyncLocationsWorker
 import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
 
@@ -17,43 +21,23 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
                                              val appExecutors: AppExecutors,
                                              val firebaseFirestore: FirebaseFirestore) {
 
-    fun save(location: Location): LiveData<String> {
+    fun save(location: Location): Single<String> {
         Timber.d("Saving %s: %s", location.type, location.name)
         val locationDTO = toLocationDto(location)
+        WorkManager.getInstance().enqueue(OneTimeWorkRequestBuilder<SyncLocationsWorker>()
+                .setConstraints(Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build())
+                .build())
         return saveToLocalDb(locationDTO)
     }
 
-    private fun saveToLocalDb(location: uk.co.oliverdelange.wcr_android_kt.db.Location): MutableLiveData<String> {
-        val result = MutableLiveData<String>()
-        appExecutors.diskIO().execute {
+    private fun saveToLocalDb(location: uk.co.oliverdelange.wcr_android_kt.db.Location): Single<String> {
+        return Single.fromCallable {
             Timber.d("Saving location to local db")
-            val locationRowId = locationDao.insert(location)
-            Timber.d("Saved location - its row-id id $locationRowId")
-            appExecutors.mainThread().execute { result.value = location.id }
+            locationDao.insert(location)
+            location.id
         }
-        return result
-    }
-
-    private fun saveToRemoteDb(location: uk.co.oliverdelange.wcr_android_kt.db.Location): MutableLiveData<String> {
-        val result = MutableLiveData<String>()
-        appExecutors.networkIO().execute {
-            firebaseFirestore.collection("locations")
-                    .document(location.id)
-                    .set(location)
-                    .addOnSuccessListener {
-                        result.value = location.id
-                        Timber.d("Location saved to firestore: ${location.id}")
-                    }
-                    .addOnFailureListener {
-                        if (it is FirebaseFirestoreException && it.code == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
-                            Timber.d("User tried to submit when not logged in")
-//                             TODO show message
-                        } else {
-                            Timber.e(it, "failed to add location to firestore")
-                        }
-                    }
-        }
-        return result
     }
 
     fun load(selectedLocationId: String): LiveData<Location> {
