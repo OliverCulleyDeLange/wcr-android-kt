@@ -24,6 +24,8 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
     fun save(location: Location): Single<String> {
         Timber.d("Saving %s: %s", location.type, location.name)
         val locationDTO = toLocationDto(location)
+        //TODO Possible race condition - if task starts before saved to local db, nothing will be uploaded.
+        // Need to wait save to local db, then enqueu worker
         WorkManager.getInstance().enqueue(OneTimeWorkRequestBuilder<SyncLocationsWorker>()
                 .setConstraints(Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)

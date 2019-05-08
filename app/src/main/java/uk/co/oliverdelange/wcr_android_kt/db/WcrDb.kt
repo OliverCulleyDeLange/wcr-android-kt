@@ -124,6 +124,12 @@ interface TopoDao : BaseDao<Topo> {
     @Query("SELECT * from topo where locationId = :locationId")
     fun getTopoAndRoutes(locationId: String): List<TopoAndRoutes>
 
+    @Query("SELECT * FROM topo where uploaded = :uploaded")
+    fun loadWithUploaded(uploaded: Boolean): Maybe<List<Topo>>
+
+    @Query("UPDATE topo SET uploaded = 'true' where id = :id")
+    fun markAsUploaded(id: String): Completable
+
     //https://developer.android.com/training/data-storage/room/accessing-data
     @Query("SELECT * FROM topo WHERE name LIKE :search")
     fun searchOnName(search: String): LiveData<List<Topo>>
@@ -137,6 +143,12 @@ interface RouteDao : BaseDao<Route> {
 
     @Query("SELECT * from route where topoId = :topoId")
     fun loadWithTopoId(topoId: String): LiveData<List<Route>>
+
+    @Query("SELECT * FROM route where uploaded = :uploaded")
+    fun loadWithUploaded(uploaded: Boolean): Maybe<List<Route>>
+
+    @Query("UPDATE route SET uploaded = 'true' where id = :id")
+    fun markAsUploaded(id: String): Completable
 
     @Query("SELECT * FROM route WHERE name LIKE :search")
     fun searchOnName(search: String): LiveData<List<Route>>

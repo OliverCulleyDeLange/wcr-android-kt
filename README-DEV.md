@@ -3,6 +3,7 @@
     - Background sync? or on request
 - Hide button whe not signed in
 - Fix crash when expand bottom sheet when no topos
+- Test DBs max length for strings - long paths could cause issues.
 
 Nice to haves:
 - https://developer.android.com/kotlin/ktx#core-packages
