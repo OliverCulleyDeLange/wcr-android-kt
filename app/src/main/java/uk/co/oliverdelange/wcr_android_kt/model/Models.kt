@@ -62,7 +62,7 @@ data class Grade(var string: String,
         }
 
         fun from(textRepresentation: String): Grade? {
-            Timber.d("Converting $textRepresentation into a grade")
+            Timber.v("Converting $textRepresentation into a grade")
             return when {
                 textRepresentation.startsWith("V") -> from(VGrade.values().first { it.textRepresentation == textRepresentation })
                 textRepresentation.startsWith("f") -> from(FontGrade.values().first { it.textRepresentation == textRepresentation })

@@ -28,7 +28,7 @@ class SyncRoutesWorker(appContext: Context, workerParams: WorkerParameters) : Rx
                     Observable.mergeArrayDelayError(*saveRoutesToFirestore.toTypedArray())
                             .flatMapCompletable {
                                 Timber.d("Marking Route $it as uploaded")
-                                localDb.topoDao().markAsUploaded(it)
+                                localDb.routeDao().markAsUploaded(it)
                             }
                 }
                 .toSingleDefault(Result.success())

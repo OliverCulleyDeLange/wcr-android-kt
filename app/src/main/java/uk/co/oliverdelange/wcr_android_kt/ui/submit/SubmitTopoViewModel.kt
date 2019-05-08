@@ -24,6 +24,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.WorkerService
+import uk.co.oliverdelange.wcr_android_kt.service.syncTopoOnSubmit
 import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTopoImageView
 import javax.inject.Inject
 
@@ -246,6 +247,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                                             Timber.d("All routes saved for topo $topoId")
                                             mediator.value = topoId // Signifies the topo has been submitted
                                             workerService.updateRouteInfo(sectorId)
+                                            syncTopoOnSubmit() // Enqueues tasks that sync topo and routes in bg
                                             submitting.value = false
                                         }
                             }

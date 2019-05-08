@@ -2,10 +2,6 @@ package uk.co.oliverdelange.wcr_android_kt.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Single
 import timber.log.Timber
@@ -13,7 +9,6 @@ import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromLocationDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.toLocationDto
 import uk.co.oliverdelange.wcr_android_kt.model.*
-import uk.co.oliverdelange.wcr_android_kt.service.SyncLocationsWorker
 import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
 
@@ -24,13 +19,6 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
     fun save(location: Location): Single<String> {
         Timber.d("Saving %s: %s", location.type, location.name)
         val locationDTO = toLocationDto(location)
-        //TODO Possible race condition - if task starts before saved to local db, nothing will be uploaded.
-        // Need to wait save to local db, then enqueu worker
-        WorkManager.getInstance().enqueue(OneTimeWorkRequestBuilder<SyncLocationsWorker>()
-                .setConstraints(Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .build())
-                .build())
         return saveToLocalDb(locationDTO)
     }
 
