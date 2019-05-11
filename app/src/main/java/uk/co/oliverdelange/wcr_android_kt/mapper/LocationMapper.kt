@@ -18,7 +18,8 @@ fun toLocationDto(location: Location): LocationDTO {
             location.blacks,
             location.boulders,
             location.sports,
-            location.trads
+            location.trads,
+            uploaderId = location.uploaderId
     )
 }
 
@@ -37,6 +38,7 @@ fun fromLocationDto(location: LocationDTO): Location {
             location.blacks,
             location.boulders,
             location.sports,
-            location.trads
+            location.trads,
+            location.uploaderId
     )
 }

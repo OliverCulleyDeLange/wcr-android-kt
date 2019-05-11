@@ -12,7 +12,7 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.Route
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 
-class SyncRoutesWorker(appContext: Context, workerParams: WorkerParameters) : RxWorker(appContext, workerParams) {
+class UploadRoutesWorker(appContext: Context, workerParams: WorkerParameters) : RxWorker(appContext, workerParams) {
 
     @SuppressLint("WrongThread")
     override fun createWork(): Single<Result> {
@@ -28,7 +28,7 @@ class SyncRoutesWorker(appContext: Context, workerParams: WorkerParameters) : Rx
                     Observable.mergeArrayDelayError(*saveRoutesToFirestore.toTypedArray())
                             .flatMapCompletable {
                                 Timber.d("Marking Route $it as uploaded")
-                                localDb.routeDao().markAsUploaded(it)
+                                localDb.routeDao().markUploaded(it)
                             }
                 }
                 .toSingleDefault(Result.success())

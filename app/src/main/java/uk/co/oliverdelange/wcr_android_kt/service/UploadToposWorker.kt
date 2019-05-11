@@ -12,7 +12,7 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.Topo
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 
-class SyncToposWorker(appContext: Context, workerParams: WorkerParameters) : RxWorker(appContext, workerParams) {
+class UploadToposWorker(appContext: Context, workerParams: WorkerParameters) : RxWorker(appContext, workerParams) {
 
     @SuppressLint("WrongThread")
     override fun createWork(): Single<Result> {
@@ -28,7 +28,7 @@ class SyncToposWorker(appContext: Context, workerParams: WorkerParameters) : RxW
                     Observable.mergeArrayDelayError(*saveToposToFirestore.toTypedArray())
                             .flatMapCompletable {
                                 Timber.d("Marking Topo $it as uploaded")
-                                localDb.topoDao().markAsUploaded(it)
+                                localDb.topoDao().markUploaded(it)
                             }
                 }
                 .toSingleDefault(Result.success())

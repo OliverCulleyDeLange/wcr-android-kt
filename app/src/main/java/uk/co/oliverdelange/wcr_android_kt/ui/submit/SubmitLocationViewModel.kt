@@ -4,6 +4,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Single
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.Location
@@ -36,9 +37,10 @@ class SubmitLocationViewModel @Inject constructor(private val submitLocationUseC
         val locationName = locationName.value
         val lat = locationLatLng.value?.latitude
         val lng = locationLatLng.value?.longitude
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
 
-        return if (locationName != null && lat != null && lng != null) {
-            val location = Location(name = locationName, latlng = LatLng(lat, lng), type = locationType, parentLocation = parentId)
+        return if (locationName != null && lat != null && lng != null && userId != null) {
+            val location = Location(name = locationName, latlng = LatLng(lat, lng), type = locationType, parentLocation = parentId, uploaderId = userId)
             submitLocationUseCase.submitLocation(location)
         } else {
             val err = RuntimeException("Submit attempted but not all information available. (Submit button shouldn't have been active!)")

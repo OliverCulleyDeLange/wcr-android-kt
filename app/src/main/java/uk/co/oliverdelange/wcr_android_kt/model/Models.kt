@@ -6,6 +6,8 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
+//val dateformat = DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneOffset.UTC)
+
 data class Location(val id: String? = null,
                     val parentLocation: String? = null,
                     var name: String,
@@ -17,7 +19,8 @@ data class Location(val id: String? = null,
                     var blacks: Int = 0,
                     var boulders: Int = 0,
                     var sports: Int = 0,
-                    var trads: Int = 0)
+                    var trads: Int = 0,
+                    val uploaderId: String)
 
 data class TopoAndRoutes(
         var topo: Topo,
@@ -94,3 +97,6 @@ enum class GradeColour {
     GREEN, ORANGE, RED, BLACK
 }
 
+enum class SyncType {
+    UPLOAD, DOWNLOAD
+}

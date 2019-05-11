@@ -1,12 +1,20 @@
 package uk.co.oliverdelange.wcr_android_kt.db
 
 import androidx.room.TypeConverter
-import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
-import uk.co.oliverdelange.wcr_android_kt.model.GradeType
-import uk.co.oliverdelange.wcr_android_kt.model.LocationType
-import uk.co.oliverdelange.wcr_android_kt.model.RouteType
+import uk.co.oliverdelange.wcr_android_kt.model.*
 
 class WcrTypeConverters {
+
+    @TypeConverter
+    fun strListToString(strList: List<String>?): String? {
+        if (strList?.any { it.contains(",") } == true) throw RuntimeException("String list can't contain items containing a comma")
+        return strList?.joinToString(",")
+    }
+
+    @TypeConverter
+    fun stringToStrList(string: String?): List<String>? {
+        return string?.let { string.split(",") }
+    }
 
     @TypeConverter
     fun enumTypeToString(enum: Enum<*>?): String {
@@ -33,7 +41,12 @@ class WcrTypeConverters {
         return if (enumContains<GradeColour>(data)) GradeColour.valueOf(data) else null
     }
 
-    inline fun <reified T : Enum<T>> enumContains(name: String): Boolean {
+    @TypeConverter
+    fun stringToSyncType(data: String?): SyncType? {
+        return if (enumContains<GradeColour>(data)) SyncType.valueOf(data!!) else null
+    }
+
+    inline fun <reified T : Enum<T>> enumContains(name: String?): Boolean {
         return enumValues<T>().any { it.name == name }
     }
 }

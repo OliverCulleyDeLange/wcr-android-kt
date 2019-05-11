@@ -12,12 +12,18 @@ import io.reactivex.Maybe
 import kotlinx.android.parcel.Parcelize
 import uk.co.oliverdelange.wcr_android_kt.util.ioThread
 
-@Database(entities = [(Location::class), (Topo::class), (Route::class)], version = 1)
+@Database(entities = [
+    (Location::class),
+    (Topo::class),
+    (Route::class),
+    (Sync::class)
+], version = 1)
 @TypeConverters(WcrTypeConverters::class)
 abstract class WcrDb : RoomDatabase() {
     abstract fun locationDao(): LocationDao
     abstract fun topoDao(): TopoDao
     abstract fun routeDao(): RouteDao
+    abstract fun syncDao(): SyncDao
 
     companion object {
         @Volatile
@@ -96,11 +102,11 @@ interface LocationDao : BaseDao<Location> {
     @Query("SELECT * FROM location where type = :type AND parentLocation = :parent")
     fun loadWithParentId(parent: String, type: String = "SECTOR"): LiveData<List<Location>>
 
-    @Query("SELECT * FROM location where uploaded = :uploaded")
-    fun loadWithUploaded(uploaded: Boolean): Maybe<List<Location>>
+    @Query("SELECT * FROM location where uploadedAt = -1")
+    fun loadYetToBeUploaded(): Maybe<List<Location>>
 
-    @Query("UPDATE location SET uploaded = 'true' where id = :id")
-    fun markAsUploaded(id: String): Completable
+    @Query("UPDATE location SET uploadedAt = :uploadedAt where id = :id")
+    fun updateUploadedAt(id: String, uploadedAt: Long): Completable
 
     @Query("SELECT * FROM location where type = :type AND parentLocation = :parent")
     fun getWithParentId(parent: String, type: String = "SECTOR"): List<Location>
@@ -110,7 +116,13 @@ interface LocationDao : BaseDao<Location> {
 
     @Query("SELECT * FROM location WHERE name LIKE :search")
     fun searchOnName(search: String): LiveData<List<Location>>
+
+//    @Query("SELECT MAX(uploadedAt) as mostRecentUploadedAt FROM location")
+//    fun getMostRecentUploadedAt(): MostRecentUploadedAt
 }
+
+//data class MostRecentUploadedAt(val mostRecentUploadedAt: Long)
+
 
 @Dao
 @WorkerThread
@@ -127,8 +139,8 @@ interface TopoDao : BaseDao<Topo> {
     @Query("SELECT * FROM topo where uploaded = :uploaded")
     fun loadWithUploaded(uploaded: Boolean): Maybe<List<Topo>>
 
-    @Query("UPDATE topo SET uploaded = 'true' where id = :id")
-    fun markAsUploaded(id: String): Completable
+    @Query("UPDATE topo SET uploaded = :uploaded where id = :id")
+    fun markUploaded(id: String, uploaded: Boolean = true): Completable
 
     //https://developer.android.com/training/data-storage/room/accessing-data
     @Query("SELECT * FROM topo WHERE name LIKE :search")
@@ -147,21 +159,33 @@ interface RouteDao : BaseDao<Route> {
     @Query("SELECT * FROM route where uploaded = :uploaded")
     fun loadWithUploaded(uploaded: Boolean): Maybe<List<Route>>
 
-    @Query("UPDATE route SET uploaded = 'true' where id = :id")
-    fun markAsUploaded(id: String): Completable
+    @Query("UPDATE route SET uploaded = :uploaded where id = :id")
+    fun markUploaded(id: String, uploaded: Boolean = true): Completable
 
     @Query("SELECT * FROM route WHERE name LIKE :search")
     fun searchOnName(search: String): LiveData<List<Route>>
 }
 
+@Dao
+@WorkerThread
+interface SyncDao : BaseDao<Sync> {
+    @Query("SELECT MAX(epochSeconds) as epochSeconds FROM sync where syncType = :syncType")
+    fun getMostRecentSync(syncType: String): Maybe<MostRecentSync>
+
+    //TODO?
+//    fun getMostRecentErrorFreeSync(syncType: SyncType): MostRecentUpdate
+}
+
+data class MostRecentSync(val epochSeconds: Long)
+
 @Parcelize
 @Entity
-data class Location(@PrimaryKey val id: String,
+data class Location(@PrimaryKey val id: String = "",
                     val parentLocation: String? = null,
-                    var name: String,
-                    var lat: Double,
-                    var lng: Double,
-                    val type: String,
+                    var name: String = "",
+                    var lat: Double = 0.0,
+                    var lng: Double = 0.0,
+                    var type: String = "",
                     var greens: Int = 0,
                     var oranges: Int = 0,
                     var reds: Int = 0,
@@ -169,7 +193,9 @@ data class Location(@PrimaryKey val id: String,
                     var boulders: Int = 0,
                     var sports: Int = 0,
                     var trads: Int = 0,
-                    @get:Exclude val uploaded: Boolean = false) : Parcelable
+                    var uploadedAt: Long = -1,
+                    var uploaderId: String = ""
+) : Parcelable
 
 class TopoAndRoutes {
     @Embedded
@@ -190,6 +216,7 @@ data class Topo(@PrimaryKey val id: String,
                 var locationId: String,
                 var name: String,
                 var image: String,
+                val lastUpdated: Long = -1,
                 @get:Exclude val uploaded: Boolean = false)
 
 @Entity(foreignKeys = [(
@@ -205,4 +232,12 @@ data class Route(@PrimaryKey val id: String,
                  var type: String,
                  var description: String,
                  var path: String,
+                 val lastUpdated: Long = -1,
                  @get:Exclude val uploaded: Boolean = false)
+
+@Entity
+data class Sync(@PrimaryKey(autoGenerate = true) val id: Long = 0,
+                val epochSeconds: Long,
+                val syncType: String,
+                val successIds: String
+)

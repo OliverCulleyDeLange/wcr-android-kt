@@ -55,6 +55,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
+import uk.co.oliverdelange.wcr_android_kt.service.enqueueCloudDownloads
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
@@ -124,6 +125,7 @@ class MapsActivity : AppCompatActivity(),
         initialiseDrawer()
         initialiseFloatingSearchBar()
         initialiseBottomSheet()
+        enqueueCloudDownloads()
     }
 
     override fun onBackPressed() {
