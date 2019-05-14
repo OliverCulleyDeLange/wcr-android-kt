@@ -1,7 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.map
 
 import android.view.View
-import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -24,7 +23,6 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
 
     val userSignedIn = MutableLiveData<Boolean>().also { it.value = false }
 
-    val showFab = ObservableBoolean(true)
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
         it.value = GoogleMap.MAP_TYPE_NORMAL
     }
@@ -34,7 +32,15 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     val mapMode: MutableLiveData<MapMode> = MutableLiveData<MapMode>().also {
         it.value = MapMode.DEFAULT_MODE
     }
-
+    private val mapModesThatDisplayFab = listOf(MapMode.DEFAULT_MODE, MapMode.CRAG_MODE, MapMode.TOPO_MODE)
+    val showFab = MediatorLiveData<Boolean>().also {
+        it.value = true
+        fun getShowFab(): Boolean {
+            return userSignedIn.value == true && mapModesThatDisplayFab.contains(mapMode.value)
+        }
+        it.addSource(userSignedIn) { _ -> it.value = getShowFab() }
+        it.addSource(mapMode) { _ -> it.value = getShowFab() }
+    }
     val selectedLocationId: MutableLiveData<String?> = MutableLiveData<String?>().also {
         it.value = null
     }

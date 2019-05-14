@@ -290,13 +290,12 @@ class MapsActivity : AppCompatActivity(),
             }
             when (it) {
                 DEFAULT_MODE, CRAG_MODE, SECTOR_MODE, TOPO_MODE -> {
-                    binding.vm?.showFab?.set(true)
                     val bottomSheetOpened = getPreferences(Context.MODE_PRIVATE)
                             .getBoolean(BOTTOM_SHEET_OPENED, false)
                     if (!bottomSheetOpened) bounceBottomSheet()
                 }
                 SUBMIT_CRAG_MODE, SUBMIT_SECTOR_MODE, SUBMIT_TOPO_MODE -> {
-                    binding.vm?.showFab?.set(false)
+
                 }
             }
         })
