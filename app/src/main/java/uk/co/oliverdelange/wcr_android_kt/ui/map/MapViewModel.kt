@@ -4,6 +4,7 @@ import android.view.View
 import androidx.lifecycle.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -24,7 +25,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
                                        val routeDao: RouteDao,
                                        val db: WcrDb) : ViewModel() {
 
-    val userSignedIn = MutableLiveData<Boolean>().also { it.value = false }
+    val userSignedIn = MutableLiveData<Boolean>().also { it.value = FirebaseAuth.getInstance().currentUser != null }
 
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
         it.value = GoogleMap.MAP_TYPE_NORMAL
