@@ -35,7 +35,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     val mapMode: MutableLiveData<MapMode> = MutableLiveData<MapMode>().also {
         it.value = MapMode.DEFAULT_MODE
     }
-    private val mapModesThatDisplayFab = listOf(MapMode.DEFAULT_MODE, MapMode.CRAG_MODE, MapMode.TOPO_MODE)
+    private val mapModesThatDisplayFab = listOf(MapMode.DEFAULT_MODE, MapMode.CRAG_MODE, MapMode.TOPO_MODE, MapMode.SECTOR_MODE)
     val showFab = MediatorLiveData<Boolean>().also {
         it.value = true
         fun getShowFab(): Boolean {
