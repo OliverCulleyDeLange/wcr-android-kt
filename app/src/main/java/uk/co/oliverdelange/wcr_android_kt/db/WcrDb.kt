@@ -178,10 +178,15 @@ interface SyncDao : BaseDao<Sync> {
 
 data class MostRecentSync(val epochSeconds: Long)
 
+
+abstract class BaseEntity {
+    abstract var id: String
+}
+
 @Parcelize
 @Entity
-data class Location(@PrimaryKey val id: String = "",
-                    val parentLocation: String? = null,
+data class Location(@PrimaryKey override var id: String = "",
+                    var parentLocation: String? = null,
                     var name: String = "",
                     var lat: Double = 0.0,
                     var lng: Double = 0.0,
@@ -195,7 +200,7 @@ data class Location(@PrimaryKey val id: String = "",
                     var trads: Int = 0,
                     var uploadedAt: Long = -1,
                     var uploaderId: String = ""
-) : Parcelable
+) : Parcelable, BaseEntity()
 
 class TopoAndRoutes {
     @Embedded
@@ -212,12 +217,12 @@ class TopoAndRoutes {
                 childColumns = arrayOf("locationId")
         )
 )))
-data class Topo(@PrimaryKey val id: String,
+data class Topo(@PrimaryKey override var id: String,
                 var locationId: String,
                 var name: String,
                 var image: String,
                 val lastUpdated: Long = -1,
-                @get:Exclude val uploaded: Boolean = false)
+                @get:Exclude val uploaded: Boolean = false) : BaseEntity()
 
 @Entity(foreignKeys = [(
         ForeignKey(
@@ -225,7 +230,7 @@ data class Topo(@PrimaryKey val id: String,
                 parentColumns = arrayOf("id"),
                 childColumns = arrayOf("topoId"))
         )])
-data class Route(@PrimaryKey val id: String,
+data class Route(@PrimaryKey override var id: String,
                  var topoId: String,
                  var name: String,
                  var grade: String,
@@ -233,11 +238,11 @@ data class Route(@PrimaryKey val id: String,
                  var description: String,
                  var path: String,
                  val lastUpdated: Long = -1,
-                 @get:Exclude val uploaded: Boolean = false)
+                 @get:Exclude val uploaded: Boolean = false) : BaseEntity()
 
 @Entity
 data class Sync(@PrimaryKey(autoGenerate = true) val id: Long = 0,
                 val epochSeconds: Long,
-                val syncType: String,
-                val successIds: String
+                val syncType: String
+//                val successIds: String
 )

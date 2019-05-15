@@ -17,7 +17,7 @@ class WelcomeFragment : Fragment(), Injectable {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Timber.d("WelcomeFragment : onCreateView")
+        Timber.v("WelcomeFragment : onCreateView")
         return inflater.inflate(R.layout.fragment_welcome, container, false)
     }
 }

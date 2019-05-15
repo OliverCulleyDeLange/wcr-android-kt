@@ -6,11 +6,16 @@ import com.google.maps.android.SphericalUtil
 
 object LatLngUtil {
 
-    private val PADDING_PERCENTAGE = 15.0
+    private val DEFAULT_BOUNDS = LatLngBounds.builder()
+            .include(LatLng(58.547148, -7.824919))
+            .include(LatLng(50.373360, 1.083633))
+            .build()
+    private const val PADDING_PERCENTAGE = 15.0
     private var mostW: LatLng? = null
     private var mostE: LatLng? = null
 
     fun getBoundsForLatLngs(latLngs: Collection<LatLng>): LatLngBounds {
+        if (latLngs.isEmpty()) return DEFAULT_BOUNDS
         val builder = LatLngBounds.builder()
         mostE = null
         mostW = null

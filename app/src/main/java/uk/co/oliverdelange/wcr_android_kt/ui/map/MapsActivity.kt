@@ -112,7 +112,7 @@ class MapsActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.d("MapsActivity : onCreate")
+        Timber.v("MapsActivity : onCreate")
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
         binding.lifecycleOwner = this
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
@@ -358,9 +358,9 @@ class MapsActivity : AppCompatActivity(),
                             .setPositiveButton("Yes") { _, _ ->
                                 AuthUI.getInstance()
                                         .signOut(this@MapsActivity)
-                                        .addOnCompleteListener({
+                                        .addOnCompleteListener {
                                             binding.vm?.userSignedIn?.value = false
-                                        })
+                                        }
                             }
                             .show()
                     false
@@ -382,6 +382,14 @@ class MapsActivity : AppCompatActivity(),
                                     "<br /><br />" +
                                     "Below is a list of Open Source libraries used in this app.")
                             .start(this@MapsActivity)
+                    false
+                }
+            }
+            primaryItem("NukeDB") {
+                iicon = GoogleMaterial.Icon.gmd_warning
+                selectable = false
+                onClick { _ ->
+                    binding.vm?.nukeDb()
                     false
                 }
             }

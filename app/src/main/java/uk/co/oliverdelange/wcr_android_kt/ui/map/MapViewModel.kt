@@ -4,11 +4,13 @@ import android.view.View
 import androidx.lifecycle.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
+import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
@@ -19,7 +21,8 @@ import javax.inject.Singleton
 @Singleton
 class MapViewModel @Inject constructor(val locationRepository: LocationRepository,
                                        val topoRepository: TopoRepository,
-                                       val routeDao: RouteDao) : ViewModel() {
+                                       val routeDao: RouteDao,
+                                       val db: WcrDb) : ViewModel() {
 
     val userSignedIn = MutableLiveData<Boolean>().also { it.value = false }
 
@@ -220,6 +223,16 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
                 MapMode.SUBMIT_TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE
             }
         }
+    }
+
+    fun nukeDb() {
+        Completable.fromAction {
+            db.clearAllTables()
+        }
+                .subscribeOn(Schedulers.io())
+                .subscribe {
+                    Timber.d("DB Nuked")
+                }
     }
 }
 

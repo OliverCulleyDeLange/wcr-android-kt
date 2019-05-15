@@ -27,5 +27,5 @@ fun enqueueCloudDownloads() {
     workManager.enqueueUniquePeriodicWork(
             "download-locations",
             ExistingPeriodicWorkPolicy.REPLACE,
-            PeriodicWorkRequestBuilder<DownloadLocationsWorker>(duration, unit).build())
+            PeriodicWorkRequestBuilder<DownloadWorker>(duration, unit).build())
 }
