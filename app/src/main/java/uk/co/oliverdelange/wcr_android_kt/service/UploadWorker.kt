@@ -12,8 +12,8 @@ import io.reactivex.Single
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneOffset
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.db.BaseDao
-import uk.co.oliverdelange.wcr_android_kt.db.BaseEntity
+import uk.co.oliverdelange.wcr_android_kt.db.dao.local.BaseDao
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.BaseEntity
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 
 fun <T : BaseEntity> uploadToFirebase(collection: String, entity: T): Single<T> {

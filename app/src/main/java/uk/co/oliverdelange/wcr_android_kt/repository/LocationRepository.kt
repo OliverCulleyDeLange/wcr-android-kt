@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import io.reactivex.Single
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
+import uk.co.oliverdelange.wcr_android_kt.db.dao.local.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromLocationDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.toLocationDto
 import uk.co.oliverdelange.wcr_android_kt.model.*
@@ -18,7 +18,7 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
         return saveToLocalDb(locationDTO)
     }
 
-    private fun saveToLocalDb(location: uk.co.oliverdelange.wcr_android_kt.db.Location): Single<String> {
+    private fun saveToLocalDb(location: uk.co.oliverdelange.wcr_android_kt.db.dto.local.Location): Single<String> {
         return Single.fromCallable {
             locationDao.insert(location)
             Timber.d("Saved location to local db")

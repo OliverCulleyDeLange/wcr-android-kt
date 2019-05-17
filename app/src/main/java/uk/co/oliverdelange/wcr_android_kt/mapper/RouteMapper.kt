@@ -1,7 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.mapper
 
 import uk.co.oliverdelange.wcr_android_kt.model.*
-import uk.co.oliverdelange.wcr_android_kt.db.Route as RouteDTO
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Route as RouteDTO
 
 fun toRouteDto(route: Route): RouteDTO {
     return RouteDTO(

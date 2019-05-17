@@ -8,9 +8,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import uk.co.oliverdelange.wcr_android_kt.db.LocationDao;
-import uk.co.oliverdelange.wcr_android_kt.db.RouteDao;
-import uk.co.oliverdelange.wcr_android_kt.db.TopoDao;
+import uk.co.oliverdelange.wcr_android_kt.db.dao.local.LocationDao;
+import uk.co.oliverdelange.wcr_android_kt.db.dao.local.RouteDao;
+import uk.co.oliverdelange.wcr_android_kt.db.dao.local.TopoDao;
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb;
 
 @Module(includes = ViewModelModule.class)

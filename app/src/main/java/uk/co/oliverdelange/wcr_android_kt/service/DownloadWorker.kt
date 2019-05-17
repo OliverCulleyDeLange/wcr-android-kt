@@ -15,6 +15,8 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneOffset
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.*
+import uk.co.oliverdelange.wcr_android_kt.db.dao.local.BaseDao
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.*
 import uk.co.oliverdelange.wcr_android_kt.model.SyncType
 import kotlin.reflect.KClass
 

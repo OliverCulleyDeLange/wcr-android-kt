@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import io.reactivex.Single
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
-import uk.co.oliverdelange.wcr_android_kt.db.TopoDao
+import uk.co.oliverdelange.wcr_android_kt.db.dao.local.LocationDao
+import uk.co.oliverdelange.wcr_android_kt.db.dao.local.TopoDao
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromTopoAndRouteDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromTopoDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.toTopoDto
@@ -22,7 +22,7 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
         return saveToLocalDb(topoDTO)
     }
 
-    private fun saveToLocalDb(topoDTO: uk.co.oliverdelange.wcr_android_kt.db.Topo): Single<String> {
+    private fun saveToLocalDb(topoDTO: uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo): Single<String> {
         return Single.fromCallable {
             Timber.d("Saving topo to local db: %s", topoDTO)
             topoDao.insert(topoDTO)

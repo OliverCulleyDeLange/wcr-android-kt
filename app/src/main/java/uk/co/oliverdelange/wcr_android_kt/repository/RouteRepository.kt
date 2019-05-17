@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import io.reactivex.Completable
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.db.Route
-import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Route
+import uk.co.oliverdelange.wcr_android_kt.db.dao.local.RouteDao
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromRouteDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.toRouteDto
 import javax.inject.Inject
