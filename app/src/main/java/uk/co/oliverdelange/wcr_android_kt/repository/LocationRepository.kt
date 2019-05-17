@@ -24,8 +24,8 @@ class LocationRepository @Inject constructor(val locationDao: LocationDao,
 
     private fun saveToLocalDb(location: uk.co.oliverdelange.wcr_android_kt.db.Location): Single<String> {
         return Single.fromCallable {
-            Timber.d("Saving location to local db")
             locationDao.insert(location)
+            Timber.d("Saved location to local db")
             location.id
         }
     }

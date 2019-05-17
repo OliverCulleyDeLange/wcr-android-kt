@@ -74,7 +74,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : RxWo
                     val downloadedRouteIds: Single<MutableList<String>> = downloadThing(it, "routes", Route::class, routeDao)
                     Single.mergeDelayError(downloadedLocationIds, downloadedTopoIds, downloadedRouteIds)
                 }.collect({ mutableListOf<String>() }, { list, it ->
-                    Timber.v("Collecting $it")
+                    Timber.v("IDs of downloaded things: $it")
                     list.addAll(it)
                 })
                 .flatMapCompletable {

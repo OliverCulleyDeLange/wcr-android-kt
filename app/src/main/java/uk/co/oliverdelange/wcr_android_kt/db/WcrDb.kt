@@ -92,33 +92,33 @@ interface BaseDao<T : BaseEntity> {
 
 @Dao
 @WorkerThread
-abstract class LocationDao : BaseDao<Location> {
+interface LocationDao : BaseDao<Location> {
     @Query("SELECT * FROM location where name = :name")
-    abstract fun load(name: String): LiveData<Location>
+    fun load(name: String): LiveData<Location>
 
     @Query("SELECT * FROM location where name = :name")
-    abstract fun get(name: String): Location?
+    fun get(name: String): Location?
 
     @Query("SELECT * FROM location where type = :type")
-    abstract fun loadByType(type: String): LiveData<List<Location>>
+    fun loadByType(type: String): LiveData<List<Location>>
 
     @Query("SELECT * FROM location where type = :type AND parentLocation = :parent")
-    abstract fun loadWithParentId(parent: String, type: String = "SECTOR"): LiveData<List<Location>>
+    fun loadWithParentId(parent: String, type: String = "SECTOR"): LiveData<List<Location>>
 
     @Query("SELECT * FROM location where uploadedAt = -1")
-    abstract override fun loadYetToBeUploaded(): Maybe<List<Location>>
+    override fun loadYetToBeUploaded(): Maybe<List<Location>>
 
     @Query("UPDATE location SET uploadedAt = :uploadedAt where id = :id")
-    abstract override fun updateUploadedAt(id: String, uploadedAt: Long): Completable
+    override fun updateUploadedAt(id: String, uploadedAt: Long): Completable
 
     @Query("SELECT * FROM location where type = :type AND parentLocation = :parent")
-    abstract fun getWithParentId(parent: String, type: String = "SECTOR"): List<Location>
+    fun getWithParentId(parent: String, type: String = "SECTOR"): List<Location>
 
     @Query("UPDATE location SET boulders = :boulders, sports = :sports, trads = :trads, greens = :greens, oranges = :oranges, reds = :reds, blacks = :blacks WHERE name =:name")
-    abstract fun updateRouteInfo(name: String, boulders: Int, sports: Int, trads: Int, greens: Int, oranges: Int, reds: Int, blacks: Int)
+    fun updateRouteInfo(name: String, boulders: Int, sports: Int, trads: Int, greens: Int, oranges: Int, reds: Int, blacks: Int)
 
     @Query("SELECT * FROM location WHERE name LIKE :search")
-    abstract fun searchOnName(search: String): LiveData<List<Location>>
+    fun searchOnName(search: String): LiveData<List<Location>>
 }
 
 

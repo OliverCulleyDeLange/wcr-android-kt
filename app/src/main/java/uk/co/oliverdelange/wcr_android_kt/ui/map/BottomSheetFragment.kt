@@ -30,7 +30,7 @@ import javax.inject.Inject
 class BottomSheetFragment : Fragment(), Injectable {
     companion object {
         fun newBottomSheet(): BottomSheetFragment {
-            Timber.d("Creating BottomSheetFragment")
+            Timber.v("Creating BottomSheetFragment")
             return BottomSheetFragment()
         }
     }
@@ -41,7 +41,7 @@ class BottomSheetFragment : Fragment(), Injectable {
     private var binding: FragmentBottomSheetBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Timber.d("onCreateView")
+        Timber.v("BottomSheetFragment: onCreateView")
         binding = FragmentBottomSheetBinding.inflate(layoutInflater, container, false)
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
         binding?.vm = viewModel
@@ -51,7 +51,7 @@ class BottomSheetFragment : Fragment(), Injectable {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Timber.d("onActivityCreated")
+        Timber.v("BottomSheetFragment: onActivityCreated")
         binding?.topoRecycler?.layoutManager = DeScrollLinearLayoutManager(activity)
         val recyclerAdapter = TopoRecyclerAdapter(activity)
         binding?.topoRecycler?.adapter = recyclerAdapter
