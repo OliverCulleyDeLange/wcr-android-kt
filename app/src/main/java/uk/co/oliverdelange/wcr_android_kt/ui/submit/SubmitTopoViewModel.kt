@@ -6,17 +6,12 @@ import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.cloudinary.android.MediaManager
-import com.cloudinary.android.callback.ErrorInfo
-import com.cloudinary.android.callback.UploadCallback
-import com.cloudinary.android.preprocess.BitmapEncoder
-import com.cloudinary.android.preprocess.ImagePreprocessChain
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.Single
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.USE_V_GRADE_FOR_BOULDERING
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
@@ -26,6 +21,7 @@ import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.WorkerService
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTopoImageView
+import java.io.IOException
 import javax.inject.Inject
 
 const val MAX_TOPO_SIZE_PX = 640
@@ -206,67 +202,57 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         it.value = false
     }
 
-    fun submit(sectorId: String): MutableLiveData<String> {
+    fun uploadImage(topoImage: Uri, topoName: String, sectorId: String): Single<Uri> {
+        return Single.create { emitter ->
+            val rootRef = FirebaseStorage.getInstance().reference
+            val imageRef = rootRef.child("topos/$topoName")
+            val uploadTask = imageRef.putFile(topoImage)
+                    .addOnProgressListener { snapshot ->
+                        val percent = snapshot.bytesTransferred / snapshot.totalByteCount
+                        Timber.d("Image uploading... $percent")
+                    }
+
+            try {
+                Tasks.await(uploadTask)
+                val url = Tasks.await(imageRef.downloadUrl)
+                emitter.onSuccess(url)
+            } catch (e: IOException) {
+                Timber.e(e, "Error uploading topo image to cloud")
+                submitButtonEnabled.set(true)
+                submitting.value = false
+                emitter.onError(e)
+            }
+        }
+    }
+
+    fun submit(sectorId: String): Single<String> {
         val topoName = topoName.value
         val topoImage = localTopoImage.value
         return if (topoName != null && topoImage != null) {
             Timber.i("Submission started")
             submitButtonEnabled.set(false)
             submitting.value = true
-            val mediator = MediatorLiveData<String>()
-            // TODO extract out into a completable
-            MediaManager.get().upload(topoImage)
-                    .unsigned("wcr_topo_upload")
-                    .option("folder", "topo/$sectorId")
-                    .option("public_id", topoName)
-                    .preprocess(ImagePreprocessChain.limitDimensionsChain(MAX_TOPO_SIZE_PX, MAX_TOPO_SIZE_PX)
-                            .saveWith(BitmapEncoder(BitmapEncoder.Format.WEBP, 80)))
-                    .callback(object : UploadCallback {
-                        override fun onStart(requestId: String) {
-                        }
 
-                        override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
-                            val progress = bytes.toDouble() / totalBytes
-                            Timber.d("Image upload progress: %s", progress.toString())
-                        }
-
-                        override fun onSuccess(requestId: String, resultData: Map<*, *>) {
-                            Timber.d("Image upload success: %s", resultData)
-                            val imageUrl = resultData["secure_url"] as String
-                            val topo = Topo(name = topoName, locationId = sectorId, image = imageUrl)
-                            val liveTopoId = topoRepository.save(topo)
-                            mediator.addSource(liveTopoId) { topoId ->
-                                Timber.d("Topo saved, we now have its ID: $topoId")
-                                // Update routes with topo ID and save
-                                val routes = routes.values.map { it.apply { it.topoId = topoId } }
-                                val saveRoutes = Completable.mergeDelayError(routes.map { routeRepository.save(it) })
-                                saveRoutes
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe {
-                                            Timber.d("All routes saved for topo $topoId")
-                                            mediator.value = topoId // Signifies the topo has been submitted
-                                            workerService.updateRouteInfo(sectorId)
-                                            uploadSync()
-                                            submitting.value = false
-                                        }
-                            }
-                        }
-
-                        override fun onError(requestId: String, error: ErrorInfo) {
-                            submitButtonEnabled.set(true)
-                            submitting.value = false
-                        }
-
-                        override fun onReschedule(requestId: String, error: ErrorInfo) {
-                            // your code here
-                        }
-                    })
-                    .dispatch(getApplication())
-            mediator
+            uploadImage(topoImage, topoName, sectorId)
+                    .flatMap { imageUrl ->
+                        val topo = Topo(name = topoName, locationId = sectorId, image = imageUrl.toString())
+                        topoRepository.save(topo)
+                    }.flatMap { topoId ->
+                        Timber.d("Topo saved")
+                        val routesWithTopoId = routes.values.map { r -> r.also { it.topoId = topoId } }
+                        val saveRoutes = routesWithTopoId.map { routeRepository.save(it) }
+                        Completable.mergeDelayError(saveRoutes).toSingleDefault(topoId)
+                    }.doOnSuccess { topoId ->
+                        Timber.d("All routes saved for topo $topoId")
+                        workerService.updateRouteInfo(sectorId)
+                        uploadSync()
+                        submitting.postValue(false)
+                    }.doOnError {
+                        submitting.postValue(false)
+                    }
         } else {
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
-            MutableLiveData()
+            Single.just("")
         }
     }
 

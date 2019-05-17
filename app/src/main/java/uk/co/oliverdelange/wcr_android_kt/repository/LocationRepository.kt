@@ -2,19 +2,15 @@ package uk.co.oliverdelange.wcr_android_kt.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Single
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromLocationDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.toLocationDto
 import uk.co.oliverdelange.wcr_android_kt.model.*
-import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
 
-class LocationRepository @Inject constructor(val locationDao: LocationDao,
-                                             val appExecutors: AppExecutors,
-                                             val firebaseFirestore: FirebaseFirestore) {
+class LocationRepository @Inject constructor(private val locationDao: LocationDao) {
 
     fun save(location: Location): Single<String> {
         Timber.d("Saving %s: %s", location.type, location.name)

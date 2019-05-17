@@ -19,6 +19,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_submit_topo.*
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
@@ -69,16 +71,18 @@ class SubmitTopoFragment : Fragment(), Injectable {
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitTopoViewModel::class.java)
         binding.vm = viewModel
 
-        binding.submit.setOnClickListener { _: View? ->
+        binding.submit.setOnClickListener {
             sectorId?.let { sectorId ->
-                binding.vm?.submit(sectorId)?.observe(this, Observer { submittedTopoId ->
-                    if (submittedTopoId != null) {
-                        Timber.i("Submission Succeeded")
-                        activityInteractor?.onTopoSubmitted(submittedTopoId)
-                    } else {
-                        Snackbar.make(binding.submit, "Failed to submit topo!", Snackbar.LENGTH_SHORT).show()
-                    }
-                })
+                binding.vm?.submit(sectorId)
+                        ?.subscribeOn(Schedulers.io())
+                        ?.observeOn(AndroidSchedulers.mainThread())
+                        ?.subscribe({ submittedTopoId ->
+                            Timber.i("Submission Succeeded")
+                            activityInteractor?.onTopoSubmitted(submittedTopoId)
+                        }, { e ->
+                            Timber.e(e, "Submission Failed")
+                            Snackbar.make(binding.submit, "Failed to submit topo!", Snackbar.LENGTH_SHORT).show()
+                        })
             }
         }
 

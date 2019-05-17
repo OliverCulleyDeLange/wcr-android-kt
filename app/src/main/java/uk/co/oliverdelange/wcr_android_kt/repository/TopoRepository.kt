@@ -2,9 +2,8 @@ package uk.co.oliverdelange.wcr_android_kt.repository
 
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.google.firebase.firestore.FirebaseFirestore
+import io.reactivex.Single
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.db.TopoDao
@@ -13,27 +12,22 @@ import uk.co.oliverdelange.wcr_android_kt.mapper.fromTopoDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.toTopoDto
 import uk.co.oliverdelange.wcr_android_kt.model.Topo
 import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
-import uk.co.oliverdelange.wcr_android_kt.util.AppExecutors
 import javax.inject.Inject
 
 class TopoRepository @Inject constructor(val topoDao: TopoDao,
-                                         val locationDao: LocationDao,
-                                         val firebaseFirestore: FirebaseFirestore,
-                                         val appExecutors: AppExecutors) {
+                                         val locationDao: LocationDao) {
 
-    fun save(topo: Topo): MutableLiveData<String> {
+    fun save(topo: Topo): Single<String> {
         val topoDTO = toTopoDto(topo)
         return saveToLocalDb(topoDTO)
     }
 
-    private fun saveToLocalDb(topoDTO: uk.co.oliverdelange.wcr_android_kt.db.Topo): MutableLiveData<String> {
-        val result = MutableLiveData<String>()
-        appExecutors.diskIO().execute {
+    private fun saveToLocalDb(topoDTO: uk.co.oliverdelange.wcr_android_kt.db.Topo): Single<String> {
+        return Single.fromCallable {
             Timber.d("Saving topo to local db: %s", topoDTO)
             topoDao.insert(topoDTO)
-            appExecutors.mainThread().execute { result.value = topoDTO.id }
+            topoDTO.id
         }
-        return result
     }
 
     fun loadToposForLocation(locationId: String): LiveData<List<TopoAndRoutes>> {
