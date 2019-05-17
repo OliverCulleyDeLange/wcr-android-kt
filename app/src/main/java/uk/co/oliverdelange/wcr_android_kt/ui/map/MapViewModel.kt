@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
@@ -15,6 +16,8 @@ import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
+import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
+import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,6 +27,8 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
                                        val topoRepository: TopoRepository,
                                        val routeDao: RouteDao,
                                        val db: WcrDb) : ViewModel() {
+
+    private val disposables: CompositeDisposable = CompositeDisposable()
 
     val userSignedIn = MutableLiveData<Boolean>().also { it.value = FirebaseAuth.getInstance().currentUser != null }
 
@@ -227,13 +232,18 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     fun nukeDb() {
-        Completable.fromAction {
+        disposables.add(Completable.fromAction {
             db.clearAllTables()
         }
                 .subscribeOn(Schedulers.io())
                 .subscribe {
                     Timber.d("DB Nuked")
-                }
+                })
+    }
+
+    fun sync() {
+        uploadSync()
+        downloadSync()
     }
 }
 

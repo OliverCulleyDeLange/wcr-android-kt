@@ -55,7 +55,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
-import uk.co.oliverdelange.wcr_android_kt.service.enqueueCloudDownloads
+import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
@@ -125,7 +125,7 @@ class MapsActivity : AppCompatActivity(),
         initialiseDrawer()
         initialiseFloatingSearchBar()
         initialiseBottomSheet()
-        enqueueCloudDownloads()
+        downloadSync()
     }
 
     override fun onBackPressed() {
@@ -390,6 +390,14 @@ class MapsActivity : AppCompatActivity(),
                 selectable = false
                 onClick { _ ->
                     binding.vm?.nukeDb()
+                    false
+                }
+            }
+            primaryItem("Sync") {
+                iicon = GoogleMaterial.Icon.gmd_warning
+                selectable = false
+                onClick { _ ->
+                    binding.vm?.sync()
                     false
                 }
             }

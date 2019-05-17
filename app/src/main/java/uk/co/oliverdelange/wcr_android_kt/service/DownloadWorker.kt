@@ -18,7 +18,7 @@ import uk.co.oliverdelange.wcr_android_kt.db.*
 import uk.co.oliverdelange.wcr_android_kt.model.SyncType
 import kotlin.reflect.KClass
 
-fun <T : Any> getFirebaseThing(mostRecentDownload: MostRecentSync, collection: String, kClass: KClass<T>): Observable<T> {
+fun <T : Any> getFirebaseThings(mostRecentDownload: MostRecentSync, collection: String, kClass: KClass<T>): Observable<T> {
     val remoteDb = FirebaseFirestore.getInstance()
     return Maybe.create<List<DocumentSnapshot>> { emitter ->
         val task = remoteDb
@@ -40,12 +40,10 @@ fun <T : Any> getFirebaseThing(mostRecentDownload: MostRecentSync, collection: S
     }
 }
 
-fun <T : BaseEntity> downloadThing(mostRecentDownload: Maybe<MostRecentSync>, collection: String, kClass: KClass<T>, dao: BaseDao<T>): Single<MutableList<String>> {
-    return mostRecentDownload
-            .flatMapObservable { _mostRecentDownload ->
-                Timber.d("Getting all remote $collection since ${_mostRecentDownload.epochSeconds}")
-                getFirebaseThing(_mostRecentDownload, "locations", kClass)
-            }.concatMapDelayError {
+fun <T : BaseEntity> downloadThing(mostRecentDownload: MostRecentSync, collection: String, kClass: KClass<T>, dao: BaseDao<T>): Single<MutableList<String>> {
+    Timber.d("Getting all remote $collection since ${mostRecentDownload.epochSeconds}")
+    return getFirebaseThings(mostRecentDownload, collection, kClass)
+            .concatMapDelayError {
                 Timber.v("Inserting ${kClass.java.simpleName} ${it.id}")
                 dao.insert(it)
                 Observable.just(it)
@@ -66,20 +64,19 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : RxWo
         val routeDao = localDb.routeDao()
         val syncStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
 
-        val mostRecentDownload = localDb.syncDao()
+        return localDb.syncDao()
                 .getMostRecentSync(SyncType.DOWNLOAD.name)
                 .doAfterSuccess {
                     Timber.d("Most recent sync: ${it.epochSeconds}")
-                }
-
-        val downloadedLocationIds: Single<MutableList<String>> = downloadThing(mostRecentDownload, "locations", Location::class, locationDao)
-        val downloadedTopoIds: Single<MutableList<String>> = downloadThing(mostRecentDownload, "topos", Topo::class, topoDao)
-        val downloadedRouteIds: Single<MutableList<String>> = downloadThing(mostRecentDownload, "routes", Route::class, routeDao)
-
-        return downloadedLocationIds
-                .mergeWith(downloadedTopoIds)
-                .mergeWith(downloadedRouteIds)
-                .collect({ mutableListOf<String>() }, { list, it -> list.addAll(it) })
+                }.flatMapPublisher {
+                    val downloadedLocationIds: Single<MutableList<String>> = downloadThing(it, "locations", Location::class, locationDao)
+                    val downloadedTopoIds: Single<MutableList<String>> = downloadThing(it, "topos", Topo::class, topoDao)
+                    val downloadedRouteIds: Single<MutableList<String>> = downloadThing(it, "routes", Route::class, routeDao)
+                    Single.mergeDelayError(downloadedLocationIds, downloadedTopoIds, downloadedRouteIds)
+                }.collect({ mutableListOf<String>() }, { list, it ->
+                    Timber.v("Collecting $it")
+                    list.addAll(it)
+                })
                 .flatMapCompletable {
                     Timber.d("Sync completed. Saving sync record. ")
                     val sync = Sync(
