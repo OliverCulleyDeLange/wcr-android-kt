@@ -8,7 +8,7 @@ enum class SearchResultType {
 }
 
 @Parcelize
-class SearchSuggestionItem(val name: String, val type: SearchResultType, val id: String?) : SearchSuggestion {
+class SearchSuggestionItem(val name: String?, val type: SearchResultType, val id: String?) : SearchSuggestion {
 
     override fun getBody(): String? {
         return name

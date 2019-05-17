@@ -19,7 +19,7 @@ import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 fun <T : BaseEntity> uploadToFirebase(collection: String, entity: T): Single<T> {
     val firebaseFirestore = FirebaseFirestore.getInstance()
     return Single.create<T> { emitter ->
-        val classname = entity.javaClass.simpleName //TODO Check me
+        val classname = entity.javaClass.simpleName
         Timber.d("Saving $classname to firestore : ${entity.id}")
         val setTask = firebaseFirestore.collection(collection)
                 .document(entity.id)

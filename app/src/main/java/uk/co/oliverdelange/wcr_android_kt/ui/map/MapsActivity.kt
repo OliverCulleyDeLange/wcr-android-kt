@@ -441,13 +441,12 @@ class MapsActivity : AppCompatActivity(),
                     floating_search_view.clearSearchFocus()
 
                     when (searchSuggestion.type) {
-                        //TODO Uncomment once IDs all strings
                         CRAG -> binding.vm?.selectCrag(searchSuggestion.id)
                         SECTOR -> binding.vm?.selectSector(searchSuggestion.id)
                         TOPO -> binding.vm?.selectTopo(searchSuggestion.id)
-//                        ROUTE, ROUTE_BOULDER, ROUTE_TRAD, ROUTE_SPORT -> {
-//                            binding.vm?.selectRoute(searchSuggestion.id)
-//                        }
+                        ROUTE, ROUTE_BOULDER, ROUTE_TRAD, ROUTE_SPORT -> {
+                            binding.vm?.selectRoute(searchSuggestion.id)
+                        }
                     }
                 }
             }

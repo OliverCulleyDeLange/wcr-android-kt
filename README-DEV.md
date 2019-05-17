@@ -2,9 +2,6 @@ chrome://inspect/#devices
 Stetho the app to view DB contents
 
 #TODO
-- Get stuff from firestore after local db
-    - Background sync? or on request
-- Fix crash when expand bottom sheet when no topos
 - Test DBs max length for strings - long paths could cause issues.
 - Store user id of uploader to allow future editing
 - Allow uploader to edit uploads?

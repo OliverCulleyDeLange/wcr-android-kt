@@ -11,10 +11,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.db.RouteDao
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
+import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
@@ -25,7 +25,7 @@ import javax.inject.Singleton
 @Singleton
 class MapViewModel @Inject constructor(val locationRepository: LocationRepository,
                                        val topoRepository: TopoRepository,
-                                       val routeDao: RouteDao,
+                                       val routeRepository: RouteRepository,
                                        val db: WcrDb) : ViewModel() {
 
     private val disposables: CompositeDisposable = CompositeDisposable()
@@ -160,10 +160,10 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         }
     }
 
-    fun selectRoute(id: Long?) {
+    fun selectRoute(id: String?) {
         Timber.d("Selecting route with id %s", id)
         id?.let { routeId ->
-            Observable.fromCallable { routeDao.get(routeId) }
+            Observable.fromCallable { routeRepository.get(routeId) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { route ->
@@ -188,19 +188,17 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
             mediator.addSource(topoRepository.search(query)) { topos: List<Topo>? ->
                 addToSearchItems(mediator, topos?.map { SearchSuggestionItem(it.name, SearchResultType.TOPO, it.id) })
             }
-            // TODO Uncomment once all primary keys strings
-
-//            mediator.addSource(routeDao.searchOnName("%$query%")) { routes: List<Route>? ->
-//                addToSearchItems(mediator, routes?.map {
-//                    val type = when (it.type) {
-//                        TRAD -> SearchResultType.ROUTE_TRAD
-//                        SPORT -> SearchResultType.ROUTE_SPORT
-//                        BOULDERING -> SearchResultType.ROUTE_BOULDER
-//                        else -> SearchResultType.ROUTE
-//                    }
-//                    SearchSuggestionItem(it.name, type, it.id)
-//                })
-//            }
+            mediator.addSource(routeRepository.searchOnName(query)) { routes ->
+                addToSearchItems(mediator, routes?.map {
+                    val type = when (it.type) {
+                        RouteType.TRAD -> SearchResultType.ROUTE_TRAD
+                        RouteType.SPORT -> SearchResultType.ROUTE_SPORT
+                        RouteType.BOULDERING -> SearchResultType.ROUTE_BOULDER
+                        else -> SearchResultType.ROUTE
+                    }
+                    SearchSuggestionItem(it.name, type, it.id)
+                })
+            }
             mediator
         } else {
             AbsentLiveData.create<List<SearchSuggestionItem>>()
