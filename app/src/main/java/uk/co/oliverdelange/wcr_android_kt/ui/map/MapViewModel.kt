@@ -55,7 +55,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
     val selectedLocation: LiveData<Location?> = Transformations.switchMap(selectedLocationId) {
         if (it != null) {
-            Timber.d("SelectedLocationId changed: Updating 'selectedLocation'")
+            Timber.v("SelectedLocationId changed: Updating 'selectedLocation'")
             locationRepository.load(it)
         } else {
             AbsentLiveData.create()
@@ -64,18 +64,22 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
 
     val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
     val sectors: LiveData<List<Location>> = Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) { selectedLocation ->
-        Timber.d("selectedLocation changed to %s : %s: Updating 'sectors'", selectedLocation?.id, selectedLocation?.name)
-        selectedLocation?.id?.let {
-            when (selectedLocation.type) {
-                LocationType.CRAG -> locationRepository.loadSectorsFor(selectedLocation.id)
-                LocationType.SECTOR -> selectedLocation.parentLocation?.let { parentID -> locationRepository.loadSectorsFor(parentID) }
+        Timber.v("SelectedLocation changed to %s: Updating 'sectors'", selectedLocation?.id)
+        if (selectedLocation?.id != null) {
+            selectedLocation.id.let {
+                when (selectedLocation.type) {
+                    LocationType.CRAG -> locationRepository.loadSectorsFor(selectedLocation.id)
+                    LocationType.SECTOR -> selectedLocation.parentLocation?.let { parentID -> locationRepository.loadSectorsFor(parentID) }
+                }
             }
+        } else {
+            AbsentLiveData.create()
         }
     })
 
     val selectedTopoId = MutableLiveData<String>()
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
-        Timber.d("selectedLocation changed to %s : %s: Updating 'topos'", selectedLocation?.id, selectedLocation?.name)
+        Timber.d("SelectedLocation changed to %s : %s: Updating 'topos'", selectedLocation?.id, selectedLocation?.name)
         selectedLocation?.id?.let {
             when (selectedLocation.type) {
                 LocationType.SECTOR -> topoRepository.loadToposForLocation(selectedLocation.id)
