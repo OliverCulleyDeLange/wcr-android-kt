@@ -79,7 +79,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
 
     val selectedTopoId = MutableLiveData<String>()
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
-        Timber.d("SelectedLocation changed to %s : %s: Updating 'topos'", selectedLocation?.id, selectedLocation?.name)
+        Timber.d("SelectedLocation changed to %s: Updating 'topos'", selectedLocation?.id)
         selectedLocation?.id?.let {
             when (selectedLocation.type) {
                 LocationType.SECTOR -> topoRepository.loadToposForLocation(selectedLocation.id)

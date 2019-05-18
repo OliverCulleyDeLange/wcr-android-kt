@@ -1,12 +1,14 @@
 package uk.co.oliverdelange.wcr_android_kt.db
 
 import io.reactivex.Completable
+import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Location
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Route
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo
 
 fun preload(instance: WcrDb): Completable {
     return Completable.fromAction {
+        Timber.d("Preloading DB with data")
         instance.locationDao().insertMany(
                 Location("L0 London", null, "L0 London", 51.507363, -0.127755, "CRAG"),
                 Location("L1 Derby", null, "L1 Derby", 52.923429, -1.471682, "CRAG"),

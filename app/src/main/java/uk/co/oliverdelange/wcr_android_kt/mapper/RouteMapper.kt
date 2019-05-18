@@ -9,6 +9,7 @@ fun toRouteDto(route: Route): RouteDTO {
             route.topoId ?: "",
             route.name ?: "",
             route.grade?.string ?: "",
+            route.grade?.colour?.name ?: "",
             route.type?.name ?: "",
             route.description ?: "",
             coordsSetToString(route.path) ?: ""

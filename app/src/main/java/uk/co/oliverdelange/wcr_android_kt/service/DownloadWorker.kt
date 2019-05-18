@@ -29,9 +29,10 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : RxWo
                 .doAfterSuccess {
                     Timber.d("Most recent sync: ${it.epochSeconds}")
                 }.flatMapPublisher {
-                    val downloadedLocationIds: Single<MutableList<String>> = saveFromFirebase(it, "locations", Location::class, localDb.locationDao())
-                    val downloadedTopoIds: Single<MutableList<String>> = saveFromFirebase(it, "topos", Topo::class, localDb.topoDao())
-                    val downloadedRouteIds: Single<MutableList<String>> = saveFromFirebase(it, "routes", Route::class, localDb.routeDao())
+                    val downloadedLocationIds = saveFromFirebase(it, "locations", Location::class, localDb.locationDao())
+                    val downloadedTopoIds = saveFromFirebase(it, "topos", Topo::class, localDb.topoDao())
+                    val downloadedRouteIds = saveFromFirebase(it, "routes", Route::class, localDb.routeDao())
+
                     Single.mergeDelayError(downloadedLocationIds, downloadedTopoIds, downloadedRouteIds)
                 }.collect({ mutableListOf<String>() }, { list, it ->
                     Timber.v("IDs of downloaded things: $it")
