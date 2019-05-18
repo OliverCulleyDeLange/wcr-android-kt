@@ -37,16 +37,16 @@ interface LocationDao : BaseDao<Location> {
     fun searchOnName(search: String): LiveData<List<Location>>
 
     @Query("SELECT " +
-            "SUM(case when gradeColour = \"GREEN\" THEN 1 ELSE 0 END) as greens," +
-            "SUM(case when gradeColour = \"RED\" THEN 1 ELSE 0 END) as reds," +
-            "SUM(case when gradeColour = \"ORANGE\" THEN 1 ELSE 0 END) as oranges," +
-            "SUM(case when gradeColour = \"BLACK\" THEN 1 ELSE 0 END) as blacks," +
-            "SUM(case when route.type = \"SPORT\" THEN 1 ELSE 0 END) as sports," +
-            "SUM(case when route.type = \"BOULDERING\" THEN 1 ELSE 0 END) as boulders," +
-            "SUM(case when route.type = \"TRAD\" THEN 1 ELSE 0 END) as trads " +
-            "FROM location " +
-            "INNER JOIN topo ON topo.locationId = location.id " +
-            "INNER JOIN route ON route.topoId = route.id " +
-            "WHERE location.id = :id ")
+            "SUM(case when gradeColour = 'GREEN' THEN 1 ELSE 0 END) as greens," +
+            "SUM(case when gradeColour = 'ORANGE' THEN 1 ELSE 0 END) as oranges," +
+            "SUM(case when gradeColour = 'RED' THEN 1 ELSE 0 END) as reds," +
+            "SUM(case when gradeColour = 'BLACK' THEN 1 ELSE 0 END) as blacks," +
+            "SUM(case when route.type = 'TRAD' THEN 1 ELSE 0 END) as trads," +
+            "SUM(case when route.type = 'SPORT' THEN 1 ELSE 0 END) as sports," +
+            "SUM(case when route.type = 'BOULDERING' THEN 1 ELSE 0 END) as boulders " +
+            "FROM route " +
+            "INNER JOIN topo ON route.topoId = topo.id " +
+            "INNER JOIN location ON topo.locationId = location.id " +
+            "WHERE location.parentLocation = :id OR location.id = :id")
     fun getRouteInfo(id: String): LiveData<LocationRouteInfo>
 }

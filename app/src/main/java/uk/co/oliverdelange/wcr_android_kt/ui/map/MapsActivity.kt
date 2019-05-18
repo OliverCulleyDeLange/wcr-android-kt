@@ -389,7 +389,7 @@ class MapsActivity : AppCompatActivity(),
                 iicon = GoogleMaterial.Icon.gmd_warning
                 selectable = false
                 onClick { _ ->
-                    binding.vm?.nukeDb()
+                    binding.vm?.nukeDb(applicationContext)
                     false
                 }
             }

@@ -1,5 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.map
 
+import android.content.Context
 import android.view.View
 import androidx.lifecycle.*
 import com.google.android.gms.maps.GoogleMap
@@ -12,6 +13,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
+import uk.co.oliverdelange.wcr_android_kt.db.preload
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
@@ -240,10 +242,11 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         }
     }
 
-    fun nukeDb() {
+    fun nukeDb(applicationContext: Context) {
         disposables.add(Completable.fromAction {
+            Timber.d("Nuking DB")
             db.clearAllTables()
-        }
+        }.andThen(preload(WcrDb.getInstance(applicationContext)))
                 .subscribeOn(Schedulers.io())
                 .subscribe {
                     Timber.d("DB Nuked")
