@@ -56,6 +56,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
 import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
+import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
@@ -393,11 +394,19 @@ class MapsActivity : AppCompatActivity(),
                     false
                 }
             }
-            primaryItem("Sync") {
+            primaryItem("Sync Up") {
                 iicon = GoogleMaterial.Icon.gmd_warning
                 selectable = false
                 onClick { _ ->
-                    binding.vm?.sync()
+                    uploadSync()
+                    false
+                }
+            }
+            primaryItem("Sync Down") {
+                iicon = GoogleMaterial.Icon.gmd_warning
+                selectable = false
+                onClick { _ ->
+                    downloadSync()
                     false
                 }
             }

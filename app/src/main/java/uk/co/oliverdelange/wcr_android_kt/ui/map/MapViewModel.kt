@@ -18,8 +18,6 @@ import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
-import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
-import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -251,11 +249,6 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
                 .subscribe {
                     Timber.d("DB Nuked")
                 })
-    }
-
-    fun sync() {
-        uploadSync()
-        downloadSync()
     }
 }
 

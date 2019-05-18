@@ -1,6 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.db.dao.remote
 
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -33,6 +34,7 @@ fun <T : BaseEntity> uploadThingsToFirebase(collection: String, dao: BaseDao<T>,
     return { things ->
         Timber.d("$collection yet to be uploaded: ${things.map { it.id }}")
         val saveToFirestore = things.map {
+            it.uploaderId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
             it.uploadedAt = syncStartTime
             uploadToFirebase(collection, it).toObservable()
         }

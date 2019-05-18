@@ -17,5 +17,5 @@ data class Topo(@PrimaryKey override var id: String = "",
                 var name: String = "",
                 var image: String = "",
                 override var uploadedAt: Long = -1,
-                var uploaderId: String = ""
+                override var uploaderId: String = ""
 ) : BaseEntity()

@@ -19,5 +19,5 @@ data class Route(@PrimaryKey override var id: String = "",
                  var description: String = "",
                  var path: String = "",
                  override var uploadedAt: Long = -1,
-                 var uploaderId: String = ""
+                 override var uploaderId: String = ""
 ) : BaseEntity()

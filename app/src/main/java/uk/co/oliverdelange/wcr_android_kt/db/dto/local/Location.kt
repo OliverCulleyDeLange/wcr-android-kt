@@ -14,5 +14,5 @@ data class Location(@PrimaryKey override var id: String = "",
                     var lng: Double = 0.0,
                     var type: String = "",
                     override var uploadedAt: Long = -1,
-                    var uploaderId: String = ""
+                    override var uploaderId: String = ""
 ) : Parcelable, BaseEntity()
