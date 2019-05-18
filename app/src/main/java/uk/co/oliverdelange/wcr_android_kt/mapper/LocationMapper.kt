@@ -12,13 +12,6 @@ fun toLocationDto(location: Location): LocationDTO {
             location.latlng.latitude,
             location.latlng.longitude,
             location.type.toString(),
-            location.greens,
-            location.oranges,
-            location.reds,
-            location.blacks,
-            location.boulders,
-            location.sports,
-            location.trads,
             uploaderId = location.uploaderId
     )
 }
@@ -32,13 +25,6 @@ fun fromLocationDto(location: LocationDTO): Location {
                     location.lat,
                     location.lng),
             LocationType.valueOf(location.type),
-            location.greens,
-            location.oranges,
-            location.reds,
-            location.blacks,
-            location.boulders,
-            location.sports,
-            location.trads,
             location.uploaderId
     )
 }

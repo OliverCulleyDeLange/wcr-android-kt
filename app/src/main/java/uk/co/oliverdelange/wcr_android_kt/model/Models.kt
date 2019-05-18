@@ -11,14 +11,16 @@ data class Location(val id: String? = null,
                     var name: String,
                     val latlng: LatLng,
                     val type: LocationType,
-                    var greens: Int = 0,
-                    var oranges: Int = 0,
-                    var reds: Int = 0,
-                    var blacks: Int = 0,
-                    var boulders: Int = 0,
-                    var sports: Int = 0,
-                    var trads: Int = 0,
                     val uploaderId: String)
+
+// Doesn't need a domain object yet
+//data class LocationRouteInfo(var greens: Int = 0,
+//                    var oranges: Int = 0,
+//                    var reds: Int = 0,
+//                    var blacks: Int = 0,
+//                    var boulders: Int = 0,
+//                    var sports: Int = 0,
+//                    var trads: Int = 0)
 
 data class TopoAndRoutes(
         var topo: Topo,

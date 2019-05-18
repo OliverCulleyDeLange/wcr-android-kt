@@ -5,9 +5,11 @@ import androidx.lifecycle.Transformations
 import io.reactivex.Single
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.LocationDao
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromLocationDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.toLocationDto
-import uk.co.oliverdelange.wcr_android_kt.model.*
+import uk.co.oliverdelange.wcr_android_kt.model.Location
+import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import javax.inject.Inject
 
 class LocationRepository @Inject constructor(private val locationDao: LocationDao) {
@@ -60,31 +62,9 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
         }
     }
 
-    fun updateLocationRouteInfo(toposAndRoutes: List<TopoAndRoutes>, locationId: String) {
-        Timber.d("Updating route info for location with id %s", locationId)
-        var boulders = 0
-        var sports = 0
-        var trads = 0
-        var greens = 0
-        var oranges = 0
-        var reds = 0
-        var blacks = 0
-        for (topoAndRoute in toposAndRoutes) {
-            for (route in topoAndRoute.routes) {
-                when (route.type) {
-                    RouteType.BOULDERING -> boulders++
-                    RouteType.SPORT -> sports++
-                    RouteType.TRAD -> trads++
-                }
-                when (route.grade?.colour) {
-                    GradeColour.GREEN -> greens++
-                    GradeColour.ORANGE -> oranges++
-                    GradeColour.RED -> reds++
-                    GradeColour.BLACK -> blacks++
-                }
-            }
-        }
-        locationDao.updateRouteInfo(locationId, boulders, sports, trads, greens, oranges, reds, blacks)
+    fun loadRouteInfoFor(locationId: String): LiveData<LocationRouteInfo> {
+        Timber.d("Loading route info for location: %s", locationId)
+        return locationDao.getRouteInfo(locationId)
     }
 
     fun search(query: String): LiveData<List<Location>> {

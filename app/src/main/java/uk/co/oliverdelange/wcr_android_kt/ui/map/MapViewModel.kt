@@ -53,6 +53,13 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     val selectedLocationId: MutableLiveData<String?> = MutableLiveData<String?>().also {
         it.value = null
     }
+    val selectedLocationRouteInfo = Transformations.switchMap(selectedLocationId) {
+        if (it != null) {
+            locationRepository.loadRouteInfoFor(it)
+        } else {
+            AbsentLiveData.create()
+        }
+    }
     val selectedLocation: LiveData<Location?> = Transformations.switchMap(selectedLocationId) {
         if (it != null) {
             Timber.v("SelectedLocationId changed: Updating 'selectedLocation'")

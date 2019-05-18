@@ -18,7 +18,6 @@ import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
-import uk.co.oliverdelange.wcr_android_kt.service.WorkerService
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTopoImageView
 import java.io.IOException
@@ -29,8 +28,7 @@ const val MAX_TOPO_SIZE_PX = 640
 //@Singleton
 class SubmitTopoViewModel @Inject constructor(application: Application,
                                               private val topoRepository: TopoRepository,
-                                              private val routeRepository: RouteRepository,
-                                              private val workerService: WorkerService) : AndroidViewModel(application) {
+                                              private val routeRepository: RouteRepository) : AndroidViewModel(application) {
 
     val localTopoImage = MutableLiveData<Uri?>()
     val topoName = MutableLiveData<String?>()
@@ -244,7 +242,6 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                         Completable.mergeDelayError(saveRoutes).toSingleDefault(topoId)
                     }.doOnSuccess { topoId ->
                         Timber.d("All routes saved for topo $topoId")
-                        workerService.updateRouteInfo(sectorId)
                         uploadSync()
                         submitting.postValue(false)
                     }.doOnError {
