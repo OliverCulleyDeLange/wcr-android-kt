@@ -6,8 +6,6 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
-//val dateformat = DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneOffset.UTC)
-
 data class Location(val id: String? = null,
                     val parentLocation: String? = null,
                     var name: String,
