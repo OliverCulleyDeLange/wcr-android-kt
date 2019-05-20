@@ -203,7 +203,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
     fun uploadImage(topoImage: Uri, topoName: String, sectorId: String): Single<Uri> {
         return Single.create { emitter ->
             val rootRef = FirebaseStorage.getInstance().reference
-            val imageRef = rootRef.child("topos/$topoName")
+            val imageRef = rootRef.child("topos/$sectorId/$topoName")
             val uploadTask = imageRef.putFile(topoImage)
                     .addOnProgressListener { snapshot ->
                         val percent = snapshot.bytesTransferred / snapshot.totalByteCount

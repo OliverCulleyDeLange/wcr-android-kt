@@ -128,6 +128,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
             MapMode.DEFAULT_MODE -> mapMode.value = MapMode.SUBMIT_CRAG_MODE
             MapMode.CRAG_MODE -> mapMode.value = MapMode.SUBMIT_SECTOR_MODE
             MapMode.SECTOR_MODE, MapMode.TOPO_MODE -> mapMode.value = MapMode.SUBMIT_TOPO_MODE
+            else -> Timber.e("Submit FAB clicked when it shouldn't be visible!")
         }
     }
 

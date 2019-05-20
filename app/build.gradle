@@ -49,6 +49,9 @@ android {
     androidExtensions {
         experimental = true
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 def versions = [:]
@@ -108,8 +111,8 @@ dependencies {
     implementation "androidx.room:room-runtime:$versions.room"
     implementation "android.arch.persistence.room:rxjava2:1.1.1"
 
-    implementation "androidx.lifecycle:lifecycle-extensions:2.1.0-alpha04"
-    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.1.0-alpha04"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0-alpha01"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.2.0-alpha01"
 
     implementation "com.google.android.gms:play-services-maps:${versions.gmaps}"
     implementation "com.google.maps.android:android-maps-utils:${versions.maps_utils}"
@@ -151,7 +154,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
     testImplementation 'org.objenesis:objenesis:2.6'
     testImplementation 'cglib:cglib-nodep:3.2.4'
-    testImplementation "org.mockito:mockito-core:2.17.0"
+    testImplementation "org.mockito:mockito-core:2.19.0"
     testImplementation 'org.codehaus.groovy:groovy:2.4.13:grooid'
     testImplementation "androidx.arch.core:core-testing:${versions.arch_core}"
 

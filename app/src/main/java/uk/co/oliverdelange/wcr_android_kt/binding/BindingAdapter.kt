@@ -79,14 +79,13 @@ fun setImageResource(imageView: ImageView, resource: Int) {
 
 @BindingAdapter("android:textColor")
 fun setTextGradeColour(textView: TextView, gradeColour: GradeColour) {
-    @ColorInt val colour: Int
-    when (gradeColour) {
-        GradeColour.GREEN -> colour = R.color.map_dragbar_climb_grades_green
-        GradeColour.ORANGE -> colour = R.color.map_dragbar_climb_grades_orange
-        GradeColour.RED -> colour = R.color.map_dragbar_climb_grades_red
-        GradeColour.BLACK -> colour = R.color.map_dragbar_climb_grades_black
+    @ColorInt val colour: Int = when (gradeColour) {
+        GradeColour.GREEN -> R.color.map_dragbar_climb_grades_green
+        GradeColour.ORANGE -> R.color.map_dragbar_climb_grades_orange
+        GradeColour.RED -> R.color.map_dragbar_climb_grades_red
+        GradeColour.BLACK -> R.color.map_dragbar_climb_grades_black
     }
-    textView.setTextColor(textView.resources.getColor(colour))
+    textView.setTextColor(ContextCompat.getColor(textView.context, colour))
 }
 
 @BindingAdapter("android:text")
