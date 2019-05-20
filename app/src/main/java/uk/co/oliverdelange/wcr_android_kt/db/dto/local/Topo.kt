@@ -2,9 +2,11 @@ package uk.co.oliverdelange.wcr_android_kt.db.dto.local
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(foreignKeys = (arrayOf(
+@Entity(indices = [Index("id"), Index("locationId")],
+        foreignKeys = (arrayOf(
         ForeignKey(
                 entity = Location::class,
                 onUpdate = ForeignKey.CASCADE,

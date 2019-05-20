@@ -2,9 +2,11 @@ package uk.co.oliverdelange.wcr_android_kt.db.dto.local
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(foreignKeys = [(
+@Entity(indices = [Index("id"), Index("topoId")],
+        foreignKeys = [(
         ForeignKey(
                 entity = Topo::class,
                 parentColumns = arrayOf("id"),

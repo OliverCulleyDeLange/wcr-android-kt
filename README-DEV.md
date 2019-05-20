@@ -1,52 +1,36 @@
 chrome://inspect/#devices
 Stetho the app to view DB contents
+gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --dependency kotlin-stdlib-jre7
 
 #TODO
-- Test DBs max length for strings - long paths could cause issues.
-- Store user id of uploader to allow future editing
-- Allow uploader to edit uploads?
+- Fix
+Warnings
+Fix gesture image view
+Fab hides long title
+Icon disappears
+Long title pushed route info down
+IDs
+
+- Do
+Filter routes by grade and type
+Image resizing
+Cache images on phone up to configurable limit
+Route undo button
+Submission validation of fields to show nice error
+Perf test - load huge data set and check performance
+Store user id of uploader to allow future editing
+Allow uploader to edit uploads?
+Time dB queries
+crashlytics
+Analytics
+License t&c
+
+- Test
+Test DBs max length for strings - long paths could cause issues.
 
 Nice to haves:
 - https://developer.android.com/kotlin/ktx#core-packages
-
 - Clean architecture? RxJava? Single responsibility?
-
-
-### Cloud storage decision
-Wants:
-- Low maintainance, low cost, quick turnaround, easy implementation
-- Easy Auth / Login
-- Integration with room / offline storage
-
-
-Options:
-- [Google Firebase](https://firebase.google.com/docs/firestore/quickstart?authuser=0)
-    - *No searchability built in*
-    - *Smaller feature set compared to parse*
-    - Drop in Auth UI that just works.
-    - NoSQL db doesn't play nice with Room our of the box.
-    - Offline mode built in - stores locally
-    - Probable data structure: (Assuming names are keys) (Complete redesign from room)
-    ```
-    Locations:
-        Crag(Name, LatLng, List<Sector>)
-            Sector(Name, LatLng, List<Topo>)
-    Topos:
-        Topo(Name, Image, List<Route>)
-            Route(Name, Grade, Type, Description, Path)
-    ```
-- [Parse server](http://docs.parseplatform.org/android/guide/)
-    - *Setup of server required - Heroku / ElasticBeanstalk + MongoDB hosted*
-
-- [AWS Mobile Hub](https://docs.aws.amazon.com/aws-mobile/latest/developerguide/getting-started.html)
-    - Drop in auth UI
-    - Relatively easy to implement, but don't like their api or docs/guides
-    - No offline mode but works well with room data objects
-
-Scenarios to consider:
-- Multiple users submitting stuff at the same time, IDs, overwrites etc
-
-Resources:
 https://proandroiddev.com/offline-apps-its-easier-than-you-think-9ff97701a73f
 
 ### GitLab

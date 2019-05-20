@@ -4,6 +4,7 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo
@@ -15,9 +16,11 @@ interface TopoDao : BaseDao<Topo> {
     @Query("SELECT * from topo where id = :id")
     fun get(id: String): Topo
 
+    @Transaction
     @Query("SELECT * from topo where locationId = :locationId")
     fun loadTopoAndRoutes(locationId: String): LiveData<List<TopoAndRoutes>>
 
+    @Transaction
     @Query("SELECT * from topo where locationId = :locationId")
     fun getTopoAndRoutes(locationId: String): List<TopoAndRoutes>
 

@@ -15,6 +15,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // https://stackoverflow.com/questions/44322178/room-schema-export-directory-is-not-provided-to-the-annotation-processor-so-we
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas".toString())
+            }
+        }
     }
 //    signingConfigs {
 //        releaseDevelop {
@@ -68,7 +74,6 @@ versions.rxjava2 = "2.1.14"
 versions.rxandroid = "2.0.2"
 versions.room = '2.1.0-alpha07'
 versions.anko = "0.10.5"
-versions.material_drawer_kt = "1.3.3"
 versions.material_drawer = "6.0.6@aar"
 versions.about_libraries = "6.0.6@aar"
 
@@ -114,7 +119,7 @@ dependencies {
 
     implementation "com.github.arimorty:floatingsearchview:${versions.floating_search_view}"
 
-    implementation "co.zsmb:materialdrawer-kt:${versions.material_drawer_kt}"
+    implementation "co.zsmb:materialdrawer-kt:2.0.1"
     implementation("com.mikepenz:materialdrawer:${versions.material_drawer}") { transitive = true }
     implementation("com.mikepenz:aboutlibraries:${versions.about_libraries}") { transitive = true }
 
