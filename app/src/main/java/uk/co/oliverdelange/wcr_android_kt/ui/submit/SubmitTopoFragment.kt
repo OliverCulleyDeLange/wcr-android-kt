@@ -132,8 +132,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
         binding.vm?.activeRoute?.observe(this, Observer { activeRouteFragmentId ->
             activeRouteFragmentId?.let { routeFragmentId ->
-                val route = binding.vm?.routes?.get(routeFragmentId)
-                route?.let { route ->
+                binding.vm?.routes?.get(routeFragmentId)?.let { route ->
                     Timber.d("Active route fragment changed: $activeRouteFragmentId - route name: ${route.name}")
                     binding.topoImage.controlPath(routeFragmentId, route)
                 }
@@ -149,6 +148,10 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
         // Update the grade if the route type changes
         binding.vm?.routeTypeUpdate?.observe(this, Observer { routeType ->
+            if (routeType == null) {
+                Timber.e("RouteType enum is null - wtf?")
+                return@Observer
+            }
             // Force select the right grade
             Timber.d("Route type changed, force selected the grade")
             val submitRouteFragment = routeFragments[binding.routePager.currentItem]
@@ -226,11 +229,13 @@ class SubmitTopoFragment : Fragment(), Injectable {
                 data?.let { intent ->
                     val uri = intent.data
                     Timber.d("User selected picture: %s", uri)
-                    val takeFlags = intent.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                    activity?.contentResolver?.takePersistableUriPermission(uri, takeFlags)
+                    if (uri != null) {
+                        val takeFlags = intent.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                        activity?.contentResolver?.takePersistableUriPermission(uri, takeFlags)
 
-                    binding.vm?.localTopoImage?.value = uri
-                    binding.vm?.tryEnableSubmit()
+                        binding.vm?.localTopoImage?.value = uri
+                        binding.vm?.tryEnableSubmit()
+                    }
                 }
             }
         }

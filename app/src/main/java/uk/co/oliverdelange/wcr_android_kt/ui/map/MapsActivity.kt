@@ -11,6 +11,7 @@ import android.view.animation.BounceInterpolator
 import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -23,7 +24,6 @@ import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -143,8 +143,7 @@ class MapsActivity : AppCompatActivity(),
                 }
             }
             REQUEST_SIGNIN -> {
-                val response = IdpResponse.fromResultIntent(data)
-
+//                val response = IdpResponse.fromResultIntent(data)
                 if (resultCode == RESULT_OK) {
                     // Successfully signed in
                     val user = FirebaseAuth.getInstance().currentUser
@@ -246,6 +245,10 @@ class MapsActivity : AppCompatActivity(),
         })
 
         binding.vm?.mapMode?.observe(this, Observer {
+            if (it == null) {
+                Timber.e("MapMode enum is null - wtf?")
+                return@Observer
+            }
             when (it) {
                 DEFAULT_MODE -> {
                     Timber.d("MapMode changed to DEFAULT_MODE")
@@ -489,6 +492,7 @@ class MapsActivity : AppCompatActivity(),
                     ROUTE_BOULDER -> Picasso.get().load(R.drawable.ic_boulder).into(leftIcon)
                     ROUTE_TRAD -> Picasso.get().load(R.drawable.ic_cam).into(leftIcon)
                     ROUTE_SPORT -> Picasso.get().load(R.drawable.ic_quick_draw).into(leftIcon)
+                    else -> Timber.e("Route doesn't have type")
                 }
             }
         }
@@ -539,7 +543,7 @@ class MapsActivity : AppCompatActivity(),
     }
 
     private fun fabStyle(iconId: Int, colourId: Int) {
-        fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(colourId))
+        fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, colourId))
         fab.setImageResource(iconId)
     }
 }

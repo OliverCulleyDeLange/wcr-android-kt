@@ -75,14 +75,15 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
         canvas.concat(matrix)
         routes.forEach {
             if (paths.containsKey(it.id)) {
-                val routePath = paths[it.id]
-                when (it.grade?.colour) {
-                    GradeColour.GREEN -> canvas.drawPath(routePath, greenRoutePaint)
-                    GradeColour.ORANGE -> canvas.drawPath(routePath, orangeRoutePaint)
-                    GradeColour.RED -> canvas.drawPath(routePath, redRoutePaint)
-                    GradeColour.BLACK -> canvas.drawPath(routePath, blackRoutePaint)
+                paths[it.id]?.let { routePath ->
+                    when (it.grade?.colour) {
+                        GradeColour.GREEN -> canvas.drawPath(routePath, greenRoutePaint)
+                        GradeColour.ORANGE -> canvas.drawPath(routePath, orangeRoutePaint)
+                        GradeColour.RED -> canvas.drawPath(routePath, redRoutePaint)
+                        GradeColour.BLACK -> canvas.drawPath(routePath, blackRoutePaint)
+                    }
+                    if (selectedRoute?.id == it.id) canvas.drawPath(routePath, selectedRoutePaint)
                 }
-                if (selectedRoute?.id == it.id) canvas.drawPath(routePath, selectedRoutePaint)
             }
         }
     }

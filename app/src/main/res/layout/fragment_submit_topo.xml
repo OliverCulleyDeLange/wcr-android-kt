@@ -81,7 +81,7 @@
                     android:layout_marginRight="12dp"
                     android:background="@color/transparent"
                     android:src="@drawable/ic_add_circle"
-                    app:show="@{vm.shouldShowAddRouteButton}" />
+                    app:show="@{safeUnbox(vm.shouldShowAddRouteButton)}" />
 
             </FrameLayout>
 
@@ -96,7 +96,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:enabled="@{vm.submitButtonEnabled}"
+                    android:enabled="@{safeUnbox(vm.submitButtonEnabled)}"
                     android:text="@string/button_submit" />
 
 
@@ -109,7 +109,7 @@
                     android:max="500"
                     android:progress="0"
                     android:progressDrawable="@drawable/spinner"
-                    app:show="@{vm.submitting}" />
+                    app:show="@{safeUnbox(vm.submitting)}" />
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>

@@ -7,6 +7,7 @@ import android.view.View.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
 import uk.co.oliverdelange.wcr_android_kt.R
@@ -39,15 +40,14 @@ var View.gone
 @BindingAdapter("mapModeTextColour")
 fun setmapModeTextColour(textView: TextView, mapMode: MapMode?) {
     val context = textView.context
-    val resources = context.resources
     when (mapMode) {
-        DEFAULT_MODE -> textView.setTextColor(resources.getColor(R.color.text_grey_dark))
-        CRAG_MODE -> textView.setTextColor(resources.getColor(R.color.crag_accent))
-        SECTOR_MODE, TOPO_MODE -> textView.setTextColor(resources.getColor(R.color.sector_accent))
+        CRAG_MODE -> textView.setTextColor(ContextCompat.getColor(context, R.color.crag_accent))
+        SECTOR_MODE, TOPO_MODE -> textView.setTextColor(ContextCompat.getColor(context, R.color.sector_accent))
+        else -> textView.setTextColor(ContextCompat.getColor(context, R.color.text_grey_dark))
     }
 }
 
-@BindingAdapter("app:imageUrl", "app:placeholder")
+@BindingAdapter("imageUrl", "placeholder")
 fun loadImageUrl(view: ImageView, imageUrl: String, placeholder: Drawable) {
     Picasso.get()
             .load(imageUrl)
@@ -55,7 +55,7 @@ fun loadImageUrl(view: ImageView, imageUrl: String, placeholder: Drawable) {
             .into(view)
 }
 
-@BindingAdapter("app:imageUri")
+@BindingAdapter("imageUri")
 fun loadTopoSubmissionImageFromUri(view: ImageView, uri: Uri?) {
     Picasso.get()
             .load(uri)
@@ -64,7 +64,7 @@ fun loadTopoSubmissionImageFromUri(view: ImageView, uri: Uri?) {
             .into(view)
 }
 
-@BindingAdapter("app:imageUri", "app:placeholder")
+@BindingAdapter("imageUri", "placeholder")
 fun loadImageUri(view: ImageView, uri: String?, placeholder: Drawable) {
     Picasso.get()
             .load(Uri.parse(uri))

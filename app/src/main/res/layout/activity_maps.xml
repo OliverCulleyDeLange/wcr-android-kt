@@ -64,10 +64,10 @@
             android:layout_margin="@dimen/activity_vertical_margin"
             android:elevation="8dp"
             android:onClick="@{vm::submit}"
-            android:clickable="@{vm.bottomSheetState == 4}"
+            android:clickable="@{safeUnbox(vm.bottomSheetState) == 4}"
             app:layout_anchor="@id/bottom_sheet"
             app:layout_anchorGravity="top|end"
-            app:show="@{vm.showFab}" />
+            app:show="@{safeUnbox(vm.showFab)}" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

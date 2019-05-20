@@ -103,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="6"
                     android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.V)}"
-                    android:visibility="@{vm.shouldShow(fragmentId, GradeType.V)}" />
+                    android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.V)}" />
 
                 <Spinner
                     android:id="@+id/f_grade_spinner"
@@ -111,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="6"
                     android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.FONT)}"
-                    android:visibility="@{vm.shouldShow(fragmentId, GradeType.FONT)}" />
+                    android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.FONT)}" />
 
                 <Spinner
                     android:id="@+id/trad_adjectival_grade_spinner"
@@ -119,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
                     android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.TRAD_ADJ)}"
-                    android:visibility="@{vm.shouldShow(fragmentId, GradeType.TRAD)}" />
+                    android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.TRAD)}" />
 
                 <Spinner
                     android:id="@+id/trad_technical_grade_spinner"
@@ -127,7 +127,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
                     android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.TRAD_TECH)}"
-                    android:visibility="@{vm.shouldShow(fragmentId, GradeType.TRAD)}" />
+                    android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.TRAD)}" />
 
                 <Spinner
                     android:id="@+id/sport_grade_spinner"
@@ -135,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="6"
                     android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.SPORT)}"
-                    android:visibility="@{vm.shouldShow(fragmentId, GradeType.SPORT)}" />
+                    android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.SPORT)}" />
 
             </LinearLayout>
         </RelativeLayout>

@@ -42,12 +42,12 @@ class SubmitRouteFragment : androidx.fragment.app.Fragment(), Injectable {
         val viewModel = ViewModelProviders.of(submitTopoFragment, viewModelFactory).get(SubmitTopoViewModel::class.java)
         binding?.vm = viewModel
 
-        binding?.routeTypeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, RouteType.values())
-        binding?.vGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, VGrade.values().map { it.textRepresentation })
-        binding?.fGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, FontGrade.values().map { it.textRepresentation })
-        binding?.sportGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, SportGrade.values().map { it.textRepresentation })
-        binding?.tradAdjectivalGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradAdjectivalGrade.values().map { it.textRepresentation })
-        binding?.tradTechnicalGradeSpinner?.adapter = ArrayAdapter(activity, R.layout.element_spinner_simple, TradTechnicalGrade.values().map { it.textRepresentation })
+        binding?.routeTypeSpinner?.adapter = ArrayAdapter(requireContext(), R.layout.element_spinner_simple, RouteType.values())
+        binding?.vGradeSpinner?.adapter = ArrayAdapter(requireContext(), R.layout.element_spinner_simple, VGrade.values().map { it.textRepresentation })
+        binding?.fGradeSpinner?.adapter = ArrayAdapter(requireContext(), R.layout.element_spinner_simple, FontGrade.values().map { it.textRepresentation })
+        binding?.sportGradeSpinner?.adapter = ArrayAdapter(requireContext(), R.layout.element_spinner_simple, SportGrade.values().map { it.textRepresentation })
+        binding?.tradAdjectivalGradeSpinner?.adapter = ArrayAdapter(requireContext(), R.layout.element_spinner_simple, TradAdjectivalGrade.values().map { it.textRepresentation })
+        binding?.tradTechnicalGradeSpinner?.adapter = ArrayAdapter(requireContext(), R.layout.element_spinner_simple, TradTechnicalGrade.values().map { it.textRepresentation })
 
         binding?.fragmentId = fragmentId
 

@@ -46,8 +46,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
         super.onDraw(canvas)
         canvas.concat(matrix)
         routes.forEach { (routeFragmentId, route) ->
-            val routePath = paths[routeFragmentId]
-            routePath?.let { routePath ->
+            paths[routeFragmentId]?.let { routePath ->
                 val routePoints = routePath.capture.toSet()
                 val scaledRoutePath = scalePath(routePoints)
                 when (route.grade?.colour) {
@@ -121,7 +120,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
     }
 
     init {
-        setOnTouchListener { v, event ->
+        setOnTouchListener { _, event ->
             onTouch(event)
         }
     }
