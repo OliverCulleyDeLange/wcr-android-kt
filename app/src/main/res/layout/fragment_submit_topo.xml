@@ -6,7 +6,6 @@
     <data>
 
         <import type="uk.co.oliverdelange.wcr_android_kt.model.LocationType" />
-
         <variable
             name="vm"
             type="uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoViewModel" />
@@ -40,10 +39,17 @@
                     android:layout_gravity="center_horizontal"
                     android:background="@color/bg_grey_light"
                     android:scaleType="fitCenter"
+                    app:drawMode="@{vm.isDrawing}"
                     app:imageUri="@{vm.localTopoImage}"
                     tools:src="@drawable/nature" />
 
             </FrameLayout>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{vm::toggleDrawing}"
+                android:text="Tool" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/topo_name_input_layout"

@@ -10,6 +10,9 @@ import android.util.AttributeSet
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.model.Route
 
+/*
+ This is the non-editable version of the paintable topo image view, used to display topos
+ */
 class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
 
     //TODO Better way of refreshing paths once image loaded?

@@ -61,6 +61,10 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     // Defaults to 1
     private int minPointers;
 
+
+    // Enable the touch gestures
+    protected boolean enableTouch = true;
+
     //
     // Scale of image ranges from minScale to maxScale, where minScale == 1
     // when the image is stretched to fit view.
@@ -958,43 +962,44 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            mScaleDetector.onTouchEvent(event);
-            mGestureDetector.onTouchEvent(event);
-            if (event.getPointerCount() < minPointers) {
-                return false;
-            }
-            PointF curr = new PointF(event.getX(), event.getY());
-
-            if (state == State.NONE || state == State.DRAG || state == State.FLING || state == State.ZOOM) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        last.set(curr);
-                        if (fling != null)
-                            fling.cancelFling();
-                        setState(State.DRAG);
-                        break;
-
-                    case MotionEvent.ACTION_MOVE:
-                        if (state == State.DRAG || state == State.ZOOM) {
-                            float deltaX = curr.x - last.x;
-                            float deltaY = curr.y - last.y;
-                            float fixTransX = getFixDragTrans(deltaX, viewWidth, getImageWidth());
-                            float fixTransY = getFixDragTrans(deltaY, viewHeight, getImageHeight());
-                            matrix.postTranslate(fixTransX, fixTransY);
-                            fixTrans();
-                            last.set(curr.x, curr.y);
-                        }
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_POINTER_UP:
-                        setState(State.NONE);
-                        break;
+            if (enableTouch) {
+                mScaleDetector.onTouchEvent(event);
+                mGestureDetector.onTouchEvent(event);
+                if (event.getPointerCount() < minPointers) {
+                    return false;
                 }
+                PointF curr = new PointF(event.getX(), event.getY());
+
+                if (state == State.NONE || state == State.DRAG || state == State.FLING || state == State.ZOOM) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            last.set(curr);
+                            if (fling != null)
+                                fling.cancelFling();
+                            setState(State.DRAG);
+                            break;
+
+                        case MotionEvent.ACTION_MOVE:
+                            if (state == State.DRAG || state == State.ZOOM) {
+                                float deltaX = curr.x - last.x;
+                                float deltaY = curr.y - last.y;
+                                float fixTransX = getFixDragTrans(deltaX, viewWidth, getImageWidth());
+                                float fixTransY = getFixDragTrans(deltaY, viewHeight, getImageHeight());
+                                matrix.postTranslate(fixTransX, fixTransY);
+                                fixTrans();
+                                last.set(curr.x, curr.y);
+                            }
+                            break;
+
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_POINTER_UP:
+                            setState(State.NONE);
+                            break;
+                    }
+                }
+
+                setImageMatrix(matrix);
             }
-
-            setImageMatrix(matrix);
-
             //
             // User-defined OnTouchListener
             //

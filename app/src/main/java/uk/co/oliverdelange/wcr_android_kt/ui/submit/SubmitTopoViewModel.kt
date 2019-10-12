@@ -30,6 +30,16 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                                               private val topoRepository: TopoRepository,
                                               private val routeRepository: RouteRepository) : AndroidViewModel(application) {
 
+    val isDrawing = ObservableBoolean(true)
+    fun toggleDrawing(view: View) {
+        Timber.d("Toggling drawing mode")
+        if (isDrawing.get()) {
+            isDrawing.set(false)
+        } else {
+            isDrawing.set(true)
+        }
+    }
+
     val localTopoImage = MutableLiveData<Uri?>()
     val topoName = MutableLiveData<String?>()
     val topoNameError = Transformations.map(topoName) {

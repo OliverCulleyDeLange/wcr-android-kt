@@ -15,6 +15,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode
 import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.ui.submit.MAX_TOPO_SIZE_PX
+import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTopoImageView
 
 @set:BindingAdapter("show")
 var View.visibleOrGone
@@ -70,6 +71,11 @@ fun loadImageUri(view: ImageView, uri: String?, placeholder: Drawable) {
             .load(Uri.parse(uri))
             .placeholder(placeholder)
             .into(view)
+}
+
+@BindingAdapter("drawMode")
+fun loadDrawMode(view: PaintableTopoImageView, drawMode: Boolean?) {
+    view.setDrawing(drawMode)
 }
 
 @BindingAdapter("android:src")

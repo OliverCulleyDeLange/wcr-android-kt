@@ -18,8 +18,13 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
     val routes = mutableMapOf<Int, Route>()
     private var currX: Float = 0f
     private var currY: Float = 0f
-
+    private var drawMode = false
     private var selectedRoute: Int = -1
+
+    fun setDrawing(newDrawMode: Boolean?) {
+        drawMode = newDrawMode ?: false
+        enableTouch = newDrawMode?.not() ?: true
+    }
 
     fun refresh() {
         Timber.d("Refreshing topo drawings")
@@ -102,18 +107,28 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
         val x = event.x
         val y = event.y
 
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                touch_start(x, y)
-                invalidate()
-            }
-            MotionEvent.ACTION_MOVE -> {
-                touch_move(x, y)
-                invalidate()
-            }
-            MotionEvent.ACTION_UP -> {
-                touch_up()
-                invalidate()
+        Timber.d("${MotionEvent.actionToString(event.action)} at $x,$y")
+        if (drawMode) {
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    touch_start(x, y)
+                    invalidate()
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    touch_move(x, y)
+                    invalidate()
+                }
+                MotionEvent.ACTION_UP -> {
+                    touch_up()
+                    invalidate()
+                }
+//                MotionEvent.ACTION_POINTER_DOWN -> {
+//                }
+//                MotionEvent.ACTION_POINTER_UP -> {
+//                }
+                else -> {
+                    Timber.d("Unhandled touch event: ${MotionEvent.actionToString(event.action)} at $x,$y")
+                }
             }
         }
         return true

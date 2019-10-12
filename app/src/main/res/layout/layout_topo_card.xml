@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="topo"
             type="uk.co.oliverdelange.wcr_android_kt.model.Topo" />
