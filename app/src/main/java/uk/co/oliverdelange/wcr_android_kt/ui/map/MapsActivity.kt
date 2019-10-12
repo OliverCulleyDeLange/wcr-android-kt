@@ -543,7 +543,9 @@ class MapsActivity : AppCompatActivity(),
     }
 
     private fun fabStyle(iconId: Int, colourId: Int) {
+        fab.hide() // https://issuetracker.google.com/issues/111316656
         fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, colourId))
         fab.setImageResource(iconId)
+        fab.show()
     }
 }

@@ -4,10 +4,8 @@ gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --depen
 
 #TODO
 - Fix
-Warnings
 Fix gesture image view
 Fab hides long title
-Icon disappears
 Long title pushed route info down
 IDs
 
