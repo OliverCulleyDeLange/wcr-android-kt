@@ -26,20 +26,10 @@
             android:layout_height="80dp"
             android:background="@color/bg_grey_light">
 
-            <TextView
-                android:id="@+id/bottom_sheet_peek_title"
-                style="@style/Wcr_MapBottomSheetTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{vm.bottomSheetTitle}"
-                app:mapModeTextColour="@{vm.mapMode}"
-                tools:text="Some location name" />
-
             <RelativeLayout
                 android:id="@+id/dragbar_climb_grades_and_types_parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/bottom_sheet_peek_title"
                 android:gravity="bottom|start"
                 app:gone="@{vm.mapMode == MapMode.DEFAULT_MODE}">
 
@@ -150,6 +140,22 @@
                 </LinearLayout>
 
             </RelativeLayout>
+
+            <TextView
+                android:id="@+id/bottom_sheet_peek_title"
+                style="@style/Wcr_MapBottomSheetTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/dragbar_climb_grades_and_types_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="@{vm.bottomSheetTitle}"
+                app:mapModeTextColour="@{vm.mapMode}"
+                tools:text="Some location name" />
 
             <View
                 android:id="@+id/divider"

@@ -1,5 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.map
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -502,6 +503,7 @@ class MapsActivity : AppCompatActivity(),
         bottomSheet = BottomSheetBehavior.from(bottom_sheet)
         binding.vm?.bottomSheetState?.value = bottomSheet?.state
         bottomSheet?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            @SuppressLint("SwitchIntDef")
             override fun onStateChanged(bottomSheetView: View, newState: Int) {
                 when (newState) {
                     STATE_EXPANDED -> {
