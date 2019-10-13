@@ -40,7 +40,7 @@
                     android:background="@color/bg_grey_light"
                     android:scaleType="fitCenter"
                     app:drawMode="@{vm.isDrawing}"
-                    app:imageUri="@{vm.localTopoImage}"
+                    app:imageBitmap="@{vm.localTopoImageBitmap}"
                     tools:src="@drawable/nature" />
 
                 <ImageButton

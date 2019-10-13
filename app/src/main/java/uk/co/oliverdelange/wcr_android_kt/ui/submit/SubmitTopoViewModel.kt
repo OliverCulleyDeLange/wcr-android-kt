@@ -1,7 +1,10 @@
 package uk.co.oliverdelange.wcr_android_kt.ui.submit
 
 import android.app.Application
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.provider.MediaStore
 import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
@@ -20,10 +23,14 @@ import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTopoImageView
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
-const val MAX_TOPO_SIZE_PX = 640
+
+const val MAX_TOPO_SIZE_PX = 1020
 
 //@Singleton
 class SubmitTopoViewModel @Inject constructor(application: Application,
@@ -41,6 +48,24 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
     }
 
     val localTopoImage = MutableLiveData<Uri?>()
+    val localTopoImageBytes = Transformations.map(localTopoImage) {
+        val bitmap = MediaStore.Images.Media.getBitmap(application.contentResolver, it)
+        val widthScale = MAX_TOPO_SIZE_PX.toFloat() / bitmap.width
+        val newWidth = bitmap.width * widthScale
+        val newHeight = bitmap.height * widthScale
+        val scaled = Bitmap.createScaledBitmap(bitmap, newWidth.roundToInt(), newHeight.roundToInt(), false)
+        val out = ByteArrayOutputStream()
+        scaled.compress(Bitmap.CompressFormat.WEBP, 75, out)
+        val bytes = out.toByteArray()
+        Timber.d("Image WAS ${bitmap.width}x${bitmap.height} bytes ${bitmap.byteCount}")
+        bytes
+    }
+    val localTopoImageBitmap = Transformations.map(localTopoImageBytes) {
+        Timber.d("${it.size}")
+        val scaledAndCompressed = BitmapFactory.decodeStream(ByteArrayInputStream(it))
+        Timber.d("Image IS ${scaledAndCompressed.width}x${scaledAndCompressed.height} ${scaledAndCompressed.byteCount}")
+        scaledAndCompressed
+    }
     val topoName = MutableLiveData<String?>()
     val topoNameError = Transformations.map(topoName) {
         tryEnableSubmit()
@@ -214,21 +239,23 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         return Single.create { emitter ->
             val rootRef = FirebaseStorage.getInstance().reference
             val imageRef = rootRef.child("topos/$sectorId/$topoName")
-            val uploadTask = imageRef.putFile(topoImage)
-                    .addOnProgressListener { snapshot ->
-                        val percent = snapshot.bytesTransferred / snapshot.totalByteCount
-                        Timber.d("Image uploading... $percent")
-                    }
+            localTopoImageBytes.value?.let {
+                val uploadTask = imageRef.putBytes(it)
+                        .addOnProgressListener { snapshot ->
+                            val percent = snapshot.bytesTransferred / snapshot.totalByteCount
+                            Timber.d("Image uploading... $percent")
+                        }
 
-            try {
-                Tasks.await(uploadTask)
-                val url = Tasks.await(imageRef.downloadUrl)
-                emitter.onSuccess(url)
-            } catch (e: IOException) {
-                Timber.e(e, "Error uploading topo image to cloud")
-                submitButtonEnabled.set(true)
-                submitting.value = false
-                emitter.onError(e)
+                try {
+                    Tasks.await(uploadTask)
+                    val url = Tasks.await(imageRef.downloadUrl)
+                    emitter.onSuccess(url)
+                } catch (e: IOException) {
+                    Timber.e(e, "Error uploading topo image to cloud")
+                    submitButtonEnabled.set(true)
+                    submitting.value = false
+                    emitter.onError(e)
+                }
             }
         }
     }

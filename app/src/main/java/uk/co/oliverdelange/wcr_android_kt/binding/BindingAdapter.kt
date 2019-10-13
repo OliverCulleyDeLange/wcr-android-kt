@@ -1,5 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.binding
 
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
@@ -76,6 +77,13 @@ fun loadImageUri(view: ImageView, uri: String?, placeholder: Drawable) {
 @BindingAdapter("drawMode")
 fun loadDrawMode(view: PaintableTopoImageView, drawMode: Boolean?) {
     view.setDrawing(drawMode)
+}
+
+@BindingAdapter("imageBitmap")
+fun setImageBitmap(imageView: ImageView, bitmap: Bitmap?) {
+    bitmap?.let {
+        imageView.setImageBitmap(it)
+    }
 }
 
 @BindingAdapter("android:src")

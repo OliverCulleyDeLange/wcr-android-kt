@@ -4,12 +4,10 @@ gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --depen
 
 #TODO
 - Fix
-Fix gesture image view
 IDs
 
 - Do
 Filter routes by grade and type
-Image resizing
 Cache images on phone up to configurable limit
 Route undo button
 Submission validation of fields to show nice error
