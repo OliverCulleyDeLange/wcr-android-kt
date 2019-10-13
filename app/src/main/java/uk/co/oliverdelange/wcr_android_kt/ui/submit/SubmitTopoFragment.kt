@@ -55,7 +55,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
     private var routeFragments: MutableList<SubmitRouteFragment> = mutableListOf()
     private lateinit var binding: FragmentSubmitTopoBinding
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is ActivityInteractor) activityInteractor = context
     }

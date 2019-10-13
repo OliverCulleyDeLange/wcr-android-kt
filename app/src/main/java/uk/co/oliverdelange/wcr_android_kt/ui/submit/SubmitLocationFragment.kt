@@ -50,7 +50,7 @@ class SubmitLocationFragment : androidx.fragment.app.Fragment(), Injectable {
 
     private lateinit var binding: FragmentSubmitLocationBinding
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is ActivityInteractor) activityInteractor = context
     }

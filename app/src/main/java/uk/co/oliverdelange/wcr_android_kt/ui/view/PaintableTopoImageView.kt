@@ -11,7 +11,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.Route
 
 const val DRAW_TOLERANCE = 5f
 
-class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, att) {
+class PaintableTopoImageView(c: Context, att: AttributeSet) : com.ortiz.touchview.TouchImageView(c, att) {
 
     private var path = PathCapture()
     val paths: MutableMap<Int, PathCapture> = mutableMapOf(Pair(0, path))
@@ -107,7 +107,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
         val x = event.x
         val y = event.y
 
-        Timber.d("${MotionEvent.actionToString(event.action)} at $x,$y")
+//        Timber.d("${MotionEvent.actionToString(event.action)} at $x,$y")
         if (drawMode) {
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {

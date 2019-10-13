@@ -43,13 +43,13 @@
                     app:imageUri="@{vm.localTopoImage}"
                     tools:src="@drawable/nature" />
 
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:onClick="@{vm::toggleDrawing}"
+                    android:src="@{vm.isDrawing ? @drawable/ic_move_black_24dp : @drawable/ic_edit_black_24dp}" />
             </FrameLayout>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="@{vm::toggleDrawing}"
-                android:text="Tool" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/topo_name_input_layout"
