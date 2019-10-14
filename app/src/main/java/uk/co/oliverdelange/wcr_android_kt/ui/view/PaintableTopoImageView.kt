@@ -32,7 +32,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
     }
 
     fun undoAction() {
-        if (paths.size > selectedRoute) {
+        if (paths.containsKey(selectedRoute)) {
             paths[selectedRoute]?.undoAction()
             invalidate()
         }
