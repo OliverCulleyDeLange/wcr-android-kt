@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.lifecycle.*
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Completable
@@ -13,6 +14,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
 import uk.co.oliverdelange.wcr_android_kt.db.preload
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
@@ -52,6 +54,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     val mapMode: MutableLiveData<MapMode> = MutableLiveData<MapMode>().also {
         it.value = MapMode.DEFAULT_MODE
     }
+
     private val mapModesThatDisplayFab = listOf(MapMode.DEFAULT_MODE, MapMode.CRAG_MODE, MapMode.TOPO_MODE, MapMode.SECTOR_MODE)
     val showFab = MediatorLiveData<Boolean>().also {
         it.value = true
@@ -64,7 +67,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     val selectedLocationId: MutableLiveData<String?> = MutableLiveData<String?>().also {
         it.value = null
     }
-    val selectedLocationRouteInfo = Transformations.switchMap(selectedLocationId) {
+    val selectedLocationRouteInfo: LiveData<LocationRouteInfo?> = Transformations.switchMap(selectedLocationId) {
         if (it != null) {
             locationRepository.loadRouteInfoFor(it)
         } else {
@@ -81,7 +84,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
-    val sectors: LiveData<List<Location>> = Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) { selectedLocation ->
+    val sectors: LiveData<List<Location>?> = Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) { selectedLocation ->
         Timber.v("SelectedLocation changed to %s: Updating 'sectors'", selectedLocation?.id)
         if (selectedLocation?.id != null) {
             selectedLocation.id.let {
@@ -106,6 +109,24 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         }
     }
 
+    val mapLatLngBounds = MediatorLiveData<List<LatLng>>().also {
+        it.value = emptyList()
+        it.addSource(crags) { crags ->
+            it.value = crags.map { crag -> crag.latlng }
+        }
+        it.addSource(sectors) { sectors ->
+            if (selectedLocation.value?.type == LocationType.CRAG) {
+                it.value = sectors?.plus(selectedLocation.value!!)?.map { l -> l.latlng }
+            }
+        }
+        it.addSource(mapMode) { mapMode ->
+            val numberOfCrags: Int = crags.value?.size ?: 0
+            if (mapMode == MapMode.DEFAULT_MODE && numberOfCrags > 0) {
+                it.value = crags.value!!.map { c -> c.latlng }
+            }
+        }
+    }
+
     private fun getToposForCrag(cragId: String): LiveData<List<TopoAndRoutes>> {
         Timber.d("Getting topos for crag with id: %s", cragId)
         val topos: MediatorLiveData<List<TopoAndRoutes>> = MediatorLiveData()
@@ -123,7 +144,7 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
                     }
                 }
             } else {
-                topos.value = null
+                topos.value = null //TODO NPE possible?
             }
         }
         return topos

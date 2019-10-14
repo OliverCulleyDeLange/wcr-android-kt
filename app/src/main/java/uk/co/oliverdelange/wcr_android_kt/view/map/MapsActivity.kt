@@ -234,18 +234,16 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
             Timber.v("crags changed, new crags: %s", crags?.map { it.name })
             refreshCragClusterItems()
-            // TODO Move LatLng Bounds into VM and observe seperately
-            crags?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
         })
 
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
             Timber.v("sectors changed, new sectors: %s", sectors?.map { it.name })
             refreshSectorsForCrag(sectors)
-            // TODO Move LatLng Bounds into VM and observe seperately
-            if (binding.vm?.selectedLocation?.value?.type == LocationType.CRAG) {
-                val locations = sectors?.plus(binding.vm!!.selectedLocation.value!!)
-                locations?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
-            }
+        })
+
+        binding.vm?.mapLatLngBounds?.observe(this, Observer {
+            Timber.v("mapLatLngBounds changed, animating map pan")
+            map.animate(LatLngUtil.getBoundsForLatLngs(it))
         })
 
         binding.vm?.mapMode?.observe(this, Observer {
@@ -258,9 +256,6 @@ class MapsActivity : AppCompatActivity(),
                     Timber.d("MapMode changed to DEFAULT_MODE")
                     fabStyle(R.drawable.ic_add_crag, R.color.fab_new_crag)
                     refreshCragClusterItems()
-                    // TODO Move LatLng Bounds into VM and observe seperately
-                    val latlngs = binding.vm?.crags?.value?.map { it.latlng }
-                    latlngs?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
                     replaceFragment(welcomeFragment, R.id.bottom_sheet)
                 }
                 CRAG_MODE -> {
