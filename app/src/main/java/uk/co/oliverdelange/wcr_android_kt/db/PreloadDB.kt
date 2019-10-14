@@ -22,13 +22,13 @@ fun preload(instance: WcrDb): Completable {
         )
         instance.routeDao().insertMany(
                 Route("0", "0", "0GREEN ROUTE", "V0", "GREEN", "BOULDERING", "Eating biscuits is good for you", "0.25:0.25,0.25:0.90"),
-                Route("1", "0", "0ORANGE ROUTE", "f4+", "GREEN", "BOULDERING", "Mmmmm creamy custard", "0.35:0.25,0.35:0.90"),
-                Route("2", "0", "0RED ROUTE", "E1 5b", "GREEN", "TRAD", "Traditional Rich Tea or Digestive?", "0.45:0.25,0.45:0.90"),
+                Route("1", "0", "0ORANGE ROUTE", "f4+", "ORANGE", "BOULDERING", "Mmmmm creamy custard", "0.35:0.25,0.35:0.90"),
+                Route("2", "0", "0RED ROUTE", "E1 5b", "RED", "TRAD", "Traditional Rich Tea or Digestive?", "0.45:0.25,0.45:0.90"),
                 Route("3", "0", "0BLACK ROUTE", "8a", "BLACK", "SPORT", "Excuisite", "0.55:0.25,0.55:0.90"),
                 Route("4", "1", "1A biscuit based name that is really long so we know if things look okay when there are really long names", "4b", "GREEN", "SPORT", "Lol...", "0.65:0.25,0.65:0.90"),
                 Route("5", "2", "2GREEN ROUTE", "V0", "GREEN", "BOULDERING", "Eating biscuits is good for you", "0.25:0.25,0.25:0.90"),
-                Route("6", "2", "2ORANGE ROUTE", "f4+", "GREEN", "BOULDERING", "Mmmmm creamy custard", "0.35:0.25,0.35:0.90"),
-                Route("7", "2", "2RED ROUTE", "E1 5b", "GREEN", "TRAD", "Traditional Rich Tea or Digestive?", "0.45:0.25,0.45:0.90"),
+                Route("6", "2", "2ORANGE ROUTE", "f4+", "ORANGE", "BOULDERING", "Mmmmm creamy custard", "0.35:0.25,0.35:0.90"),
+                Route("7", "2", "2RED ROUTE", "E1 5b", "RED", "TRAD", "Traditional Rich Tea or Digestive?", "0.45:0.25,0.45:0.90"),
                 Route("8", "2", "2BLACK ROUTE", "8a", "BLACK", "SPORT", "Excuisite", "0.55:0.25,0.55:0.90"),
                 Route("9", "3", "3A biscuit based name that is really long so we know if things look okay when there are really long names", "4b", "GREEN", "SPORT", "Lol...", "0.75:0.25,0.75:0.90")
         )
