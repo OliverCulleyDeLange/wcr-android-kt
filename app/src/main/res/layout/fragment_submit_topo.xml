@@ -118,7 +118,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:enabled="@{safeUnbox(vm.submitButtonEnabled)}"
+                    android:enabled="@{safeUnbox(!vm.submitting)}"
+                    android:onClick="@{vm::onClickSubmit}"
                     android:text="@string/button_submit" />
 
 

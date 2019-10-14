@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Completable
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.PREF_USE_V_GRADE_FOR_BOULDERING
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
@@ -74,7 +76,6 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
     }
     val topoName = MutableLiveData<String?>()
     val topoNameError = Transformations.map(topoName) {
-        tryEnableSubmit()
         if (it?.isEmpty() == true) "Can not be empty"
         else null
     }
@@ -103,11 +104,9 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         }
         activeRoute.value = activeRouteFragId
         // Link the route path capture to the Route in the view model
-        val pathCapture = paths[activeRouteFragId]?.actionStack?.flatten()
+        val pathCapture = paths[activeRouteFragId]?.actionStack?.flatten() //TODO FIXME
         routes[activeRouteFragId]?.path = pathCapture
         Timber.d("Set route $activeRouteFragId path to $pathCapture")
-        // We probably need to disable the submit button if a new route has been added without filled in info.
-        tryEnableSubmit()
     }
 
     fun removeRoute(fragmentId: Int?) {
@@ -132,7 +131,6 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
             Timber.d("Route fragment $fragmentId (${it.name}) name changed to $text")
             it.name = "$text"
         }
-        tryEnableSubmit()
     }
 
     fun routeDescriptionChanged(fragmentId: Int, text: CharSequence) {
@@ -140,7 +138,6 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
             it.description = text.toString()
             Timber.d("Route fragment $fragmentId (${it.name}) description changed to ${it.description}")
         }
-        tryEnableSubmit()
     }
 
     val routeTypeUpdate = MutableLiveData<RouteType>()
@@ -224,24 +221,55 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                 }
     }
 
-    val submitButtonEnabled = ObservableBoolean(false)
-
-    fun tryEnableSubmit() {
-        submitButtonEnabled.set(!topoName.value.isNullOrEmpty() &&
-                localTopoImage.value != null &&
-                routes.size > 0 &&
-                routes.none { route ->
-                    route.value.name?.isEmpty() ?: true ||
-                            route.value.description.isNullOrEmpty() ||
-                            route.value.path?.size?.let { it < 2 } ?: false
-                })
-    }
-
+    lateinit var sectorId: String
+    val submissionResult = MutableLiveData<SubmissionResult>()
+    // We display a loader and disable the submit button when a submission is in progress
     val submitting = MutableLiveData<Boolean>().also {
         it.value = false
     }
 
-    fun uploadImage(topoImage: Uri, topoName: String, sectorId: String): Single<Uri> {
+    fun onClickSubmit(view: View) {
+        Timber.d("Submit clicked for $sectorId")
+
+        val hasName = !topoName.value.isNullOrEmpty()
+        val hasImage = localTopoImage.value != null
+        val hasAtLeast1Route = routes.size > 0
+        val routesHaveNameDescriptionAndPath = routes.none { route ->
+            route.value.name?.isEmpty() ?: true ||
+                    route.value.description.isNullOrEmpty() ||
+                    route.value.path?.size?.let { it < 2 } ?: false
+        }
+        val allowSubmit = hasName && hasImage && hasAtLeast1Route && routesHaveNameDescriptionAndPath
+        Timber.d("Submission allowed: $allowSubmit")
+
+        if (allowSubmit) {
+            submit(sectorId)
+                    .subscribeOn(Schedulers.io())
+                    ?.observeOn(AndroidSchedulers.mainThread())
+                    ?.subscribe({ submittedTopoId ->
+                        Timber.i("Submission Succeeded")
+                        submissionResult.postValue(SubmissionResult.success(submittedTopoId))
+                    }, { e ->
+                        Timber.e(e, "Submission Failed")
+                        submissionResult.postValue(SubmissionResult.failure("Failed to submit topo!"))
+                    })
+        } else {
+            val error = if (!hasName) {
+                "Please enter a name"
+            } else if (!hasImage) {
+                "Please select an image"
+            } else if (!hasAtLeast1Route) {
+                "A topo should have at least one route"
+            } else if (!routesHaveNameDescriptionAndPath) {
+                "Every route should have a name, description and topo path"
+            } else {
+                "Unknown error, please contact us for details"
+            }
+            submissionResult.postValue(SubmissionResult.failure(error))
+        }
+    }
+
+    private fun uploadImage(topoName: String, sectorId: String): Single<Uri> {
         return Single.create { emitter ->
             val rootRef = FirebaseStorage.getInstance().reference
             val imageRef = rootRef.child("topos/$sectorId/$topoName")
@@ -258,7 +286,6 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                     emitter.onSuccess(url)
                 } catch (e: IOException) {
                     Timber.e(e, "Error uploading topo image to cloud")
-                    submitButtonEnabled.set(true)
                     submitting.value = false
                     emitter.onError(e)
                 }
@@ -266,15 +293,14 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         }
     }
 
-    fun submit(sectorId: String): Single<String> {
+    private fun submit(sectorId: String): Single<String> {
         val topoName = topoName.value
         val topoImage = localTopoImage.value
         return if (topoName != null && topoImage != null) {
             Timber.i("Submission started")
-            submitButtonEnabled.set(false)
             submitting.value = true
 
-            uploadImage(topoImage, topoName, sectorId)
+            uploadImage(topoName, sectorId)
                     .flatMap { imageUrl ->
                         val topo = Topo(name = topoName, locationId = sectorId, image = imageUrl.toString())
                         topoRepository.save(topo)
@@ -299,5 +325,30 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
     override fun onCleared() {
         super.onCleared()
         Timber.d("SubmitTopoViewModel is being destroyed...")
+    }
+}
+
+class SubmissionResult private constructor(val success: Boolean) {
+    companion object {
+        fun success(submittedTopoId: String): SubmissionResult {
+            return SubmissionResult(true).withTopoId(submittedTopoId)
+        }
+
+        fun failure(errorMessage: String): SubmissionResult {
+            return SubmissionResult(false).withErrorMessage(errorMessage)
+        }
+    }
+
+    var submittedTopoId: String? = null
+    var errorMessage: String? = null
+
+    private fun withErrorMessage(errorMessage: String): SubmissionResult {
+        this.errorMessage = errorMessage
+        return this
+    }
+
+    private fun withTopoId(topoId: String): SubmissionResult {
+        this.submittedTopoId = topoId
+        return this
     }
 }

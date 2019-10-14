@@ -19,8 +19,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_submit_topo.*
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
@@ -75,20 +73,12 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.lifecycleOwner = this
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubmitTopoViewModel::class.java)
         binding.vm = viewModel
-
-        binding.submit.setOnClickListener {
-            sectorId?.let { sectorId ->
-                binding.vm?.submit(sectorId)
-                        ?.subscribeOn(Schedulers.io())
-                        ?.observeOn(AndroidSchedulers.mainThread())
-                        ?.subscribe({ submittedTopoId ->
-                            Timber.i("Submission Succeeded")
-                            activityInteractor?.onTopoSubmitted(submittedTopoId)
-                        }, { e ->
-                            Timber.e(e, "Submission Failed")
-                            Snackbar.make(binding.submit, "Failed to submit topo!", Snackbar.LENGTH_SHORT).show()
-                        })
-            }
+        val sectorIdSnap = sectorId
+        if (sectorIdSnap != null) {
+            Timber.d("Setting sectorId $sectorId on ViewModel")
+            viewModel.sectorId = sectorIdSnap
+        } else { //Can this ever happen?
+            Timber.e("SectorID not set in VM, submission will fail")
         }
 
         viewModel.doUndoDrawing.observe(this, Observer {
@@ -97,6 +87,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
             // That way we just modify that, and re-draw the Paintable View.
             binding.topoImage.undoAction()
         })
+
         viewModel.submitting.observe(this, Observer {
             Timber.v("submitting changed, ${if (it) "starting" else "stopping"} animation")
             if (it == true) {
@@ -107,6 +98,15 @@ class SubmitTopoFragment : Fragment(), Injectable {
                 animation.start()
             } else {
                 topo_submit_progress.clearAnimation()
+            }
+        })
+
+        viewModel.submissionResult.observe(this, Observer {
+            if (it.success) {
+                activityInteractor?.onTopoSubmitted(it.submittedTopoId)
+            } else {
+                Snackbar.make(binding.submit, it.errorMessage
+                        ?: "Oops, something went wrong", Snackbar.LENGTH_SHORT).show()
             }
         })
 
@@ -152,8 +152,6 @@ class SubmitTopoFragment : Fragment(), Injectable {
                 }
             } //FragmentID
         })
-
-        binding.topoImage.setOnTouchImageViewListener { binding.vm?.tryEnableSubmit() }
 
         // Update the route line colour on the topo
         binding.vm?.routeColourUpdate?.observe(this, Observer {
@@ -219,7 +217,6 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.routePager.adapter?.notifyDataSetChanged()
         // Check if we should now show the add route button
         binding.vm?.setShouldShowAddRouteButton(binding.routePager.adapter?.count)
-        binding.vm?.tryEnableSubmit()
     }
 
     private fun addRoute(pagerAdapter: SubmitRoutePagerAdapter) {
@@ -252,7 +249,6 @@ class SubmitTopoFragment : Fragment(), Injectable {
                         activity?.contentResolver?.takePersistableUriPermission(uri, takeFlags)
 
                         binding.vm?.localTopoImage?.value = uri
-                        binding.vm?.tryEnableSubmit()
                     }
                 }
             }
