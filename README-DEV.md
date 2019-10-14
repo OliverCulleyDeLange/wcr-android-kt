@@ -7,11 +7,7 @@ gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --depen
 IDs
 
 - Do
-Route undo button
-Submission validation of fields to show nice error
 Perf test - load huge data set and check performance
-Store user id of uploader to allow future editing
-Allow uploader to edit uploads?
 Time dB queries
 crashlytics
 Analytics
@@ -20,6 +16,8 @@ License t&c
 - Do after release
 Filter routes by grade and type
 Cache images on phone up to configurable limit
+Submission validation of fields to show nice error instead of just disabling button
+Allow uploader to edit uploads?
 
 - Test
 Test DBs max length for strings - long paths could cause issues.
