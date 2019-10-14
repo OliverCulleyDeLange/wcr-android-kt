@@ -10,7 +10,7 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.BaseDao
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.BaseEntity
 
-fun <T : BaseEntity> uploadToFirebase(collection: String, entity: T): Single<T> {
+private fun <T : BaseEntity> uploadToFirebase(collection: String, entity: T): Single<T> {
     val firebase = FirebaseFirestore.getInstance()
     return Single.create<T> { emitter ->
         val classname = entity.javaClass.simpleName
@@ -21,7 +21,7 @@ fun <T : BaseEntity> uploadToFirebase(collection: String, entity: T): Single<T> 
         try {
             //TODO Write blog post on how to do this!
             Tasks.await(setTask)
-            Timber.d("$classname saved to firestore: ${entity.id} ")
+            Timber.v("$classname saved to firestore: ${entity.id} ")
             emitter.onSuccess(entity)
         } catch (e: Exception) {
             Timber.e(e, "Failed to add $classname to firestore: ${entity.id}")

@@ -205,6 +205,7 @@ class MapsActivity : AppCompatActivity(),
 
     private fun observeViewModel() {
         binding.vm?.userSignedIn?.observe(this, Observer {
+            Timber.v("userSignedIn changed, swapping drawer button")
             slidingDrawer.removeItem(MENU_SIGN_IN_ID)
             slidingDrawer.removeItem(MENU_SIGN_OUT_ID)
             if (it == true) {
@@ -215,6 +216,7 @@ class MapsActivity : AppCompatActivity(),
         })
 
         binding.vm?.mapType?.observe(this, Observer {
+            Timber.v("Map type changed, updating map")
             if (GoogleMap.MAP_TYPE_NORMAL == it) {
                 map.mapType = GoogleMap.MAP_TYPE_NORMAL
             } else {
@@ -223,20 +225,21 @@ class MapsActivity : AppCompatActivity(),
         })
 
         binding.vm?.bottomSheetState?.observe(this, Observer {
+            Timber.v("bottomSheetState changed, updating state")
             it?.let {
                 bottomSheet?.state = it
             }
         })
 
         binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
-            Timber.v("New crag location to display. Crags: %s", crags?.map { it.name })
+            Timber.v("crags changed, new crags: %s", crags?.map { it.name })
             refreshCragClusterItems()
             // TODO Move LatLng Bounds into VM and observe seperately
             crags?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
         })
 
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
-            Timber.v("New sector location to display. Sectors: %s", sectors?.map { it.name })
+            Timber.v("sectors changed, new sectors: %s", sectors?.map { it.name })
             refreshSectorsForCrag(sectors)
             // TODO Move LatLng Bounds into VM and observe seperately
             if (binding.vm?.selectedLocation?.value?.type == LocationType.CRAG) {

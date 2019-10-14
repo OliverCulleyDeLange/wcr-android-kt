@@ -18,14 +18,15 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
                                          val locationDao: LocationDao) {
 
     fun save(topo: Topo): Single<String> {
+        Timber.d("Saving topo %s", topo.name)
         val topoDTO = toTopoDto(topo)
         return saveToLocalDb(topoDTO)
     }
 
     private fun saveToLocalDb(topoDTO: uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo): Single<String> {
         return Single.fromCallable {
-            Timber.d("Saving topo to local db: %s", topoDTO)
             topoDao.insert(topoDTO)
+            Timber.d("Saved topo to local db: %s", topoDTO)
             topoDTO.id
         }
     }

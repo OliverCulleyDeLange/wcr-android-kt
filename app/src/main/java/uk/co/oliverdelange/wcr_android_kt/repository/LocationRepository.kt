@@ -15,7 +15,7 @@ import javax.inject.Inject
 class LocationRepository @Inject constructor(private val locationDao: LocationDao) {
 
     fun save(location: Location): Single<String> {
-        Timber.d("Saving %s: %s", location.type, location.name)
+        Timber.d("Saving %s location: %s", location.type, location.name)
         val locationDTO = toLocationDto(location)
         return saveToLocalDb(locationDTO)
     }
@@ -68,7 +68,7 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
     }
 
     fun search(query: String): LiveData<List<Location>> {
-        Timber.d("Search locations: %s", query)
+        Timber.d("Searching locations: %s", query)
         val liveLocationDTOs = locationDao.searchOnName("%$query%")
         return Transformations.map(liveLocationDTOs) { locations ->
             locations.map { location ->
