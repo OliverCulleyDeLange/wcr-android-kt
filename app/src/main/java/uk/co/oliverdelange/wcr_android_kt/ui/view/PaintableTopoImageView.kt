@@ -163,10 +163,10 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
         }
 
         fun undoAction() {
-            if (actionStack.size >= actionIndex) {
+            if (actionStack.size >= actionIndex && actionIndex > 0) {
                 actionStack.removeAt(actionIndex - 1)
+                actionIndex--
             }
-            actionIndex--
         }
 
         fun endAction() {
