@@ -1,6 +1,5 @@
 package uk.co.oliverdelange.wcr_android_kt.view.map
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -226,8 +225,16 @@ class MapsActivity : AppCompatActivity(),
 
         binding.vm?.bottomSheetState?.observe(this, Observer {
             Timber.v("bottomSheetState changed, updating state")
-            it?.let {
+            it?.let { newState ->
                 bottomSheet?.state = it
+                when (newState) {
+                    STATE_EXPANDED -> {
+                        setMapBottomPadding(bottom_sheet.measuredHeight)
+                        binding.vm?.onBottomSheetExpand()
+                    }
+                    STATE_COLLAPSED -> setMapBottomPadding(bottomSheet?.peekHeight ?: 0)
+                }
+                Unit
             }
         })
 
@@ -430,13 +437,11 @@ class MapsActivity : AppCompatActivity(),
         floating_search_view.attachNavigationDrawerToMenuButton(slidingDrawer.drawerLayout)
         floating_search_view.setOnFocusChangeListener(object : FloatingSearchView.OnFocusChangeListener {
             override fun onFocusCleared() {
-                //TODO Call VM method which sets state instead so its testable
-                bottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+                binding.vm?.onSearchBarUnfocus()
             }
 
             override fun onFocus() {
-                //TODO Call VM method which sets state instead
-                bottomSheet?.state = BottomSheetBehavior.STATE_HIDDEN
+                binding.vm?.onSearchBarFocus()
             }
         })
 
@@ -491,22 +496,7 @@ class MapsActivity : AppCompatActivity(),
         bottomSheet = BottomSheetBehavior.from(bottom_sheet)
         binding.vm?.bottomSheetState?.value = bottomSheet?.state
         bottomSheet?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            @SuppressLint("SwitchIntDef")
             override fun onStateChanged(bottomSheetView: View, newState: Int) {
-                when (newState) {
-                    STATE_EXPANDED -> {
-                        setMapBottomPadding(bottom_sheet.measuredHeight)
-                        // TODO We shouldn't do this ev ery time we expand the bottom sheet
-                        // Do Prefs mofification in VM
-                        with(getPreferences(Context.MODE_PRIVATE).edit()) {
-                            putBoolean(BOTTOM_SHEET_OPENED, true)
-                            apply()
-                        }
-                    }
-                    STATE_COLLAPSED -> {
-                        setMapBottomPadding(bottomSheet?.peekHeight ?: 0)
-                    }
-                }
                 binding.vm?.bottomSheetState?.value = newState
             }
 

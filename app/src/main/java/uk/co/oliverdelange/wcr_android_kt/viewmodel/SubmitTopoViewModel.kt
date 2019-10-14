@@ -27,11 +27,13 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.math.roundToInt
 
 
 const val MAX_TOPO_SIZE_PX = 1020
 
+@Singleton
 class SubmitTopoViewModel @Inject constructor(application: Application,
                                               private val topoRepository: TopoRepository,
                                               private val routeRepository: RouteRepository) : AndroidViewModel(application) {

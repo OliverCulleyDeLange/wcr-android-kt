@@ -1,5 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
+import android.app.Application
 import android.content.Context
 import android.view.View
 import androidx.lifecycle.*
@@ -13,6 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
 import uk.co.oliverdelange.wcr_android_kt.db.preload
@@ -26,10 +28,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MapViewModel @Inject constructor(val locationRepository: LocationRepository,
+class MapViewModel @Inject constructor(application: Application,
+                                       val locationRepository: LocationRepository,
                                        val topoRepository: TopoRepository,
                                        val routeRepository: RouteRepository,
-                                       val db: WcrDb) : ViewModel() {
+                                       val db: WcrDb) : AndroidViewModel(application) {
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
@@ -161,6 +164,18 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         it?.name
     }
 
+    var bottomSheetExpanded = false
+    fun onBottomSheetExpand() {
+        if (!bottomSheetExpanded) {
+            Timber.v("Bottom sheet expanded for first time since app open")
+            with(getApplication<WcrApp>().prefs.edit()) {
+                putBoolean(uk.co.oliverdelange.wcr_android_kt.view.map.BOTTOM_SHEET_OPENED, true)
+                apply()
+            }
+            bottomSheetExpanded = true
+        }
+    }
+
     fun submit(view: View) {
         when (mapMode.value) {
             MapMode.DEFAULT_MODE -> mapMode.value = MapMode.SUBMIT_CRAG_MODE
@@ -249,6 +264,16 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         } else {
             AbsentLiveData.create<List<SearchSuggestionItem>>()
         }
+    }
+
+    fun onSearchBarUnfocus() {
+        bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
+
+    }
+
+    fun onSearchBarFocus() {
+        bottomSheetState.value = BottomSheetBehavior.STATE_HIDDEN
+
     }
 
     fun onSearchSuggestionClicked(searchSuggestion: SearchSuggestionItem) {
