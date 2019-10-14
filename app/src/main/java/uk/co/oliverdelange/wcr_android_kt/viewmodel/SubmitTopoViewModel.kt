@@ -16,7 +16,7 @@ import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Completable
 import io.reactivex.Single
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.USE_V_GRADE_FOR_BOULDERING
+import uk.co.oliverdelange.wcr_android_kt.PREF_USE_V_GRADE_FOR_BOULDERING
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
@@ -163,8 +163,8 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
             RouteType.SPORT -> visibilityTracker[Pair(fragmentId, GradeType.SPORT)]?.set(View.VISIBLE)
             RouteType.BOULDERING -> {
                 val prefs = getApplication<WcrApp>().prefs
-                //TODO Settings toggle for USE_V_GRADE_FOR_BOULDERING
-                if (prefs.getBoolean(USE_V_GRADE_FOR_BOULDERING, true)) {
+                //TODO Settings toggle for PREF_USE_V_GRADE_FOR_BOULDERING
+                if (prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)) {
                     visibilityTracker[Pair(fragmentId, GradeType.V)]?.set(View.VISIBLE)
                 } else {
                     visibilityTracker[Pair(fragmentId, GradeType.FONT)]?.set(View.VISIBLE)
@@ -174,7 +174,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
     }
 
     val halfFinishedTradGrades = mutableMapOf<Long, Pair<TradAdjectivalGrade?, TradTechnicalGrade?>>()
-    val useVGradeForBouldering = getApplication<WcrApp>().prefs.getBoolean(USE_V_GRADE_FOR_BOULDERING, true)
+    val useVGradeForBouldering = getApplication<WcrApp>().prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)
     val routeColourUpdate = MutableLiveData<Int>()
     fun gradeChanged(fragmentId: Int, position: Int, gradeDropDown: GradeDropDown) {
         routeColourUpdate.value = fragmentId

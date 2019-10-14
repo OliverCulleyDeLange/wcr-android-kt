@@ -47,6 +47,8 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_maps.*
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.PREFS_KEY
+import uk.co.oliverdelange.wcr_android_kt.PREF_BOTTOM_SHEET_OPENED
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.databinding.ActivityMapsBinding
 import uk.co.oliverdelange.wcr_android_kt.map.*
@@ -65,8 +67,6 @@ import java.lang.Math.round
 import java.util.Arrays.asList
 import javax.inject.Inject
 
-const val DEFAULT_ZOOM = 6f
-const val CRAG_ZOOM = 14f
 const val MAP_ANIMATION_DURATION = 400
 const val MAP_PADDING_TOP = 150
 
@@ -76,8 +76,6 @@ const val REQUEST_SIGNIN = 998
 
 const val MENU_SIGN_IN_ID = 1L
 const val MENU_SIGN_OUT_ID = 2L
-
-const val BOTTOM_SHEET_OPENED = "BOTTOM_SHEET_OPENED"
 
 /*
     The Main Activity of the app. Shows a map with markers for crags, which when clicked reveal its sectors.
@@ -303,8 +301,8 @@ class MapsActivity : AppCompatActivity(),
             }
             when (it) {
                 DEFAULT_MODE, CRAG_MODE, SECTOR_MODE, TOPO_MODE -> {
-                    val bottomSheetOpened = getPreferences(Context.MODE_PRIVATE)
-                            .getBoolean(BOTTOM_SHEET_OPENED, false)
+                    val bottomSheetOpened = getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
+                            .getBoolean(PREF_BOTTOM_SHEET_OPENED, false)
                     if (!bottomSheetOpened) bounceBottomSheet()
                 }
                 SUBMIT_CRAG_MODE, SUBMIT_SECTOR_MODE, SUBMIT_TOPO_MODE -> {

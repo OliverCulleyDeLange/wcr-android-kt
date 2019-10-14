@@ -10,9 +10,12 @@ import dagger.android.HasActivityInjector
 import uk.co.oliverdelange.wcr_android_kt.di.AppInjector
 import javax.inject.Inject
 
-const val USE_V_GRADE_FOR_BOULDERING = "USE_V_GRADE_FOR_BOULDERING"
+const val PREFS_KEY = "wcr"
+const val PREF_USE_V_GRADE_FOR_BOULDERING = "PREF_USE_V_GRADE_FOR_BOULDERING"
+const val PREF_BOTTOM_SHEET_OPENED = "PREF_BOTTOM_SHEET_OPENED"
 
 open class WcrApp : Application(), HasActivityInjector {
+
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
@@ -21,7 +24,7 @@ open class WcrApp : Application(), HasActivityInjector {
 
     override fun onCreate() {
         super.onCreate()
-        prefs = getSharedPreferences("wcr", Context.MODE_PRIVATE)
+        prefs = getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
         AppInjector.init(this)
         AndroidThreeTen.init(this)
     }

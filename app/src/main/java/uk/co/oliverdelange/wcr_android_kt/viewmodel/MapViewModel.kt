@@ -14,6 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.PREF_BOTTOM_SHEET_OPENED
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
@@ -169,7 +170,7 @@ class MapViewModel @Inject constructor(application: Application,
         if (!bottomSheetExpanded) {
             Timber.v("Bottom sheet expanded for first time since app open")
             with(getApplication<WcrApp>().prefs.edit()) {
-                putBoolean(uk.co.oliverdelange.wcr_android_kt.view.map.BOTTOM_SHEET_OPENED, true)
+                putBoolean(PREF_BOTTOM_SHEET_OPENED, true)
                 apply()
             }
             bottomSheetExpanded = true
