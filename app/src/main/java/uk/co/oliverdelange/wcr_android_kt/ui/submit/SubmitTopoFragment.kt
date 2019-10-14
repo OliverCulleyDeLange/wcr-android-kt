@@ -202,7 +202,9 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.topoImage.removePath(routeFragment.fragmentId)
         // Remove the fragment
         routeFragments.remove(routeFragment)
-        fragmentManager?.inTransaction { remove(routeFragment) }
+        fragmentManager?.inTransaction {
+            remove(routeFragment)
+        }
         binding.routePager.adapter?.notifyDataSetChanged()
         // Check if we should now show the add route button
         binding.vm?.setShouldShowAddRouteButton(binding.routePager.adapter?.count)
