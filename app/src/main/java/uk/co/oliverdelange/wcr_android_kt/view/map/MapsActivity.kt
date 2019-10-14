@@ -442,21 +442,13 @@ class MapsActivity : AppCompatActivity(),
 
         floating_search_view.setOnSearchListener(object : FloatingSearchView.OnSearchListener {
             override fun onSuggestionClicked(searchSuggestion: SearchSuggestion) {
-                //TODO Move into VM
                 Timber.i("Search suggestion clicked: $searchSuggestion")
                 if (searchSuggestion is SearchSuggestionItem) {
                     floating_search_view.clearQuery()
                     floating_search_view.clearSuggestions()
                     floating_search_view.clearSearchFocus()
 
-                    when (searchSuggestion.type) {
-                        CRAG -> binding.vm?.selectCrag(searchSuggestion.id)
-                        SECTOR -> binding.vm?.selectSector(searchSuggestion.id)
-                        TOPO -> binding.vm?.selectTopo(searchSuggestion.id)
-                        ROUTE, ROUTE_BOULDER, ROUTE_TRAD, ROUTE_SPORT -> {
-                            binding.vm?.selectRoute(searchSuggestion.id)
-                        }
-                    }
+                    binding.vm?.onSearchSuggestionClicked(searchSuggestion)
                 }
             }
 

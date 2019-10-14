@@ -251,6 +251,17 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
         }
     }
 
+    fun onSearchSuggestionClicked(searchSuggestion: SearchSuggestionItem) {
+        when (searchSuggestion.type) {
+            SearchResultType.CRAG -> selectCrag(searchSuggestion.id)
+            SearchResultType.SECTOR -> selectSector(searchSuggestion.id)
+            SearchResultType.TOPO -> selectTopo(searchSuggestion.id)
+            SearchResultType.ROUTE, SearchResultType.ROUTE_BOULDER, SearchResultType.ROUTE_TRAD, SearchResultType.ROUTE_SPORT -> {
+                selectRoute(searchSuggestion.id)
+            }
+        }
+    }
+
     private fun addToSearchItems(mediator: MediatorLiveData<List<SearchSuggestionItem>>, new: List<SearchSuggestionItem>?) {
         val existing = mediator.value
         if (existing != null && new != null) mediator.value = new + existing
