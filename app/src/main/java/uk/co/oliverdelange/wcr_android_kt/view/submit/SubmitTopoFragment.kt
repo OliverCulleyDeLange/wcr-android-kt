@@ -35,6 +35,10 @@ import kotlin.math.roundToInt
 const val SELECT_PICTURE = 999
 const val ROUTE_PADDING = 0.15
 
+/*
+    This is the main fragment when submitting a new topo.
+    It allows the user to select an image, draw routes on it, add route info and submit
+ */
 class SubmitTopoFragment : Fragment(), Injectable {
     companion object {
         fun newTopoSubmissionFor(sectorId: String): SubmitTopoFragment {

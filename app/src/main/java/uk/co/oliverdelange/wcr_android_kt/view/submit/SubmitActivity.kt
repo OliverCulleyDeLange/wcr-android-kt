@@ -12,6 +12,9 @@ import uk.co.oliverdelange.wcr_android_kt.view.map.EXTRA_SECTOR_ID
 import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitTopoFragment.Companion.newTopoSubmissionFor
 import javax.inject.Inject
 
+/*
+    The other main activity, used to submit a new topo
+ */
 class SubmitActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteractor,
         HasSupportFragmentInjector {
 

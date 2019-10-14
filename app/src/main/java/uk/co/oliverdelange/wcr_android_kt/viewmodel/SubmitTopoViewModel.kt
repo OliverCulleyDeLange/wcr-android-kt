@@ -53,7 +53,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
     val localTopoImage = MutableLiveData<Uri?>()
     val localTopoImageBytes = Transformations.map(localTopoImage) {
-        val bitmap = MediaStore.Images.Media.getBitmap(application.contentResolver, it)
+        val bitmap = MediaStore.Images.Media.getBitmap(getApplication<WcrApp>().contentResolver, it)
         val widthScale = MAX_TOPO_SIZE_PX.toFloat() / bitmap.width
         val newWidth = bitmap.width * widthScale
         val newHeight = bitmap.height * widthScale

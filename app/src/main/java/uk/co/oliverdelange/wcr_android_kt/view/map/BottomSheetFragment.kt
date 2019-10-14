@@ -28,6 +28,10 @@ import uk.co.oliverdelange.wcr_android_kt.view.map.BottomSheetFragment.RouteRecy
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 import javax.inject.Inject
 
+/*
+    A fragment which fills the bottom sheet on the main MapsActivity
+    It gives information about the selected location, including a list of topos
+ */
 class BottomSheetFragment : Fragment(), Injectable {
     companion object {
         fun newBottomSheet(): BottomSheetFragment {

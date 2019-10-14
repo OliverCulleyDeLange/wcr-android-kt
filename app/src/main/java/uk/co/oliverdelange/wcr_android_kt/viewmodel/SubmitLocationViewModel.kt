@@ -12,15 +12,12 @@ import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.usecases.SubmitLocationUseCase
 import javax.inject.Inject
 
-//@Singleton
 class SubmitLocationViewModel @Inject constructor(private val submitLocationUseCase: SubmitLocationUseCase) : ViewModel() {
 
     lateinit var locationType: LocationType
     val locationName = MutableLiveData<String>()
     val locationNameError = MutableLiveData<String>()
     val locationLatLng = MutableLiveData<LatLng>()
-
-//    private val disposables = CompositeDisposable()
 
     val submitButtonEnabled = MediatorLiveData<Boolean>().also {
         it.value = false

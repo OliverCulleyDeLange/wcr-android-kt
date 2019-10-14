@@ -9,6 +9,9 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 
+/*
+    A simple fragment that is shown the users before any map marker is selected
+ */
 class WelcomeFragment : Fragment(), Injectable {
     companion object {
         fun newWelcomeFragment(): WelcomeFragment {

@@ -31,6 +31,17 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     val userSignedIn = MutableLiveData<Boolean>().also { it.value = FirebaseAuth.getInstance().currentUser != null }
+    fun onUserSignInSuccess() {
+        userSignedIn.value = true
+        val user = FirebaseAuth.getInstance().currentUser
+        Timber.d("User successfully signed in: ${user?.email}")
+    }
+
+    fun onUserSignInFail() {
+        val user = FirebaseAuth.getInstance().currentUser
+        userSignedIn.value = user != null
+        Timber.d("User sign in failed")
+    }
 
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
         it.value = GoogleMap.MAP_TYPE_NORMAL

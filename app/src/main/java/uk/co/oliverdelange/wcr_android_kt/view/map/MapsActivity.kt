@@ -35,7 +35,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
-import com.google.firebase.auth.FirebaseAuth
 import com.google.maps.android.MarkerManager
 import com.google.maps.android.clustering.ClusterManager
 import com.mikepenz.aboutlibraries.Libs
@@ -81,6 +80,13 @@ const val MENU_SIGN_OUT_ID = 2L
 
 const val BOTTOM_SHEET_OPENED = "BOTTOM_SHEET_OPENED"
 
+/*
+    The Main Activity of the app. Shows a map with markers for crags, which when clicked reveal its sectors.
+    Floating search bar allows searching crags, sectors and routes. It also give access to drawer menu
+
+    Bottom sheet gives information on the selected crag/sector location map marker, including topos.
+        - See BottomSheetFragment.kt
+ */
 class MapsActivity : AppCompatActivity(),
         HasSupportFragmentInjector,
         OnMapReadyCallback,
@@ -141,23 +147,14 @@ class MapsActivity : AppCompatActivity(),
                 binding.vm?.mapMode?.value = SECTOR_MODE
                 if (resultCode == Activity.RESULT_OK) {
                     Timber.d("User submitted topo")
-                    // TODO expand bottom sheet?
                 }
             }
             REQUEST_SIGNIN -> {
 //                val response = IdpResponse.fromResultIntent(data)
                 if (resultCode == RESULT_OK) {
-                    // Successfully signed in
-                    val user = FirebaseAuth.getInstance().currentUser
-                    binding.vm?.userSignedIn?.value = true
-                    Timber.d("User successfully signed in: ${user?.email}")
-                    // ...
+                    binding.vm?.onUserSignInSuccess()
                 } else {
-                    Timber.d("User sign in failed")
-                    // Sign in failed. If response is null the user canceled the
-                    // sign-in flow using the back button. Otherwise check
-                    // response.getError().getErrorCode() and handle the error.
-                    // ...
+                    binding.vm?.onUserSignInFail()
                 }
             }
         }
@@ -234,12 +231,14 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
             Timber.v("New crag location to display. Crags: %s", crags?.map { it.name })
             refreshCragClusterItems()
+            // TODO Move LatLng Bounds into VM and observe seperately
             crags?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
         })
 
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
             Timber.v("New sector location to display. Sectors: %s", sectors?.map { it.name })
             refreshSectorsForCrag(sectors)
+            // TODO Move LatLng Bounds into VM and observe seperately
             if (binding.vm?.selectedLocation?.value?.type == LocationType.CRAG) {
                 val locations = sectors?.plus(binding.vm!!.selectedLocation.value!!)
                 locations?.map { location -> location.latlng }?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
@@ -256,6 +255,7 @@ class MapsActivity : AppCompatActivity(),
                     Timber.d("MapMode changed to DEFAULT_MODE")
                     fabStyle(R.drawable.ic_add_crag, R.color.fab_new_crag)
                     refreshCragClusterItems()
+                    // TODO Move LatLng Bounds into VM and observe seperately
                     val latlngs = binding.vm?.crags?.value?.map { it.latlng }
                     latlngs?.let { map.animate(LatLngUtil.getBoundsForLatLngs(it)) }
                     replaceFragment(welcomeFragment, R.id.bottom_sheet)
@@ -308,6 +308,7 @@ class MapsActivity : AppCompatActivity(),
     }
 
     private fun refreshSectorsForCrag(sectors: List<Location>?) {
+        //TODO Do a diff instead of clearing and re-initialising, this is probably causing lag
         sectorMarkers.clear()
         sectors?.forEach {
             val iconStyle = if (binding.vm?.mapMode?.value == SUBMIT_SECTOR_MODE) Icon.SECTOR_DIMMED else Icon.SECTOR
@@ -321,6 +322,8 @@ class MapsActivity : AppCompatActivity(),
     }
 
     private fun refreshCragClusterItems() {
+        //TODO Move to VM as transformation
+        //TODO Do diff insteaf of re-initisliaing
         val cragClusterItems = binding.vm?.crags?.value?.map { CragClusterItem(it) }
         cragClusterItems?.let {
             clusterManager.clearItems()
@@ -438,16 +441,19 @@ class MapsActivity : AppCompatActivity(),
         floating_search_view.attachNavigationDrawerToMenuButton(slidingDrawer.drawerLayout)
         floating_search_view.setOnFocusChangeListener(object : FloatingSearchView.OnFocusChangeListener {
             override fun onFocusCleared() {
+                //TODO Call VM method which sets state instead so its testable
                 bottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
             }
 
             override fun onFocus() {
+                //TODO Call VM method which sets state instead
                 bottomSheet?.state = BottomSheetBehavior.STATE_HIDDEN
             }
         })
 
         floating_search_view.setOnSearchListener(object : FloatingSearchView.OnSearchListener {
             override fun onSuggestionClicked(searchSuggestion: SearchSuggestion) {
+                //TODO Move into VM
                 Timber.i("Search suggestion clicked: $searchSuggestion")
                 if (searchSuggestion is SearchSuggestionItem) {
                     floating_search_view.clearQuery()
@@ -509,6 +515,8 @@ class MapsActivity : AppCompatActivity(),
                 when (newState) {
                     STATE_EXPANDED -> {
                         setMapBottomPadding(bottom_sheet.measuredHeight)
+                        // TODO We shouldn't do this ev ery time we expand the bottom sheet
+                        // Do Prefs mofification in VM
                         with(getPreferences(Context.MODE_PRIVATE).edit()) {
                             putBoolean(BOTTOM_SHEET_OPENED, true)
                             apply()

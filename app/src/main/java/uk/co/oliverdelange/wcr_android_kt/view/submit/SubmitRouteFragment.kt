@@ -15,6 +15,11 @@ import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitTopoViewModel
 import javax.inject.Inject
 
+/*
+    This fragment is used when submitting a new topo.
+    It gathers information for a new route, including name, grade, description etc
+    It takes the form of a small card, which are paged horizontally
+ */
 class SubmitRouteFragment : androidx.fragment.app.Fragment(), Injectable {
     companion object {
         var routeFragmentIdCounter: Int = 0

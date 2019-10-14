@@ -25,6 +25,10 @@ import uk.co.oliverdelange.wcr_android_kt.view.map.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitLocationViewModel
 import javax.inject.Inject
 
+/*
+    This small fragment is displayed in the bottom sheet when a user wants to submit a new location / map marker.
+    It's a simple text box and button
+ */
 class SubmitLocationFragment : androidx.fragment.app.Fragment(), Injectable {
     companion object {
         fun newCragSubmission(): SubmitLocationFragment {
