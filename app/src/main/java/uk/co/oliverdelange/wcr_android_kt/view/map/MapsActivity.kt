@@ -233,7 +233,14 @@ class MapsActivity : AppCompatActivity(),
 
         binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
             Timber.v("crags changed, new crags: %s", crags?.map { it.name })
-            refreshCragClusterItems()
+        })
+
+        binding.vm?.cragClusterItems?.observe(this, Observer { clusterItems ->
+            Timber.v("cragClusterItems changed")
+            //TODO Do diff insteaf of re-initisliaing
+            clusterManager.clearItems()
+            clusterManager.addItems(clusterItems)
+            clusterManager.cluster()
         })
 
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
@@ -255,32 +262,27 @@ class MapsActivity : AppCompatActivity(),
                 DEFAULT_MODE -> {
                     Timber.d("MapMode changed to DEFAULT_MODE")
                     fabStyle(R.drawable.ic_add_crag, R.color.fab_new_crag)
-                    refreshCragClusterItems()
                     replaceFragment(welcomeFragment, R.id.bottom_sheet)
                 }
                 CRAG_MODE -> {
                     Timber.d("MapMode changed to CRAG_MODE")
                     fabStyle(R.drawable.ic_add_sector, R.color.fab_new_sector)
-                    refreshCragClusterItems()
                     refreshSectorsForCrag(binding.vm?.sectors?.value)
                     replaceFragment(bottomSheetFragment, R.id.bottom_sheet)
                 }
                 SECTOR_MODE, TOPO_MODE -> {
                     Timber.d("MapMode changed to SECTOR_MODE || TOPO MODE")
                     fabStyle(R.drawable.ic_add_topo, R.color.fab_new_topo)
-                    refreshCragClusterItems()
                     replaceFragment(bottomSheetFragment, R.id.bottom_sheet)
                 }
                 SUBMIT_CRAG_MODE -> {
                     Timber.d("MapMode changed to SUBMIT_CRAG_MODE")
                     replaceFragment(submitCragFragment, R.id.bottom_sheet)
-                    refreshCragClusterItems()
                 }
                 SUBMIT_SECTOR_MODE -> {
                     Timber.d("MapMode changed to SUBMIT_SECTOR_MODE")
                     submitSectorFragment.parentId = binding.vm?.selectedLocationId?.value
                     replaceFragment(submitSectorFragment, R.id.bottom_sheet)
-                    refreshCragClusterItems()
                     refreshSectorsForCrag(binding.vm?.sectors?.value)
                 }
                 SUBMIT_TOPO_MODE -> {
@@ -316,17 +318,6 @@ class MapsActivity : AppCompatActivity(),
                     .position(it.latlng)
                     .draggable(false))
             marker.tag = it
-        }
-    }
-
-    private fun refreshCragClusterItems() {
-        //TODO Move to VM as transformation
-        //TODO Do diff insteaf of re-initisliaing
-        val cragClusterItems = binding.vm?.crags?.value?.map { CragClusterItem(it) }
-        cragClusterItems?.let {
-            clusterManager.clearItems()
-            clusterManager.addItems(cragClusterItems)
-            clusterManager.cluster()
         }
     }
 

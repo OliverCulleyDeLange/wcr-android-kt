@@ -16,6 +16,7 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
 import uk.co.oliverdelange.wcr_android_kt.db.preload
+import uk.co.oliverdelange.wcr_android_kt.map.CragClusterItem
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
@@ -84,6 +85,11 @@ class MapViewModel @Inject constructor(val locationRepository: LocationRepositor
     }
 
     val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
+
+    val cragClusterItems = Transformations.map(crags) {
+        it.map { location -> CragClusterItem(location) }
+    }
+
     val sectors: LiveData<List<Location>?> = Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) { selectedLocation ->
         Timber.v("SelectedLocation changed to %s: Updating 'sectors'", selectedLocation?.id)
         if (selectedLocation?.id != null) {
