@@ -87,7 +87,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : com.ortiz.touchvie
     }
 
     private fun touch_start(x: Float, y: Float) {
-        if (path.isEmpty) {
+        if (path.actionStack.isEmpty()) {
             path.moveTo(x, y)
             // Hack to get the white circle for initial tap
             path.lineTo(x + 1, y)
