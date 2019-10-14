@@ -6,6 +6,7 @@
     <data>
 
         <import type="uk.co.oliverdelange.wcr_android_kt.model.LocationType" />
+
         <variable
             name="vm"
             type="uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoViewModel" />
@@ -43,12 +44,26 @@
                     app:imageBitmap="@{vm.localTopoImageBitmap}"
                     tools:src="@drawable/nature" />
 
-                <ImageButton
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:onClick="@{vm::toggleDrawing}"
-                    android:src="@{vm.isDrawing ? @drawable/ic_move_black_24dp : @drawable/ic_edit_black_24dp}" />
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{vm::undoDrawing}"
+                        android:src="@drawable/ic_undo_black_24dp" />
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{vm::toggleDrawing}"
+                        android:src="@{vm.isDrawing ? @drawable/ic_move_black_24dp : @drawable/ic_edit_black_24dp}" />
+
+                </LinearLayout>
+
             </FrameLayout>
 
             <com.google.android.material.textfield.TextInputLayout

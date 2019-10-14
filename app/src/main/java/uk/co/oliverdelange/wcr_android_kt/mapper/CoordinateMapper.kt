@@ -2,13 +2,13 @@ package uk.co.oliverdelange.wcr_android_kt.mapper
 
 import timber.log.Timber
 
-fun coordsSetToString(coords: Set<Pair<Float, Float>>?): String? {
+fun coordsSetToString(coords: List<Pair<Float, Float>>?): String? {
     return coords?.let {
         it.joinToString(",", transform = { pair -> "${pair.first}:${pair.second}" })
     }
 }
 
-fun stringToCoordsSet(coords: String?): Set<Pair<Float, Float>>? {
+fun stringToCoordsSet(coords: String?): List<Pair<Float, Float>>? {
     return coords?.let {
         try {
 
@@ -17,10 +17,10 @@ fun stringToCoordsSet(coords: String?): Set<Pair<Float, Float>>? {
                 val parts = it.split(":").map { it.toFloat() }
                 Pair(parts[0], parts[1])
             }
-            pairs.toSet()
+            pairs
         } catch (e: Exception) {
             Timber.e(e, "Error whilst converting topo route path string into Set<Pair<Int, Int>>")
-            emptySet()
+            emptyList()
         }
     }
 }

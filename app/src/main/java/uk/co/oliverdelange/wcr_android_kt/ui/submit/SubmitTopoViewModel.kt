@@ -32,7 +32,6 @@ import kotlin.math.roundToInt
 
 const val MAX_TOPO_SIZE_PX = 1020
 
-//@Singleton
 class SubmitTopoViewModel @Inject constructor(application: Application,
                                               private val topoRepository: TopoRepository,
                                               private val routeRepository: RouteRepository) : AndroidViewModel(application) {
@@ -45,6 +44,11 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         } else {
             isDrawing.set(true)
         }
+    }
+
+    val doUndoDrawing = MutableLiveData<Void>()
+    fun undoDrawing(view: View) {
+        doUndoDrawing.value = null
     }
 
     val localTopoImage = MutableLiveData<Uri?>()
@@ -97,7 +101,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         }
         activeRoute.value = activeRouteFragId
         // Link the route path capture to the Route in the view model
-        val pathCapture = paths[activeRouteFragId]?.capture
+        val pathCapture = paths[activeRouteFragId]?.actionStack?.flatten()
         routes[activeRouteFragId]?.path = pathCapture
         Timber.d("Set route $activeRouteFragId path to $pathCapture")
         // We probably need to disable the submit button if a new route has been added without filled in info.

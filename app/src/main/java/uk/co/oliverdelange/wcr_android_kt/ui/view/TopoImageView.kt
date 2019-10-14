@@ -61,7 +61,7 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
         }
     }
 
-    private fun scalePath(routePoints: Set<Pair<Float, Float>>): Path {
+    private fun scalePath(routePoints: List<Pair<Float, Float>>): Path {
         val routePath = Path()
         val iterator = routePoints.iterator()
         val firstPoint = iterator.next()

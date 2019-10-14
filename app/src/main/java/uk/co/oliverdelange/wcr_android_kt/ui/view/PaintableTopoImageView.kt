@@ -14,7 +14,7 @@ const val DRAW_TOLERANCE = 5f
 class PaintableTopoImageView(c: Context, att: AttributeSet) : com.ortiz.touchview.TouchImageView(c, att) {
 
     private var path = PathCapture()
-    val paths: MutableMap<Int, PathCapture> = mutableMapOf(Pair(0, path))
+    val paths = mutableMapOf(Pair(0, path))
     val routes = mutableMapOf<Int, Route>()
     private var currX: Float = 0f
     private var currY: Float = 0f
@@ -29,6 +29,13 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : com.ortiz.touchvie
     fun refresh() {
         Timber.d("Refreshing topo drawings")
         invalidate()
+    }
+
+    fun undoAction() {
+        if (paths.size > selectedRoute) {
+            paths[selectedRoute]?.undoAction()
+            invalidate()
+        }
     }
 
     fun controlPath(routeFragmentId: Int, route: Route) {
@@ -52,7 +59,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : com.ortiz.touchvie
         canvas.concat(matrix)
         routes.forEach { (routeFragmentId, route) ->
             paths[routeFragmentId]?.let { routePath ->
-                val routePoints = routePath.capture.toSet()
+                val routePoints = routePath.actionStack.flatten().toSet()
                 val scaledRoutePath = scalePath(routePoints)
                 when (route.grade?.colour) {
                     GradeColour.GREEN -> canvas.drawPath(scaledRoutePath, greenRoutePaint)
@@ -82,6 +89,8 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : com.ortiz.touchvie
     private fun touch_start(x: Float, y: Float) {
         if (path.isEmpty) {
             path.moveTo(x, y)
+            // Hack to get the white circle for initial tap
+            path.lineTo(x + 1, y)
         } else {
             path.lineTo(x, y)
         }
@@ -101,6 +110,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : com.ortiz.touchvie
 
     private fun touch_up() {
         path.lineTo(currX, currY)
+        path.endAction()
     }
 
     fun onTouch(event: MotionEvent): Boolean {
@@ -141,31 +151,51 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : com.ortiz.touchvie
     }
 
     inner class PathCapture : Path() {
-        val capture = mutableSetOf<Pair<Float, Float>>()
+        private var actionIndex: Int = 0
+        val actionStack = mutableListOf<MutableList<Pair<Float, Float>>>()
+
+        fun capture(pair: Pair<Float, Float>) {
+            if (actionIndex >= actionStack.size) {
+                actionStack.add(actionIndex, mutableListOf())
+            }
+            val action = actionStack[actionIndex]
+            action.add(pair)
+        }
+
+        fun undoAction() {
+            if (actionStack.size >= actionIndex) {
+                actionStack.removeAt(actionIndex - 1)
+            }
+            actionIndex--
+        }
+
+        fun endAction() {
+            actionIndex++
+        }
 
         override fun reset() {
             super.reset()
-            capture.clear()
+            actionStack.clear()
         }
 
         override fun moveTo(x: Float, y: Float) {
             super.moveTo(x, y)
             val imagePoint = transformCoordTouchToBitmap(x, y, true)
-            capture.add(Pair(imagePoint.x / drawable.intrinsicWidth,
+            capture(Pair(imagePoint.x / drawable.intrinsicWidth,
                     imagePoint.y / drawable.intrinsicHeight))
         }
 
         override fun quadTo(x1: Float, y1: Float, x2: Float, y2: Float) {
             super.quadTo(x1, y1, x2, y2)
             val imagePoint = transformCoordTouchToBitmap(x2, y2, true)
-            capture.add(Pair(imagePoint.x / drawable.intrinsicWidth,
+            capture(Pair(imagePoint.x / drawable.intrinsicWidth,
                     imagePoint.y / drawable.intrinsicHeight))
         }
 
         override fun lineTo(x: Float, y: Float) {
             super.lineTo(x, y)
             val imagePoint = transformCoordTouchToBitmap(x, y, true)
-            capture.add(Pair(imagePoint.x / drawable.intrinsicWidth,
+            capture(Pair(imagePoint.x / drawable.intrinsicWidth,
                     imagePoint.y / drawable.intrinsicHeight))
         }
     }

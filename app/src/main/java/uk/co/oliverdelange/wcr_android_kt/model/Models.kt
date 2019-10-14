@@ -38,7 +38,7 @@ data class Route(val id: String? = null,
                  var grade: Grade? = null,
                  var type: RouteType? = null,
                  var description: String? = null,
-                 var path: Set<Pair<Float, Float>>? = null)
+                 var path: List<Pair<Float, Float>>? = null)
 
 
 data class Grade(var string: String,

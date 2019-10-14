@@ -7,8 +7,6 @@ gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --depen
 IDs
 
 - Do
-Filter routes by grade and type
-Cache images on phone up to configurable limit
 Route undo button
 Submission validation of fields to show nice error
 Perf test - load huge data set and check performance
@@ -18,6 +16,10 @@ Time dB queries
 crashlytics
 Analytics
 License t&c
+
+- Do after release
+Filter routes by grade and type
+Cache images on phone up to configurable limit
 
 - Test
 Test DBs max length for strings - long paths could cause issues.

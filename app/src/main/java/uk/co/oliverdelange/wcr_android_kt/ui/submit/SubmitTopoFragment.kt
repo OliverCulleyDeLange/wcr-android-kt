@@ -86,6 +86,11 @@ class SubmitTopoFragment : Fragment(), Injectable {
             }
         }
 
+        viewModel.doUndoDrawing.observe(this, Observer {
+            // This feels super hacky, shouldn't all the route data live in the VM?
+            // That way we just modify that, and re-draw the Paintable View.
+            binding.topoImage.undoAction()
+        })
         viewModel.submitting.observe(this, Observer {
             if (it == true) {
                 val animation = ObjectAnimator.ofInt(topo_submit_progress, "progress", 0, 500)
