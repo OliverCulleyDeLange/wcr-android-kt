@@ -10,9 +10,9 @@ import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import uk.co.oliverdelange.wcr_android_kt.model.Location
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.SUBMIT_CRAG_MODE
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.SUBMIT_SECTOR_MODE
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode.SUBMIT_CRAG_MODE
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode.SUBMIT_SECTOR_MODE
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 
 class CragClusterItem(val location: Location) : ClusterItem {
 

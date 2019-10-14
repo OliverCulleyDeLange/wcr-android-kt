@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.map
+package uk.co.oliverdelange.wcr_android_kt.view.map
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -24,7 +24,8 @@ import uk.co.oliverdelange.wcr_android_kt.databinding.LayoutTopoCardBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.Route
 import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
-import uk.co.oliverdelange.wcr_android_kt.ui.map.BottomSheetFragment.RouteRecyclerAdapter.ViewHolder
+import uk.co.oliverdelange.wcr_android_kt.view.map.BottomSheetFragment.RouteRecyclerAdapter.ViewHolder
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 import javax.inject.Inject
 
 class BottomSheetFragment : Fragment(), Injectable {

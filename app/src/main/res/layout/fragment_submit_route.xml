@@ -17,7 +17,7 @@
 
         <variable
             name="vm"
-            type="uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoViewModel" />
+            type="uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitTopoViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView

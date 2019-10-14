@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModelProvider;
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel;
-import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationViewModel;
-import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoViewModel;
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel;
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitLocationViewModel;
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitTopoViewModel;
 
 @Module
 abstract class ViewModelModule {

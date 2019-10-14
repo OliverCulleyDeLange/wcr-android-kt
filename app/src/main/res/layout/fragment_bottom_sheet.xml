@@ -7,11 +7,11 @@
 
         <import type="android.view.View" />
 
-        <import type="uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode" />
+        <import type="uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode" />
 
         <variable
             name="vm"
-            type="uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel" />
+            type="uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel" />
     </data>
 
     <LinearLayout

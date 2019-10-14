@@ -23,7 +23,7 @@
             android:background="@color/bg_grey_light"
             android:paddingBottom="10dp">
 
-            <uk.co.oliverdelange.wcr_android_kt.ui.view.TopoImageView
+            <uk.co.oliverdelange.wcr_android_kt.view.customviews.TopoImageView
                 android:id="@+id/topo_image"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"

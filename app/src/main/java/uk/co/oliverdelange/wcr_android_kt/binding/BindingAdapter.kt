@@ -13,10 +13,10 @@ import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
-import uk.co.oliverdelange.wcr_android_kt.ui.submit.MAX_TOPO_SIZE_PX
-import uk.co.oliverdelange.wcr_android_kt.ui.view.PaintableTopoImageView
+import uk.co.oliverdelange.wcr_android_kt.view.customviews.PaintableTopoImageView
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MAX_TOPO_SIZE_PX
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode.*
 
 @set:BindingAdapter("show")
 var View.visibleOrGone

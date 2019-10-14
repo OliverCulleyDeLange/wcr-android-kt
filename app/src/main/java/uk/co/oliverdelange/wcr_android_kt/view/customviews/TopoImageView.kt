@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.view
+package uk.co.oliverdelange.wcr_android_kt.view.customviews
 
 import android.content.Context
 import android.graphics.Bitmap

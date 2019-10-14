@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.submit
+package uk.co.oliverdelange.wcr_android_kt.view.submit
 
 import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -9,6 +9,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitLocationViewModel
 
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.*

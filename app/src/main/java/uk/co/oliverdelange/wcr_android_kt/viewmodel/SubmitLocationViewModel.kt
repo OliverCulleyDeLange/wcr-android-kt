@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.submit
+package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData

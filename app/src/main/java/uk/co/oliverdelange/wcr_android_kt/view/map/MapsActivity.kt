@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.map
+package uk.co.oliverdelange.wcr_android_kt.view.map
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -58,10 +58,11 @@ import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
 import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
-import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitActivity
-import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationFragment
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
+import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitActivity
+import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitLocationFragment
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode.*
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 import java.lang.Math.round
 import java.util.Arrays.asList
 import javax.inject.Inject

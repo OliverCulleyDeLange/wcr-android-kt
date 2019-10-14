@@ -9,7 +9,7 @@
 
         <variable
             name="vm"
-            type="uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitLocationViewModel" />
+            type="uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitLocationViewModel" />
     </data>
 
     <RelativeLayout

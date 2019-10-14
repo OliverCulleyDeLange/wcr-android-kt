@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="uk.co.oliverdelange.wcr_android_kt.ui.map.MapViewModel" />
+            type="uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -19,7 +19,7 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.map.MapsActivity">
+            tools:context=".view.map.MapsActivity">
 
             <Button
                 android:id="@+id/map_toggle"

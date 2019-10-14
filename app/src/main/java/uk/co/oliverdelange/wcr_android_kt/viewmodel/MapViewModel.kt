@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.map
+package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
 import android.content.Context
 import android.view.View

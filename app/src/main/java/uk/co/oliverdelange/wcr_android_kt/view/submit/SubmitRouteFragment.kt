@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.submit
+package uk.co.oliverdelange.wcr_android_kt.view.submit
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +12,7 @@ import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitRouteBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.*
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitTopoViewModel
 import javax.inject.Inject
 
 class SubmitRouteFragment : androidx.fragment.app.Fragment(), Injectable {

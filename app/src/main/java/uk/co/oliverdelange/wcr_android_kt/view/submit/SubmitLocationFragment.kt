@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.submit
+package uk.co.oliverdelange.wcr_android_kt.view.submit
 
 import android.content.Context
 import android.os.Bundle
@@ -21,7 +21,8 @@ import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitLocationBind
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.map.IconHelper
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
-import uk.co.oliverdelange.wcr_android_kt.ui.map.MapsActivity
+import uk.co.oliverdelange.wcr_android_kt.view.map.MapsActivity
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitLocationViewModel
 import javax.inject.Inject
 
 class SubmitLocationFragment : androidx.fragment.app.Fragment(), Injectable {

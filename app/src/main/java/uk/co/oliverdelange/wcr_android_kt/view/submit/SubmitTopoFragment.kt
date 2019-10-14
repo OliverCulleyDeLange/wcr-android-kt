@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.submit
+package uk.co.oliverdelange.wcr_android_kt.view.submit
 
 import android.animation.ObjectAnimator
 import android.app.Activity.RESULT_OK
@@ -27,6 +27,7 @@ import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.util.inTransaction
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitTopoViewModel
 import javax.inject.Inject
 import kotlin.math.roundToInt
 

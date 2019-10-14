@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.map
+package uk.co.oliverdelange.wcr_android_kt.view.map
 
 import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -7,9 +7,9 @@ import org.junit.Rule
 import spock.lang.Specification
 import spock.lang.Unroll
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 
 import static org.mockito.Mockito.mock
-import static uk.co.oliverdelange.wcr_android_kt.ui.map.MapMode.*
 
 class MapViewModelSpec extends Specification {
 

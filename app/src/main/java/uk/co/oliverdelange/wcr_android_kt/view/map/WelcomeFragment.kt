@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.map
+package uk.co.oliverdelange.wcr_android_kt.view.map
 
 import android.os.Bundle
 import android.view.LayoutInflater

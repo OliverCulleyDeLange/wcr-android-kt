@@ -4,6 +4,7 @@ gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --depen
 
 #TODO
 - Fix
+Make look good
 IDs
 
 - Do

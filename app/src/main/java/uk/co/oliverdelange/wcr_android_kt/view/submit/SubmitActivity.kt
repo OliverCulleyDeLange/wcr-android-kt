@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.ui.submit
+package uk.co.oliverdelange.wcr_android_kt.view.submit
 
 import android.app.Activity
 import android.os.Bundle
@@ -7,9 +7,9 @@ import androidx.fragment.app.Fragment
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import uk.co.oliverdelange.wcr_android_kt.R
-import uk.co.oliverdelange.wcr_android_kt.ui.map.EXTRA_SECTOR_ID
-import uk.co.oliverdelange.wcr_android_kt.ui.submit.SubmitTopoFragment.Companion.newTopoSubmissionFor
 import uk.co.oliverdelange.wcr_android_kt.util.addFragment
+import uk.co.oliverdelange.wcr_android_kt.view.map.EXTRA_SECTOR_ID
+import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitTopoFragment.Companion.newTopoSubmissionFor
 import javax.inject.Inject
 
 class SubmitActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteractor,
