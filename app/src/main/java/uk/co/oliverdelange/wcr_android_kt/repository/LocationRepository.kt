@@ -14,21 +14,22 @@ import javax.inject.Inject
 
 class LocationRepository @Inject constructor(private val locationDao: LocationDao) {
 
-    fun save(location: Location): Single<String> {
+    fun save(location: Location): Single<Long> {
         Timber.d("Saving %s location: %s", location.type, location.name)
         val locationDTO = toLocationDto(location)
         return saveToLocalDb(locationDTO)
     }
 
-    private fun saveToLocalDb(location: uk.co.oliverdelange.wcr_android_kt.db.dto.local.Location): Single<String> {
+    private fun saveToLocalDb(location: uk.co.oliverdelange.wcr_android_kt.db.dto.local.Location)
+            : Single<Long> {
         return Single.fromCallable {
-            locationDao.insert(location)
-            Timber.d("Saved location to local db")
-            location.id
+            val id = locationDao.insert(location)
+            Timber.d("Saved location $id to local db: %s", location)
+            id
         }
     }
 
-    fun load(selectedLocationId: String): LiveData<Location> {
+    fun load(selectedLocationId: Long): LiveData<Location> {
         Timber.d("Loading location from id: %s", selectedLocationId)
         val liveLocationDTO = locationDao.load(selectedLocationId)
         return Transformations.map(liveLocationDTO) {
@@ -36,7 +37,7 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
         }
     }
 
-    fun get(locationId: String): Location? {
+    fun get(locationId: Long): Location? {
         Timber.d("Getting Location from id: %s", locationId)
         val location = locationDao.get(locationId)
         return location?.let { fromLocationDto(it) }
@@ -52,7 +53,7 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
         }
     }
 
-    fun loadSectorsFor(cragId: String): LiveData<List<Location>> {
+    fun loadSectorsFor(cragId: Long): LiveData<List<Location>> {
         Timber.d("Loading sectors for cragId: %s", cragId)
         val liveLocationDTOs = locationDao.loadWithParentId(cragId)
         return Transformations.map(liveLocationDTOs) { locations ->
@@ -62,7 +63,7 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
         }
     }
 
-    fun loadRouteInfoFor(locationId: String): LiveData<LocationRouteInfo> {
+    fun loadRouteInfoFor(locationId: Long): LiveData<LocationRouteInfo> {
         Timber.d("Loading route info for location: %s", locationId)
         return locationDao.getRouteInfo(locationId)
     }

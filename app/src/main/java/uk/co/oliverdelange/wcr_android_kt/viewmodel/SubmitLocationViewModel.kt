@@ -30,7 +30,7 @@ class SubmitLocationViewModel @Inject constructor(private val submitLocationUseC
         }
     }
 
-    fun submit(parentId: String?): Single<String> {
+    fun submit(parentId: Long?): Single<Long> {
         val locationName = locationName.value
         val lat = locationLatLng.value?.latitude
         val lng = locationLatLng.value?.longitude

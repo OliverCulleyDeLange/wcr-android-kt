@@ -37,7 +37,12 @@ class MapViewModel @Inject constructor(application: Application,
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
-    val userSignedIn = MutableLiveData<Boolean>().also { it.value = FirebaseAuth.getInstance().currentUser != null }
+    val userSignedIn = MutableLiveData<Boolean>().also {
+        val signedIn = FirebaseAuth.getInstance().currentUser != null
+        Timber.v("Initialising userSignedIn: $signedIn")
+        it.value = signedIn
+    }
+
     fun onUserSignInSuccess() {
         userSignedIn.value = true
         val user = FirebaseAuth.getInstance().currentUser
@@ -62,14 +67,16 @@ class MapViewModel @Inject constructor(application: Application,
 
     private val mapModesThatDisplayFab = listOf(MapMode.DEFAULT_MODE, MapMode.CRAG_MODE, MapMode.TOPO_MODE, MapMode.SECTOR_MODE)
     val showFab = MediatorLiveData<Boolean>().also {
-        it.value = true
+        it.value = false
         fun getShowFab(): Boolean {
-            return userSignedIn.value == true && mapModesThatDisplayFab.contains(mapMode.value)
+            val show = userSignedIn.value == true && mapModesThatDisplayFab.contains(mapMode.value)
+            Timber.v("Should we show fab? $show")
+            return show
         }
         it.addSource(userSignedIn) { _ -> it.value = getShowFab() }
         it.addSource(mapMode) { _ -> it.value = getShowFab() }
     }
-    val selectedLocationId: MutableLiveData<String?> = MutableLiveData<String?>().also {
+    val selectedLocationId: MutableLiveData<Long?> = MutableLiveData<Long?>().also {
         it.value = null
     }
     val selectedLocationRouteInfo: LiveData<LocationRouteInfo?> = Transformations.switchMap(selectedLocationId) {
@@ -99,8 +106,10 @@ class MapViewModel @Inject constructor(application: Application,
         if (selectedLocation?.id != null) {
             selectedLocation.id.let {
                 when (selectedLocation.type) {
-                    LocationType.CRAG -> locationRepository.loadSectorsFor(selectedLocation.id)
-                    LocationType.SECTOR -> selectedLocation.parentLocation?.let { parentID -> locationRepository.loadSectorsFor(parentID) }
+                    LocationType.CRAG -> locationRepository.loadSectorsFor(it)
+                    LocationType.SECTOR -> selectedLocation.parentLocation?.let { parentID ->
+                        locationRepository.loadSectorsFor(parentID)
+                    }
                 }
             }
         } else {
@@ -108,7 +117,7 @@ class MapViewModel @Inject constructor(application: Application,
         }
     })
 
-    val selectedTopoId = MutableLiveData<String>()
+    val selectedTopoId = MutableLiveData<Long>()
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
         Timber.d("SelectedLocation changed to %s: Updating 'topos'", selectedLocation?.id)
         selectedLocation?.id?.let {
@@ -137,7 +146,7 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
-    private fun getToposForCrag(cragId: String): LiveData<List<TopoAndRoutes>> {
+    private fun getToposForCrag(cragId: Long): LiveData<List<TopoAndRoutes>> {
         Timber.d("Getting topos for crag with id: %s", cragId)
         val topos: MediatorLiveData<List<TopoAndRoutes>> = MediatorLiveData()
         val loadSectorsForCrag = locationRepository.loadSectorsFor(cragId)
@@ -195,19 +204,19 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
-    fun selectCrag(id: String?) {
+    fun selectCrag(id: Long?) {
         Timber.d("Selecting crag with id %s", id)
         selectedLocationId.postValue(id)
         mapMode.value = MapMode.CRAG_MODE
     }
 
-    fun selectSector(id: String?) {
+    fun selectSector(id: Long?) {
         Timber.d("Selecting sector with id %s", id)
         selectedLocationId.postValue(id)
         mapMode.value = MapMode.SECTOR_MODE
     }
 
-    fun selectTopo(id: String?) {
+    fun selectTopo(id: Long?) {
         Timber.d("Selecting topo with id %s", id)
         id?.let {
             bottomSheetState.value = BottomSheetBehavior.STATE_EXPANDED
@@ -222,7 +231,7 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
-    fun selectRoute(id: String?) {
+    fun selectRoute(id: Long?) {
         Timber.d("Selecting route with id %s", id)
         id?.let { routeId ->
             Observable.fromCallable { routeRepository.get(routeId) }

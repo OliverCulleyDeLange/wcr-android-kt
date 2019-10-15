@@ -17,35 +17,35 @@ import javax.inject.Inject
 class TopoRepository @Inject constructor(val topoDao: TopoDao,
                                          val locationDao: LocationDao) {
 
-    fun save(topo: Topo): Single<String> {
+    fun save(topo: Topo): Single<Long> {
         Timber.d("Saving topo %s", topo.name)
         val topoDTO = toTopoDto(topo)
         return saveToLocalDb(topoDTO)
     }
 
-    private fun saveToLocalDb(topoDTO: uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo): Single<String> {
+    private fun saveToLocalDb(topoDTO: uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo): Single<Long> {
         return Single.fromCallable {
-            topoDao.insert(topoDTO)
-            Timber.d("Saved topo to local db: %s", topoDTO)
-            topoDTO.id
+            val id = topoDao.insert(topoDTO)
+            Timber.d("Saved topo $id to local db: %s", topoDTO)
+            id
         }
     }
 
-    fun loadToposForLocation(locationId: String): LiveData<List<TopoAndRoutes>> {
+    fun loadToposForLocation(locationId: Long): LiveData<List<TopoAndRoutes>> {
         Timber.d("Loading topos for location with id: %s", locationId)
         val liveTopoAndRoutesDto = topoDao.loadTopoAndRoutes(locationId)
         return Transformations.map(liveTopoAndRoutesDto) { fromTopoAndRouteDto(it) }
     }
 
     @WorkerThread
-    fun getToposForLocation(locationId: String): List<TopoAndRoutes> {
+    fun getToposForLocation(locationId: Long): List<TopoAndRoutes> {
         Timber.d("Getting topos for location with id: %s", locationId)
         val topoAndRoutes = topoDao.getTopoAndRoutes(locationId)
         return fromTopoAndRouteDto(topoAndRoutes)
     }
 
     @WorkerThread
-    fun getToposForCrag(cragId: String): List<TopoAndRoutes> {
+    fun getToposForCrag(cragId: Long): List<TopoAndRoutes> {
         Timber.d("Getting topos for crag with id: %s", cragId)
         val toposAndRoutes = ArrayList<TopoAndRoutes>()
         val sectorsForCrag = locationDao.getWithParentId(cragId)

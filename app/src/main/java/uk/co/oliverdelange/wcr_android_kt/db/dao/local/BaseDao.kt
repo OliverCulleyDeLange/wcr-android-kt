@@ -21,5 +21,7 @@ interface BaseDao<T : BaseEntity> {
 
     fun loadYetToBeUploaded(): Maybe<List<T>>
 
-    fun updateUploadedAt(id: String, uploadedAt: Long): Completable
+    fun updateUploadedAt(id: Long, uploadedAt: Long): Completable
+
+//    fun updateFirebaseId(id: Long, firebaseId: String): Completable
 }

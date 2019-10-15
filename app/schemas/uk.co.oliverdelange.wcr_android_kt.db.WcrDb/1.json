@@ -2,22 +2,28 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2faa94099e79fc55eb66110f8a273275",
+    "identityHash": "9bd157b4f6f23e175811de208db1c702",
     "entities": [
       {
         "tableName": "Location",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `parentLocation` TEXT, `name` TEXT NOT NULL, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `type` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `firebaseId` TEXT, `parentLocationId` INTEGER, `name` TEXT NOT NULL, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `type` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "parentLocation",
-            "columnName": "parentLocation",
+            "fieldPath": "firebaseId",
+            "columnName": "firebaseId",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "parentLocationId",
+            "columnName": "parentLocationId",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -61,25 +67,31 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "Topo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `locationId` TEXT NOT NULL, `name` TEXT NOT NULL, `image` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`locationId`) REFERENCES `Location`(`id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `firebaseId` TEXT, `locationId` INTEGER NOT NULL, `name` TEXT NOT NULL, `image` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL, FOREIGN KEY(`locationId`) REFERENCES `Location`(`id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "firebaseId",
+            "columnName": "firebaseId",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "locationId",
             "columnName": "locationId",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -111,7 +123,7 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [
           {
@@ -147,18 +159,24 @@
       },
       {
         "tableName": "Route",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `topoId` TEXT NOT NULL, `name` TEXT NOT NULL, `grade` TEXT NOT NULL, `gradeColour` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `path` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`topoId`) REFERENCES `Topo`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `firebaseId` TEXT, `topoId` INTEGER NOT NULL, `name` TEXT NOT NULL, `grade` TEXT NOT NULL, `gradeColour` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `path` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL, FOREIGN KEY(`topoId`) REFERENCES `Topo`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "firebaseId",
+            "columnName": "firebaseId",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "topoId",
             "columnName": "topoId",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -214,7 +232,7 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [
           {
@@ -284,7 +302,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2faa94099e79fc55eb66110f8a273275\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9bd157b4f6f23e175811de208db1c702\")"
     ]
   }
 }

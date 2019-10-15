@@ -9,7 +9,7 @@ import javax.inject.Inject
 class SubmitLocationUseCase @Inject constructor(
         private val locationRepository: LocationRepository
 ) {
-    fun submitLocation(location: Location): Single<String> {
+    fun submitLocation(location: Location): Single<Long> {
         val save = locationRepository.save(location)
         uploadSync()
         return save

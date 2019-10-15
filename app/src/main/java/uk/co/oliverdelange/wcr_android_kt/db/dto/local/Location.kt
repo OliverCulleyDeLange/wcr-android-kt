@@ -1,18 +1,24 @@
 package uk.co.oliverdelange.wcr_android_kt.db.dto.local
 
-import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
+import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.Exclude
 
-@Parcelize
+//https://stackoverflow.com/questions/40116244/firebase-exclude-with-kotlin-data-class
+
+//@Parcelize
 @Entity
-data class Location(@PrimaryKey override var id: String = "",
-                    var parentLocation: String? = null,
+data class Location(@PrimaryKey(autoGenerate = true) @get:Exclude override var id: Long = 0,
+                    @DocumentId override var firebaseId: DocumentReference?,
+//                    override var uuid: String = "",
+                    @get:Exclude var parentLocationId: Long? = null,
+//                @Ignore var parentLocationFirebaseId: DocumentReference,
                     var name: String = "",
                     var lat: Double = 0.0,
                     var lng: Double = 0.0,
                     var type: String = "",
                     override var uploadedAt: Long = -1,
                     override var uploaderId: String = ""
-) : Parcelable, BaseEntity()
+) : BaseEntity()

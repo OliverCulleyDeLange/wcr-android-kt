@@ -7,7 +7,8 @@ import uk.co.oliverdelange.wcr_android_kt.db.dto.local.TopoAndRoutes as TopoAndR
 
 fun toTopoDto(topo: Topo): TopoDTO {
     return TopoDTO(
-            topo.name,
+            topo.id ?: 0,
+            topo.firebaseId,
             topo.locationId,
             topo.name,
             topo.image
@@ -17,6 +18,7 @@ fun toTopoDto(topo: Topo): TopoDTO {
 fun fromTopoDto(topo: TopoDTO): Topo {
     return Topo(
             topo.id,
+            topo.firebaseId,
             topo.locationId,
             topo.name,
             topo.image

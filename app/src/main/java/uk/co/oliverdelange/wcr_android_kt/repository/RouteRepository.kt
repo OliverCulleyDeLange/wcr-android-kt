@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class RouteRepository @Inject constructor(private val routeDao: RouteDao) {
 
-    fun get(routeId: String): Route {
+    fun get(routeId: Long): Route {
         Timber.d("Getting Route from id: %s", routeId)
         return routeDao.get(routeId)
     }

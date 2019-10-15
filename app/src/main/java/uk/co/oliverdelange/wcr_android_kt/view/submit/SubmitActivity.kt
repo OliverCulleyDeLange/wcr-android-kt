@@ -28,11 +28,11 @@ class SubmitActivity : AppCompatActivity(), SubmitTopoFragment.ActivityInteracto
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_submit)
-        val fragment = newTopoSubmissionFor(intent.getStringExtra(EXTRA_SECTOR_ID))
+        val fragment = newTopoSubmissionFor(intent.getLongExtra(EXTRA_SECTOR_ID, 0))
         addFragment(fragment, R.id.submit_topo_container)
     }
 
-    override fun onTopoSubmitted(submittedTopoId: String?) {
+    override fun onTopoSubmitted(submittedTopoId: Long?) {
         setResult(Activity.RESULT_OK)
         finish()
     }

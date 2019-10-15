@@ -5,8 +5,9 @@ import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Route as RouteDTO
 
 fun toRouteDto(route: Route): RouteDTO {
     return RouteDTO(
-            route.name ?: "",
-            route.topoId ?: "",
+            route.id ?: 0,
+            route.firebaseId,
+            route.topoId ?: 0,
             route.name ?: "",
             route.grade?.string ?: "",
             route.grade?.colour?.name ?: "",
@@ -21,6 +22,7 @@ fun fromRouteDto(route: RouteDTO): Route {
     val routeType = RouteType.valueOf(route.type)
     return Route(
             route.id,
+            route.firebaseId,
             route.topoId,
             route.name,
             grade,

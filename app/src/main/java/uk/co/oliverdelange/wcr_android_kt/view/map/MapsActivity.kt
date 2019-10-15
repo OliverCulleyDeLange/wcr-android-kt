@@ -189,7 +189,7 @@ class MapsActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: String) {
+    override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: Long) {
         if (locationType == LocationType.CRAG) {
             Timber.v("Crag submitted, changing map mode")
             binding.vm?.mapMode?.value = CRAG_MODE
@@ -255,7 +255,9 @@ class MapsActivity : AppCompatActivity(),
 
         binding.vm?.mapLatLngBounds?.observe(this, Observer {
             Timber.v("mapLatLngBounds changed, animating map pan")
-            map.animate(LatLngUtil.getBoundsForLatLngs(it))
+            if (it.size > 1) {
+                map.animate(LatLngUtil.getBoundsForLatLngs(it))
+            }
         })
 
         binding.vm?.mapMode?.observe(this, Observer {
@@ -292,9 +294,9 @@ class MapsActivity : AppCompatActivity(),
                 }
                 SUBMIT_TOPO_MODE -> {
                     Timber.d("MapMode changed to SUBMIT_TOPO_MODE")
-                    binding.vm?.selectedLocation?.value?.id?.let {
+                    binding.vm?.selectedLocation?.value?.id?.let { sectorId ->
                         val intent = Intent(this, SubmitActivity::class.java)
-                        intent.putExtra(EXTRA_SECTOR_ID, it)
+                        intent.putExtra(EXTRA_SECTOR_ID, sectorId)
                         startActivityForResult(intent, REQUEST_SUBMIT)
                     }
                 }
@@ -526,6 +528,8 @@ class MapsActivity : AppCompatActivity(),
         fab.hide() // https://issuetracker.google.com/issues/111316656
         fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, colourId))
         fab.setImageResource(iconId)
-        fab.show()
+        if (binding.vm?.showFab?.value == true) {
+            fab.show()
+        }
     }
 }

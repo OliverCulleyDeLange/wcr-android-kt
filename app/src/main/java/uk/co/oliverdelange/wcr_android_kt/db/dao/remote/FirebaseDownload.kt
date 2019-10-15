@@ -36,13 +36,16 @@ private fun <T : BaseEntity> getFromFirebase(mostRecentDownload: MostRecentSync,
 }
 
 
-fun <T : BaseEntity> saveFromFirebase(mostRecentDownload: MostRecentSync, collection: String, kClass: KClass<T>, dao: BaseDao<T>): Single<MutableList<String>> {
+fun <T : BaseEntity> saveFromFirebase(mostRecentDownload: MostRecentSync,
+                                      collection: String,
+                                      kClass: KClass<T>,
+                                      dao: BaseDao<T>): Single<MutableList<Long>> {
     return getFromFirebase(mostRecentDownload, collection, kClass)
             .concatMapDelayError {
                 Timber.v("Inserting into db: ${kClass.java.simpleName} ${it.id}")
                 dao.insert(it)
                 Observable.just(it)
-            }.collect({ mutableListOf<String>() }, { list, it -> list.add(it.id) })
+            }.collect({ mutableListOf<Long>() }, { list, it -> list.add(it.id) })
             .doOnSuccess {
                 Timber.d("Downloaded ${it.size} ${kClass.java.simpleName} from firestore: $it")
             }

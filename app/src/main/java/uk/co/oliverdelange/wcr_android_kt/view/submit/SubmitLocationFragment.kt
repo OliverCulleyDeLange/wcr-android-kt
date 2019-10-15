@@ -41,7 +41,7 @@ class SubmitLocationFragment : androidx.fragment.app.Fragment(), Injectable {
     }
 
     interface ActivityInteractor {
-        fun onLocationSubmitted(locationType: LocationType, submittedLocationId: String)
+        fun onLocationSubmitted(locationType: LocationType, submittedLocationId: Long)
     }
 
     @Inject
@@ -49,7 +49,7 @@ class SubmitLocationFragment : androidx.fragment.app.Fragment(), Injectable {
 
     private var activityInteractor: ActivityInteractor? = null
 
-    var parentId: String? = null
+    var parentId: Long? = null
     lateinit var locationType: LocationType
     private var newLocationMarker: Marker? = null
 

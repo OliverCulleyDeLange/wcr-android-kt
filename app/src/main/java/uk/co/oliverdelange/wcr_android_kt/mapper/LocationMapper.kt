@@ -6,7 +6,8 @@ import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Location as LocationDTO
 
 fun toLocationDto(location: Location): LocationDTO {
-    return LocationDTO(location.name,
+    return LocationDTO(location.id ?: 0,
+            location.firebaseId,
             location.parentLocation,
             location.name,
             location.latlng.latitude,
@@ -19,7 +20,8 @@ fun toLocationDto(location: Location): LocationDTO {
 fun fromLocationDto(location: LocationDTO): Location {
     return Location(
             location.id,
-            location.parentLocation,
+            location.firebaseId,
+            location.parentLocationId,
             location.name,
             LatLng(
                     location.lat,

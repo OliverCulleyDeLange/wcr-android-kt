@@ -34,7 +34,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : RxWo
                     val downloadedRouteIds = saveFromFirebase(it, "routes", Route::class, localDb.routeDao())
 
                     Single.mergeDelayError(downloadedLocationIds, downloadedTopoIds, downloadedRouteIds)
-                }.collect({ mutableListOf<String>() }, { list, it ->
+                }.collect({ mutableListOf<Long>() }, { list, it ->
                     Timber.v("IDs of downloaded things: $it")
                     list.addAll(it)
                 })

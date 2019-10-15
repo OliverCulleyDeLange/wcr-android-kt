@@ -12,16 +12,16 @@ import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Route
 @WorkerThread
 interface RouteDao : BaseDao<Route> {
     @Query("SELECT * from route where id = :id")
-    fun get(id: String): Route
+    fun get(id: Long): Route
 
     @Query("SELECT * from route where topoId = :topoId")
-    fun loadWithTopoId(topoId: String): LiveData<List<Route>>
+    fun loadWithTopoId(topoId: Long): LiveData<List<Route>>
 
     @Query("SELECT * FROM route where uploadedAt= -1")
     override fun loadYetToBeUploaded(): Maybe<List<Route>>
 
     @Query("UPDATE route SET uploadedAt = :uploadedAt where id = :id")
-    override fun updateUploadedAt(id: String, uploadedAt: Long): Completable
+    override fun updateUploadedAt(id: Long, uploadedAt: Long): Completable
 
     @Query("SELECT * FROM route WHERE name LIKE :search")
     fun searchOnName(search: String): LiveData<List<Route>>
