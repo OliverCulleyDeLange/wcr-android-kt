@@ -24,18 +24,17 @@ import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
-import uk.co.oliverdelange.wcr_android_kt.view.customviews.PaintableTopoImageView
+import uk.co.oliverdelange.wcr_android_kt.util.PathCapture
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.math.roundToInt
 
 
 const val MAX_TOPO_SIZE_PX = 1020
 
-@Singleton
+//@Singleton Not a singleton so a new one gets created so half finished submissions don't retair
 class SubmitTopoViewModel @Inject constructor(application: Application,
                                               private val topoRepository: TopoRepository,
                                               private val routeRepository: RouteRepository) : AndroidViewModel(application) {
@@ -97,16 +96,15 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
     val activeRoute = MutableLiveData<Int>()
     val routes = HashMap<Int, Route>()
-    fun addRoute(activeRouteFragId: Int, paths: MutableMap<Int, PaintableTopoImageView.PathCapture>) {
+    fun addRoute(activeRouteFragId: Int, path: PathCapture?) {
         if (!routes.containsKey(activeRouteFragId)) {
             routes[activeRouteFragId] = Route(name = "")
             Timber.d("Added empty route to view model with fragment id $activeRouteFragId")
         }
         activeRoute.value = activeRouteFragId
         // Link the route path capture to the Route in the view model
-        val pathCapture = paths[activeRouteFragId]?.actionStack?.flatten() //TODO FIXME
-        routes[activeRouteFragId]?.path = pathCapture
-        Timber.d("Set route $activeRouteFragId path to $pathCapture")
+        routes[activeRouteFragId]?.path = path?.actionStack
+        Timber.d("Set route $activeRouteFragId path")
     }
 
     fun removeRoute(fragmentId: Int?) {
@@ -235,9 +233,10 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         val hasImage = localTopoImage.value != null
         val hasAtLeast1Route = routes.size > 0
         val routesHaveNameDescriptionAndPath = routes.none { route ->
-            route.value.name?.isEmpty() ?: true ||
-                    route.value.description.isNullOrEmpty() ||
-                    route.value.path?.size?.let { it < 2 } ?: false
+            val emptyName = route.value.name?.isEmpty() ?: true
+            val emptyDescription = route.value.description.isNullOrEmpty()
+            val noRoutePath = (route.value.path?.flatten()?.size ?: 0) < 2
+            emptyName || emptyDescription || noRoutePath
         }
         val allowSubmit = hasName && hasImage && hasAtLeast1Route && routesHaveNameDescriptionAndPath
         Timber.d("Submission allowed: $allowSubmit")

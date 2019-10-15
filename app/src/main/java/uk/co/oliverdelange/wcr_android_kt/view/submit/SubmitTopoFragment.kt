@@ -228,7 +228,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.routePager.setCurrentItem(pagerAdapter.count, true)
         // Get the fragment ID and set it as active so we control the right topo route path
         val activeRouteFragId = pagerAdapter.getItemId(binding.routePager.currentItem).toInt()
-        binding.vm?.addRoute(activeRouteFragId, binding.topoImage.paths)
+        binding.vm?.addRoute(activeRouteFragId, binding.topoImage.getPath(activeRouteFragId))
     }
 
     private fun selectImage() {
