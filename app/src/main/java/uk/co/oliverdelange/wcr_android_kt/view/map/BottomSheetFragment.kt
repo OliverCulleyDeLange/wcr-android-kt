@@ -68,6 +68,7 @@ class BottomSheetFragment : Fragment(), Injectable {
             binding?.topoRecycler?.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     binding?.vm?.selectedTopoId?.value?.let { selectedTopoId ->
+                        Timber.d("Selecting the right topo in the list")
                         val position = recyclerAdapter.topos.indexOfFirst { it.topo.id == selectedTopoId }
                         if (position != -1) {
                             binding?.topoRecycler?.scrollToPosition(position)
@@ -87,6 +88,7 @@ class BottomSheetFragment : Fragment(), Injectable {
 
         @SuppressLint("ClickableViewAccessibility")
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            Timber.v("TopoRecyclerAdapter:onCreateViewHolder ... Creating the topo view")
             val routeBinding: LayoutTopoCardBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.layout_topo_card, parent, false)
             routeBinding.routeRecycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             LinearSnapHelper().attachToRecyclerView(routeBinding.routeRecycler)
@@ -122,6 +124,7 @@ class BottomSheetFragment : Fragment(), Injectable {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            Timber.v("TopoRecyclerAdapter:onBindViewHolder ... Binding data to topo view: topo name = ${topos[position].topo.name}")
             val topoAndRoutes = topos[position]
             holder.binding.topo = topoAndRoutes.topo
             holder.binding.topoImage.routes = topoAndRoutes.routes
@@ -143,13 +146,13 @@ class BottomSheetFragment : Fragment(), Injectable {
                     }
 
                     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                        val rtn = topos.get(oldItemPosition).topo.id == newTopos.get(newItemPosition).topo.id
+                        val rtn = topos[oldItemPosition].topo.id == newTopos[newItemPosition].topo.id
                         return rtn
                     }
 
                     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                        val newData = newTopos.get(newItemPosition)
-                        val oldData = topos.get(oldItemPosition)
+                        val newData = newTopos[newItemPosition]
+                        val oldData = topos[oldItemPosition]
                         return (newData.topo.id == oldData.topo.id &&
                                 newData.routes.size == oldData.routes.size)
                     }
@@ -165,6 +168,7 @@ class BottomSheetFragment : Fragment(), Injectable {
     inner class RouteRecyclerAdapter(val routes: List<Route>) : RecyclerView.Adapter<ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            Timber.v("RouteRecyclerAdapter:onCreateViewHolder ... Creating a Route view ")
             val binding: LayoutRouteCardBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.layout_route_card, parent, false)
             return ViewHolder(binding)
         }
@@ -174,6 +178,7 @@ class BottomSheetFragment : Fragment(), Injectable {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            Timber.v("RouteRecyclerAdapter:onBindViewHolder ... Binding route view data: route name = ${routes[position].name} ")
             val route = routes[position]
             holder.binding.route = route
         }

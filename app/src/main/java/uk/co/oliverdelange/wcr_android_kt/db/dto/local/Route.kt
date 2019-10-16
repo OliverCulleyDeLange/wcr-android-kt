@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import uk.co.oliverdelange.wcr_android_kt.mapper.stringToCoordsSet
 
 @Entity(indices = [Index("id", unique = true), Index("topoId"), Index("name")],
         foreignKeys = [(
@@ -23,4 +24,11 @@ data class Route(@PrimaryKey override var id: String = "",
                  var path: String = "",
                  override var uploadedAt: Long = -1,
                  override var uploaderId: String = ""
-) : BaseEntity()
+) : Comparable<Route>, BaseEntity() {
+    override fun compareTo(other: Route): Int {
+        fun getFirstXCoord(pathString: String): Float {
+            return stringToCoordsSet(pathString)?.flatten()?.first()?.first ?: 0f
+        }
+        return getFirstXCoord(path).compareTo(getFirstXCoord(other.path))
+    }
+}
