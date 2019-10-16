@@ -145,7 +145,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
                     touch_move(x, y)
                     invalidate()
                 }
-                MotionEvent.ACTION_UP -> {
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     touch_up()
                     invalidate()
                 }

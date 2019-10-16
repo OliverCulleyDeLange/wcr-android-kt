@@ -64,12 +64,12 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         val out = ByteArrayOutputStream()
         scaled.compress(Bitmap.CompressFormat.WEBP, 75, out)
         val bytes = out.toByteArray()
-        Timber.d("Image WAS ${bitmap.width}x${bitmap.height} kb:${bytes.size / 1000}")
+        Timber.d("Image WAS ${bitmap.width}x${bitmap.height} kb:${bitmap.byteCount / 1000}")
         bytes
     }
     val localTopoImageBitmap = Transformations.map(localTopoImageBytes) {
         val scaledAndCompressed = BitmapFactory.decodeStream(ByteArrayInputStream(it))
-        Timber.d("Image IS ${scaledAndCompressed.width}x${scaledAndCompressed.height} kb:${it.size / 1000}")
+        Timber.d("Image IS ${scaledAndCompressed.width}x${scaledAndCompressed.height} kb:${scaledAndCompressed.byteCount / 1000}, filesize: ${it.size / 1000}kb")
         scaledAndCompressed
     }
     val topoName = MutableLiveData<String?>()
