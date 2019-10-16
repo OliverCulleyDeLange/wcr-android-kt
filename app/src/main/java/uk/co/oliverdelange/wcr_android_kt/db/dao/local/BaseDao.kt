@@ -14,14 +14,14 @@ import uk.co.oliverdelange.wcr_android_kt.db.dto.local.BaseEntity
 @WorkerThread
 interface BaseDao<T : BaseEntity> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(obj: T): Long
+    fun insert(obj: T)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMany(vararg objs: T): Array<Long>
+    fun insertMany(vararg objs: T)
 
     fun loadYetToBeUploaded(): Maybe<List<T>>
 
-    fun updateUploadedAt(id: Long, uploadedAt: Long): Completable
+    fun updateUploadedAt(id: String, uploadedAt: Long): Completable
 
 //    fun updateFirebaseId(id: Long, firebaseId: String): Completable
 }

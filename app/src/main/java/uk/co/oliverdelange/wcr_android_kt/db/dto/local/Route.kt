@@ -4,22 +4,17 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.google.firebase.firestore.DocumentId
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.Exclude
 
-@Entity(indices = [Index("firebaseId", unique = true), Index("topoFirebaseId")],
+@Entity(indices = [Index("id", unique = true), Index("topoId"), Index("name")],
         foreignKeys = [(
                 ForeignKey(
                         entity = Topo::class,
-                        parentColumns = arrayOf("firebaseId"),
-                        childColumns = arrayOf("topoFirebaseId"))
+                        parentColumns = arrayOf("id"),
+                        childColumns = arrayOf("topoId"))
                 )])
-data class Route(@get:Exclude @PrimaryKey(autoGenerate = true) override var id: Long = 0,
-                 @DocumentId override var firebaseId: DocumentReference? = null,
-//                 override var uuid: String = "",
-                 @get:Exclude var topoId: Long = 0,
-                 var topoFirebaseId: DocumentReference? = null,
+data class Route(@PrimaryKey override var id: String = "",
+                 var topoId: String = "",
+
                  var name: String = "",
                  var grade: String = "",
                  var gradeColour: String = "",

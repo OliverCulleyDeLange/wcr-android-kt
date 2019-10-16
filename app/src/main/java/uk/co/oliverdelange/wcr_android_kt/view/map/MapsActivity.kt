@@ -189,7 +189,7 @@ class MapsActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: Long) {
+    override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: String) {
         if (locationType == LocationType.CRAG) {
             Timber.v("Crag submitted, changing map mode")
             binding.vm?.mapMode?.value = CRAG_MODE

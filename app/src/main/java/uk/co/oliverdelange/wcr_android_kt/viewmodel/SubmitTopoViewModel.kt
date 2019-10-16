@@ -219,7 +219,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                 }
     }
 
-    var sectorId: Long = 0
+    var sectorId: String = ""
     val submissionResult = MutableLiveData<SubmissionResult>()
     // We display a loader and disable the submit button when a submission is in progress
     val submitting = MutableLiveData<Boolean>().also {
@@ -268,7 +268,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         }
     }
 
-    private fun uploadImage(topoName: String, sectorId: Long): Single<Uri> {
+    private fun uploadImage(topoName: String, sectorId: String): Single<Uri> {
         return Single.create { emitter ->
             val rootRef = FirebaseStorage.getInstance().reference
             val imageRef = rootRef.child("topos/$sectorId/$topoName")
@@ -292,7 +292,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         }
     }
 
-    private fun submit(sectorId: Long): Single<Long> {
+    private fun submit(sectorId: String): Single<String> {
         val topoName = topoName.value
         val topoImage = localTopoImage.value
         return if (topoName != null && topoImage != null) {
@@ -317,7 +317,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                     }
         } else {
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
-            Single.just(0)
+            Single.just("")
         }
     }
 
@@ -329,7 +329,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
 class SubmissionResult private constructor(val success: Boolean) {
     companion object {
-        fun success(submittedTopoId: Long): SubmissionResult {
+        fun success(submittedTopoId: String): SubmissionResult {
             return SubmissionResult(true).withTopoId(submittedTopoId)
         }
 
@@ -338,7 +338,7 @@ class SubmissionResult private constructor(val success: Boolean) {
         }
     }
 
-    var submittedTopoId: Long? = null
+    var submittedTopoId: String? = null
     var errorMessage: String? = null
 
     private fun withErrorMessage(errorMessage: String): SubmissionResult {
@@ -346,7 +346,7 @@ class SubmissionResult private constructor(val success: Boolean) {
         return this
     }
 
-    private fun withTopoId(topoId: Long): SubmissionResult {
+    private fun withTopoId(topoId: String): SubmissionResult {
         this.submittedTopoId = topoId
         return this
     }

@@ -2,15 +2,12 @@ package uk.co.oliverdelange.wcr_android_kt.model
 
 import androidx.annotation.DrawableRes
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.firestore.DocumentReference
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
-data class Location(val id: Long? = null,
-                    val firebaseId: DocumentReference? = null,
-                    val parentLocationId: Long? = null,
-                    val parentLocationFirebaseId: DocumentReference? = null,
+data class Location(val id: String? = null,
+                    val parentLocationId: String? = null,
                     var name: String,
                     val latlng: LatLng,
                     val type: LocationType,
@@ -30,17 +27,13 @@ data class TopoAndRoutes(
         var routes: List<Route>
 )
 
-data class Topo(val id: Long? = null,
-                val firebaseId: DocumentReference? = null,
-                var locationId: Long,
-                var locationFirebaseId: DocumentReference? = null,
+data class Topo(val id: String? = null,
+                var locationId: String,
                 var name: String,
                 var image: String)
 
-data class Route(val id: Long? = null,
-                 val firebaseId: DocumentReference? = null,
-                 var topoId: Long? = null,
-                 var topoFirebaseId: DocumentReference? = null,
+data class Route(val id: String? = null,
+                 var topoId: String? = null,
                  var name: String? = null,
                  var grade: Grade? = null,
                  var type: RouteType? = null,

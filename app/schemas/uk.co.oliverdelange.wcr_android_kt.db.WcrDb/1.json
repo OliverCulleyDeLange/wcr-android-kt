@@ -2,33 +2,21 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "81bb5938f9f73f9fc1c4ffe876186a99",
+    "identityHash": "5a1f45c7183c9c3f6dba9084b01e82d7",
     "entities": [
       {
         "tableName": "Location",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `firebaseId` TEXT, `parentLocationId` INTEGER, `parentLocationFirebaseId` TEXT, `name` TEXT NOT NULL, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `type` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `parentLocationId` TEXT, `name` TEXT NOT NULL, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `type` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "firebaseId",
-            "columnName": "firebaseId",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "parentLocationId",
             "columnName": "parentLocationId",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "parentLocationFirebaseId",
-            "columnName": "parentLocationFirebaseId",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -73,55 +61,51 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [
           {
-            "name": "index_Location_firebaseId",
+            "name": "index_Location_id",
             "unique": true,
             "columnNames": [
-              "firebaseId"
+              "id"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_Location_firebaseId` ON `${TABLE_NAME}` (`firebaseId`)"
+            "createSql": "CREATE UNIQUE INDEX `index_Location_id` ON `${TABLE_NAME}` (`id`)"
           },
           {
-            "name": "index_Location_parentLocationFirebaseId",
+            "name": "index_Location_parentLocationId",
             "unique": false,
             "columnNames": [
-              "parentLocationFirebaseId"
+              "parentLocationId"
             ],
-            "createSql": "CREATE  INDEX `index_Location_parentLocationFirebaseId` ON `${TABLE_NAME}` (`parentLocationFirebaseId`)"
+            "createSql": "CREATE  INDEX `index_Location_parentLocationId` ON `${TABLE_NAME}` (`parentLocationId`)"
+          },
+          {
+            "name": "index_Location_name",
+            "unique": false,
+            "columnNames": [
+              "name"
+            ],
+            "createSql": "CREATE  INDEX `index_Location_name` ON `${TABLE_NAME}` (`name`)"
           }
         ],
         "foreignKeys": []
       },
       {
         "tableName": "Topo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `firebaseId` TEXT, `locationId` INTEGER NOT NULL, `locationFirebaseId` TEXT, `name` TEXT NOT NULL, `image` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL, FOREIGN KEY(`locationFirebaseId`) REFERENCES `Location`(`firebaseId`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `locationId` TEXT NOT NULL, `name` TEXT NOT NULL, `image` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`locationId`) REFERENCES `Location`(`id`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "firebaseId",
-            "columnName": "firebaseId",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "locationId",
             "columnName": "locationId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "locationFirebaseId",
-            "columnName": "locationFirebaseId",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "name",
@@ -152,24 +136,24 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [
           {
-            "name": "index_Topo_firebaseId",
+            "name": "index_Topo_id",
             "unique": true,
             "columnNames": [
-              "firebaseId"
+              "id"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_Topo_firebaseId` ON `${TABLE_NAME}` (`firebaseId`)"
+            "createSql": "CREATE UNIQUE INDEX `index_Topo_id` ON `${TABLE_NAME}` (`id`)"
           },
           {
-            "name": "index_Topo_locationFirebaseId",
+            "name": "index_Topo_locationId",
             "unique": false,
             "columnNames": [
-              "locationFirebaseId"
+              "locationId"
             ],
-            "createSql": "CREATE  INDEX `index_Topo_locationFirebaseId` ON `${TABLE_NAME}` (`locationFirebaseId`)"
+            "createSql": "CREATE  INDEX `index_Topo_locationId` ON `${TABLE_NAME}` (`locationId`)"
           }
         ],
         "foreignKeys": [
@@ -178,41 +162,29 @@
             "onDelete": "NO ACTION",
             "onUpdate": "CASCADE",
             "columns": [
-              "locationFirebaseId"
+              "locationId"
             ],
             "referencedColumns": [
-              "firebaseId"
+              "id"
             ]
           }
         ]
       },
       {
         "tableName": "Route",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `firebaseId` TEXT, `topoId` INTEGER NOT NULL, `topoFirebaseId` TEXT, `name` TEXT NOT NULL, `grade` TEXT NOT NULL, `gradeColour` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `path` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL, FOREIGN KEY(`topoFirebaseId`) REFERENCES `Topo`(`firebaseId`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `topoId` TEXT NOT NULL, `name` TEXT NOT NULL, `grade` TEXT NOT NULL, `gradeColour` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `path` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, `uploaderId` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`topoId`) REFERENCES `Topo`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "firebaseId",
-            "columnName": "firebaseId",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "topoId",
             "columnName": "topoId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "topoFirebaseId",
-            "columnName": "topoFirebaseId",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "name",
@@ -267,24 +239,32 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [
           {
-            "name": "index_Route_firebaseId",
+            "name": "index_Route_id",
             "unique": true,
             "columnNames": [
-              "firebaseId"
+              "id"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_Route_firebaseId` ON `${TABLE_NAME}` (`firebaseId`)"
+            "createSql": "CREATE UNIQUE INDEX `index_Route_id` ON `${TABLE_NAME}` (`id`)"
           },
           {
-            "name": "index_Route_topoFirebaseId",
+            "name": "index_Route_topoId",
             "unique": false,
             "columnNames": [
-              "topoFirebaseId"
+              "topoId"
             ],
-            "createSql": "CREATE  INDEX `index_Route_topoFirebaseId` ON `${TABLE_NAME}` (`topoFirebaseId`)"
+            "createSql": "CREATE  INDEX `index_Route_topoId` ON `${TABLE_NAME}` (`topoId`)"
+          },
+          {
+            "name": "index_Route_name",
+            "unique": false,
+            "columnNames": [
+              "name"
+            ],
+            "createSql": "CREATE  INDEX `index_Route_name` ON `${TABLE_NAME}` (`name`)"
           }
         ],
         "foreignKeys": [
@@ -293,10 +273,10 @@
             "onDelete": "NO ACTION",
             "onUpdate": "NO ACTION",
             "columns": [
-              "topoFirebaseId"
+              "topoId"
             ],
             "referencedColumns": [
-              "firebaseId"
+              "id"
             ]
           }
         ]
@@ -337,7 +317,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"81bb5938f9f73f9fc1c4ffe876186a99\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"5a1f45c7183c9c3f6dba9084b01e82d7\")"
     ]
   }
 }

@@ -10,16 +10,18 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.BaseDao
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.BaseEntity
 
-private fun <T : BaseEntity> uploadToFirebase(collection: String, entity: T): Single<Pair<String, T>> {
+private fun <T : BaseEntity> uploadToFirebase(collection: String, entity: T): Single<T> {
     val firebase = FirebaseFirestore.getInstance()
-    return Single.create<Pair<String, T>> { emitter ->
+    return Single.create<T> { emitter ->
         val classname = entity.javaClass.simpleName
         Timber.v("Saving $classname to firestore. id: ${entity.id}")
-        val addTask = firebase.collection(collection).add(entity) //Autogenerates the firebase ID
+        val addTask = firebase.collection(collection)
+                .document(entity.id)
+                .set(entity)
         try {
-            val result = Tasks.await(addTask)
-            Timber.v("$classname saved to firestore. id: ${entity.id} firestore id: ${result.id}")
-            emitter.onSuccess(Pair(result.id, entity))
+            Tasks.await(addTask)
+            Timber.v("$classname saved to firestore. id: ${entity.id}")
+            emitter.onSuccess(entity)
         } catch (e: Exception) {
             Timber.e(e, "Failed to add $classname to firestore: ${entity.id}")
             emitter.onError(e)
@@ -37,12 +39,8 @@ fun <T : BaseEntity> uploadThingsToFirebase(collection: String, dao: BaseDao<T>,
         }
         Observable.mergeArrayDelayError(*saveToFirestore.toTypedArray())
                 .flatMapCompletable {
-                    val firebaseID = it.first
-                    val uploadedItem = it.second
-                    Timber.v("Setting ${uploadedItem.id}'s firebase ID: $firebaseID")
-                    // TODO Set firebase ID
-                    Timber.v("Marking ${uploadedItem.id} as uploaded")
-                    dao.updateUploadedAt(uploadedItem.id, uploadedItem.uploadedAt)
+                    Timber.v("Marking ${it.id} as uploaded")
+                    dao.updateUploadedAt(it.id, it.uploadedAt)
                     // Future note: we don't need to update the uploaderId because its all in firebase.
                 }
     }
