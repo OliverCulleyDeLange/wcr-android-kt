@@ -4,7 +4,12 @@ import android.app.Application
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
+import android.media.ExifInterface.ORIENTATION_UNDEFINED
+import android.media.ExifInterface.TAG_ORIENTATION
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.view.View
 import androidx.databinding.ObservableBoolean
@@ -30,7 +35,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 
 const val MAX_TOPO_SIZE_PX = 1020
@@ -64,16 +68,35 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
     val localTopoImage = MutableLiveData<Uri?>()
     val localTopoImageBytes = Transformations.map(localTopoImage) {
-        MediaStore.Images.Media.getBitmap(getApplication<WcrApp>().contentResolver, it)?.let { bitmap ->
-            val widthScale = MAX_TOPO_SIZE_PX.toFloat() / bitmap.width
-            val newWidth = bitmap.width * widthScale
-            val newHeight = bitmap.height * widthScale
-            val scaled = Bitmap.createScaledBitmap(bitmap, newWidth.roundToInt(), newHeight.roundToInt(), false)
-            val out = ByteArrayOutputStream()
-            scaled.compress(Bitmap.CompressFormat.WEBP, 75, out)
-            val bytes = out.toByteArray()
-            Timber.d("Image WAS ${bitmap.width}x${bitmap.height} kb:${bitmap.byteCount / 1000}")
-            bytes
+        it?.let { imageUri ->
+            MediaStore.Images.Media.getBitmap(getApplication<WcrApp>().contentResolver, imageUri)?.let { bitmap ->
+                Timber.d("Image WAS ${bitmap.width}x${bitmap.height} kb:${bitmap.byteCount / 1000}")
+                //Get orientation https://stackoverflow.com/questions/14066038/why-does-an-image-captured-using-camera-intent-gets-rotated-on-some-devices-on-a
+                val imageInputStream = application.contentResolver.openInputStream(imageUri)
+                // TODO Test on various OS versions
+                val exif = if (Build.VERSION.SDK_INT > 23) ExifInterface(imageInputStream) else ExifInterface(imageUri.path)
+                val orientation = exif.getAttributeInt(TAG_ORIENTATION, ORIENTATION_UNDEFINED)
+
+                val out = ByteArrayOutputStream()
+                val matrix = Matrix()
+                // Scale
+                val widthScale = MAX_TOPO_SIZE_PX.toFloat() / bitmap.width
+                matrix.setScale(widthScale, widthScale)
+                // Rotate
+                matrix.postRotate(when (orientation) {
+                    ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+                    ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                    ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                    else -> 0f
+                })
+                val scaledAndRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
+                // TODO CHeck memory usage
+                bitmap.recycle()
+                // Compress
+                scaledAndRotated.compress(Bitmap.CompressFormat.WEBP, 75, out)
+                scaledAndRotated.recycle()
+                out.toByteArray()
+            }
         }
     }
 
