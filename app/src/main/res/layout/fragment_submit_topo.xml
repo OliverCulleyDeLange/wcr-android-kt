@@ -44,7 +44,8 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
-                        android:src="@drawable/ic_photo_camera_black_24dp" />
+                        android:src="@drawable/ic_photo_camera_black_24dp"
+                        app:show="@{vm.hasCamera}" />
                 </LinearLayout>
 
                 <uk.co.oliverdelange.wcr_android_kt.view.customviews.PaintableTopoImageView
