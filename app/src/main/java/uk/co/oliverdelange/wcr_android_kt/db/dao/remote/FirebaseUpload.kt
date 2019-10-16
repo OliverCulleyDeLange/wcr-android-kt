@@ -37,11 +37,15 @@ fun <T : BaseEntity> uploadThingsToFirebase(collection: String, dao: BaseDao<T>,
             it.uploadedAt = syncStartTime
             uploadToFirebase(collection, it).toObservable()
         }
-        Observable.mergeArrayDelayError(*saveToFirestore.toTypedArray())
-                .flatMapCompletable {
-                    Timber.v("Marking ${it.id} as uploaded")
-                    dao.updateUploadedAt(it.id, it.uploadedAt)
-                    // Future note: we don't need to update the uploaderId because its all in firebase.
-                }
+        if (saveToFirestore.isEmpty()) {
+            Completable.complete()
+        } else {
+            Observable.mergeArrayDelayError(*saveToFirestore.toTypedArray())
+                    .flatMapCompletable {
+                        Timber.v("Marking ${it.id} as uploaded")
+                        dao.updateUploadedAt(it.id, it.uploadedAt)
+                        // Future note: we don't need to update the uploaderId because its all in firebase.
+                    }
+        }
     }
 }
