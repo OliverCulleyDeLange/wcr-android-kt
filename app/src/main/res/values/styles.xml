@@ -137,7 +137,7 @@
         <item name="android:textSize">12sp</item>
     </style>
 
-    <style name="Wcr_Button" parent="Widget.AppCompat.Button.Colored"></style>
+    <style name="Wcr_Button" parent="Widget.AppCompat.Button.Colored" />
 
     <style name="Wcr_Spinner" parent="Base.Widget.AppCompat.Spinner">
         <item name="android:height">10dp</item>

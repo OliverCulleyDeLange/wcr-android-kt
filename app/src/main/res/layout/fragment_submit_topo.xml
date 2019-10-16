@@ -25,13 +25,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp">
 
-                <ImageView
-                    android:id="@+id/select_topo_image"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/ic_photo"
-                    app:gone="@{vm.localTopoImage != null}" />
+                    app:gone="@{vm.localTopoImage != null}">
+
+                    <ImageView
+                        android:id="@+id/select_topo_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_photo" />
+
+                    <ImageView
+                        android:id="@+id/take_photo_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_photo_camera_black_24dp" />
+                </LinearLayout>
 
                 <uk.co.oliverdelange.wcr_android_kt.view.customviews.PaintableTopoImageView
                     android:id="@+id/topo_image"

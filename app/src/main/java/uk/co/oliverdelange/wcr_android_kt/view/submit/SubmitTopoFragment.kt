@@ -4,13 +4,17 @@ import android.animation.ObjectAnimator
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.DecelerateInterpolator
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -26,11 +30,16 @@ import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.util.inTransaction
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitTopoViewModel
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
 
 const val SELECT_PICTURE = 999
+const val TAKE_PHOTO = 998
 const val ROUTE_PADDING = 0.15
 
 /*
@@ -112,6 +121,10 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
         binding.selectTopoImage.setOnClickListener {
             if (viewModel.localTopoImage.value == null) selectImage()
+        }
+
+        binding.takePhotoImage.setOnClickListener {
+            if (viewModel.localTopoImage.value == null) takePhoto()
         }
 
         viewModel.topoNameError.observe(this, Observer { _ ->
@@ -237,6 +250,46 @@ class SubmitTopoFragment : Fragment(), Injectable {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE)
     }
 
+    //https://developer.android.com/training/camera/photobasics
+    private fun takePhoto() {
+        activity?.let { activity ->
+            activity.packageManager?.let { packageManager ->
+                Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                    takePictureIntent.resolveActivity(packageManager)?.also {
+                        // Create the File where the photo should go
+                        val photoFile: File? = try {
+                            // Create an image file name
+                            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+                            val storageDir: File = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                            File.createTempFile(
+                                    "JPEG_${timeStamp}_", /* prefix */
+                                    ".jpg", /* suffix */
+                                    storageDir /* directory */
+                            ).apply {
+                                // Save a file: path for use with ACTION_VIEW intents
+                                Timber.d("Photo path: ${absolutePath}")
+//                                currentPhotoPath = absolutePath
+                            }
+                        } catch (ex: IOException) {
+                            // Error occurred while creating the File
+                            null
+                        }
+                        // Continue only if the File was successfully created
+                        photoFile?.also {
+                            val photoURI: Uri = FileProvider.getUriForFile(
+                                    activity,
+                                    "com.example.android.fileprovider",
+                                    it
+                            )
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                            startActivityForResult(takePictureIntent, TAKE_PHOTO)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
@@ -250,6 +303,8 @@ class SubmitTopoFragment : Fragment(), Injectable {
                         binding.vm?.localTopoImage?.value = uri
                     }
                 }
+            } else if (requestCode == TAKE_PHOTO) {
+                Timber.d("Photo taken")
             }
         }
     }

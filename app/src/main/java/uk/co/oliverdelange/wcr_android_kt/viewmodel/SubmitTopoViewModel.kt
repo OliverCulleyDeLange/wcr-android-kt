@@ -1,6 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
 import android.app.Application
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -38,6 +39,8 @@ const val MAX_TOPO_SIZE_PX = 1020
 class SubmitTopoViewModel @Inject constructor(application: Application,
                                               private val topoRepository: TopoRepository,
                                               private val routeRepository: RouteRepository) : AndroidViewModel(application) {
+
+    val hasCamera: Boolean = application.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
     val isDrawing = ObservableBoolean(true)
     fun toggleDrawing(view: View) {
