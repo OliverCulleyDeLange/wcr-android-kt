@@ -255,7 +255,7 @@ class MapsActivity : AppCompatActivity(),
 
         binding.vm?.mapLatLngBounds?.observe(this, Observer {
             Timber.v("mapLatLngBounds changed, animating map pan")
-            if (it.size > 1) {
+            if (it.isNotEmpty()) {
                 map.animate(LatLngUtil.getBoundsForLatLngs(it))
             }
         })
