@@ -70,7 +70,7 @@ class MapViewModel @Inject constructor(application: Application,
         it.value = false
         fun getShowFab(): Boolean {
             val show = userSignedIn.value == true && mapModesThatDisplayFab.contains(mapMode.value)
-            Timber.v("Should we show fab? $show")
+            Timber.v("'showFab': $show")
             return show
         }
         it.addSource(userSignedIn) { _ -> it.value = getShowFab() }
@@ -81,19 +81,28 @@ class MapViewModel @Inject constructor(application: Application,
     }
     val selectedLocationRouteInfo: LiveData<LocationRouteInfo?> = Transformations.switchMap(selectedLocationId) {
         if (it != null) {
+            Timber.v("SelectedLocationId changed to $it: Updating 'selectedLocationRouteInfo'")
             locationRepository.loadRouteInfoFor(it)
         } else {
+            Timber.v("SelectedLocationId changed to null, 'selectedLocationRouteInfo' is now absent")
             AbsentLiveData.create()
         }
     }
-    val selectedLocation: LiveData<Location?> = Transformations.switchMap(selectedLocationId) {
-        if (it != null) {
-            Timber.v("SelectedLocationId changed: Updating 'selectedLocation'")
-            locationRepository.load(it)
-        } else {
-            AbsentLiveData.create()
-        }
-    }
+
+    // Distinct until changed stop the data reloading when the underlying Location object has not changed
+    // For example, when its uploaded to firestore and the DB record gets its 'uploaded at' field updated
+    // However the Location domain object doesn't have this field, so the compared Location objects are equal
+    val selectedLocation: LiveData<Location?> = Transformations.distinctUntilChanged(
+            Transformations.switchMap(selectedLocationId) {
+                if (it != null) {
+                    Timber.v("SelectedLocationId changed to $it: Updating 'selectedLocation'")
+                    locationRepository.load(it)
+                } else {
+                    Timber.v("SelectedLocationId changed to null, 'selectedLocation' is now absent")
+                    AbsentLiveData.create()
+                }
+            }
+    )
 
     val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
 
@@ -101,26 +110,27 @@ class MapViewModel @Inject constructor(application: Application,
         it.map { location -> CragClusterItem(location) }
     }
 
-    val sectors: LiveData<List<Location>?> = Transformations.distinctUntilChanged(Transformations.switchMap(selectedLocation) { selectedLocation ->
-        Timber.v("SelectedLocation changed to %s: Updating 'sectors'", selectedLocation?.id)
-        if (selectedLocation?.id != null) {
-            selectedLocation.id.let {
-                when (selectedLocation.type) {
-                    LocationType.CRAG -> locationRepository.loadSectorsFor(it)
-                    LocationType.SECTOR -> selectedLocation.parentLocationId?.let { parentID ->
-                        locationRepository.loadSectorsFor(parentID)
+    val sectors: LiveData<List<Location>?> = Transformations.distinctUntilChanged(
+            Transformations.switchMap(selectedLocation) { selectedLocation ->
+                if (selectedLocation?.id != null) {
+                    Timber.v("SelectedLocation changed to ${selectedLocation.id}: Updating 'sectors'")
+                    when (selectedLocation.type) {
+                        LocationType.CRAG -> locationRepository.loadSectorsFor(selectedLocation.id)
+                        LocationType.SECTOR -> selectedLocation.parentLocationId?.let { parentID ->
+                            locationRepository.loadSectorsFor(parentID)
+                        }
                     }
+                } else {
+                    Timber.v("SelectedLocation changed to null, 'sectors' is now absent")
+                    AbsentLiveData.create()
                 }
             }
-        } else {
-            AbsentLiveData.create()
-        }
-    })
+    )
 
     val selectedTopoId = MutableLiveData<String>()
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
-        Timber.d("SelectedLocation changed to %s: Updating 'topos'", selectedLocation?.id)
         selectedLocation?.id?.let {
+            Timber.d("SelectedLocation changed to $it: Updating 'topos'")
             when (selectedLocation.type) {
                 LocationType.SECTOR -> topoRepository.loadToposForLocation(selectedLocation.id)
                 LocationType.CRAG -> getToposForCrag(selectedLocation.id)
