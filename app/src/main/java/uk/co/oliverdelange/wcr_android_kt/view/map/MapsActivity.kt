@@ -58,6 +58,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
 import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
+import uk.co.oliverdelange.wcr_android_kt.util.hideKeyboard
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitLocationFragment
@@ -198,6 +199,7 @@ class MapsActivity : AppCompatActivity(),
             binding.vm?.mapMode?.value = SECTOR_MODE
         }
         binding.vm?.selectedLocationId?.value = submittedLocationId
+        hideKeyboard(this)
     }
 
     private fun observeViewModel() {

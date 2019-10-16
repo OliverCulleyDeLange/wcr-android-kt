@@ -5,10 +5,8 @@ gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --depen
 #TODO
 - Fix
 Make look good
-IDs
 Take photo in app!
 Topo route ordering (left to right?)
-Close keyboard after submission
 
 - Do
 Perf test - load huge data set and check performance
