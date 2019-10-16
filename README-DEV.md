@@ -5,7 +5,6 @@ gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --depen
 #TODO
 - Fix
 Make look good
-Take photo in app!
 
 - Do
 Perf test - load huge data set and check performance
@@ -19,6 +18,7 @@ Filter routes by grade and type
 Cache images on phone up to configurable limit
 Submission validation of fields to show nice error instead of just disabling button
 Allow uploader to edit uploads?
+Grade voting
 
 - Test
 Test DBs max length for strings - long paths could cause issues.

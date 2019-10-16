@@ -31,7 +31,8 @@
                 android:scaleType="fitCenter"
                 app:imageUri="@{topo.image}"
                 app:minPointers="2"
-                app:placeholder="@{@drawable/topo_placeholder}" />
+                app:placeholder="@{@drawable/topo_placeholder}"
+                tools:src="@drawable/nature" />
 
             <TextView
                 android:id="@+id/topo_name"
@@ -55,7 +56,8 @@
                 android:id="@+id/route_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_below="@+id/divider" />
+                android:layout_below="@+id/divider"
+                tools:listitem="@layout/layout_route_card" />
 
         </RelativeLayout>
 
