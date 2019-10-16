@@ -42,7 +42,7 @@ fun <T : BaseEntity> uploadThingsToFirebase(collection: String, dao: BaseDao<T>,
         } else {
             Observable.mergeArrayDelayError(*saveToFirestore.toTypedArray())
                     .flatMapCompletable {
-                        Timber.v("Marking ${it.id} as uploaded")
+                        Timber.d("Marking ${it.id} as uploaded")
                         dao.updateUploadedAt(it.id, it.uploadedAt)
                         // Future note: we don't need to update the uploaderId because its all in firebase.
                     }

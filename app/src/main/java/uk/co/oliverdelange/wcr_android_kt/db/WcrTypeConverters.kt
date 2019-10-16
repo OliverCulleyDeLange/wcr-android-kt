@@ -1,23 +1,9 @@
 package uk.co.oliverdelange.wcr_android_kt.db
 
 import androidx.room.TypeConverter
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
-import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.*
 
 class WcrTypeConverters {
-
-    @TypeConverter
-    fun fromDocumentReference(ref: DocumentReference?): String? {
-        return ref?.path
-    }
-
-    @TypeConverter
-    fun toDocumentReference(string: String?): DocumentReference? {
-        Timber.v("Converting string to DocumentRef: $string")
-        return string?.let { FirebaseFirestore.getInstance().document(it) }
-    }
 
     @TypeConverter
     fun strListToString(strList: List<String>?): String? {

@@ -191,10 +191,10 @@ class MapsActivity : AppCompatActivity(),
 
     override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: String) {
         if (locationType == LocationType.CRAG) {
-            Timber.v("Crag submitted, changing map mode")
+            Timber.d("Crag submitted, changing map mode")
             binding.vm?.mapMode?.value = CRAG_MODE
         } else {
-            Timber.v("Sector submitted, changing map mode")
+            Timber.d("Sector submitted, changing map mode")
             binding.vm?.mapMode?.value = SECTOR_MODE
         }
         binding.vm?.selectedLocationId?.value = submittedLocationId
@@ -202,7 +202,7 @@ class MapsActivity : AppCompatActivity(),
 
     private fun observeViewModel() {
         binding.vm?.userSignedIn?.observe(this, Observer {
-            Timber.v("userSignedIn changed, swapping drawer button")
+            Timber.d("userSignedIn changed, swapping drawer button")
             slidingDrawer.removeItem(MENU_SIGN_IN_ID)
             slidingDrawer.removeItem(MENU_SIGN_OUT_ID)
             if (it == true) {
@@ -213,7 +213,7 @@ class MapsActivity : AppCompatActivity(),
         })
 
         binding.vm?.mapType?.observe(this, Observer {
-            Timber.v("Map type changed, updating map")
+            Timber.d("Map type changed, updating map")
             if (GoogleMap.MAP_TYPE_NORMAL == it) {
                 map.mapType = GoogleMap.MAP_TYPE_NORMAL
             } else {
@@ -222,7 +222,7 @@ class MapsActivity : AppCompatActivity(),
         })
 
         binding.vm?.bottomSheetState?.observe(this, Observer {
-            Timber.v("bottomSheetState changed, updating state")
+            Timber.d("bottomSheetState changed, updating state")
             it?.let { newState ->
                 bottomSheet?.state = it
                 when (newState) {
@@ -237,11 +237,11 @@ class MapsActivity : AppCompatActivity(),
         })
 
         binding.vm?.crags?.observe(this, Observer { crags: List<Location>? ->
-            Timber.v("crags changed, new crags: %s", crags?.map { it.name })
+            Timber.d("crags changed, new crags: %s", crags?.map { it.name })
         })
 
         binding.vm?.cragClusterItems?.observe(this, Observer { clusterItems ->
-            Timber.v("cragClusterItems changed")
+            Timber.d("cragClusterItems changed")
             //TODO Do diff insteaf of re-initisliaing
             clusterManager.clearItems()
             clusterManager.addItems(clusterItems)
@@ -249,12 +249,12 @@ class MapsActivity : AppCompatActivity(),
         })
 
         binding.vm?.sectors?.observe(this, Observer { sectors: List<Location>? ->
-            Timber.v("sectors changed, new sectors: %s", sectors?.map { it.name })
+            Timber.d("sectors changed, new sectors: %s", sectors?.map { it.name })
             refreshSectorsForCrag(sectors)
         })
 
         binding.vm?.mapLatLngBounds?.observe(this, Observer {
-            Timber.v("mapLatLngBounds changed, animating map pan")
+            Timber.d("mapLatLngBounds changed, animating map pan")
             if (it.isNotEmpty()) {
                 map.animate(LatLngUtil.getBoundsForLatLngs(it))
             }

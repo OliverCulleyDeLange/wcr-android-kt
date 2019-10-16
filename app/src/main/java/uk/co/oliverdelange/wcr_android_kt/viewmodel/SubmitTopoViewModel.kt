@@ -64,13 +64,12 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         val out = ByteArrayOutputStream()
         scaled.compress(Bitmap.CompressFormat.WEBP, 75, out)
         val bytes = out.toByteArray()
-        Timber.d("Image WAS ${bitmap.width}x${bitmap.height} bytes ${bitmap.byteCount}")
+        Timber.d("Image WAS ${bitmap.width}x${bitmap.height} kb:${bytes.size / 1000}")
         bytes
     }
     val localTopoImageBitmap = Transformations.map(localTopoImageBytes) {
-        Timber.d("${it.size}")
         val scaledAndCompressed = BitmapFactory.decodeStream(ByteArrayInputStream(it))
-        Timber.d("Image IS ${scaledAndCompressed.width}x${scaledAndCompressed.height} ${scaledAndCompressed.byteCount}")
+        Timber.d("Image IS ${scaledAndCompressed.width}x${scaledAndCompressed.height} kb:${it.size / 1000}")
         scaledAndCompressed
     }
     val topoName = MutableLiveData<String?>()
@@ -239,7 +238,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
             emptyName || emptyDescription || noRoutePath
         }
         val allowSubmit = hasName && hasImage && hasAtLeast1Route && routesHaveNameDescriptionAndPath
-        Timber.d("Submission allowed: $allowSubmit")
+        Timber.d("Submission allowed: $allowSubmit (hasName:$hasName, hasImage:$hasImage, hasAtLeast1Route:$hasAtLeast1Route, routesHaveNameDescriptionAndPath:$routesHaveNameDescriptionAndPath)")
 
         if (allowSubmit) {
             submit(sectorId)
@@ -276,7 +275,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                 val uploadTask = imageRef.putBytes(it)
                         .addOnProgressListener { snapshot ->
                             val percent = snapshot.bytesTransferred / snapshot.totalByteCount
-                            Timber.d("Image uploading... $percent")
+                            Timber.d("Image uploading... ${percent * 100}%")
                         }
 
                 try {

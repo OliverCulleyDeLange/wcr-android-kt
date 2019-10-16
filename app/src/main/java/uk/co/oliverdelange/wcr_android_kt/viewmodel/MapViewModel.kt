@@ -39,7 +39,7 @@ class MapViewModel @Inject constructor(application: Application,
 
     val userSignedIn = MutableLiveData<Boolean>().also {
         val signedIn = FirebaseAuth.getInstance().currentUser != null
-        Timber.v("Initialising userSignedIn: $signedIn")
+        Timber.d("Initialising userSignedIn: $signedIn")
         it.value = signedIn
     }
 
@@ -70,7 +70,7 @@ class MapViewModel @Inject constructor(application: Application,
         it.value = false
         fun getShowFab(): Boolean {
             val show = userSignedIn.value == true && mapModesThatDisplayFab.contains(mapMode.value)
-            Timber.v("'showFab': $show")
+            Timber.d("'showFab': $show")
             return show
         }
         it.addSource(userSignedIn) { _ -> it.value = getShowFab() }
@@ -81,10 +81,10 @@ class MapViewModel @Inject constructor(application: Application,
     }
     val selectedLocationRouteInfo: LiveData<LocationRouteInfo?> = Transformations.switchMap(selectedLocationId) {
         if (it != null) {
-            Timber.v("SelectedLocationId changed to $it: Updating 'selectedLocationRouteInfo'")
+            Timber.d("SelectedLocationId changed to $it: Updating 'selectedLocationRouteInfo'")
             locationRepository.loadRouteInfoFor(it)
         } else {
-            Timber.v("SelectedLocationId changed to null, 'selectedLocationRouteInfo' is now absent")
+            Timber.d("SelectedLocationId changed to null, 'selectedLocationRouteInfo' is now absent")
             AbsentLiveData.create()
         }
     }
@@ -95,10 +95,10 @@ class MapViewModel @Inject constructor(application: Application,
     val selectedLocation: LiveData<Location?> = Transformations.distinctUntilChanged(
             Transformations.switchMap(selectedLocationId) {
                 if (it != null) {
-                    Timber.v("SelectedLocationId changed to $it: Updating 'selectedLocation'")
+                    Timber.d("SelectedLocationId changed to $it: Updating 'selectedLocation'")
                     locationRepository.load(it)
                 } else {
-                    Timber.v("SelectedLocationId changed to null, 'selectedLocation' is now absent")
+                    Timber.d("SelectedLocationId changed to null, 'selectedLocation' is now absent")
                     AbsentLiveData.create()
                 }
             }
@@ -113,7 +113,7 @@ class MapViewModel @Inject constructor(application: Application,
     val sectors: LiveData<List<Location>?> = Transformations.distinctUntilChanged(
             Transformations.switchMap(selectedLocation) { selectedLocation ->
                 if (selectedLocation?.id != null) {
-                    Timber.v("SelectedLocation changed to ${selectedLocation.id}: Updating 'sectors'")
+                    Timber.d("SelectedLocation changed to ${selectedLocation.id}: Updating 'sectors'")
                     when (selectedLocation.type) {
                         LocationType.CRAG -> locationRepository.loadSectorsFor(selectedLocation.id)
                         LocationType.SECTOR -> selectedLocation.parentLocationId?.let { parentID ->
@@ -121,7 +121,7 @@ class MapViewModel @Inject constructor(application: Application,
                         }
                     }
                 } else {
-                    Timber.v("SelectedLocation changed to null, 'sectors' is now absent")
+                    Timber.d("SelectedLocation changed to null, 'sectors' is now absent")
                     AbsentLiveData.create()
                 }
             }
@@ -187,7 +187,7 @@ class MapViewModel @Inject constructor(application: Application,
     var bottomSheetExpanded = false
     fun onBottomSheetExpand() {
         if (!bottomSheetExpanded) {
-            Timber.v("Bottom sheet expanded for first time since app open")
+            Timber.d("Bottom sheet expanded for first time since app open")
             with(getApplication<WcrApp>().prefs.edit()) {
                 putBoolean(PREF_BOTTOM_SHEET_OPENED, true)
                 apply()

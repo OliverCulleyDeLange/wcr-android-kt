@@ -35,7 +35,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : RxWo
 
                     Single.mergeDelayError(downloadedLocationIds, downloadedTopoIds, downloadedRouteIds)
                 }.collect({ mutableListOf<String>() }, { list, it ->
-                    Timber.v("IDs of downloaded things: $it")
+                    Timber.d("IDs of downloaded things: $it")
                     list.addAll(it)
                 })
                 .flatMapCompletable {

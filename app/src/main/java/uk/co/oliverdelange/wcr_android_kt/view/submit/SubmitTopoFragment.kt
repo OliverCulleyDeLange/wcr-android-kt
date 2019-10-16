@@ -75,21 +75,21 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.vm = viewModel
         val sectorIdSnap = sectorId
         if (sectorIdSnap != null) {
-            Timber.d("Setting sectorId $sectorId on ViewModel")
+            Timber.d("Setting sectorId to '$sectorId' on ViewModel")
             viewModel.sectorId = sectorIdSnap
         } else { //Can this ever happen?
             Timber.e("SectorID not set in VM, submission will fail")
         }
 
         viewModel.doUndoDrawing.observe(this, Observer {
-            Timber.v("doUndoDrawing changed, undoing last drawing action")
+            Timber.d("doUndoDrawing changed, undoing last drawing action")
             // This feels super hacky, shouldn't all the route data live in the VM?
             // That way we just modify that, and re-draw the Paintable View.
             binding.topoImage.undoAction()
         })
 
         viewModel.submitting.observe(this, Observer {
-            Timber.v("submitting changed, ${if (it) "starting" else "stopping"} animation")
+            Timber.d("submitting changed, ${if (it) "starting" else "stopping"} animation")
             if (it == true) {
                 val animation = ObjectAnimator.ofInt(topo_submit_progress, "progress", 0, 500)
                 animation.duration = 5000 // in milliseconds
@@ -115,7 +115,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
         }
 
         viewModel.topoNameError.observe(this, Observer { _ ->
-            Timber.v("topoNameError changed, updating error message")
+            Timber.d("topoNameError changed, updating error message")
             binding.topoNameInputLayout.error = binding.vm?.topoNameError?.value
         })
 
@@ -144,7 +144,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.addRoute.setOnClickListener { addRoute(pagerAdapter) }
 
         binding.vm?.activeRoute?.observe(this, Observer { activeRouteFragmentId ->
-            Timber.v("activeRoute changed, controlling new drawing path")
+            Timber.d("activeRoute changed, controlling new drawing path")
             activeRouteFragmentId?.let { routeFragmentId ->
                 binding.vm?.routes?.get(routeFragmentId)?.let { route ->
                     Timber.d("Active route fragment changed: $activeRouteFragmentId - route name: ${route.name}")
@@ -155,14 +155,13 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
         // Update the route line colour on the topo
         binding.vm?.routeColourUpdate?.observe(this, Observer {
-            Timber.v("routeColourUpdate changed, refreshig topo image")
+            Timber.d("routeColourUpdate changed, refreshig topo image")
             binding.topoImage.refresh()
-            Timber.d("Refreshed topo due to grade change")
         })
 
         // Update the grade if the route type changes
         binding.vm?.routeTypeUpdate?.observe(this, Observer { routeType ->
-            Timber.v("Route type changed, force selected the grade")
+            Timber.d("Route type changed, force selected the grade")
             if (routeType == null) {
                 Timber.e("RouteType enum is null - wtf?")
                 return@Observer
@@ -173,25 +172,25 @@ class SubmitTopoFragment : Fragment(), Injectable {
                 when (routeType) {
                     RouteType.TRAD -> {
                         // Only have to do one, as the grade gets set when either are selected
-                        Timber.v("Route type now TRAD, setting trad adj grade")
+                        Timber.d("Route type now TRAD, setting trad adj grade")
                         val selectedTradAdjectivalGrade = TradAdjectivalGrade.values()[routeFragmentBinding.tradAdjectivalGradeSpinner.selectedItemPosition]
 //                        routeFragmentBinding.tradAdjectivalGradeSpinner.setSelection(selectedTradAdjectivalGrade.ordinal, false)
                         routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedTradAdjectivalGrade.ordinal, GradeDropDown.TRAD_ADJ)
                     }
                     RouteType.SPORT -> {
-                        Timber.v("Route type now SPORT, setting sport grade")
+                        Timber.d("Route type now SPORT, setting sport grade")
                         val selectedSportGrade = SportGrade.values()[routeFragmentBinding.sportGradeSpinner.selectedItemPosition]
 //                        routeFragmentBinding.sportGradeSpinner.setSelection(selectedSportGrade.ordinal, false)
                         routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedSportGrade.ordinal, GradeDropDown.SPORT)
                     }
                     RouteType.BOULDERING -> {
                         if (binding.vm?.useVGradeForBouldering == true) {
-                            Timber.v("Route type now BOULDERING, setting V grade")
+                            Timber.d("Route type now BOULDERING, setting V grade")
                             val selectedVGrade = VGrade.values()[routeFragmentBinding.vGradeSpinner.selectedItemPosition]
 //                        routeFragmentBinding.vGradeSpinner.setSelection(selectedVGrade.ordinal, false)
                             routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedVGrade.ordinal, GradeDropDown.V)
                         } else {
-                            Timber.v("Route type now BOULDERING, setting FONT grade")
+                            Timber.d("Route type now BOULDERING, setting FONT grade")
                             val selectedFGrade = FontGrade.values()[routeFragmentBinding.fGradeSpinner.selectedItemPosition]
 //                        routeFragmentBinding.vGradeSpinner.setSelection(selectedVGrade.ordinal, false)
                             routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedFGrade.ordinal, GradeDropDown.FONT)

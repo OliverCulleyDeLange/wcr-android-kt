@@ -34,7 +34,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
     }
 
     fun refresh() {
-        Timber.d("Refreshing topo drawings")
+        Timber.v("Refreshing topo drawings")
         invalidate()
     }
 
