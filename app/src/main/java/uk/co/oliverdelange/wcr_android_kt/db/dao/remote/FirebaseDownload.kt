@@ -10,6 +10,7 @@ import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.BaseDao
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.BaseEntity
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.MostRecentSync
+import uk.co.oliverdelange.wcr_android_kt.repository.Repository
 import kotlin.reflect.KClass
 
 private fun <T : BaseEntity> getFromFirebase(mostRecentDownload: MostRecentSync, collection: String, kClass: KClass<T>): Observable<T> {
@@ -42,7 +43,7 @@ fun <T : BaseEntity> saveFromFirebase(mostRecentDownload: MostRecentSync,
                                       dao: BaseDao<T>): Single<MutableList<Long>> {
     return getFromFirebase(mostRecentDownload, collection, kClass)
             .concatMapDelayError {
-                Timber.v("Inserting into db: ${kClass.java.simpleName} ${it.id}")
+                Timber.v("Inserting into db: ${kClass.java.simpleName} id:${it.id} firebaseId:${it.firebaseId}")
                 dao.insert(it)
                 Observable.just(it)
             }.collect({ mutableListOf<Long>() }, { list, it -> list.add(it.id) })

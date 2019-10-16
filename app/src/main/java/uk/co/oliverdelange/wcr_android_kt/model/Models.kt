@@ -9,7 +9,8 @@ import uk.co.oliverdelange.wcr_android_kt.map.Icon
 
 data class Location(val id: Long? = null,
                     val firebaseId: DocumentReference? = null,
-                    val parentLocation: Long? = null,
+                    val parentLocationId: Long? = null,
+                    val parentLocationFirebaseId: DocumentReference? = null,
                     var name: String,
                     val latlng: LatLng,
                     val type: LocationType,
@@ -32,12 +33,14 @@ data class TopoAndRoutes(
 data class Topo(val id: Long? = null,
                 val firebaseId: DocumentReference? = null,
                 var locationId: Long,
+                var locationFirebaseId: DocumentReference? = null,
                 var name: String,
                 var image: String)
 
 data class Route(val id: Long? = null,
                  val firebaseId: DocumentReference? = null,
                  var topoId: Long? = null,
+                 var topoFirebaseId: DocumentReference? = null,
                  var name: String? = null,
                  var grade: Grade? = null,
                  var type: RouteType? = null,

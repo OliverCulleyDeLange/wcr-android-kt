@@ -10,6 +10,7 @@ fun toTopoDto(topo: Topo): TopoDTO {
             topo.id ?: 0,
             topo.firebaseId,
             topo.locationId,
+            topo.locationFirebaseId,
             topo.name,
             topo.image
     )
@@ -20,6 +21,7 @@ fun fromTopoDto(topo: TopoDTO): Topo {
             topo.id,
             topo.firebaseId,
             topo.locationId,
+            topo.locationFirebaseId,
             topo.name,
             topo.image
     )

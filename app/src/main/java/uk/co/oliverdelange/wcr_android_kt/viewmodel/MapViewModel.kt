@@ -107,7 +107,7 @@ class MapViewModel @Inject constructor(application: Application,
             selectedLocation.id.let {
                 when (selectedLocation.type) {
                     LocationType.CRAG -> locationRepository.loadSectorsFor(it)
-                    LocationType.SECTOR -> selectedLocation.parentLocation?.let { parentID ->
+                    LocationType.SECTOR -> selectedLocation.parentLocationId?.let { parentID ->
                         locationRepository.loadSectorsFor(parentID)
                     }
                 }
@@ -317,7 +317,7 @@ class MapViewModel @Inject constructor(application: Application,
                 MapMode.SUBMIT_CRAG_MODE -> mapMode.value = MapMode.DEFAULT_MODE
                 MapMode.SECTOR_MODE, MapMode.TOPO_MODE -> {
                     mapMode.value = MapMode.CRAG_MODE
-                    selectedLocation.value?.parentLocation?.let { selectedLocationId.value = it }
+                    selectedLocation.value?.parentLocationId?.let { selectedLocationId.value = it }
                 }
                 MapMode.SUBMIT_SECTOR_MODE -> mapMode.value = MapMode.CRAG_MODE
                 MapMode.SUBMIT_TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE

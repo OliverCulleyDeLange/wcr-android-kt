@@ -14,10 +14,9 @@ private fun <T : BaseEntity> uploadToFirebase(collection: String, entity: T): Si
     val firebase = FirebaseFirestore.getInstance()
     return Single.create<Pair<String, T>> { emitter ->
         val classname = entity.javaClass.simpleName
-        Timber.d("Saving $classname to firestore : ${entity.id}")
+        Timber.v("Saving $classname to firestore. id: ${entity.id}")
         val addTask = firebase.collection(collection).add(entity) //Autogenerates the firebase ID
         try {
-            //TODO Write blog post on how to do this!
             val result = Tasks.await(addTask)
             Timber.v("$classname saved to firestore. id: ${entity.id} firestore id: ${result.id}")
             emitter.onSuccess(Pair(result.id, entity))
