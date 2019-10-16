@@ -259,28 +259,27 @@ class SubmitTopoFragment : Fragment(), Injectable {
                         // Create the File where the photo should go
                         val photoFile: File? = try {
                             // Create an image file name
-                            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+                            val timeStamp: String = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Date())
                             val storageDir: File = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
                             File.createTempFile(
-                                    "JPEG_${timeStamp}_", /* prefix */
-                                    ".jpg", /* suffix */
-                                    storageDir /* directory */
+                                    "TOPO_${timeStamp}_",
+                                    ".jpg",
+                                    storageDir
                             ).apply {
                                 // Save a file: path for use with ACTION_VIEW intents
-                                Timber.d("Photo path: ${absolutePath}")
-//                                currentPhotoPath = absolutePath
+                                Timber.d("Photo path: $absolutePath")
                             }
                         } catch (ex: IOException) {
-                            // Error occurred while creating the File
+                            Timber.e("Couldn't create file for topo photo to be saved to")
                             null
                         }
-                        // Continue only if the File was successfully created
-                        photoFile?.also {
+                        photoFile?.also { file ->
                             val photoURI: Uri = FileProvider.getUriForFile(
                                     activity,
                                     "com.example.android.fileprovider",
-                                    it
+                                    file
                             )
+                            binding.vm?.photoUri?.value = photoURI
                             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                             startActivityForResult(takePictureIntent, TAKE_PHOTO)
                         }
@@ -305,6 +304,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
                 }
             } else if (requestCode == TAKE_PHOTO) {
                 Timber.d("Photo taken")
+                binding.vm?.onPhotoTaken()
             }
         }
     }

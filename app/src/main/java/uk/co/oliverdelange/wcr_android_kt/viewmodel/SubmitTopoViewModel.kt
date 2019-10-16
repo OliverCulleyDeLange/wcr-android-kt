@@ -57,24 +57,34 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         doUndoDrawing.value = null
     }
 
+    val photoUri = MutableLiveData<Uri>()
+    fun onPhotoTaken() {
+        localTopoImage.value = photoUri.value
+    }
+
     val localTopoImage = MutableLiveData<Uri?>()
     val localTopoImageBytes = Transformations.map(localTopoImage) {
-        val bitmap = MediaStore.Images.Media.getBitmap(getApplication<WcrApp>().contentResolver, it)
-        val widthScale = MAX_TOPO_SIZE_PX.toFloat() / bitmap.width
-        val newWidth = bitmap.width * widthScale
-        val newHeight = bitmap.height * widthScale
-        val scaled = Bitmap.createScaledBitmap(bitmap, newWidth.roundToInt(), newHeight.roundToInt(), false)
-        val out = ByteArrayOutputStream()
-        scaled.compress(Bitmap.CompressFormat.WEBP, 75, out)
-        val bytes = out.toByteArray()
-        Timber.d("Image WAS ${bitmap.width}x${bitmap.height} kb:${bitmap.byteCount / 1000}")
-        bytes
+        MediaStore.Images.Media.getBitmap(getApplication<WcrApp>().contentResolver, it)?.let { bitmap ->
+            val widthScale = MAX_TOPO_SIZE_PX.toFloat() / bitmap.width
+            val newWidth = bitmap.width * widthScale
+            val newHeight = bitmap.height * widthScale
+            val scaled = Bitmap.createScaledBitmap(bitmap, newWidth.roundToInt(), newHeight.roundToInt(), false)
+            val out = ByteArrayOutputStream()
+            scaled.compress(Bitmap.CompressFormat.WEBP, 75, out)
+            val bytes = out.toByteArray()
+            Timber.d("Image WAS ${bitmap.width}x${bitmap.height} kb:${bitmap.byteCount / 1000}")
+            bytes
+        }
     }
+
     val localTopoImageBitmap = Transformations.map(localTopoImageBytes) {
-        val scaledAndCompressed = BitmapFactory.decodeStream(ByteArrayInputStream(it))
-        Timber.d("Image IS ${scaledAndCompressed.width}x${scaledAndCompressed.height} kb:${scaledAndCompressed.byteCount / 1000}, filesize: ${it.size / 1000}kb")
-        scaledAndCompressed
+        it?.let {
+            val scaledAndCompressed = BitmapFactory.decodeStream(ByteArrayInputStream(it))
+            Timber.d("Image IS ${scaledAndCompressed.width}x${scaledAndCompressed.height} kb:${scaledAndCompressed.byteCount / 1000}, filesize: ${it.size / 1000}kb")
+            scaledAndCompressed
+        }
     }
+
     val topoName = MutableLiveData<String?>()
     val topoNameError = Transformations.map(topoName) {
         if (it?.isEmpty() == true) "Can not be empty"
