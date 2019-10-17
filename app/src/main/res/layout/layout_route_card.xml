@@ -16,8 +16,13 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_margin="10dp"
-        card_view:cardCornerRadius="5dp"
-        tools:layout_height="150dp">
+        card_view:cardBackgroundColor="@color/bg_grey_light"
+        card_view:cardCornerRadius="10dp"
+        card_view:cardElevation="1dp"
+        card_view:contentPaddingBottom="8dp"
+        card_view:contentPaddingLeft="16dp"
+        card_view:contentPaddingRight="16dp"
+        tools:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,24 +32,13 @@
             <RelativeLayout
                 android:id="@+id/route_details"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/route_name"
-                    style="@style/Wcr_TopoTitleText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:text="@{route.name}"
-                    tools:layout_height="50dp"
-                    tools:layout_width="200dp"
-                    tools:text="Crag name but really long so we can see overlap" />
+                android:layout_height="30dp">
 
                 <TextView
                     android:id="@+id/climb_type_text"
                     style="@style/Wcr_TopoClimbTypeText"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_toLeftOf="@+id/climb_type_icon"
                     android:text="@{route.type.name}"
                     tools:text="bouldering" />
@@ -52,25 +46,34 @@
                 <ImageView
                     android:id="@+id/climb_type_icon"
                     style="@style/Wcr_MapBottomSheetClimbTypeIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
                     android:layout_toLeftOf="@+id/topo_grade"
                     android:src="@{route.type.icon}"
-                    tools:layout_height="30dp"
-                    tools:layout_width="30dp"
                     tools:src="@drawable/ic_boulder" />
 
                 <TextView
                     android:id="@+id/topo_grade"
                     style="@style/Wcr_TopoGradeText"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:text="@{route.grade.string}"
                     android:textColor="@{route.grade.colour}"
                     tools:text="V5" />
 
             </RelativeLayout>
+
+            <TextView
+                android:id="@+id/route_name"
+                style="@style/Wcr_RouteTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@{route.name}"
+                tools:layout_height="wrap_content"
+                tools:layout_width="match_parent"
+                tools:text="Crag name but really long so we can see overlap" />
 
             <!--            <View-->
             <!--                android:id="@+id/divider"-->

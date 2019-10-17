@@ -5,5 +5,5 @@
     <!--Minimum span required to process scale gesture for API < 24-->
     <dimen name="wcr_internalScaleMinSpan23">10mm</dimen>
 
-    <dimen name="route_card_width">260dp</dimen>
+    <dimen name="route_card_width">220dp</dimen>
 </resources>

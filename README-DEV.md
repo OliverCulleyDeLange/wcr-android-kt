@@ -3,10 +3,8 @@ Stetho the app to view DB contents
 gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --dependency kotlin-stdlib-jre7
 
 #TODO
-- Fix
 Make look good
-
-- Do
+Tutorials and help screen
 Perf test - load huge data set and check performance
 Time dB queries
 crashlytics
@@ -19,6 +17,10 @@ Cache images on phone up to configurable limit
 Submission validation of fields to show nice error instead of just disabling button
 Allow uploader to edit uploads?
 Grade voting
+Place hold location on topo
+Full screen Topo view
+DWS grade / climb  type
+
 
 - Test
 Test DBs max length for strings - long paths could cause issues.

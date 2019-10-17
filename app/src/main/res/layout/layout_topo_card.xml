@@ -13,14 +13,14 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/topo_card_view"
         android:layout_width="match_parent"
-        android:layout_height="420dp"
-        android:layout_gravity="center"
-        card_view:cardCornerRadius="0dp">
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        card_view:cardCornerRadius="10dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/bg_grey_light"
+            android:background="@color/md_white_1000"
             android:paddingBottom="10dp">
 
             <!--            <androidx.cardview.widget.CardView-->
@@ -32,7 +32,7 @@
             <uk.co.oliverdelange.wcr_android_kt.view.customviews.TopoImageView
                 android:id="@+id/topo_image"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 app:imageUri="@{topo.image}"
@@ -48,23 +48,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/topo_image"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:text="@{topo.name}"
                 tools:text="Topo name that is really long so we see the wrapping behaviour" />
 
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/topo_name"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@android:color/darker_gray" />
+            <!--            <View-->
+            <!--                android:id="@+id/divider"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="1dp"-->
+            <!--                android:layout_below="@+id/topo_name"-->
+            <!--                android:layout_marginLeft="10dp"-->
+            <!--                android:layout_marginRight="10dp"-->
+            <!--                android:background="@android:color/darker_gray" />-->
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/route_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_below="@+id/divider"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/topo_name"
                 tools:listitem="@layout/layout_route_card" />
 
         </RelativeLayout>

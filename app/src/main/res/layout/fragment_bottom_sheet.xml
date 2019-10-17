@@ -23,8 +23,7 @@
             android:id="@+id/bottom_sheet_peek"
             style="@style/Wcr_Container"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@color/bg_grey_light">
+            android:layout_height="80dp">
 
             <RelativeLayout
                 android:id="@+id/dragbar_climb_grades_and_types_parent"
@@ -135,7 +134,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:text="@{vm.selectedLocationRouteInfo.trads}"
-                        tools:text="" />
+                        tools:text="3" />
 
                 </LinearLayout>
 
