@@ -142,6 +142,11 @@ class MapViewModel @Inject constructor(application: Application,
 
     val mapLatLngBounds = MediatorLiveData<List<LatLng>>().also {
         it.value = emptyList()
+        it.addSource(selectedLocation) { location ->
+            if (location?.type == LocationType.SECTOR) {
+                it.value = listOf(location.latlng)
+            }
+        }
         it.addSource(crags) { crags ->
             it.value = crags.map { crag -> crag.latlng }
         }
