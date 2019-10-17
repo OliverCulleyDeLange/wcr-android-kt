@@ -22,11 +22,12 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:orientation="vertical"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="@dimen/cardview_default_elevation"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        tools:backgroundTint="@color/bg_grey"
         tools:layout_height="180dp">
 
         <RelativeLayout
@@ -142,8 +143,8 @@
 
         <ImageButton
             android:id="@+id/remove_fragment"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="end|top"
             android:background="@color/transparent"
             android:src="@drawable/ic_cancel" />

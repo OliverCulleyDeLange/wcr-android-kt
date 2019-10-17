@@ -3,7 +3,7 @@
 
     <!--  https://developer.android.com/reference/android/R.styleable.html#Theme-->
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:fontFamily">@font/roboto</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -11,7 +11,8 @@
         <item name="android:textColorPrimary">@color/text_black</item>
         <!--        <item name="android:textColorPrimaryInverse">@color/text_grey</item>-->
 
-        <item name="android:buttonStyle">@style/Wcr_Button</item>
+        <!--        <item name="android:editTextStyle">@style/Wcr_EditText</item>-->
+        <!--        <item name="android:buttonStyle">@style/Wcr_Button</item>-->
     </style>
 
     <style name="Wcr_Text" parent="android:Widget.TextView" />
@@ -22,8 +23,8 @@
 
     <!--CONTAINER-->
     <style name="Wcr_Container">
-        <item name="android:paddingLeft">15dp</item>
-        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
         <item name="android:paddingTop">8dp</item>
     </style>
 
@@ -131,7 +132,7 @@
         <item name="android:textColor">@color/accent</item>
     </style>
 
-    <style name="Wcr_EditText" parent="Theme.AppCompat.Light">
+    <style name="Wcr_EditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="colorControlNormal">@color/colorAccentLight</item>
         <item name="colorControlActivated">@color/accent</item>
     </style>
@@ -140,7 +141,7 @@
         <item name="android:textSize">12sp</item>
     </style>
 
-    <style name="Wcr_Button" parent="Widget.AppCompat.Button.Colored" />
+    <style name="Wcr_Button" parent="Widget.MaterialComponents.Button.UnelevatedButton" />
 
     <style name="Wcr_Spinner" parent="Base.Widget.AppCompat.Spinner">
         <item name="android:height">10dp</item>
