@@ -23,6 +23,12 @@
             android:background="@color/bg_grey_light"
             android:paddingBottom="10dp">
 
+            <!--            <androidx.cardview.widget.CardView-->
+            <!--                android:id="@+id/topo_image_card"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                card_view:cardCornerRadius="50dp">-->
+
             <uk.co.oliverdelange.wcr_android_kt.view.customviews.TopoImageView
                 android:id="@+id/topo_image"
                 android:layout_width="match_parent"
@@ -33,6 +39,8 @@
                 app:minPointers="2"
                 app:placeholder="@{@drawable/topo_placeholder}"
                 tools:src="@drawable/nature" />
+            <!--            </androidx.cardview.widget.CardView>-->
+
 
             <TextView
                 android:id="@+id/topo_name"

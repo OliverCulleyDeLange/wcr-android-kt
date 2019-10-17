@@ -86,6 +86,8 @@
                 android:id="@+id/topo_name_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 app:errorEnabled="true"
                 app:hintTextAppearance="@style/Wcr_FloatingLabel">
 
@@ -129,7 +131,6 @@
 
                 <Button
                     android:id="@+id/submit"
-                    style="@style/Wcr_Button"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"

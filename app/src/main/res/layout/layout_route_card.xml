@@ -22,7 +22,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/bg_grey_light"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -39,7 +38,7 @@
                     android:text="@{route.name}"
                     tools:layout_height="50dp"
                     tools:layout_width="200dp"
-                    tools:text="Crag name" />
+                    tools:text="Crag name but really long so we can see overlap" />
 
                 <TextView
                     android:id="@+id/climb_type_text"
@@ -73,13 +72,13 @@
 
             </RelativeLayout>
 
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@android:color/darker_gray" />
+            <!--            <View-->
+            <!--                android:id="@+id/divider"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="1dp"-->
+            <!--                android:layout_marginLeft="10dp"-->
+            <!--                android:layout_marginRight="10dp"-->
+            <!--                android:background="@android:color/darker_gray" />-->
 
             <TextView
                 android:id="@+id/route_description"

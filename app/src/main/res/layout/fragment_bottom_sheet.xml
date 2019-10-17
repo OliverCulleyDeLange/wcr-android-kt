@@ -170,12 +170,15 @@
             android:id="@+id/topo_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            tools:layout_height="500dp"
             tools:listitem="@layout/layout_topo_card" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="There are no topos at this location" />
+            android:gravity="center"
+            android:text="@string/no_topos"
+            app:show="@{vm.topos.size() == 0}" />
     </LinearLayout>
 
 </layout>

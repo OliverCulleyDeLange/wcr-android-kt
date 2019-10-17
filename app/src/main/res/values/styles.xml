@@ -1,16 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--  https://developer.android.com/reference/android/R.styleable.html#Theme-->
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/text_black</item>
-        <item name="android:textColorPrimaryInverse">@color/text_grey</item>
+        <!--        <item name="android:textColorPrimaryInverse">@color/text_grey</item>-->
+
+        <item name="android:buttonStyle">@style/Wcr_Button</item>
     </style>
 
-    <style name="Wcr_Text" parent="android:Widget.TextView"></style>
+    <style name="Wcr_Text" parent="android:Widget.TextView" />
 
     <style name="Wcr_Text_Small" parent="Wcr_Text">
         <item name="android:textSize">12sp</item>
@@ -24,7 +28,7 @@
     </style>
 
     <!--MAP-->
-    <style name="Wcr_MapToggle" parent="@style/Widget.AppCompat.Button">
+    <style name="Wcr_MapToggle" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">38dp</item>
         <item name="android:layout_height">38dp</item>
         <item name="android:textSize">10sp</item>
@@ -58,7 +62,7 @@
     <!--OUTPUT-->
     <!--BOTTOM SHEET-->
     <style name="Wcr_MapBottomSheetTitle" parent="Theme.AppCompat.Light">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:layout_marginBottom">5dp</item>
     </style>
 
@@ -85,7 +89,7 @@
     </style>
 
     <!--TOPO_MODE STYLING-->
-    <style name="Wcr_TopoText" parent="android:Widget.TextView">
+    <style name="Wcr_TopoText" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/text_grey</item>
         <item name="android:paddingLeft">25dp</item>
         <item name="android:paddingTop">3dp</item>
@@ -99,8 +103,7 @@
         <item name="android:paddingBottom">5dp</item>
         <item name="android:textColor">@color/text_grey_dark</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:singleLine">true</item>
     </style>
 

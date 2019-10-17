@@ -14,6 +14,7 @@
 
     <!--MAP-->
     <string name="map_search_hint">Search for crags and climbs</string>
+    <string name="no_topos">There are no topos at this location yet</string>
 
     <!--SUBMIT-->
     <string name="button_submit">Submit</string>
