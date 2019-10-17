@@ -144,20 +144,28 @@ class MapViewModel @Inject constructor(application: Application,
         it.value = emptyList()
         it.addSource(selectedLocation) { location ->
             if (location?.type == LocationType.SECTOR) {
+                Timber.d("selectedLocation changed to a SECTOR, setting mapLatLngBounds")
                 it.value = listOf(location.latlng)
+            } else if (location?.type == LocationType.CRAG) {
+                Timber.d("selectedLocation changed to a CRAG, setting mapLatLngBounds")
+                val locations = listOf(location).plus(sectors.value ?: emptyList())
+                it.value = locations.map { l -> l.latlng }
             }
         }
         it.addSource(crags) { crags ->
+            Timber.d("crags changed, setting mapLatLngBounds")
             it.value = crags.map { crag -> crag.latlng }
         }
         it.addSource(sectors) { sectors ->
             if (selectedLocation.value?.type == LocationType.CRAG) {
+                Timber.d("sectors changed, and selectedLocation is a CRAG, setting mapLatLngBounds")
                 it.value = sectors?.plus(selectedLocation.value!!)?.map { l -> l.latlng }
             }
         }
         it.addSource(mapMode) { mapMode ->
             val numberOfCrags: Int = crags.value?.size ?: 0
             if (mapMode == MapMode.DEFAULT_MODE && numberOfCrags > 0) {
+                Timber.d("mapMode changed to DEFAULT_MODE, and there are crags, setting mapLatLngBounds")
                 it.value = crags.value!!.map { c -> c.latlng }
             }
         }

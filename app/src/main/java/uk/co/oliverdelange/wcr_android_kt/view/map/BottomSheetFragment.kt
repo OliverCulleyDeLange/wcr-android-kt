@@ -61,8 +61,9 @@ class BottomSheetFragment : Fragment(), Injectable {
         val recyclerAdapter = TopoRecyclerAdapter(activity)
         binding?.topoRecycler?.adapter = recyclerAdapter
 
-        binding?.vm?.topos?.observe(this, Observer {
-            recyclerAdapter.updateTopos(it ?: emptyList())
+        binding?.vm?.topos?.observe(this, Observer { topos ->
+            Timber.d("topos changed, new topos: %s", topos?.map { it.topo.name })
+            recyclerAdapter.updateTopos(topos ?: emptyList())
 //            binding?.executePendingBindings()
 
             binding?.topoRecycler?.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
