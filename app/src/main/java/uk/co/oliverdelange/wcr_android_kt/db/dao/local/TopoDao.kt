@@ -18,11 +18,11 @@ interface TopoDao : BaseDao<Topo> {
 
     @Transaction
     @Query("SELECT * from topo where locationId = :locationId")
-    fun loadTopoAndRoutes(locationId: String): LiveData<List<TopoAndRoutes>>
+    fun loadTopoAndRoutes(locationId: String): LiveData<List<TopoAndRoutes>?>
 
     @Transaction
     @Query("SELECT * from topo where locationId = :locationId")
-    fun getTopoAndRoutes(locationId: String): List<TopoAndRoutes>
+    fun getTopoAndRoutes(locationId: String): List<TopoAndRoutes>?
 
     @Query("SELECT * FROM topo where uploadedAt= -1")
     override fun loadYetToBeUploaded(): Maybe<List<Topo>>
@@ -32,5 +32,5 @@ interface TopoDao : BaseDao<Topo> {
 
     //https://developer.android.com/training/data-storage/room/accessing-data
     @Query("SELECT * FROM topo WHERE name LIKE :search")
-    fun searchOnName(search: String): LiveData<List<Topo>>
+    fun searchOnName(search: String): LiveData<List<Topo>?>
 }

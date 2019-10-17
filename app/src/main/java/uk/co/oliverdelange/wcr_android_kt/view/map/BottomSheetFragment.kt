@@ -68,9 +68,10 @@ class BottomSheetFragment : Fragment(), Injectable {
             binding?.topoRecycler?.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     binding?.vm?.selectedTopoId?.value?.let { selectedTopoId ->
-                        Timber.d("Selecting the right topo in the list")
+                        Timber.d("Selecting the right topo in the list: $selectedTopoId")
                         val position = recyclerAdapter.topos.indexOfFirst { it.topo.id == selectedTopoId }
                         if (position != -1) {
+
                             binding?.topoRecycler?.scrollToPosition(position)
                         } else {
                             binding?.topoRecycler?.scrollToPosition(0)

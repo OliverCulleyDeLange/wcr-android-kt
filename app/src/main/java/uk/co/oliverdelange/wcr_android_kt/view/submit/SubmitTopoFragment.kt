@@ -119,14 +119,6 @@ class SubmitTopoFragment : Fragment(), Injectable {
             }
         })
 
-        binding.selectTopoImage.setOnClickListener {
-            if (viewModel.localTopoImage.value == null) selectImage()
-        }
-
-        binding.takePhotoImage.setOnClickListener {
-            if (viewModel.localTopoImage.value == null) takePhoto()
-        }
-
         viewModel.topoNameError.observe(this, Observer { _ ->
             Timber.d("topoNameError changed, updating error message")
             binding.topoNameInputLayout.error = binding.vm?.topoNameError?.value
@@ -144,22 +136,21 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.routePager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageSelected(position: Int) {
-                binding.vm?.activeRoute?.value = pagerAdapter.getItemId(position).toInt()
+                viewModel.activeRoute.value = pagerAdapter.getItemId(position).toInt()
             }
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 val routeCount = binding.routePager.adapter?.count
-                binding.vm?.setShouldShowAddRouteButton(routeCount, position, positionOffset)
+                viewModel.setShouldShowAddRouteButton(routeCount, position, positionOffset)
             }
         })
 
         addRoute(pagerAdapter)
-        binding.addRoute.setOnClickListener { addRoute(pagerAdapter) }
 
-        binding.vm?.activeRoute?.observe(this, Observer { activeRouteFragmentId ->
+        viewModel.activeRoute.observe(this, Observer { activeRouteFragmentId ->
             Timber.d("activeRoute changed, controlling new drawing path")
             activeRouteFragmentId?.let { routeFragmentId ->
-                binding.vm?.routes?.get(routeFragmentId)?.let { route ->
+                viewModel.routes.get(routeFragmentId)?.let { route ->
                     Timber.d("Active route fragment changed: $activeRouteFragmentId - route name: ${route.name}")
                     binding.topoImage.controlPath(routeFragmentId, route)
                 }
@@ -167,13 +158,13 @@ class SubmitTopoFragment : Fragment(), Injectable {
         })
 
         // Update the route line colour on the topo
-        binding.vm?.routeColourUpdate?.observe(this, Observer {
+        viewModel.routeColourUpdate.observe(this, Observer {
             Timber.d("routeColourUpdate changed, refreshig topo image")
             binding.topoImage.refresh()
         })
 
         // Update the grade if the route type changes
-        binding.vm?.routeTypeUpdate?.observe(this, Observer { routeType ->
+        viewModel.routeTypeUpdate.observe(this, Observer { routeType ->
             Timber.d("Route type changed, force selected the grade")
             if (routeType == null) {
                 Timber.e("RouteType enum is null - wtf?")
@@ -213,6 +204,16 @@ class SubmitTopoFragment : Fragment(), Injectable {
                 Unit // .let must return something
             }
         })
+
+        binding.addRoute.setOnClickListener { addRoute(pagerAdapter) }
+
+        binding.selectTopoImage.setOnClickListener {
+            if (viewModel.localTopoImage.value == null) selectImage()
+        }
+
+        binding.takePhotoImage.setOnClickListener {
+            if (viewModel.localTopoImage.value == null) takePhoto()
+        }
 
         return binding.root
     }

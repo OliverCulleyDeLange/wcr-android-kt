@@ -534,4 +534,9 @@ class MapsActivity : AppCompatActivity(),
             fab.show()
         }
     }
+
+    fun exploreRandomCrag(view: View) {
+        binding.vm?.exploreRandomCrag()
+    }
+
 }

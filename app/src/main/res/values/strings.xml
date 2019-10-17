@@ -34,7 +34,7 @@
     <string name="welcome_detail">Weclimb.rocks is a new crowd sourced climbing platform. It aims to make finding climbing routes easy and free.
         \nYou can create your own climbing topos and share them with the community. Simply take a photo of the rock face, draw on the routes, fill in some details and upload.
         \n\nTo get started, ensure the crag and sector location that the topo belongs to exists. If it doesn\'t, adding a new location is super simple.
-        \n\nOnce your crag location and sector location exist, add a topo.
-    </string>
+        \n\nOnce your crag location and sector location exist, add a topo.</string>
+    <string name="welcome_random_crag">Explore a random crag</string>
 
 </resources>

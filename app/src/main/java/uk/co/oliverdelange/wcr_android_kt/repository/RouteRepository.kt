@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class RouteRepository @Inject constructor(private val routeDao: RouteDao) {
 
-    fun get(routeId: String): Route {
+    fun get(routeId: String): Route? {
         Timber.d("Getting Route from id: %s", routeId)
         return routeDao.get(routeId)
     }
@@ -34,7 +34,7 @@ class RouteRepository @Inject constructor(private val routeDao: RouteDao) {
         Timber.d("Searching routes: %s", query)
         val searchOnName = routeDao.searchOnName("%$query%")
         return Transformations.map(searchOnName) { routes ->
-            routes.map { route ->
+            routes?.map { route ->
                 fromRouteDto(route)
             }
         }

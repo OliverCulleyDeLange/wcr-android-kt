@@ -34,24 +34,30 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
     fun loadToposForLocation(locationId: String): LiveData<List<TopoAndRoutes>> {
         Timber.d("Loading topos for location with id: %s", locationId)
         val liveTopoAndRoutesDto = topoDao.loadTopoAndRoutes(locationId)
-        return Transformations.map(liveTopoAndRoutesDto) { fromTopoAndRouteDto(it) }
+        return Transformations.map(liveTopoAndRoutesDto) {
+            it?.let { fromTopoAndRouteDto(it) }
+        }
     }
 
     @WorkerThread
-    fun getToposForLocation(locationId: String): List<TopoAndRoutes> {
+    fun getToposForLocation(locationId: String): List<TopoAndRoutes>? {
         Timber.d("Getting topos for location with id: %s", locationId)
         val topoAndRoutes = topoDao.getTopoAndRoutes(locationId)
-        return fromTopoAndRouteDto(topoAndRoutes)
+        return topoAndRoutes?.let { fromTopoAndRouteDto(it) }
     }
 
     @WorkerThread
     fun getToposForCrag(cragId: String): List<TopoAndRoutes> {
         Timber.d("Getting topos for crag with id: %s", cragId)
-        val toposAndRoutes = ArrayList<TopoAndRoutes>()
+        val toposAndRoutes = mutableListOf<TopoAndRoutes>()
         val sectorsForCrag = locationDao.getWithParentId(cragId)
-        for (sector in sectorsForCrag) {
-            val topoAndRoutesDto = topoDao.getTopoAndRoutes(sector.id)
-            toposAndRoutes.addAll(fromTopoAndRouteDto(topoAndRoutesDto))
+        if (sectorsForCrag != null) {
+            for (sector in sectorsForCrag) {
+                val topoAndRoutesDto = topoDao.getTopoAndRoutes(sector.id)
+                topoAndRoutesDto?.let {
+                    toposAndRoutes.addAll(fromTopoAndRouteDto(it))
+                }
+            }
         }
         return toposAndRoutes
     }
@@ -60,7 +66,7 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
         Timber.d("Search topos: %s", query)
         val liveSearchData = topoDao.searchOnName("%$query%")
         return Transformations.map(liveSearchData) { topos ->
-            topos.map { topo ->
+            topos?.map { topo ->
                 fromTopoDto(topo)
             }
         }

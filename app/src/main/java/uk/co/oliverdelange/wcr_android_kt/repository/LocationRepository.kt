@@ -29,12 +29,16 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
         }
     }
 
-    fun load(selectedLocationId: String): LiveData<Location> {
+    fun load(selectedLocationId: String): LiveData<Location?> {
         Timber.d("Loading location from id: %s", selectedLocationId)
         val liveLocationDTO = locationDao.load(selectedLocationId)
         return Transformations.map(liveLocationDTO) {
-            fromLocationDto(it)
+            it?.let { fromLocationDto(it) }
         }
+    }
+
+    fun randomCragId(): String? {
+        return locationDao.loadRandomId()
     }
 
     fun get(locationId: String): Location? {
@@ -47,7 +51,7 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
         Timber.d("Loading crags")
         val liveLocationDTOs = locationDao.loadByType(LocationType.CRAG.toString())
         return Transformations.map(liveLocationDTOs) { locations ->
-            locations.map { location ->
+            locations?.map { location ->
                 fromLocationDto(location)
             }
         }
@@ -57,13 +61,13 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
         Timber.d("Loading sectors for cragId: %s", cragId)
         val liveLocationDTOs = locationDao.loadWithParentId(cragId)
         return Transformations.map(liveLocationDTOs) { locations ->
-            locations.map { location ->
+            locations?.map { location ->
                 fromLocationDto(location)
             }
         }
     }
 
-    fun loadRouteInfoFor(locationId: String): LiveData<LocationRouteInfo> {
+    fun loadRouteInfoFor(locationId: String): LiveData<LocationRouteInfo?> {
         Timber.d("Loading route info for location: %s", locationId)
         return locationDao.getRouteInfo(locationId)
     }
@@ -72,7 +76,7 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
         Timber.d("Searching locations: %s", query)
         val liveLocationDTOs = locationDao.searchOnName("%$query%")
         return Transformations.map(liveLocationDTOs) { locations ->
-            locations.map { location ->
+            locations?.map { location ->
                 fromLocationDto(location)
             }
         }

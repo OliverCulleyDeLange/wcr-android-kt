@@ -1,5 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.view.View
@@ -76,6 +77,7 @@ class MapViewModel @Inject constructor(application: Application,
         it.addSource(userSignedIn) { _ -> it.value = getShowFab() }
         it.addSource(mapMode) { _ -> it.value = getShowFab() }
     }
+
     val selectedLocationId: MutableLiveData<String?> = MutableLiveData<String?>().also {
         it.value = null
     }
@@ -214,6 +216,17 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
+    @SuppressLint("CheckResult")
+    fun exploreRandomCrag() {
+        Observable.fromCallable { locationRepository.randomCragId() }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { id ->
+                    Timber.d("Random location id = $id")
+                    selectedLocationId.value = id
+                }
+    }
+
     fun selectCrag(id: String?) {
         Timber.d("Selecting crag with id %s", id)
         selectedLocationId.postValue(id)
@@ -248,7 +261,7 @@ class MapViewModel @Inject constructor(application: Application,
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { route ->
-                        selectTopo(route.topoId)
+                        selectTopo(route?.topoId)
                         //TODO Select route in route pager
                     }
         }
