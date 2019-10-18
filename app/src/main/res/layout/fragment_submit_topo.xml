@@ -54,10 +54,10 @@
                 <uk.co.oliverdelange.wcr_android_kt.view.customviews.PaintableTopoImageView
                     android:id="@+id/topo_image"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
                     android:layout_gravity="center_horizontal"
                     android:background="@color/bg_grey_light"
-                    android:scaleType="fitCenter"
                     app:drawMode="@{vm.isDrawing}"
                     app:imageBitmap="@{vm.localTopoImageBitmap}"
                     tools:src="@drawable/nature"
