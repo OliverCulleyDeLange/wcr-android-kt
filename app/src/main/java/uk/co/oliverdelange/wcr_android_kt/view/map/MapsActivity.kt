@@ -535,6 +535,7 @@ class MapsActivity : AppCompatActivity(),
         }
     }
 
+    // This is in the activity cause i couldn't be bothered to inject the viewmodel into the welcome fragment... lazy
     fun exploreRandomCrag(view: View) {
         binding.vm?.exploreRandomCrag()
     }

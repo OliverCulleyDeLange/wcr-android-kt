@@ -199,7 +199,34 @@ class MapViewModel @Inject constructor(application: Application,
         it?.name
     }
 
-    var bottomSheetExpanded = false
+    fun toggleBottomSheetState(view: View) {
+        Timber.d("Toggling bottom sheet state")
+        if (bottomSheetIsCollapsed()) {
+            expandBottomSheet()
+        } else {
+            collapseBottomSheet()
+        }
+    }
+
+    private fun expandBottomSheet() {
+        bottomSheetState.value = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun collapseBottomSheet() {
+        bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    private fun hideBottomSheet() {
+        bottomSheetState.value = BottomSheetBehavior.STATE_HIDDEN
+    }
+
+    private fun bottomSheetIsHidden() = bottomSheetState.value == BottomSheetBehavior.STATE_HIDDEN
+
+    private fun bottomSheetIsExpanded() = bottomSheetState.value == BottomSheetBehavior.STATE_EXPANDED
+    private fun bottomSheetIsCollapsed() = bottomSheetState.value == BottomSheetBehavior.STATE_COLLAPSED
+
+
+    private var bottomSheetExpanded = false
     fun onBottomSheetExpand() {
         if (!bottomSheetExpanded) {
             Timber.d("Bottom sheet expanded for first time since app open")
@@ -255,7 +282,7 @@ class MapViewModel @Inject constructor(application: Application,
     fun selectTopo(id: String?) {
         Timber.d("Selecting topo with id %s", id)
         id?.let {
-            bottomSheetState.value = BottomSheetBehavior.STATE_EXPANDED
+            expandBottomSheet()
             mapMode.value = MapMode.TOPO_MODE
             Observable.fromCallable { topoRepository.topoDao.get(it) }
                     .subscribeOn(Schedulers.io())
@@ -313,13 +340,12 @@ class MapViewModel @Inject constructor(application: Application,
     }
 
     fun onSearchBarUnfocus() {
-        bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
+        collapseBottomSheet()
 
     }
 
     fun onSearchBarFocus() {
-        bottomSheetState.value = BottomSheetBehavior.STATE_HIDDEN
-
+        hideBottomSheet()
     }
 
     fun onSearchSuggestionClicked(searchSuggestion: SearchSuggestionItem) {
@@ -340,12 +366,12 @@ class MapViewModel @Inject constructor(application: Application,
     }
 
     fun back() {
-        if (bottomSheetState.value == BottomSheetBehavior.STATE_EXPANDED ||
-                bottomSheetState.value == BottomSheetBehavior.STATE_HIDDEN) {
-            bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
+        if (bottomSheetIsExpanded() ||
+                bottomSheetIsHidden()) {
+            collapseBottomSheet()
         } else {
             when (mapMode.value) {
-                MapMode.DEFAULT_MODE -> bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
+                MapMode.DEFAULT_MODE -> collapseBottomSheet()
                 MapMode.CRAG_MODE -> {
                     mapMode.value = MapMode.DEFAULT_MODE
                     selectedLocationId.value = null

@@ -3,7 +3,9 @@ Stetho the app to view DB contents
 gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --dependency kotlin-stdlib-jre7
 
 #TODO
-Make look good
+Stuttery performance fix
+
+Split submission into route paths and info
 Tutorials and help screen - https://github.com/TakuSemba/Spotlight
 Perf test - load huge data set and check performance
 Time dB queries
@@ -11,7 +13,9 @@ crashlytics
 Analytics
 License t&c
 
+
 - Do after release
+Allow marking start/end holds, in / out holds
 Filter routes by grade and type
 Cache images on phone up to configurable limit
 Submission validation of fields to show nice error instead of just disabling button
@@ -20,7 +24,11 @@ Grade voting
 Place hold location on topo
 Full screen Topo view
 DWS grade / climb  type
-
+Add extra info:
+    - Parking spots
+    - Approach notes
+    - Rock type
+    - Route height
 
 - Test
 Test DBs max length for strings - long paths could cause issues.
