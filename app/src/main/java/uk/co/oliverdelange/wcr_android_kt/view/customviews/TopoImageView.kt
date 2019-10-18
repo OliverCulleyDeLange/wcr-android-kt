@@ -21,19 +21,19 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
         refreshPaths()
     }
 
-    override fun setImageBitmap(bm: Bitmap) {
+    override fun setImageBitmap(bm: Bitmap?) {
         super.setImageBitmap(bm)
-        refreshPaths()
+        bm?.let { refreshPaths() }
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
         super.setImageDrawable(drawable)
-        refreshPaths()
+        drawable?.let { refreshPaths() }
     }
 
     override fun setImageURI(uri: Uri?) {
         super.setImageURI(uri)
-        refreshPaths()
+        uri?.let { refreshPaths() }
     }
 
     var routes: List<Route> = emptyList()

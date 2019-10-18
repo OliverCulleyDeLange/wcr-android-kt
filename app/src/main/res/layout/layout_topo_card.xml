@@ -23,24 +23,27 @@
             android:background="@color/md_white_1000"
             android:paddingBottom="10dp">
 
-            <!--            <androidx.cardview.widget.CardView-->
-            <!--                android:id="@+id/topo_image_card"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                card_view:cardCornerRadius="50dp">-->
-
             <uk.co.oliverdelange.wcr_android_kt.view.customviews.TopoImageView
                 android:id="@+id/topo_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
                 app:imageUri="@{topo.image}"
                 app:minPointers="2"
                 app:placeholder="@{@drawable/topo_placeholder}"
                 tools:src="@drawable/nature" />
-            <!--            </androidx.cardview.widget.CardView>-->
 
+
+            <!--            //TESTING-->
+            <!--            <ImageView-->
+            <!--                android:id="@+id/topo_image_"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:adjustViewBounds="true"-->
+            <!--                android:layout_below="@+id/topo_image"-->
+            <!--                app:imageUri="@{topo.image}"-->
+            <!--                app:placeholder="@{@drawable/topo_placeholder}"-->
+            <!--                tools:src="@drawable/nature" />-->
 
             <TextView
                 android:id="@+id/topo_name"

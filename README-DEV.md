@@ -4,7 +4,7 @@ gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --depen
 
 #TODO
 Make look good
-Tutorials and help screen
+Tutorials and help screen - https://github.com/TakuSemba/Spotlight
 Perf test - load huge data set and check performance
 Time dB queries
 crashlytics

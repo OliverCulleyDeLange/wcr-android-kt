@@ -198,6 +198,7 @@ public class TouchImageView extends AppCompatImageView {
      * https://github.com/mapbox/mapbox-gestures-android/blob/396106f0b7ce2906194f4a1ec30bff0903c08a45/library/src/main/java/com/mapbox/android/gestures/StandardScaleGestureDetector.java
      * https://github.com/mapbox/mapbox-gestures-android/pull/30/files
      * https://issuetracker.google.com/issues/37137502
+     *
      * @param context
      */
     void modifyInternalMinSpanValues(Context context) throws NoSuchFieldException, IllegalAccessException {
@@ -725,9 +726,24 @@ public class TouchImageView extends AppCompatImageView {
         int width = totalViewWidth - getPaddingLeft() - getPaddingRight();
         int height = totalViewHeight - getPaddingTop() - getPaddingBottom();
 
-        //
-        // Set view dimensions
-        //
+        // Copied some of the view size scaling stuff from ImageView:onMeasure
+        if (getAdjustViewBounds()) {
+            if (heightMode != MeasureSpec.EXACTLY) {
+                float desiredAspect = (float) drawableWidth / (float) drawableHeight;
+                if (desiredAspect != 0.0f) {
+
+                    final float actualAspect = (float) (widthSize - getPaddingLeft() - getPaddingRight()) /
+                            (heightSize - getPaddingTop() - getPaddingBottom());
+
+                    if (Math.abs(actualAspect - desiredAspect) > 0.0000001) {
+                        // Adjusting height to be proportional to width
+                        height = (int) ((widthSize - getPaddingLeft() - getPaddingRight()) / desiredAspect) +
+                                getPaddingTop() + getPaddingBottom();
+                    }
+                }
+            }
+        }
+
         setMeasuredDimension(width, height);
     }
 
@@ -912,7 +928,7 @@ public class TouchImageView extends AppCompatImageView {
     /**
      * Set view dimensions based on layout params
      */
-    private int setViewSize(int mode, int size, int drawableWidth) {
+    private int setViewSize(int mode, int size, int drawableSize) {
         int viewSize;
         switch (mode) {
             case View.MeasureSpec.EXACTLY:
@@ -920,11 +936,11 @@ public class TouchImageView extends AppCompatImageView {
                 break;
 
             case View.MeasureSpec.AT_MOST:
-                viewSize = Math.min(drawableWidth, size);
+                viewSize = Math.min(drawableSize, size);
                 break;
 
             case View.MeasureSpec.UNSPECIFIED:
-                viewSize = drawableWidth;
+                viewSize = drawableSize;
                 break;
 
             default:
@@ -1118,7 +1134,7 @@ public class TouchImageView extends AppCompatImageView {
 
                 if (state == State.NONE ||
                         state == State.DRAG ||
-                        state == State.FLING  ||
+                        state == State.FLING ||
                         state == State.ZOOM) {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
@@ -1129,7 +1145,7 @@ public class TouchImageView extends AppCompatImageView {
                             break;
 
                         case MotionEvent.ACTION_MOVE:
-                            if (state == State.DRAG  || state == State.ZOOM) {
+                            if (state == State.DRAG || state == State.ZOOM) {
                                 float deltaX = curr.x - last.x;
                                 float deltaY = curr.y - last.y;
                                 float fixTransX = getFixDragTrans(deltaX, viewWidth, getImageWidth());
