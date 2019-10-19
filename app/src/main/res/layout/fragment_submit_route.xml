@@ -27,126 +27,160 @@
         android:orientation="vertical"
         app:cardCornerRadius="20dp"
         app:cardElevation="1dp"
-        tools:layout_height="180dp">
+        tools:layout_height="wrap_content">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/submit_route_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp">
+            android:layout_height="match_parent">
 
             <EditText
                 android:id="@+id/route_name"
                 style="@style/Wcr_EditText_Small"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:hint="@string/submission_text_input_route_name"
                 android:inputType="textCapWords"
-                android:onTextChanged="@{(text, start, lengthBefore, lengthAfter) -> vm.routeNameChanged(fragmentId, text)}" />
+                android:onTextChanged="@{(text, start, lengthBefore, lengthAfter) -> vm.routeNameChanged(fragmentId, text)}"
+                app:layout_constraintEnd_toStartOf="@+id/remove_fragment"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
 
             <EditText
                 android:id="@+id/route_description"
                 style="@style/Wcr_EditText_Small"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/route_name"
+                android:layout_marginStart="16dp"
                 android:hint="@string/submission_text_input_route_description"
                 android:inputType="textCapSentences"
-                android:onTextChanged="@{(text, start, lengthBefore, lengthAfter) -> vm.routeDescriptionChanged(fragmentId, text)}" />
+                android:onTextChanged="@{(text, start, lengthBefore, lengthAfter) -> vm.routeDescriptionChanged(fragmentId, text)}"
+                app:layout_constraintEnd_toEndOf="@+id/route_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/route_name" />
 
-            <LinearLayout
-                android:id="@+id/route_type"
-                android:layout_width="match_parent"
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/text_align_guideline"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/route_description"
-                android:orientation="horizontal"
-                android:weightSum="9">
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.3" />
 
-                <TextView
-                    style="@style/Wcr_SpinnerLabel"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="0dp"
-                    android:layout_weight="3"
-                    android:padding="0dp"
-                    android:text="@string/submission_label_route_type" />
-
-                <Spinner
-                    android:id="@+id/route_type_spinner"
-                    style="@style/Wcr_Spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="6"
-                    android:onItemSelected="@{(parent, view, position, id) -> vm.routeTypeChanged(fragmentId, position)}"
-                    tools:listitem="@layout/support_simple_spinner_dropdown_item" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/route_grade"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/textView"
+                style="@style/Wcr_SpinnerLabel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/route_type"
-                android:orientation="horizontal"
-                android:weightSum="9">
+                android:layout_marginTop="8dp"
+                android:text="@string/submission_label_route_type"
+                app:layout_constraintEnd_toStartOf="@+id/text_align_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/route_description" />
 
-                <TextView
-                    android:id="@+id/climb_grade_label"
-                    style="@style/Wcr_SpinnerLabel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="@string/submission_label_grade" />
 
-                <Spinner
-                    android:id="@+id/v_grade_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="6"
-                    android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.V)}"
-                    android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.V)}" />
+            <Spinner
+                android:id="@+id/route_type_spinner"
+                style="@style/Wcr_Spinner"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onItemSelected="@{(parent, view, position, id) -> vm.routeTypeChanged(fragmentId, position)}"
+                app:layout_constraintBottom_toBottomOf="@+id/textView"
+                app:layout_constraintEnd_toEndOf="@+id/route_description"
+                app:layout_constraintStart_toStartOf="@+id/text_align_guideline"
+                app:layout_constraintTop_toTopOf="@+id/textView"
+                tools:listitem="@layout/support_simple_spinner_dropdown_item" />
 
-                <Spinner
-                    android:id="@+id/f_grade_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="6"
-                    android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.FONT)}"
-                    android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.FONT)}" />
+            <TextView
+                android:id="@+id/climb_grade_label"
+                style="@style/Wcr_SpinnerLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/submission_label_grade"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/text_align_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-                <Spinner
-                    android:id="@+id/trad_adjectival_grade_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.TRAD_ADJ)}"
-                    android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.TRAD)}" />
+            <Spinner
+                android:id="@+id/v_grade_spinner"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.V)}"
+                android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.V)}"
+                app:layout_constraintBottom_toBottomOf="@+id/climb_grade_label"
+                app:layout_constraintEnd_toEndOf="@+id/route_type_spinner"
+                app:layout_constraintStart_toStartOf="@+id/text_align_guideline"
+                app:layout_constraintTop_toTopOf="@+id/climb_grade_label"
+                tools:listitem="@layout/support_simple_spinner_dropdown_item"
+                tools:visibility="gone" />
 
-                <Spinner
-                    android:id="@+id/trad_technical_grade_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.TRAD_TECH)}"
-                    android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.TRAD)}" />
+            <Spinner
+                android:id="@+id/f_grade_spinner"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.FONT)}"
+                android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.FONT)}"
+                app:layout_constraintBottom_toBottomOf="@+id/climb_grade_label"
+                app:layout_constraintEnd_toEndOf="@+id/route_type_spinner"
+                app:layout_constraintStart_toStartOf="@+id/text_align_guideline"
+                app:layout_constraintTop_toTopOf="@+id/climb_grade_label"
+                tools:listitem="@layout/support_simple_spinner_dropdown_item"
+                tools:visibility="gone" />
 
-                <Spinner
-                    android:id="@+id/sport_grade_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="6"
-                    android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.SPORT)}"
-                    android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.SPORT)}" />
+            <Spinner
+                android:id="@+id/trad_adjectival_grade_spinner"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.TRAD_ADJ)}"
+                android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.TRAD)}"
+                app:layout_constraintBottom_toBottomOf="@+id/climb_grade_label"
+                app:layout_constraintEnd_toStartOf="@+id/trad_technical_grade_spinner"
+                app:layout_constraintStart_toStartOf="@+id/text_align_guideline"
+                app:layout_constraintTop_toTopOf="@+id/climb_grade_label"
+                tools:listitem="@layout/support_simple_spinner_dropdown_item"
+                tools:visibility="visible" />
 
-            </LinearLayout>
-        </RelativeLayout>
+            <Spinner
+                android:id="@+id/trad_technical_grade_spinner"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.TRAD_TECH)}"
+                android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.TRAD)}"
+                app:layout_constraintBottom_toBottomOf="@+id/climb_grade_label"
+                app:layout_constraintEnd_toEndOf="@+id/route_type_spinner"
+                app:layout_constraintStart_toEndOf="@+id/trad_adjectival_grade_spinner"
+                app:layout_constraintTop_toTopOf="@+id/climb_grade_label"
+                tools:listitem="@layout/support_simple_spinner_dropdown_item"
+                tools:visibility="visible" />
 
-        <ImageButton
-            android:id="@+id/remove_fragment"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="end|top"
-            android:background="@color/transparent"
-            android:src="@drawable/ic_cancel" />
+            <Spinner
+                android:id="@+id/sport_grade_spinner"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onItemSelected="@{(parent, view, position, id) -> vm.gradeChanged(fragmentId, position, GradeDropDown.SPORT)}"
+                android:visibility="@{vm.shouldShow(safeUnbox(fragmentId), GradeType.SPORT)}"
+                app:layout_constraintBottom_toBottomOf="@+id/climb_grade_label"
+                app:layout_constraintEnd_toEndOf="@+id/route_type_spinner"
+                app:layout_constraintStart_toStartOf="@+id/text_align_guideline"
+                app:layout_constraintTop_toTopOf="@+id/climb_grade_label"
+                tools:listitem="@layout/support_simple_spinner_dropdown_item"
+                tools:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/remove_fragment"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end|top"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_cancel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 </layout>
