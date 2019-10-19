@@ -12,11 +12,6 @@
             type="uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitTopoViewModel" />
     </data>
 
-    <ScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -168,5 +163,4 @@
                     app:show="@{safeUnbox(vm.submitting)}" />
             </RelativeLayout>
         </RelativeLayout>
-    </ScrollView>
 </layout>
