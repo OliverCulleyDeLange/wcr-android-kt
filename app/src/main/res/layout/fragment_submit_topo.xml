@@ -55,9 +55,8 @@
                     android:id="@+id/topo_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
                     android:layout_gravity="center_horizontal"
-                    android:background="@color/bg_grey_light"
+                    android:adjustViewBounds="true"
                     app:drawMode="@{vm.isDrawing}"
                     app:imageBitmap="@{vm.localTopoImageBitmap}"
                     tools:src="@drawable/nature"
@@ -89,12 +88,12 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/topo_name_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/image_container"
                 android:minHeight="50dp"
-                app:errorEnabled="true"
-                app:hintTextAppearance="@style/Wcr_FloatingLabel">
+                app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/topo_name_input"
@@ -103,8 +102,7 @@
                     android:layout_margin="16dp"
                     android:hint="@string/submission_text_input_topo_name"
                     android:inputType="textCapWords"
-                    android:text="@={vm.topoName}"
-                    android:theme="@style/Wcr_EditText" />
+                    android:text="@={vm.topoName}" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

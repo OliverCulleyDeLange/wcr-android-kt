@@ -29,7 +29,7 @@
     </style>
 
     <!--MAP-->
-    <style name="Wcr_MapToggle" parent="Widget.AppCompat.Button">
+    <style name="Wcr_MapToggle" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_width">38dp</item>
         <item name="android:layout_height">38dp</item>
         <item name="android:textSize">10sp</item>
@@ -60,7 +60,6 @@
         <item name="android:textColor">@color/sector_light</item>
     </style>
 
-    <!--OUTPUT-->
     <!--BOTTOM SHEET-->
     <style name="Wcr_MapBottomSheetTitle" parent="Theme.AppCompat.Light">
         <item name="android:textSize">24sp</item>
@@ -134,9 +133,6 @@
     </style>
 
     <!--INPUT-->
-    <style name="Wcr_FloatingLabel" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/accent</item>
-    </style>
 
     <style name="Wcr_EditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="colorControlNormal">@color/colorAccentLight</item>
