@@ -12,155 +12,166 @@
             type="uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitTopoViewModel" />
     </data>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/submit_topo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-            <FrameLayout
-                android:id="@+id/image_container"
+
+        <uk.co.oliverdelange.wcr_android_kt.view.customviews.PaintableTopoImageView
+            android:id="@+id/topo_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:drawMode="@{vm.isDrawing}"
+            app:imageBitmap="@{vm.localTopoImageBitmap}"
+            app:layout_constraintBottom_toTopOf="@id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/nature"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/select_topo_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="33dp"
+            android:src="@drawable/ic_photo"
+            app:layout_constraintBottom_toTopOf="@id/guideline"
+            app:layout_constraintEnd_toStartOf="@id/take_photo_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:show="@{vm.hasCamera &amp;&amp; vm.localTopoImage == null}" />
+
+        <ImageView
+            android:id="@+id/take_photo_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="33dp"
+            android:src="@drawable/ic_photo_camera_black_24dp"
+            app:layout_constraintBottom_toTopOf="@id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/select_topo_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:show="@{vm.hasCamera &amp;&amp; vm.localTopoImage == null}" />
+
+
+        <ImageButton
+            android:id="@+id/undo_tool"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{vm::undoDrawing}"
+            android:src="@drawable/ic_undo_black_24dp"
+            app:layout_constraintEnd_toStartOf="@id/edit_tool"
+            app:layout_constraintTop_toTopOf="@id/topo_image"
+            app:show="@{vm.localTopoImage != null}" />
+
+        <ImageButton
+            android:id="@+id/edit_tool"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{vm::toggleDrawing}"
+            android:src="@{vm.isDrawing ? @drawable/ic_move_black_24dp : @drawable/ic_edit_black_24dp}"
+            app:layout_constraintEnd_toEndOf="@+id/topo_image"
+            app:layout_constraintTop_toTopOf="@+id/topo_image"
+            app:show="@{vm.localTopoImage != null}"
+            tools:src="@drawable/ic_edit_black_24dp" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/topo_name_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:minHeight="50dp"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toTopOf="@id/route_pager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/topo_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:minHeight="200dp">
+                android:hint="@string/submission_text_input_topo_name"
+                android:inputType="textCapWords"
+                android:text="@={vm.topoName}" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:gone="@{vm.localTopoImage != null}">
-
-                    <ImageView
-                        android:id="@+id/select_topo_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="1"
-                        android:src="@drawable/ic_photo" />
-
-                    <ImageView
-                        android:id="@+id/take_photo_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="1"
-                        android:src="@drawable/ic_photo_camera_black_24dp"
-                        app:show="@{vm.hasCamera}" />
-                </LinearLayout>
-
-                <uk.co.oliverdelange.wcr_android_kt.view.customviews.PaintableTopoImageView
-                    android:id="@+id/topo_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:adjustViewBounds="true"
-                    app:drawMode="@{vm.isDrawing}"
-                    app:imageBitmap="@{vm.localTopoImageBitmap}"
-                    tools:src="@drawable/nature"
-                    tools:visibility="visible" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:orientation="horizontal"
-                    app:gone="@{vm.localTopoImage == null}">
-
-                    <ImageButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="@{vm::undoDrawing}"
-                        android:src="@drawable/ic_undo_black_24dp" />
-
-                    <ImageButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="@{vm::toggleDrawing}"
-                        android:src="@{vm.isDrawing ? @drawable/ic_move_black_24dp : @drawable/ic_edit_black_24dp}"
-                        tools:src="@drawable/ic_edit_black_24dp" />
-
-                </LinearLayout>
-
-            </FrameLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/topo_name_input_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/image_container"
-                android:minHeight="50dp"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/topo_name_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:hint="@string/submission_text_input_topo_name"
-                    android:inputType="textCapWords"
-                    android:text="@={vm.topoName}" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <FrameLayout
-                android:id="@+id/viewpager_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/topo_name_input_layout"
-                android:minHeight="220dp">
-
-                <androidx.viewpager.widget.ViewPager
-                    android:id="@+id/route_pager"
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    tools:listitem="@layout/fragment_submit_route" />
-
-                <ImageButton
-                    android:id="@+id/add_route"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="right"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginRight="12dp"
-                    android:background="@color/transparent"
-                    android:src="@drawable/ic_add_circle"
-                    app:show="@{safeUnbox(vm.shouldShowAddRouteButton)}" />
-
-            </FrameLayout>
-
-            <RelativeLayout
-                android:id="@+id/submit_button_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/viewpager_container"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="center"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:minHeight="50dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/submit"
-                    style="@style/Wcr_Button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:enabled="@{safeUnbox(!vm.submitting)}"
-                    android:gravity="center"
-                    android:onClick="@{vm::onClickSubmit}"
-                    android:text="@string/button_submit" />
+        </com.google.android.material.textfield.TextInputLayout>
 
 
-                <ProgressBar
-                    android:id="@+id/topo_submit_progress"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_centerInParent="true"
-                    android:max="500"
-                    android:progress="0"
-                    android:progressDrawable="@drawable/spinner"
-                    app:show="@{safeUnbox(vm.submitting)}" />
-            </RelativeLayout>
-        </RelativeLayout>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/route_pager"
+            android:layout_width="wrap_content"
+            android:layout_height="180dp"
+            app:layout_constraintBottom_toTopOf="@id/submit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/topo_name_input_layout"
+            tools:listitem="@layout/fragment_submit_route" />
+
+        <ImageButton
+            android:id="@+id/add_route"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_add_circle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/route_pager"
+            app:show="@{safeUnbox(vm.shouldShowAddRouteButton)}" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/submit"
+            style="@style/Wcr_Button"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:enabled="@{safeUnbox(!vm.submitting)}"
+            android:gravity="center"
+            android:onClick="@{vm::onClickSubmit}"
+            android:text="@string/button_submit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/route_pager" />
+
+
+        <ProgressBar
+            android:id="@+id/topo_submit_progress"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:max="500"
+            android:progress="0"
+            android:progressDrawable="@drawable/spinner"
+            app:layout_constraintBottom_toTopOf="@+id/submit"
+            app:layout_constraintEnd_toEndOf="@+id/submit"
+            app:layout_constraintStart_toStartOf="@+id/submit"
+            app:layout_constraintTop_toTopOf="@id/submit"
+            app:show="@{safeUnbox(vm.submitting)}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

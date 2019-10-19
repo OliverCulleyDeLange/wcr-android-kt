@@ -3,8 +3,11 @@ Stetho the app to view DB contents
 gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --dependency kotlin-stdlib-jre7
 
 #TODO
-Stuttery performance fix
-
+Stuttery performance fix:
+    - Get rid of Relative Layouts & LinearLayouts with weights
+    - fix refresh sectors for crag
+    - fix stupid topos refreshing thing
+Real topos / places
 Split submission into route paths and info
 Tutorials and help screen - https://github.com/TakuSemba/Spotlight
 Perf test - load huge data set and check performance
@@ -12,6 +15,7 @@ Time dB queries
 crashlytics
 Analytics
 License t&c
+Allow swipe up from bottom to show bottom sheet after hidden
 
 
 - Do after release

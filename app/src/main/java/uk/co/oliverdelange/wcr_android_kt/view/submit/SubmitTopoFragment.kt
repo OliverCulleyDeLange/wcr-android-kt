@@ -208,10 +208,12 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.addRoute.setOnClickListener { addRoute(pagerAdapter) }
 
         binding.selectTopoImage.setOnClickListener {
+            Timber.d("User wants to select topo image from gallery")
             if (viewModel.localTopoImage.value == null) selectImage()
         }
 
         binding.takePhotoImage.setOnClickListener {
+            Timber.d("User wants to take topo image with camera")
             if (viewModel.localTopoImage.value == null) takePhoto()
         }
 
