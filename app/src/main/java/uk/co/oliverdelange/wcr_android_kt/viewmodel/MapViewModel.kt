@@ -182,6 +182,8 @@ class MapViewModel @Inject constructor(application: Application,
                     sector.id?.let { sectorId ->
                         topos.addSource(topoRepository.loadToposForLocation(sectorId)) {
                             it?.let { newToposAndRoutes ->
+
+                                //FIXME this is shit because it triggers the live data update x times where x is the number of sectors
                                 topos.value = newToposAndRoutes.plus(topos.value ?: emptyList())
                             }
                         }
@@ -269,13 +271,13 @@ class MapViewModel @Inject constructor(application: Application,
 
     fun selectCrag(id: String?) {
         Timber.d("Selecting crag with id %s", id)
-        selectedLocationId.postValue(id)
+        selectedLocationId.value = id
         mapMode.value = MapMode.CRAG_MODE
     }
 
     fun selectSector(id: String?) {
         Timber.d("Selecting sector with id %s", id)
-        selectedLocationId.postValue(id)
+        selectedLocationId.value = id
         mapMode.value = MapMode.SECTOR_MODE
     }
 

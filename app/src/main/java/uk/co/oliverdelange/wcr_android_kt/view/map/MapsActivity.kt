@@ -140,6 +140,7 @@ class MapsActivity : AppCompatActivity(),
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_SUBMIT -> {
                 binding.vm?.mapMode?.value = SECTOR_MODE
@@ -171,7 +172,7 @@ class MapsActivity : AppCompatActivity(),
         clusterManager.setOnClusterItemClickListener(this)
         clusterManager.setOnClusterClickListener {
             val bounds: LatLngBounds = LatLngUtil.getBoundsForLatLngs(it.items.map { it.position })
-            map.animate(bounds)
+            map.animate(bounds) {}
             true
         }
         map.setOnMarkerClickListener(markerManager)
@@ -258,7 +259,9 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.mapLatLngBounds?.observe(this, Observer {
             Timber.d("mapLatLngBounds changed, animating map pan")
             if (it.isNotEmpty()) {
-                map.animate(LatLngUtil.getBoundsForLatLngs(it))
+                map.animate(LatLngUtil.getBoundsForLatLngs(it)) {
+                    Timber.d("Map animation finished (callback), we can do expensive things now")
+                }
             }
         })
 
@@ -316,13 +319,14 @@ class MapsActivity : AppCompatActivity(),
         })
     }
 
+    // FIXME 120ms!!
     private fun refreshSectorsForCrag(sectors: List<Location>?) {
         //TODO Do a diff instead of clearing and re-initialising, this is probably causing lag
         sectorMarkers.clear()
         sectors?.forEach {
             val iconStyle = if (binding.vm?.mapMode?.value == SUBMIT_SECTOR_MODE) Icon.SECTOR_DIMMED else Icon.SECTOR
-            val icon = IconHelper(this).getIcon(it.name, iconStyle)
-            val marker = sectorMarkers.addMarker(MarkerOptions()
+            val icon = IconHelper(this).getIcon(it.name, iconStyle) //30ms
+            val marker = sectorMarkers.addMarker(MarkerOptions() //15ms
                     .icon(BitmapDescriptorFactory.fromBitmap(icon))
                     .position(it.latlng)
                     .draggable(false))
