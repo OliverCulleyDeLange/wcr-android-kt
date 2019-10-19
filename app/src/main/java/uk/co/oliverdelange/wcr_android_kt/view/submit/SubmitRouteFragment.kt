@@ -64,9 +64,9 @@ class SubmitRouteFragment : androidx.fragment.app.Fragment(), Injectable {
         super.onActivityCreated(savedInstanceState)
         val parent = parentFragment
         if (parent is SubmitTopoFragment) {
-            remove_fragment.setOnClickListener({
+            remove_fragment.setOnClickListener {
                 parent.removeRouteFragment(this)
-            })
+            }
         }
     }
 }

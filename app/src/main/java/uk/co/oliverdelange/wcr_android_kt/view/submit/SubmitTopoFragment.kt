@@ -226,7 +226,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.topoImage.removePath(routeFragment.fragmentId)
         // Remove the fragment
         routeFragments.remove(routeFragment)
-        fragmentManager?.inTransaction {
+        childFragmentManager.inTransaction {
             remove(routeFragment)
         }
         binding.routePager.adapter?.notifyDataSetChanged()
