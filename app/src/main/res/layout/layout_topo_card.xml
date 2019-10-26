@@ -17,7 +17,8 @@
         android:layout_margin="16dp"
         card_view:cardCornerRadius="10dp">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/topo_card_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/md_white_1000"
@@ -31,6 +32,9 @@
                 app:imageUri="@{topo.image}"
                 app:minPointers="2"
                 app:placeholder="@{@drawable/topo_placeholder}"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/nature" />
 
 
@@ -48,12 +52,13 @@
             <TextView
                 android:id="@+id/topo_name"
                 style="@style/Wcr_TopoTitleText"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/topo_image"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
                 android:text="@{topo.name}"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toBottomOf="@+id/topo_image"
                 tools:text="Topo name that is really long so we see the wrapping behaviour" />
 
             <!--            <View-->
@@ -69,10 +74,11 @@
                 android:id="@+id/route_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/topo_name"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toBottomOf="@+id/topo_name"
                 tools:listitem="@layout/layout_route_card" />
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 </layout>
