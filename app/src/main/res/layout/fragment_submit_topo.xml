@@ -24,7 +24,7 @@
             android:layout_height="0dp"
             app:drawMode="@{vm.isDrawing}"
             app:imageBitmap="@{vm.localTopoImageBitmap}"
-            app:layout_constraintBottom_toTopOf="@id/guideline"
+            app:layout_constraintBottom_toTopOf="@id/middle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -40,7 +40,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="33dp"
             android:src="@drawable/ic_photo"
-            app:layout_constraintBottom_toTopOf="@id/guideline"
+            app:layout_constraintBottom_toTopOf="@id/middle"
             app:layout_constraintEnd_toStartOf="@id/take_photo_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -55,7 +55,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="33dp"
             android:src="@drawable/ic_photo_camera_black_24dp"
-            app:layout_constraintBottom_toTopOf="@id/guideline"
+            app:layout_constraintBottom_toTopOf="@id/middle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/select_topo_image"
             app:layout_constraintTop_toTopOf="parent"
@@ -85,7 +85,7 @@
 
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
+            android:id="@+id/middle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -105,7 +105,7 @@
             app:layout_constraintBottom_toTopOf="@id/route_pager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline">
+            app:layout_constraintTop_toBottomOf="@id/middle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/topo_name_input"

@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_sheet_peek"
             style="@style/Wcr_Container"
             android:layout_width="match_parent"
@@ -28,145 +28,161 @@
             android:focusable="true"
             android:onClick="@{vm::toggleBottomSheetState}">
 
-            <RelativeLayout
-                android:id="@+id/dragbar_climb_grades_and_types_parent"
+
+            <ImageView
+                android:id="@+id/drag_handle"
+                android:layout_width="24dp"
+                android:layout_height="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/top"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_drag_handle" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="bottom|start"
-                app:gone="@{vm.mapMode == MapMode.DEFAULT_MODE}">
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="8dp" />
 
-                <LinearLayout
-                    android:id="@+id/dragbar_climb_grades_parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:orientation="horizontal">
+            <TextView
+                android:id="@+id/climb_grades_text_green"
+                style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
+                android:layout_width="24dp"
+                android:layout_height="0dp"
+                android:background="@color/map_dragbar_climb_grades_green"
+                android:text="@{vm.selectedLocationRouteInfo.greens}"
+                app:layout_constraintBottom_toTopOf="@+id/middle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/top"
+                tools:text="1" />
 
-                    <TextView
-                        android:id="@+id/climb_grades_text_green"
-                        style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@color/map_dragbar_climb_grades_green"
-                        android:text="@{vm.selectedLocationRouteInfo.greens}"
-                        tools:text="1" />
+            <TextView
+                android:id="@+id/climb_grades_text_orange"
+                style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
+                android:layout_width="24dp"
+                android:layout_height="0dp"
+                android:background="@color/map_dragbar_climb_grades_orange"
+                android:text="@{vm.selectedLocationRouteInfo.oranges}"
+                app:layout_constraintBottom_toTopOf="@+id/middle"
+                app:layout_constraintStart_toEndOf="@+id/climb_grades_text_green"
+                app:layout_constraintTop_toTopOf="@+id/top"
+                tools:text="2" />
 
-                    <TextView
-                        android:id="@+id/climb_grades_text_orange"
-                        style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@color/map_dragbar_climb_grades_orange"
-                        android:text="@{vm.selectedLocationRouteInfo.oranges}"
-                        tools:text="2" />
+            <TextView
+                android:id="@+id/climb_grades_text_red"
+                style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
+                android:layout_width="24dp"
+                android:layout_height="0dp"
+                android:background="@color/map_dragbar_climb_grades_red"
+                android:text="@{vm.selectedLocationRouteInfo.reds}"
+                app:layout_constraintBottom_toTopOf="@+id/middle"
+                app:layout_constraintStart_toEndOf="@+id/climb_grades_text_orange"
+                app:layout_constraintTop_toTopOf="@+id/top"
+                tools:text="3" />
 
-                    <TextView
-                        android:id="@+id/climb_grades_text_red"
-                        style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@color/map_dragbar_climb_grades_red"
-                        android:text="@{vm.selectedLocationRouteInfo.reds}"
-                        tools:text="3" />
+            <TextView
+                android:id="@+id/climb_grades_text_black"
+                style="@style/Wcr_MapBottomSheetClimbGradesText.LightText"
+                android:layout_width="24dp"
+                android:layout_height="0dp"
+                android:background="@color/map_dragbar_climb_grades_black"
+                android:text="@{vm.selectedLocationRouteInfo.blacks}"
+                app:layout_constraintBottom_toTopOf="@+id/middle"
+                app:layout_constraintStart_toEndOf="@+id/climb_grades_text_red"
+                app:layout_constraintTop_toTopOf="@+id/top"
+                tools:text="4" />
 
-                    <TextView
-                        android:id="@+id/climb_grades_text_black"
-                        style="@style/Wcr_MapBottomSheetClimbGradesText.LightText"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@color/map_dragbar_climb_grades_black"
-                        android:text="@{vm.selectedLocationRouteInfo.blacks}"
-                        tools:text="4" />
 
-                </LinearLayout>
+            <ImageView
+                android:id="@+id/climb_types_icon_bouldering"
+                style="@style/Wcr_MapBottomSheetClimbTypeIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="24dp"
+                android:src="@drawable/ic_boulder"
+                app:layout_constraintBottom_toTopOf="@+id/middle"
+                app:layout_constraintStart_toEndOf="@+id/climb_grades_text_black"
+                app:layout_constraintTop_toTopOf="@+id/top" />
 
-                <LinearLayout
-                    android:id="@+id/dragbar_climb_types_parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_toEndOf="@id/dragbar_climb_grades_parent"
-                    android:orientation="horizontal"
-                    android:paddingStart="30dp"
-                    tools:ignore="RtlSymmetry">
+            <TextView
+                android:id="@+id/climb_types_text_bouldering"
+                style="@style/Wcr_MapBottomSheetClimbTypeText"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="@{vm.selectedLocationRouteInfo.boulders}"
+                app:layout_constraintBottom_toTopOf="@+id/middle"
+                app:layout_constraintStart_toEndOf="@+id/climb_types_icon_bouldering"
+                app:layout_constraintTop_toTopOf="@+id/top"
+                tools:text="1" />
 
-                    <ImageView
-                        android:id="@+id/climb_types_icon_bouldering"
-                        style="@style/Wcr_MapBottomSheetClimbTypeIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:src="@drawable/ic_boulder" />
+            <ImageView
+                android:id="@+id/climb_types_icon_sport"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_quick_draw"
+                app:layout_constraintBottom_toTopOf="@+id/middle"
+                app:layout_constraintStart_toEndOf="@+id/climb_types_text_bouldering"
+                app:layout_constraintTop_toTopOf="@+id/top" />
 
-                    <TextView
-                        android:id="@+id/climb_types_text_bouldering"
-                        style="@style/Wcr_MapBottomSheetClimbTypeText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="@{vm.selectedLocationRouteInfo.boulders}"
-                        tools:text="1" />
+            <TextView
+                android:id="@+id/climb_types_text_sport"
+                style="@style/Wcr_MapBottomSheetClimbTypeText"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="@{vm.selectedLocationRouteInfo.sports}"
+                app:layout_constraintBottom_toTopOf="@+id/middle"
+                app:layout_constraintStart_toEndOf="@+id/climb_types_icon_sport"
+                app:layout_constraintTop_toTopOf="@+id/top"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="2" />
 
-                    <ImageView
-                        android:id="@+id/climb_types_icon_sport"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:src="@drawable/ic_quick_draw" />
+            <ImageView
+                android:id="@+id/climb_types_icon_trad"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_cam"
+                app:layout_constraintBottom_toTopOf="@+id/middle"
+                app:layout_constraintStart_toEndOf="@+id/climb_types_text_sport"
+                app:layout_constraintTop_toTopOf="@+id/top"
+                tools:text="3" />
 
-                    <TextView
-                        android:id="@+id/climb_types_text_sport"
-                        style="@style/Wcr_MapBottomSheetClimbTypeText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="@{vm.selectedLocationRouteInfo.sports}"
-                        tools:text="2" />
 
-                    <ImageView
-                        android:id="@+id/climb_types_icon_trad"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:src="@drawable/ic_cam"
-                        tools:text="3" />
+            <TextView
+                android:id="@+id/climb_types_text_trad"
+                style="@style/Wcr_MapBottomSheetClimbTypeText"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="@{vm.selectedLocationRouteInfo.trads}"
+                app:layout_constraintStart_toEndOf="@+id/climb_types_icon_trad"
+                app:layout_constraintTop_toTopOf="@+id/top"
+                tools:text="3" />
 
-                    <TextView
-                        android:id="@+id/climb_types_text_trad"
-                        style="@style/Wcr_MapBottomSheetClimbTypeText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="@{vm.selectedLocationRouteInfo.trads}"
-                        tools:text="3" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/middle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.5" />
 
             <TextView
                 android:id="@+id/bottom_sheet_peek_title"
                 style="@style/Wcr_MapBottomSheetTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/dragbar_climb_grades_and_types_parent"
-                android:layout_alignParentBottom="true"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:text="@{vm.bottomSheetTitle}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/middle"
                 app:mapModeTextColour="@{vm.mapMode}"
                 tools:text="Some location name" />
 
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="2dp"
-                android:background="@android:color/darker_gray" />
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/topo_recycler"
