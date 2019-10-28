@@ -21,7 +21,6 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_sheet_peek"
-            style="@style/Wcr_Container"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:clickable="true"
@@ -44,13 +43,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_begin="8dp" />
+                app:layout_constraintGuide_begin="16dp" />
 
             <TextView
                 android:id="@+id/climb_grades_text_green"
                 style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
                 android:layout_width="24dp"
                 android:layout_height="0dp"
+                android:layout_marginStart="16dp"
                 android:background="@color/map_dragbar_climb_grades_green"
                 android:text="@{vm.selectedLocationRouteInfo.greens}"
                 app:layout_constraintBottom_toTopOf="@+id/middle"
@@ -155,6 +155,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:text="@{vm.selectedLocationRouteInfo.trads}"
+                app:layout_constraintBottom_toTopOf="@+id/middle"
                 app:layout_constraintStart_toEndOf="@+id/climb_types_icon_trad"
                 app:layout_constraintTop_toTopOf="@+id/top"
                 tools:text="3" />
@@ -171,6 +172,10 @@
                 style="@style/Wcr_MapBottomSheetTitle"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="1"
