@@ -4,6 +4,7 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo
@@ -19,6 +20,7 @@ interface TopoDao : BaseDao<Topo> {
     @Query("SELECT topo.* FROM topo " +
             "INNER JOIN location ON topo.locationId = location.id " +
             "WHERE location.parentLocationId = :locationId OR location.id = :locationId")
+    @Transaction
     fun loadTopoAndRoutes(locationId: String): LiveData<List<TopoAndRoutes>?>
 
 
