@@ -9,6 +9,7 @@
     <color name="bg_grey">#eaeaea</color>
     <color name="bg_grey_light">#fafafa</color>
     <color name="bg_maptoggle">#beffffff</color>
+    <color name="bg_tutorial">#beffffff</color>
 
     <!--Border colours-->
     <color name="border_black">#1e1e1e</color>

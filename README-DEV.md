@@ -2,17 +2,21 @@ chrome://inspect/#devices
 Stetho the app to view DB contents
 gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --dependency kotlin-stdlib-jre7
 
-#TODO
+#TODO before release
 Stuttery performance fix:
     - fix refresh sectors for crag
-Real topos / places
-Split submission into route paths and info
+
 Tutorials and help screen - https://github.com/TakuSemba/Spotlight
-Perf test - load huge data set and check performance
-Time dB queries
 crashlytics
 Analytics
 License t&c
+
+- Test before release
+Test DBs max length for strings - long paths could cause issues.
+Real topos / places
+Perf test - load huge data set and check performance
+Time dB queries
+
 
 - Do after release
 Allow marking start/end holds, in / out holds
@@ -29,9 +33,8 @@ Add extra info:
     - Approach notes
     - Rock type
     - Route height
+Split submission into route paths and info
 
-- Test
-Test DBs max length for strings - long paths could cause issues.
 
 Nice to haves:
 - https://developer.android.com/kotlin/ktx#core-packages

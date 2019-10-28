@@ -8,6 +8,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.view.animation.BounceInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.TranslateAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -43,6 +44,12 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.util.DrawerUIUtils
 import com.squareup.picasso.Picasso
+import com.takusemba.spotlight.OnSpotlightStateChangedListener
+import com.takusemba.spotlight.OnTargetStateChangedListener
+import com.takusemba.spotlight.Spotlight
+import com.takusemba.spotlight.shape.Circle
+import com.takusemba.spotlight.target.SimpleTarget
+import com.takusemba.spotlight.target.Target
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_maps.*
@@ -536,9 +543,45 @@ class MapsActivity : AppCompatActivity(),
         fab.setImageResource(iconId)
     }
 
-    // This is in the activity cause i couldn't be bothered to inject the viewmodel into the welcome fragment... lazy
     fun exploreRandomCrag(view: View) {
         binding.vm?.exploreRandomCrag()
+    }
+
+    fun doTutorial(view: View) {
+        val targets = ArrayList<Target>().apply {
+            add(SimpleTarget.Builder(this@MapsActivity)
+                    .setPoint(500f, 500f)
+                    .setShape(Circle(200f)) // or RoundedRectangle()
+                    .setTitle("the title")
+                    .setDescription("the description")
+                    .setOverlayPoint(100f, 100f)
+                    .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<SimpleTarget> {
+                        override fun onStarted(target: SimpleTarget) {
+                            Timber.d("Tutorial step 1 started")
+                        }
+
+                        override fun onEnded(target: SimpleTarget) {
+                            Timber.d("Tutorial step 1 ended")
+                        }
+                    })
+                    .build())
+        }
+        Spotlight.with(this)
+                .setOverlayColor(R.color.md_blue_900)
+                .setDuration(300L)
+                .setAnimation(DecelerateInterpolator(2f))
+                .setTargets(targets)
+                .setClosedOnTouchedOutside(true)
+                .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
+                    override fun onStarted() {
+                        Timber.d("Tutorial started")
+                    }
+
+                    override fun onEnded() {
+                        Timber.d("Tutorial ended")
+                    }
+                })
+                .start()
     }
 
 }

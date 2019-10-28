@@ -121,6 +121,8 @@ dependencies {
 
     implementation "com.github.arimorty:floatingsearchview:${versions.floating_search_view}"
 
+    implementation 'com.github.takusemba:spotlight:1.8.0'
+
     implementation "co.zsmb:materialdrawer-kt:2.0.1"
     implementation("com.mikepenz:materialdrawer:${versions.material_drawer}") { transitive = true }
     implementation("com.mikepenz:aboutlibraries:${versions.about_libraries}") { transitive = true }

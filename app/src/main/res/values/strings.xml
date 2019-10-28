@@ -35,6 +35,7 @@
         \nYou can create your own climbing topos and share them with the community. Simply take a photo of the rock face, draw on the routes, fill in some details and upload.
         \n\nTo get started, ensure the crag and sector location that the topo belongs to exists. If it doesn\'t, adding a new location is super simple.
         \n\nOnce your crag location and sector location exist, add a topo.</string>
-    <string name="welcome_random_crag">Explore a random crag</string>
+    <string name="welcome_random_crag_button">Explore a random crag</string>
+    <string name="welcome_tutorial_button">Tutorial</string>
 
 </resources>
