@@ -13,7 +13,6 @@ Time dB queries
 crashlytics
 Analytics
 License t&c
-Allow swipe up from bottom to show bottom sheet after hidden
 Fix / stop landscape view?
 
 - Do after release
