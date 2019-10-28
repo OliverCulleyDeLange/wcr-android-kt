@@ -133,10 +133,7 @@ class MapViewModel @Inject constructor(application: Application,
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
         selectedLocation?.id?.let {
             Timber.d("SelectedLocation changed to $it: Updating 'topos'")
-            when (selectedLocation.type) {
-                LocationType.SECTOR -> topoRepository.loadToposForLocation(selectedLocation.id)
-                LocationType.CRAG -> getToposForCrag(selectedLocation.id)
-            }
+            topoRepository.loadToposForLocation(selectedLocation.id)
         }
     }
 
@@ -169,31 +166,6 @@ class MapViewModel @Inject constructor(application: Application,
                 it.value = crags.value!!.map { c -> c.latlng }
             }
         }
-    }
-
-    private fun getToposForCrag(cragId: String): LiveData<List<TopoAndRoutes>> {
-        Timber.d("Getting topos for crag with id: %s", cragId)
-        val topos: MediatorLiveData<List<TopoAndRoutes>> = MediatorLiveData()
-        val loadSectorsForCrag = locationRepository.loadSectorsFor(cragId)
-        topos.addSource(loadSectorsForCrag) { sectorsForCrag ->
-            topos.removeSource(loadSectorsForCrag)
-            if (sectorsForCrag?.isNotEmpty() == true) {
-                sectorsForCrag.forEach { sector ->
-                    sector.id?.let { sectorId ->
-                        topos.addSource(topoRepository.loadToposForLocation(sectorId)) {
-                            it?.let { newToposAndRoutes ->
-
-                                //FIXME this is shit because it triggers the live data update x times where x is the number of sectors
-                                topos.value = newToposAndRoutes.plus(topos.value ?: emptyList())
-                            }
-                        }
-                    }
-                }
-            } else {
-                topos.value = null //TODO NPE possible?
-            }
-        }
-        return topos
     }
 
     val bottomSheetState: MutableLiveData<Int> = MutableLiveData()

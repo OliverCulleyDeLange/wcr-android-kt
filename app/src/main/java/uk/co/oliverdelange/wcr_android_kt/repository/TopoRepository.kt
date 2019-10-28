@@ -1,6 +1,5 @@
 package uk.co.oliverdelange.wcr_android_kt.repository
 
-import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import io.reactivex.Single
@@ -37,29 +36,6 @@ class TopoRepository @Inject constructor(val topoDao: TopoDao,
         return Transformations.map(liveTopoAndRoutesDto) {
             it?.let { fromTopoAndRouteDto(it) }
         }
-    }
-
-    @WorkerThread
-    fun getToposForLocation(locationId: String): List<TopoAndRoutes>? {
-        Timber.d("Getting topos for location with id: %s", locationId)
-        val topoAndRoutes = topoDao.getTopoAndRoutes(locationId)
-        return topoAndRoutes?.let { fromTopoAndRouteDto(it) }
-    }
-
-    @WorkerThread
-    fun getToposForCrag(cragId: String): List<TopoAndRoutes> {
-        Timber.d("Getting topos for crag with id: %s", cragId)
-        val toposAndRoutes = mutableListOf<TopoAndRoutes>()
-        val sectorsForCrag = locationDao.getWithParentId(cragId)
-        if (sectorsForCrag != null) {
-            for (sector in sectorsForCrag) {
-                val topoAndRoutesDto = topoDao.getTopoAndRoutes(sector.id)
-                topoAndRoutesDto?.let {
-                    toposAndRoutes.addAll(fromTopoAndRouteDto(it))
-                }
-            }
-        }
-        return toposAndRoutes
     }
 
     fun search(query: String): LiveData<List<Topo>> {

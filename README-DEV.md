@@ -4,9 +4,7 @@ gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --depen
 
 #TODO
 Stuttery performance fix:
-    - Get rid of Relative Layouts & LinearLayouts with weights
     - fix refresh sectors for crag
-    - fix stupid topos refreshing thing
 Real topos / places
 Split submission into route paths and info
 Tutorials and help screen - https://github.com/TakuSemba/Spotlight
@@ -16,7 +14,7 @@ crashlytics
 Analytics
 License t&c
 Allow swipe up from bottom to show bottom sheet after hidden
-
+Fix / stop landscape view?
 
 - Do after release
 Allow marking start/end holds, in / out holds
