@@ -9,8 +9,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.BounceInterpolator
 import android.view.animation.TranslateAnimation
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -108,7 +108,7 @@ class MapsActivity : AppCompatActivity(),
     private val welcomeFragment = WelcomeFragment.newWelcomeFragment()
 
     internal lateinit var map: GoogleMap
-    private var bottomSheet: BottomSheetBehavior<LinearLayout>? = null
+    private var bottomSheet: BottomSheetBehavior<CardView>? = null
 
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
     private lateinit var sectorMarkers: MarkerManager.Collection
@@ -319,13 +319,14 @@ class MapsActivity : AppCompatActivity(),
         })
     }
 
-    // FIXME 120ms!!
     private fun refreshSectorsForCrag(sectors: List<Location>?) {
-        //TODO Do a diff instead of clearing and re-initialising, this is probably causing lag
+        // Doing a diff here wouldn't make much DIFFerence
+        // as we normally have a totally new set of sectors when this is called
         sectorMarkers.clear()
+        val iconHelper = IconHelper(this)
         sectors?.forEach {
             val iconStyle = if (binding.vm?.mapMode?.value == SUBMIT_SECTOR_MODE) Icon.SECTOR_DIMMED else Icon.SECTOR
-            val icon = IconHelper(this).getIcon(it.name, iconStyle) //30ms
+            val icon = iconHelper.getIcon(it.name, iconStyle) //30ms
             val marker = sectorMarkers.addMarker(MarkerOptions() //15ms
                     .icon(BitmapDescriptorFactory.fromBitmap(icon))
                     .position(it.latlng)
@@ -501,7 +502,7 @@ class MapsActivity : AppCompatActivity(),
     private fun initialiseBottomSheet() {
         bottomSheet = BottomSheetBehavior.from(bottom_sheet)
         binding.vm?.bottomSheetState?.value = bottomSheet?.state
-        bottomSheet?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheet?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheetView: View, newState: Int) {
                 binding.vm?.bottomSheetState?.value = newState
             }

@@ -221,6 +221,7 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
+    //TODO Move these methods into the activity / fragment and call VM from there.
     fun toggleMap(view: View) {
         Timber.d("Toggling map type")
         if (GoogleMap.MAP_TYPE_NORMAL == mapType.value) {

@@ -47,7 +47,7 @@
             app:floatingSearch_showSearchKey="false"
             app:floatingSearch_suggestionsListAnimDuration="250" />
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,6 +55,8 @@
             android:orientation="vertical"
             app:behavior_hideable="false"
             app:behavior_peekHeight="80dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="5dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
