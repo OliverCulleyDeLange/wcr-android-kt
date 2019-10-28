@@ -141,6 +141,7 @@ dependencies {
 
     implementation "com.facebook.stetho:stetho:${versions.stetho}"
     implementation "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
+    implementation "com.facebook.stetho:stetho-js-rhino:${versions.stetho}"
 
     implementation "com.mikepenz:google-material-typeface:3.0.1.2.original@aar"
     implementation "com.mikepenz:fontawesome-typeface:5.0.6.0@aar"
