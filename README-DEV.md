@@ -13,7 +13,6 @@ Time dB queries
 crashlytics
 Analytics
 License t&c
-Fix / stop landscape view?
 
 - Do after release
 Allow marking start/end holds, in / out holds
