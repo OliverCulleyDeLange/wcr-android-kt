@@ -30,7 +30,7 @@ fun launchTutorial(activity: MapsActivity, vm: MapViewModel?): Spotlight? {
     val targets = listOf(
             CustomTarget.Builder(activity)
                     .setPoint(mapView)
-                    .setShape(RoundedRectangle(mapView.height / 2.toFloat(), mapView.width.toFloat() * 0.9f, 25f))
+                    .setShape(RoundedRectangle(mapView.height / 3.toFloat(), mapView.width.toFloat() * 0.9f, 25f))
                     .setOverlay(R.layout.layout_tutorial_map_crag)
                     .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
                         override fun onStarted(target: CustomTarget) {
@@ -46,7 +46,7 @@ fun launchTutorial(activity: MapsActivity, vm: MapViewModel?): Spotlight? {
                     .build(),
             CustomTarget.Builder(activity)
                     .setPoint(mapView)
-                    .setShape(RoundedRectangle(mapView.height / 2.toFloat(), mapView.width.toFloat() * 0.9f, 25f))
+                    .setShape(RoundedRectangle(mapView.height / 3.toFloat(), mapView.width.toFloat() * 0.9f, 25f))
                     .setOverlay(R.layout.layout_tutorial_map_sector)
                     .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
                         override fun onStarted(target: CustomTarget) {
