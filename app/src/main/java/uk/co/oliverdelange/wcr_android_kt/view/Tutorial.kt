@@ -12,6 +12,7 @@ import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.view.map.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 
+
 /*
     1. MapCrag      : Crags
     2. MapSector    : Select Crag -> Sectors
@@ -22,12 +23,14 @@ import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
     7. Sign in / Register
 
  */
-fun launchTutorial(activity: MapsActivity, vm: MapViewModel?) {
+fun launchTutorial(activity: MapsActivity, vm: MapViewModel?): Spotlight? {
     val searchView = activity.findViewById<View>(R.id.search_query_section)
+    val mapView = activity.findViewById<View>(R.id.map)
+
     val targets = listOf(
             CustomTarget.Builder(activity)
-                    .setPoint(activity.findViewById<View>(R.id.map))
-                    .setShape(RoundedRectangle(1000f, 1000f, 25f))
+                    .setPoint(mapView)
+                    .setShape(RoundedRectangle(mapView.height / 2.toFloat(), mapView.width.toFloat() * 0.9f, 25f))
                     .setOverlay(R.layout.layout_tutorial_map_crag)
                     .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
                         override fun onStarted(target: CustomTarget) {
@@ -42,13 +45,12 @@ fun launchTutorial(activity: MapsActivity, vm: MapViewModel?) {
                     })
                     .build(),
             CustomTarget.Builder(activity)
-                    .setPoint(activity.findViewById<View>(R.id.map))
-                    .setShape(RoundedRectangle(1000f, 1000f, 25f))
+                    .setPoint(mapView)
+                    .setShape(RoundedRectangle(mapView.height / 2.toFloat(), mapView.width.toFloat() * 0.9f, 25f))
                     .setOverlay(R.layout.layout_tutorial_map_sector)
                     .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
                         override fun onStarted(target: CustomTarget) {
                             Timber.d("Sector tutorial started")
-                            vm?.onTutorialStart()
                         }
 
                         override fun onEnded(target: CustomTarget) {
@@ -73,7 +75,7 @@ fun launchTutorial(activity: MapsActivity, vm: MapViewModel?) {
                     .build()
     )
 
-    Spotlight.with(activity)
+    return Spotlight.with(activity)
             .setOverlayColor(R.color.bg_tutorial)
             .setDuration(100L)
             .setAnimation(DecelerateInterpolator(2f))
@@ -87,6 +89,7 @@ fun launchTutorial(activity: MapsActivity, vm: MapViewModel?) {
                 override fun onEnded() {
                     Timber.d("Tutorial ended")
                 }
-            })
-            .start()
+            }).also {
+                it.start()
+            }
 }

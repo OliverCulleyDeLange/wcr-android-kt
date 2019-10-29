@@ -45,7 +45,9 @@
             app:floatingSearch_searchSuggestionTextSize="12sp"
             app:floatingSearch_searchHint="@string/map_search_hint"
             app:floatingSearch_showSearchKey="false"
-            app:floatingSearch_suggestionsListAnimDuration="250" />
+            app:floatingSearch_suggestionsListAnimDuration="250">
+
+        </com.arlib.floatingsearchview.FloatingSearchView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/bottom_sheet"

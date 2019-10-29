@@ -43,6 +43,7 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.util.DrawerUIUtils
 import com.squareup.picasso.Picasso
+import com.takusemba.spotlight.Spotlight
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_maps.*
@@ -110,6 +111,8 @@ class MapsActivity : AppCompatActivity(),
 
     internal lateinit var map: GoogleMap
     private var bottomSheet: BottomSheetBehavior<CardView>? = null
+
+    private var tutorial: Spotlight? = null
 
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
     private lateinit var sectorMarkers: MarkerManager.Collection
@@ -539,7 +542,14 @@ class MapsActivity : AppCompatActivity(),
 
 
     fun doTutorial(view: View) {
-        launchTutorial(this, binding.vm)
+        tutorial = launchTutorial(this, binding.vm)
     }
 
+    fun continueTutorial(view: View) {
+        tutorial?.closeCurrentTarget()
+    }
+
+    fun exitTutorial(view: View) {
+        tutorial?.closeSpotlight()
+    }
 }

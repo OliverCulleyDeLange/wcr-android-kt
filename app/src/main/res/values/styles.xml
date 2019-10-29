@@ -157,4 +157,20 @@
         <item name="android:padding">5dp</item>
         <item name="android:gravity">right|center_vertical</item>
     </style>
+
+
+    <!-- TUTORIAL -->
+    <style name="Wcr_Tutorial_Title" parent="Wcr_Text">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="Wcr_Tutorial_Text" parent="Wcr_Text">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#FCFCFC</item>
+    </style>
+
+    <style name="Wcr_Tutorial_Exit_Button" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">#EEEEEE</item>
+    </style>
 </resources>

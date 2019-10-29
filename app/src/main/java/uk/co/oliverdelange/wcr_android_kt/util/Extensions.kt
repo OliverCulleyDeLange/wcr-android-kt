@@ -1,6 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.util
 
 import android.app.Activity
+import android.content.res.Resources
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
@@ -43,3 +44,5 @@ fun hideKeyboard(activity: Activity) {
     }
     imm.hideSoftInputFromWindow(view.windowToken, 0)
 }
+
+fun Int.toPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()

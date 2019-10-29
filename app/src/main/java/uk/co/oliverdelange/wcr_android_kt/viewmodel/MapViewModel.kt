@@ -214,6 +214,7 @@ class MapViewModel @Inject constructor(application: Application,
                 .subscribe { id ->
                     Timber.d("Random location id = $id")
                     selectedLocationId.value = id
+                    mapMode.value = MapMode.CRAG_MODE
                 }
     }
 

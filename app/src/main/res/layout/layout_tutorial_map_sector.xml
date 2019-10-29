@@ -15,9 +15,8 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="5dp"
-        android:text="Map - Sectors"
-        android:textColor="#FFFFFF"
-        android:textSize="36sp"
+        style="@style/Wcr_Tutorial_Title"
+        android:text="@string/tutorial_title_map_sectors"
         app:layout_constraintBottom_toTopOf="@+id/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -29,9 +28,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="See where the rocks are"
-        android:textColor="#FCFCFC"
-        android:textSize="24sp"
+        style="@style/Wcr_Tutorial_Text"
+        android:text="@string/tutorial_subtitle_map_sectors"
         app:layout_constraintEnd_toEndOf="@+id/title"
         app:layout_constraintStart_toStartOf="@+id/title"
         app:layout_constraintTop_toBottomOf="@+id/title" />
@@ -42,39 +40,40 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
-        android:text="continue"
+        android:onClick="continueTutorial"
+        android:text="@string/tutorial_continue_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/exit_button"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+        style="@style/Wcr_Tutorial_Exit_Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:text="exit"
-        android:textColor="#EEEEEE"
+        android:onClick="exitTutorial"
+        android:text="@string/tutorial_exit_button"
         app:layout_constraintBottom_toBottomOf="@+id/next_tutorial_button"
         app:layout_constraintEnd_toStartOf="@+id/next_tutorial_button" />
 
     <TextView
-        android:id="@+id/sector_market_text"
+        android:id="@+id/sector_marker_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="This is a sector marker. They show where the actual rock face is."
-        android:textColor="#FFFFFF"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_marginBottom="16dp"
+        android:text="@string/tutorial_detail_map_sectors"
+        app:layout_constraintBottom_toTopOf="@+id/next_tutorial_button"
         app:layout_constraintEnd_toEndOf="@+id/subtitle"
-        app:layout_constraintStart_toEndOf="@+id/sector_marker"
-        app:layout_constraintTop_toTopOf="@+id/sector_marker" />
+        app:layout_constraintStart_toEndOf="@+id/sector_marker" />
 
     <ImageView
         android:id="@+id/sector_marker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="@+id/subtitle"
-        app:layout_constraintTop_toBottomOf="@+id/subtitle"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toTopOf="@+id/sector_marker_text"
         app:srcCompat="@drawable/location_marker_sector" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
