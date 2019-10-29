@@ -141,7 +141,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 val routeCount = binding.routePager.adapter?.count
-                viewModel.setShouldShowAddRouteButton(routeCount, position, positionOffset)
+                viewModel.onRoutePagerScroll(routeCount, position, positionOffset)
             }
         })
 
@@ -179,25 +179,25 @@ class SubmitTopoFragment : Fragment(), Injectable {
                         Timber.d("Route type now TRAD, setting trad adj grade")
                         val selectedTradAdjectivalGrade = TradAdjectivalGrade.values()[routeFragmentBinding.tradAdjectivalGradeSpinner.selectedItemPosition]
 //                        routeFragmentBinding.tradAdjectivalGradeSpinner.setSelection(selectedTradAdjectivalGrade.ordinal, false)
-                        routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedTradAdjectivalGrade.ordinal, GradeDropDown.TRAD_ADJ)
+                        routeFragmentBinding.vm?.onGradeChanged(routeFragmentBinding.fragmentId!!, selectedTradAdjectivalGrade.ordinal, GradeDropDown.TRAD_ADJ)
                     }
                     RouteType.SPORT -> {
                         Timber.d("Route type now SPORT, setting sport grade")
                         val selectedSportGrade = SportGrade.values()[routeFragmentBinding.sportGradeSpinner.selectedItemPosition]
 //                        routeFragmentBinding.sportGradeSpinner.setSelection(selectedSportGrade.ordinal, false)
-                        routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedSportGrade.ordinal, GradeDropDown.SPORT)
+                        routeFragmentBinding.vm?.onGradeChanged(routeFragmentBinding.fragmentId!!, selectedSportGrade.ordinal, GradeDropDown.SPORT)
                     }
                     RouteType.BOULDERING -> {
                         if (binding.vm?.useVGradeForBouldering == true) {
                             Timber.d("Route type now BOULDERING, setting V grade")
                             val selectedVGrade = VGrade.values()[routeFragmentBinding.vGradeSpinner.selectedItemPosition]
 //                        routeFragmentBinding.vGradeSpinner.setSelection(selectedVGrade.ordinal, false)
-                            routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedVGrade.ordinal, GradeDropDown.V)
+                            routeFragmentBinding.vm?.onGradeChanged(routeFragmentBinding.fragmentId!!, selectedVGrade.ordinal, GradeDropDown.V)
                         } else {
                             Timber.d("Route type now BOULDERING, setting FONT grade")
                             val selectedFGrade = FontGrade.values()[routeFragmentBinding.fGradeSpinner.selectedItemPosition]
 //                        routeFragmentBinding.vGradeSpinner.setSelection(selectedVGrade.ordinal, false)
-                            routeFragmentBinding.vm?.gradeChanged(routeFragmentBinding.fragmentId!!, selectedFGrade.ordinal, GradeDropDown.FONT)
+                            routeFragmentBinding.vm?.onGradeChanged(routeFragmentBinding.fragmentId!!, selectedFGrade.ordinal, GradeDropDown.FONT)
                         }
                     }
                 }
@@ -221,7 +221,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
     }
 
     fun removeRouteFragment(routeFragment: SubmitRouteFragment) {
-        binding.vm?.removeRoute(routeFragment.fragmentId)
+        binding.vm?.onRemoveRoute(routeFragment.fragmentId)
         // Remove path from topo
         binding.topoImage.removePath(routeFragment.fragmentId)
         // Remove the fragment
@@ -231,7 +231,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
         }
         binding.routePager.adapter?.notifyDataSetChanged()
         // Check if we should now show the add route button
-        binding.vm?.setShouldShowAddRouteButton(binding.routePager.adapter?.count)
+        binding.vm?.onRouteRemoved(binding.routePager.adapter?.count)
     }
 
     private fun addRoute(pagerAdapter: SubmitRoutePagerAdapter) {
@@ -243,7 +243,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
         binding.routePager.setCurrentItem(pagerAdapter.count, true)
         // Get the fragment ID and set it as active so we control the right topo route path
         val activeRouteFragId = pagerAdapter.getItemId(binding.routePager.currentItem).toInt()
-        binding.vm?.addRoute(activeRouteFragId, binding.topoImage.getPath(activeRouteFragId))
+        binding.vm?.onAddRoute(activeRouteFragId, binding.topoImage.getPath(activeRouteFragId))
     }
 
     private fun selectImage() {

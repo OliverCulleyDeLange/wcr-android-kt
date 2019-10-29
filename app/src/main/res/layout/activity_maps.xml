@@ -28,7 +28,7 @@
                 android:layout_marginTop="65dp"
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="7dp"
-                android:onClick="@{vm::toggleMap}"
+                android:onClick="@{vm::onToggleMap}"
                 android:text="@{vm.mapLabel}" />
         </fragment>
 
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_vertical_margin"
             android:elevation="8dp"
-            android:onClick="@{vm::submit}"
+            android:onClick="@{vm::onSubmit}"
             android:clickable="@{safeUnbox(vm.bottomSheetState) == 4}"
             app:layout_anchor="@id/bottom_sheet"
             app:layout_anchorGravity="top|end"

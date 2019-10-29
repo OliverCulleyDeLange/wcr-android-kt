@@ -84,7 +84,7 @@ class SubmitLocationFragment : androidx.fragment.app.Fragment(), Injectable {
                             },
                             {
                                 Timber.e(it)
-                                Snackbar.make(binding.submit, "Failed to submit location!", Snackbar.LENGTH_SHORT).show()
+                                Snackbar.make(binding.submit, "Failed to onSubmit location!", Snackbar.LENGTH_SHORT).show()
                             })
         }
 

@@ -137,7 +137,7 @@ class MapsActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-        binding.vm?.back()
+        binding.vm?.onNavigateBack()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -183,12 +183,12 @@ class MapsActivity : AppCompatActivity(),
     }
 
     override fun onClusterItemClick(clusterItem: CragClusterItem): Boolean {
-        binding.vm?.selectCrag(clusterItem.location.id)
+        binding.vm?.onClusterItemClick(clusterItem.location.id)
         return true
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        binding.vm?.selectSector((marker.tag as Location).id)
+        binding.vm?.onMapMarkerClick((marker.tag as Location).id)
         return true
     }
 
@@ -537,12 +537,9 @@ class MapsActivity : AppCompatActivity(),
         fab.setImageResource(iconId)
     }
 
-    fun exploreRandomCrag(view: View) {
-        binding.vm?.exploreRandomCrag()
-    }
 
     fun doTutorial(view: View) {
-        launchTutorial(this)
+        launchTutorial(this, binding.vm)
     }
 
 }

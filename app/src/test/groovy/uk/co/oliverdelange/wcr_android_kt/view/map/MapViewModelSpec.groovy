@@ -31,7 +31,7 @@ class MapViewModelSpec extends Specification {
         mapViewModel.mapMode.value = before
 
         when:
-        mapViewModel.submit(mockView)
+        mapViewModel.onSubmit(mockView)
 
         then:
         mapViewModel.mapMode.value == after
@@ -49,7 +49,7 @@ class MapViewModelSpec extends Specification {
         mapViewModel.mapType.value = before
 
         when:
-        mapViewModel.toggleMap(mockView)
+        mapViewModel.onToggleMap(mockView)
 
         then:
         mapViewModel.mapType.value == after

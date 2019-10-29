@@ -1,6 +1,5 @@
 package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.view.View
@@ -36,24 +35,16 @@ class MapViewModel @Inject constructor(application: Application,
                                        val routeRepository: RouteRepository,
                                        val db: WcrDb) : AndroidViewModel(application) {
 
+    /*
+        Observable Live Data
+     */
+
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     val userSignedIn = MutableLiveData<Boolean>().also {
         val signedIn = FirebaseAuth.getInstance().currentUser != null
         Timber.d("Initialising userSignedIn: $signedIn")
         it.value = signedIn
-    }
-
-    fun onUserSignInSuccess() {
-        userSignedIn.value = true
-        val user = FirebaseAuth.getInstance().currentUser
-        Timber.d("User successfully signed in: ${user?.email}")
-    }
-
-    fun onUserSignInFail() {
-        val user = FirebaseAuth.getInstance().currentUser
-        userSignedIn.value = user != null
-        Timber.d("User sign in failed")
     }
 
     val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
@@ -173,114 +164,6 @@ class MapViewModel @Inject constructor(application: Application,
         it?.name
     }
 
-    fun toggleBottomSheetState(view: View) {
-        Timber.d("Toggling bottom sheet state")
-        if (bottomSheetIsCollapsed()) {
-            expandBottomSheet()
-        } else {
-            collapseBottomSheet()
-        }
-    }
-
-    private fun expandBottomSheet() {
-        bottomSheetState.value = BottomSheetBehavior.STATE_EXPANDED
-    }
-
-    private fun collapseBottomSheet() {
-        bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
-    }
-
-    private fun hideBottomSheet() {
-        bottomSheetState.value = BottomSheetBehavior.STATE_HIDDEN
-    }
-
-    private fun bottomSheetIsHidden() = bottomSheetState.value == BottomSheetBehavior.STATE_HIDDEN
-
-    private fun bottomSheetIsExpanded() = bottomSheetState.value == BottomSheetBehavior.STATE_EXPANDED
-    private fun bottomSheetIsCollapsed() = bottomSheetState.value == BottomSheetBehavior.STATE_COLLAPSED
-
-
-    private var bottomSheetExpanded = false
-    fun onBottomSheetExpand() {
-        if (!bottomSheetExpanded) {
-            Timber.d("Bottom sheet expanded for first time since app open")
-            with(getApplication<WcrApp>().prefs.edit()) {
-                putBoolean(PREF_BOTTOM_SHEET_OPENED, true)
-                apply()
-            }
-            bottomSheetExpanded = true
-        }
-    }
-
-    fun submit(view: View) {
-        when (mapMode.value) {
-            MapMode.DEFAULT_MODE -> mapMode.value = MapMode.SUBMIT_CRAG_MODE
-            MapMode.CRAG_MODE -> mapMode.value = MapMode.SUBMIT_SECTOR_MODE
-            MapMode.SECTOR_MODE, MapMode.TOPO_MODE -> mapMode.value = MapMode.SUBMIT_TOPO_MODE
-            else -> Timber.e("Submit FAB clicked when it shouldn't be visible!")
-        }
-    }
-
-    //TODO Move these methods into the activity / fragment and call VM from there.
-    fun toggleMap(view: View) {
-        Timber.d("Toggling map type")
-        if (GoogleMap.MAP_TYPE_NORMAL == mapType.value) {
-            mapType.value = GoogleMap.MAP_TYPE_SATELLITE
-        } else {
-            mapType.value = GoogleMap.MAP_TYPE_NORMAL
-        }
-    }
-
-    @SuppressLint("CheckResult")
-    fun exploreRandomCrag() {
-        Observable.fromCallable { locationRepository.randomCragId() }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { id ->
-                    Timber.d("Random location id = $id")
-                    selectedLocationId.value = id
-                }
-    }
-
-    fun selectCrag(id: String?) {
-        Timber.d("Selecting crag with id %s", id)
-        selectedLocationId.value = id
-        mapMode.value = MapMode.CRAG_MODE
-    }
-
-    fun selectSector(id: String?) {
-        Timber.d("Selecting sector with id %s", id)
-        selectedLocationId.value = id
-        mapMode.value = MapMode.SECTOR_MODE
-    }
-
-    fun selectTopo(id: String?) {
-        Timber.d("Selecting topo with id %s", id)
-        id?.let {
-            expandBottomSheet()
-            mapMode.value = MapMode.TOPO_MODE
-            Observable.fromCallable { topoRepository.topoDao.get(it) }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { topo ->
-                        selectedLocationId.value = topo.locationId
-                        selectedTopoId.value = topo.id
-                    }
-        }
-    }
-
-    fun selectRoute(id: String?) {
-        Timber.d("Selecting route with id %s", id)
-        id?.let { routeId ->
-            Observable.fromCallable { routeRepository.get(routeId) }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { route ->
-                        selectTopo(route?.topoId)
-                        //TODO Select route in route pager
-                    }
-        }
-    }
 
     val searchQuery = MutableLiveData<String>()
     val searchResults: LiveData<List<SearchSuggestionItem>> = Transformations.switchMap(searchQuery) { query ->
@@ -314,6 +197,91 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
+    /*
+        User Actions
+     */
+
+
+    fun onUserSignInSuccess() {
+        userSignedIn.value = true
+        val user = FirebaseAuth.getInstance().currentUser
+        Timber.d("User successfully signed in: ${user?.email}")
+    }
+
+    fun onUserSignInFail() {
+        val user = FirebaseAuth.getInstance().currentUser
+        userSignedIn.value = user != null
+        Timber.d("User sign in failed")
+    }
+
+    fun onToggleBottomSheetState(view: View) {
+        Timber.d("Toggling bottom sheet state")
+        if (bottomSheetIsCollapsed()) {
+            expandBottomSheet()
+        } else {
+            collapseBottomSheet()
+        }
+    }
+
+    private var bottomSheetExpandedPrefSet = false
+    fun onBottomSheetExpand() {
+        if (!bottomSheetExpandedPrefSet) {
+            Timber.d("Bottom sheet expanded for first time since app open")
+            with(getApplication<WcrApp>().prefs.edit()) {
+                putBoolean(PREF_BOTTOM_SHEET_OPENED, true)
+                apply()
+            }
+            bottomSheetExpandedPrefSet = true
+        }
+    }
+
+
+    fun onTutorialStart() {
+        collapseBottomSheet()
+    }
+
+    fun onSubmit(view: View) {
+        when (mapMode.value) {
+            MapMode.DEFAULT_MODE -> mapMode.value = MapMode.SUBMIT_CRAG_MODE
+            MapMode.CRAG_MODE -> mapMode.value = MapMode.SUBMIT_SECTOR_MODE
+            MapMode.SECTOR_MODE, MapMode.TOPO_MODE -> mapMode.value = MapMode.SUBMIT_TOPO_MODE
+            else -> Timber.e("Submit FAB clicked when it shouldn't be visible!")
+        }
+    }
+
+    fun onToggleMap(view: View) {
+        Timber.d("Toggling map type")
+        if (GoogleMap.MAP_TYPE_NORMAL == mapType.value) {
+            mapType.value = GoogleMap.MAP_TYPE_SATELLITE
+        } else {
+            mapType.value = GoogleMap.MAP_TYPE_NORMAL
+        }
+    }
+
+// Commented out due to tutprial replacing this button - maybe reinstate after tutorial complete
+//    @SuppressLint("CheckResult")
+//    fun exploreRandomCrag() {
+//        Observable.fromCallable { locationRepository.randomCragId() }
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe { id ->
+//                    Timber.d("Random location id = $id")
+//                    selectedLocationId.value = id
+//                }
+//    }
+
+    fun onClusterItemClick(id: String?) {
+        Timber.d("Selecting crag with id %s", id)
+        selectedLocationId.value = id
+        mapMode.value = MapMode.CRAG_MODE
+    }
+
+    fun onMapMarkerClick(id: String?) {
+        Timber.d("Selecting sector with id %s", id)
+        selectedLocationId.value = id
+        mapMode.value = MapMode.SECTOR_MODE
+    }
+
     fun onSearchBarUnfocus() {
         collapseBottomSheet()
 
@@ -325,8 +293,8 @@ class MapViewModel @Inject constructor(application: Application,
 
     fun onSearchSuggestionClicked(searchSuggestion: SearchSuggestionItem) {
         when (searchSuggestion.type) {
-            SearchResultType.CRAG -> selectCrag(searchSuggestion.id)
-            SearchResultType.SECTOR -> selectSector(searchSuggestion.id)
+            SearchResultType.CRAG -> onClusterItemClick(searchSuggestion.id)
+            SearchResultType.SECTOR -> onMapMarkerClick(searchSuggestion.id)
             SearchResultType.TOPO -> selectTopo(searchSuggestion.id)
             SearchResultType.ROUTE, SearchResultType.ROUTE_BOULDER, SearchResultType.ROUTE_TRAD, SearchResultType.ROUTE_SPORT -> {
                 selectRoute(searchSuggestion.id)
@@ -334,13 +302,7 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
-    private fun addToSearchItems(mediator: MediatorLiveData<List<SearchSuggestionItem>>, new: List<SearchSuggestionItem>?) {
-        val existing = mediator.value
-        if (existing != null && new != null) mediator.value = new + existing
-        else mediator.value = new
-    }
-
-    fun back() {
+    fun onNavigateBack() {
         if (bottomSheetIsExpanded() ||
                 bottomSheetIsHidden()) {
             collapseBottomSheet()
@@ -372,6 +334,62 @@ class MapViewModel @Inject constructor(application: Application,
                     Timber.d("DB Nuked")
                 })
     }
+
+    /*
+        Private
+     */
+
+    private fun selectTopo(id: String?) {
+        Timber.d("Selecting topo with id %s", id)
+        id?.let {
+            expandBottomSheet()
+            mapMode.value = MapMode.TOPO_MODE
+            Observable.fromCallable { topoRepository.topoDao.get(it) }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { topo ->
+                        selectedLocationId.value = topo.locationId
+                        selectedTopoId.value = topo.id
+                    }
+        }
+    }
+
+    private fun selectRoute(id: String?) {
+        Timber.d("Selecting route with id %s", id)
+        id?.let { routeId ->
+            Observable.fromCallable { routeRepository.get(routeId) }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { route ->
+                        selectTopo(route?.topoId)
+                        //TODO Select route in route pager
+                    }
+        }
+    }
+
+    private fun expandBottomSheet() {
+        bottomSheetState.value = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun collapseBottomSheet() {
+        bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    private fun hideBottomSheet() {
+        bottomSheetState.value = BottomSheetBehavior.STATE_HIDDEN
+    }
+
+    private fun bottomSheetIsHidden() = bottomSheetState.value == BottomSheetBehavior.STATE_HIDDEN
+
+    private fun bottomSheetIsExpanded() = bottomSheetState.value == BottomSheetBehavior.STATE_EXPANDED
+    private fun bottomSheetIsCollapsed() = bottomSheetState.value == BottomSheetBehavior.STATE_COLLAPSED
+
+    private fun addToSearchItems(mediator: MediatorLiveData<List<SearchSuggestionItem>>, new: List<SearchSuggestionItem>?) {
+        val existing = mediator.value
+        if (existing != null && new != null) mediator.value = new + existing
+        else mediator.value = new
+    }
+
 }
 
 enum class MapMode {
