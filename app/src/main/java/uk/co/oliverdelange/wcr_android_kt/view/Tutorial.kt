@@ -5,46 +5,76 @@ import android.view.animation.DecelerateInterpolator
 import com.takusemba.spotlight.OnSpotlightStateChangedListener
 import com.takusemba.spotlight.OnTargetStateChangedListener
 import com.takusemba.spotlight.Spotlight
-import com.takusemba.spotlight.shape.Circle
-import com.takusemba.spotlight.target.SimpleTarget
+import com.takusemba.spotlight.shape.RoundedRectangle
+import com.takusemba.spotlight.target.CustomTarget
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.view.map.MapsActivity
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 
 /*
-    1. Map: Crags
-    2. Map: Select Crag -> Sectors
-    3. Topos: Select Sector, Expand bottom sheet -> Topos
-    4. Routes: Select route
-    5. FAB: Hide bottom sheet, display fab -> Submit Crag / Sector / Topo (logged in)
-    6. Search: Search for an item
+    1. MapCrag      : Crags
+    2. MapSector    : Select Crag -> Sectors
+    3. Topos        : Select Sector, Expand bottom sheet -> Topos
+    4. Routes       : Select route
+    5. FAB          : Hide bottom sheet, display fab -> Submit Crag / Sector / Topo (logged in)
+    6. Search       : Search for an item
     7. Sign in / Register
 
  */
 fun launchTutorial(activity: MapsActivity, vm: MapViewModel?) {
+    val searchView = activity.findViewById<View>(R.id.search_query_section)
     val targets = listOf(
-            SimpleTarget.Builder(activity)
+            CustomTarget.Builder(activity)
                     .setPoint(activity.findViewById<View>(R.id.map))
-                    .setShape(Circle(500f)) // or RoundedRectangle()
-                    .setTitle("the title")
-                    .setDescription("the description")
-                    .setOverlayPoint(100f, 100f)
-                    .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<SimpleTarget> {
-                        override fun onStarted(target: SimpleTarget) {
+                    .setShape(RoundedRectangle(1000f, 1000f, 25f))
+                    .setOverlay(R.layout.layout_tutorial_map_crag)
+                    .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                        override fun onStarted(target: CustomTarget) {
+                            Timber.d("Crag tutorial started")
                             vm?.onTutorialStart()
-                            Timber.d("Tutorial step 1 started")
                         }
 
-                        override fun onEnded(target: SimpleTarget) {
-                            Timber.d("Tutorial step 1 ended")
+                        override fun onEnded(target: CustomTarget) {
+                            Timber.d("Crag tutorial ended")
+                            vm?.onCragTutorialFinish()
+                        }
+                    })
+                    .build(),
+            CustomTarget.Builder(activity)
+                    .setPoint(activity.findViewById<View>(R.id.map))
+                    .setShape(RoundedRectangle(1000f, 1000f, 25f))
+                    .setOverlay(R.layout.layout_tutorial_map_sector)
+                    .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                        override fun onStarted(target: CustomTarget) {
+                            Timber.d("Sector tutorial started")
+                            vm?.onTutorialStart()
+                        }
+
+                        override fun onEnded(target: CustomTarget) {
+                            Timber.d("Sector tutorial ended")
+                        }
+                    })
+                    .build(),
+            CustomTarget.Builder(activity)
+                    .setPoint(searchView)
+                    .setShape(RoundedRectangle(searchView.height.toFloat(), searchView.width.toFloat(), 10f))
+                    .setOverlay(R.layout.layout_tutorial_search)
+                    .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                        override fun onStarted(target: CustomTarget) {
+                            Timber.d("Search tutorial started")
+                            vm?.onTutorialStart()
+                        }
+
+                        override fun onEnded(target: CustomTarget) {
+                            Timber.d("Search tutorial ended")
                         }
                     })
                     .build()
     )
 
     Spotlight.with(activity)
-            .setOverlayColor(R.color.md_blue_900)
+            .setOverlayColor(R.color.bg_tutorial)
             .setDuration(100L)
             .setAnimation(DecelerateInterpolator(2f))
             .setTargets(ArrayList(targets))

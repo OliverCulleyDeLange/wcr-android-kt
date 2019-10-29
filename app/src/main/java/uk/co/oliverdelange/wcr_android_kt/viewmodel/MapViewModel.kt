@@ -1,5 +1,6 @@
 package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.view.View
@@ -201,6 +202,20 @@ class MapViewModel @Inject constructor(application: Application,
         User Actions
      */
 
+    fun onTutorialStart() {
+        collapseBottomSheet()
+    }
+
+    @SuppressLint("CheckResult")
+    fun onCragTutorialFinish() {
+        Observable.fromCallable { locationRepository.randomCragId() }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { id ->
+                    Timber.d("Random location id = $id")
+                    selectedLocationId.value = id
+                }
+    }
 
     fun onUserSignInSuccess() {
         userSignedIn.value = true
@@ -235,11 +250,6 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
-
-    fun onTutorialStart() {
-        collapseBottomSheet()
-    }
-
     fun onSubmit(view: View) {
         when (mapMode.value) {
             MapMode.DEFAULT_MODE -> mapMode.value = MapMode.SUBMIT_CRAG_MODE
@@ -257,18 +267,6 @@ class MapViewModel @Inject constructor(application: Application,
             mapType.value = GoogleMap.MAP_TYPE_NORMAL
         }
     }
-
-// Commented out due to tutprial replacing this button - maybe reinstate after tutorial complete
-//    @SuppressLint("CheckResult")
-//    fun exploreRandomCrag() {
-//        Observable.fromCallable { locationRepository.randomCragId() }
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe { id ->
-//                    Timber.d("Random location id = $id")
-//                    selectedLocationId.value = id
-//                }
-//    }
 
     fun onClusterItemClick(id: String?) {
         Timber.d("Selecting crag with id %s", id)
