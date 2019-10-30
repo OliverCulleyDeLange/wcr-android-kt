@@ -15,7 +15,8 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:text="@string/tutorial_title_map_sectors"
+        android:text="@string/tutorial_title_locationinfo"
+        app:layout_constraintBottom_toTopOf="@+id/next_tutorial_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,23 +27,13 @@
         style="@style/Wcr_Tutorial_Text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/tutorial_subtitle_map_sectors"
-        app:layout_constraintBottom_toTopOf="@+id/next_tutorial_button"
-        app:layout_constraintEnd_toEndOf="@+id/title"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/title" />
-
-    <Button
-        android:id="@+id/next_tutorial_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="continueTutorial"
-        android:text="@string/tutorial_continue_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:text="@string/tutorial_subtitle_locationinfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <Button
         android:id="@+id/exit_button"
@@ -55,24 +46,15 @@
         app:layout_constraintBottom_toBottomOf="@+id/next_tutorial_button"
         app:layout_constraintEnd_toStartOf="@+id/next_tutorial_button" />
 
-    <TextView
-        android:id="@+id/sector_marker_text"
-        style="@style/Wcr_Tutorial_Text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/tutorial_detail_map_sectors"
-        app:layout_constraintEnd_toEndOf="@+id/subtitle"
-        app:layout_constraintStart_toEndOf="@+id/sector_marker"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
-
-    <ImageView
-        android:id="@+id/sector_marker"
+    <Button
+        android:id="@+id/next_tutorial_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@+id/title"
-        app:layout_constraintTop_toTopOf="@+id/sector_marker_text"
-        app:srcCompat="@drawable/location_marker_sector" />
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="96dp"
+        android:onClick="continueTutorial"
+        android:text="@string/tutorial_continue_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

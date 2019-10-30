@@ -90,6 +90,21 @@ class TutorialManager {
                         .build(),
                 CustomTarget.Builder(activity)
                         .setDuration(300L)
+                        .setRectSupplierFromView(R.id.bottom_sheet_peek)
+                        .setShape(RoundedRectangle(Padding(10, 10), 10f))
+                        .setOverlay(R.layout.layout_tutorial_locationinfo)
+                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                            override fun onStarted(target: CustomTarget) {
+                                Timber.d("Location info tutorial started")
+                            }
+
+                            override fun onEnded(target: CustomTarget) {
+                                Timber.d("Location info ended")
+                            }
+                        })
+                        .build(),
+                CustomTarget.Builder(activity)
+                        .setDuration(300L)
                         .setRectSupplierFromView(R.id.climb_grades_group)
                         .setShape(RoundedRectangle(Padding(10, 10), 10f))
                         .setOverlay(R.layout.layout_tutorial_locationinfo_grades)

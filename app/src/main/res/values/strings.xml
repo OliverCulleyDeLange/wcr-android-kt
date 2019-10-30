@@ -47,22 +47,24 @@
     <string name="tutorial_continue_button">continue</string>
     <string name="tutorial_exit_button">exit</string>
 
+    <string name="tutorial_title_search">Search</string>
     <string name="tutorial_title_map_crags">Crags</string>
     <string name="tutorial_title_map_sectors">Sectors</string>
-    <string name="tutorial_title_search">Search</string>
-    <string name="tutorial_title_topo">View Topos</string>
+    <string name="tutorial_title_locationinfo">Location information</string>
     <string name="tutorial_title_locationinfo_grades">Climb grades</string>
     <string name="tutorial_title_locationinfo_climbtypes">Climb types</string>
+    <string name="tutorial_title_topo">View Topos</string>
 
-    <string name="tutorial_subtitle_map_crags">Explore climbing locations around the world using the map</string>
-    <string name="tutorial_subtitle_map_sectors">See where the rocks are</string>
     <string name="tutorial_subtitle_search">Search for crags, sectors, topos and routes. The search results will have one of the following icons: </string>
-    <string name="tutorial_subtitle_topo">View topos and routes</string>
+    <string name="tutorial_subtitle_map_crags">Explore climbing locations around the world using the map. </string>
+    <string name="tutorial_subtitle_map_sectors">See where the rocks are, on a map.</string>
+    <string name="tutorial_subtitle_locationinfo">Get a quick summary of the selected location. Tap this section, or drag it up to reveal the topos. </string>
     <string name="tutorial_subtitle_locationinfo_grades">Quickly check grades for the selected location</string>
     <string name="tutorial_subtitle_locationinfo_climbtypes">Quickly check climb types for the selected location</string>
+    <string name="tutorial_subtitle_topo">View topos and routes</string>
 
-    <string name="tutorial_detail_map_crag">This is a crag marker. They show where the general climbing areas are.</string>
-    <string name="tutorial_detail_map_sectors">This is a sector marker. They show where the actual rock face is.</string>
+    <string name="tutorial_detail_map_crag">This is a crag marker. They show where the general climbing areas are. Click on crag markers to reveal the crags sectors.</string>
+    <string name="tutorial_detail_map_sectors">This is a sector marker. They show where the actual rock faces are in a crag.</string>
     <string name="tutorial_detail_locationinfo_grades">These show how many routes of each difficulty at the selected location. Green = easy, orange = medium, red = hard, black = epic.</string>
     <string name="tutorial_detail_locationinfo_types">These icons show how many routes of each climbing discipline at the selected location. Currently we support bouldering, sport and traditional climbing.</string>
 
