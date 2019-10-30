@@ -9,14 +9,14 @@
 
     <TextView
         android:id="@+id/title"
+        style="@style/Wcr_Tutorial_Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="5dp"
-        style="@style/Wcr_Tutorial_Title"
-        android:text="@string/tutorial_title_search"
+        android:text="@string/tutorial_title_topo"
         app:layout_constraintBottom_toTopOf="@+id/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -25,13 +25,13 @@
 
     <TextView
         android:id="@+id/subtitle"
+        style="@style/Wcr_Tutorial_Text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        style="@style/Wcr_Tutorial_Text"
-        android:text="@string/tutorial_subtitle_search"
+        android:text="@string/tutorial_subtitle_topo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />

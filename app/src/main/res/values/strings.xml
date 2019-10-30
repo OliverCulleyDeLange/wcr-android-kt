@@ -42,12 +42,14 @@
     <string name="tutorial_continue_button">continue</string>
     <string name="tutorial_exit_button">exit</string>
 
-    <string name="tutorial_title_map_crags">Map - Crags</string>
-    <string name="tutorial_title_map_sectors">Map - Sectors</string>
+    <string name="tutorial_title_map_crags">Crags</string>
+    <string name="tutorial_title_map_sectors">Sectors</string>
     <string name="tutorial_title_search">Search</string>
+    <string name="tutorial_title_topo">View Topos</string>
     <string name="tutorial_subtitle_map_crags">Explore climbing locations around the world using the map</string>
     <string name="tutorial_subtitle_map_sectors">See where the rocks are</string>
     <string name="tutorial_subtitle_search">Search for crags, sectors, topos and routes</string>
+    <string name="tutorial_subtitle_topo">View topos and routes</string>
     <string name="tutorial_detail_map_crag">This is a crag marker. They show where the general climbing areas are.</string>
     <string name="tutorial_detail_map_sectors">This is a sector marker. They show where the actual rock face is.</string>
 

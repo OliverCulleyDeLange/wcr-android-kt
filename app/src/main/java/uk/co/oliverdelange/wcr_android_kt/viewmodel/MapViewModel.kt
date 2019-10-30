@@ -218,6 +218,10 @@ class MapViewModel @Inject constructor(application: Application,
                 }
     }
 
+    fun onSectorTutorialFinish() {
+        expandBottomSheet()
+    }
+
     fun onUserSignInSuccess() {
         userSignedIn.value = true
         val user = FirebaseAuth.getInstance().currentUser

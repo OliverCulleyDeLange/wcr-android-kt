@@ -43,7 +43,6 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.util.DrawerUIUtils
 import com.squareup.picasso.Picasso
-import com.takusemba.spotlight.Spotlight
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_maps.*
@@ -61,7 +60,7 @@ import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.util.hideKeyboard
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
-import uk.co.oliverdelange.wcr_android_kt.view.launchTutorial
+import uk.co.oliverdelange.wcr_android_kt.view.TutorialManager
 import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitLocationFragment
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode.*
@@ -111,8 +110,7 @@ class MapsActivity : AppCompatActivity(),
 
     internal lateinit var map: GoogleMap
     private var bottomSheet: BottomSheetBehavior<CardView>? = null
-
-    private var tutorial: Spotlight? = null
+    private val tutorialManager = TutorialManager()
 
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
     private lateinit var sectorMarkers: MarkerManager.Collection
@@ -542,14 +540,14 @@ class MapsActivity : AppCompatActivity(),
 
 
     fun doTutorial(view: View) {
-        tutorial = launchTutorial(this, binding.vm)
+        tutorialManager.launch(this, binding.vm)
     }
 
     fun continueTutorial(view: View) {
-        tutorial?.closeCurrentTarget()
+        tutorialManager.next()
     }
 
     fun exitTutorial(view: View) {
-        tutorial?.closeSpotlight()
+        tutorialManager.exit()
     }
 }
