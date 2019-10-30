@@ -61,7 +61,7 @@
 
     <string name="tutorial_detail_map_crag">This is a crag marker. They show where the general climbing areas are.</string>
     <string name="tutorial_detail_map_sectors">This is a sector marker. They show where the actual rock face is.</string>
-    <string name="tutorial_detail_locationinfo_grades">These boxes tell you the difficulty of the routes in the selected location. Green = easy, orange = medium, red = hard, black = epic.</string>
-    <string name="tutorial_detail_locationinfo_types">These icons tell you how many routes there are of each climbing discipline at the selected location. Currently we support bouldering, sport and traditional climbing.</string>
+    <string name="tutorial_detail_locationinfo_grades">These show how many routes of each difficulty at the selected location. Green = easy, orange = medium, red = hard, black = epic.</string>
+    <string name="tutorial_detail_locationinfo_types">These icons show how many routes of each climbing discipline at the selected location. Currently we support bouldering, sport and traditional climbing.</string>
 
 </resources>
