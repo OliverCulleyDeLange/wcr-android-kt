@@ -21,8 +21,9 @@ import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
     Y 3. DragBarPeek  : Coloured section, Climb types, Title
       3. Topos        : Select Sector, Expand bottom sheet -> Topos
       4. Routes       : Select route
-      5. FAB          : Hide bottom sheet, display fab -> Submit Crag / Sector / Topo (logged in)
-      6. Sign in / Register
+      5. Sign in / Register
+      6. FAB          : Hide bottom sheet, display fab -> Submit Crag / Sector / Topo (logged in)
+      7. Submission   :
  */
 
 class TutorialManager {
@@ -89,33 +90,48 @@ class TutorialManager {
                         .build(),
                 CustomTarget.Builder(activity)
                         .setDuration(300L)
-                        .setRectSupplierFromView(R.id.bottom_sheet_peek)
-                        .setShape(RoundedRectangle(Padding(0, 0), 10f))
-                        .setOverlay(R.layout.layout_tutorial_locationinfo)
+                        .setRectSupplierFromView(R.id.climb_grades_group)
+                        .setShape(RoundedRectangle(Padding(10, 10), 10f))
+                        .setOverlay(R.layout.layout_tutorial_locationinfo_grades)
                         .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
-                                Timber.d("Bottom Sheet Peek tutorial started")
+                                Timber.d("Grades tutorial started")
                             }
 
                             override fun onEnded(target: CustomTarget) {
-                                Timber.d("Bottom Sheet Peek tutorial ended")
+                                Timber.d("Grades tutorial ended")
+                            }
+                        })
+                        .build(),
+                CustomTarget.Builder(activity)
+                        .setDuration(300L)
+                        .setRectSupplierFromView(R.id.climb_types_group)
+                        .setShape(RoundedRectangle(Padding(10, 10), 10f))
+                        .setOverlay(R.layout.layout_tutorial_locationinfo_climbtypes)
+                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                            override fun onStarted(target: CustomTarget) {
+                                Timber.d("Climb types tutorial started")
+                            }
+
+                            override fun onEnded(target: CustomTarget) {
+                                Timber.d("Climb types tutorial ended")
+                            }
+                        })
+                        .build(),
+                CustomTarget.Builder(activity)
+                        .setRectSupplierFromView(R.id.topo_card_view)
+                        .setShape(RoundedRectangle(Padding(10, 10), 10f))
+                        .setOverlay(R.layout.layout_tutorial_topo)
+                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                            override fun onStarted(target: CustomTarget) {
+                                Timber.d("Topo tutorial started")
+                            }
+
+                            override fun onEnded(target: CustomTarget) {
+                                Timber.d("Topo tutorial ended")
                             }
                         })
                         .build()
-//                CustomTarget.Builder(activity)
-//                        .setRectSupplierFromView(R.id.topo_card_view)
-//                        .setShape(RoundedRectangle(Padding(10,10), 10f))
-//                        .setOverlay(R.layout.layout_tutorial_topo)
-//                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
-//                            override fun onStarted(target: CustomTarget) {
-//                                Timber.d("Topo tutorial started")
-//                            }
-//
-//                            override fun onEnded(target: CustomTarget) {
-//                                Timber.d("Topo tutorial ended")
-//                            }
-//                        })
-//                        .build()
         )
 
         currentTutorial = Spotlight.with(activity)
