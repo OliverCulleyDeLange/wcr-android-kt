@@ -9,13 +9,13 @@
 
     <TextView
         android:id="@+id/title"
+        style="@style/Wcr_Tutorial_Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="96dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="5dp"
-        style="@style/Wcr_Tutorial_Title"
         android:text="@string/tutorial_title_search"
         app:layout_constraintBottom_toTopOf="@+id/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,16 +25,142 @@
 
     <TextView
         android:id="@+id/subtitle"
+        style="@style/Wcr_Tutorial_Text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        style="@style/Wcr_Tutorial_Text"
         android:text="@string/tutorial_subtitle_search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <TextView
+        android:id="@+id/bouldering_label2"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Bouldering route"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_bouldering3"
+        app:layout_constraintStart_toEndOf="@+id/climb_types_icon_bouldering3"
+        app:layout_constraintTop_toTopOf="@+id/climb_types_icon_bouldering3" />
+
+    <TextView
+        android:id="@+id/bouldering_label3"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Sport route"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_sport3"
+        app:layout_constraintStart_toEndOf="@+id/climb_types_icon_sport3"
+        app:layout_constraintTop_toTopOf="@+id/climb_types_icon_sport3" />
+
+    <TextView
+        android:id="@+id/bouldering_label4"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Crag "
+        app:layout_constraintBottom_toBottomOf="@+id/crag_icon"
+        app:layout_constraintStart_toEndOf="@+id/crag_icon"
+        app:layout_constraintTop_toTopOf="@+id/crag_icon" />
+
+    <TextView
+        android:id="@+id/bouldering_label6"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Topo"
+        app:layout_constraintBottom_toBottomOf="@+id/topo_icon"
+        app:layout_constraintStart_toEndOf="@+id/topo_icon"
+        app:layout_constraintTop_toTopOf="@+id/topo_icon"
+        app:layout_constraintVertical_bias="0.6" />
+
+    <TextView
+        android:id="@+id/bouldering_label7"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Sector"
+        app:layout_constraintBottom_toBottomOf="@+id/sector_icon"
+        app:layout_constraintStart_toEndOf="@+id/sector_icon"
+        app:layout_constraintTop_toTopOf="@+id/sector_icon" />
+
+    <TextView
+        android:id="@+id/bouldering_label5"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Trad route"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_trad3"
+        app:layout_constraintStart_toEndOf="@+id/climb_types_icon_trad3"
+        app:layout_constraintTop_toTopOf="@+id/climb_types_icon_trad3" />
+
+    <ImageView
+        android:id="@+id/climb_types_icon_bouldering3"
+        style="@style/Wcr_MapBottomSheetClimbTypeIcon"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/ic_boulder"
+        android:tint="#FFFFFF"
+        app:layout_constraintStart_toStartOf="@+id/subtitle"
+        app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+
+    <ImageView
+        android:id="@+id/climb_types_icon_sport3"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_quick_draw"
+        android:tint="#FFFFFF"
+        app:layout_constraintStart_toStartOf="@+id/climb_types_icon_bouldering3"
+        app:layout_constraintTop_toBottomOf="@+id/climb_types_icon_bouldering3" />
+
+    <ImageView
+        android:id="@+id/climb_types_icon_trad3"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_cam"
+        android:tint="#FFFFFF"
+        app:layout_constraintStart_toStartOf="@+id/climb_types_icon_bouldering3"
+        app:layout_constraintTop_toBottomOf="@+id/climb_types_icon_sport3" />
+
+    <ImageView
+        android:id="@+id/topo_icon"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_topo"
+        android:tint="#FFFFFF"
+        app:layout_constraintStart_toStartOf="@+id/climb_types_icon_bouldering3"
+        app:layout_constraintTop_toBottomOf="@+id/climb_types_icon_trad3" />
+
+    <ImageView
+        android:id="@+id/crag_icon"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/climb_types_icon_bouldering3"
+        app:layout_constraintTop_toBottomOf="@+id/sector_icon"
+        app:srcCompat="@drawable/location_marker_crag" />
+
+    <ImageView
+        android:id="@+id/sector_icon"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/climb_types_icon_bouldering3"
+        app:layout_constraintTop_toBottomOf="@+id/topo_icon"
+        app:srcCompat="@drawable/location_marker_sector" />
 
     <Button
         android:id="@+id/next_tutorial_button"
