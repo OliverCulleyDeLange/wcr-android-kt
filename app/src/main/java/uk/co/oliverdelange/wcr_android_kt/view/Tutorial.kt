@@ -15,14 +15,14 @@ import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 
 
 /*
-    0. Search       : Search for an item
-    1. MapCrag      : Crags
-    2. MapSector    : Select Crag -> Sectors
-    3. DragBarPeek  : Coloured section, Climb types, Title
-    3. Topos        : Select Sector, Expand bottom sheet -> Topos
-    4. Routes       : Select route
-    5. FAB          : Hide bottom sheet, display fab -> Submit Crag / Sector / Topo (logged in)
-    6. Sign in / Register
+    Y 0. Search       : Search for an item
+    Y 1. MapCrag      : Crags
+    Y 2. MapSector    : Select Crag -> Sectors
+    Y 3. DragBarPeek  : Coloured section, Climb types, Title
+      3. Topos        : Select Sector, Expand bottom sheet -> Topos
+      4. Routes       : Select route
+      5. FAB          : Hide bottom sheet, display fab -> Submit Crag / Sector / Topo (logged in)
+      6. Sign in / Register
  */
 
 class TutorialManager {
@@ -41,6 +41,7 @@ class TutorialManager {
 
         val targets = listOf(
                 CustomTarget.Builder(activity)
+                        .setDuration(300L)
                         .setRectSupplierFromView(R.id.search_query_section)
                         .setShape(RoundedRectangle(Padding(8, 8), 25f))
                         .setOverlay(R.layout.layout_tutorial_search)
@@ -56,6 +57,7 @@ class TutorialManager {
                         })
                         .build(),
                 CustomTarget.Builder(activity)
+                        .setDuration(300L)
                         .setRectSupplierFromView(R.id.map)
                         .setShape(RoundedRectangle(Padding(-50, -400), 25f))
                         .setOverlay(R.layout.layout_tutorial_map_crag)
@@ -71,6 +73,7 @@ class TutorialManager {
                         })
                         .build(),
                 CustomTarget.Builder(activity)
+                        .setDuration(300L)
                         .setRectSupplierFromView(activity.findViewById<View>(R.id.map))
                         .setShape(RoundedRectangle(Padding(-50, -400), 25f))
                         .setOverlay(R.layout.layout_tutorial_map_sector)
@@ -85,6 +88,7 @@ class TutorialManager {
                         })
                         .build(),
                 CustomTarget.Builder(activity)
+                        .setDuration(300L)
                         .setRectSupplierFromView(R.id.bottom_sheet_peek)
                         .setShape(RoundedRectangle(Padding(0, 0), 10f))
                         .setOverlay(R.layout.layout_tutorial_locationinfo)
@@ -116,7 +120,7 @@ class TutorialManager {
 
         currentTutorial = Spotlight.with(activity)
                 .setOverlayColor(R.color.bg_tutorial)
-                .setDuration(100L)
+                .setDuration(500L)
                 .setAnimation(DecelerateInterpolator(2f))
                 .setTargets(ArrayList(targets))
                 .setClosedOnTouchedOutside(true)
