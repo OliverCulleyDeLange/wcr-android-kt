@@ -218,7 +218,7 @@ class MapViewModel @Inject constructor(application: Application,
                 }
     }
 
-    fun onSectorTutorialFinish() {
+    fun onLocationInfoTutorialComplete() {
         expandBottomSheet()
     }
 

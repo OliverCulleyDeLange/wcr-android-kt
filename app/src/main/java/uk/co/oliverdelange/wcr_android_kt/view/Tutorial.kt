@@ -115,6 +115,7 @@ class TutorialManager {
 
                             override fun onEnded(target: CustomTarget) {
                                 Timber.d("Climb types tutorial ended")
+                                vm?.onLocationInfoTutorialComplete()
                             }
                         })
                         .build(),
