@@ -5,6 +5,11 @@
 
     <string name="app_name">We Climb Rocks</string>
 
+    <!--General-->
+    <string name="bouldering">Bouldering</string>
+    <string name="sport">Sport</string>
+    <string name="trad">Trad</string>
+
     <!--MENU-->
     <string name="menu_signin">Sign in / register</string>
     <string name="menu_signout">Sign out</string>
@@ -46,11 +51,17 @@
     <string name="tutorial_title_map_sectors">Sectors</string>
     <string name="tutorial_title_search">Search</string>
     <string name="tutorial_title_topo">View Topos</string>
+    <string name="tutorial_title_locationinfo">Location Information</string>
+
     <string name="tutorial_subtitle_map_crags">Explore climbing locations around the world using the map</string>
     <string name="tutorial_subtitle_map_sectors">See where the rocks are</string>
     <string name="tutorial_subtitle_search">Search for crags, sectors, topos and routes</string>
     <string name="tutorial_subtitle_topo">View topos and routes</string>
+    <string name="tutorial_subtitle_locationinfo">Quickly check grades and climb types for the selected location</string>
+
     <string name="tutorial_detail_map_crag">This is a crag marker. They show where the general climbing areas are.</string>
     <string name="tutorial_detail_map_sectors">This is a sector marker. They show where the actual rock face is.</string>
+    <string name="tutorial_detail_locationinfo_grades">These boxes tell you the difficulty of the routes in the selected location. Green = easy, orange = medium, red = hard, black = epic.</string>
+    <string name="tutorial_detail_locationinfo_types">These icons tell you how many routes there are of each climbing discipline at the selected location. Currently we support bouldering, sport and traditional climbing.</string>
 
 </resources>

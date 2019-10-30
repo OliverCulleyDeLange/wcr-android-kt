@@ -45,6 +45,12 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_begin="16dp" />
 
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/climb_grades_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="climb_grades_text_green,climb_grades_text_orange,climb_grades_text_red,climb_grades_text_black" />
+
             <TextView
                 android:id="@+id/climb_grades_text_green"
                 style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
@@ -94,6 +100,12 @@
                 app:layout_constraintTop_toTopOf="@+id/top"
                 tools:text="4" />
 
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/climb_types_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="climb_types_icon_trad,climb_types_text_sport,climb_types_icon_sport,climb_types_text_bouldering,climb_types_icon_bouldering,climb_types_text_trad" />
 
             <ImageView
                 android:id="@+id/climb_types_icon_bouldering"

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map_tutorial"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/bg_tutorial">
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/Wcr_Tutorial_Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/tutorial_title_locationinfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/subtitle"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/tutorial_subtitle_locationinfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <TextView
+        android:id="@+id/climb_grade_info"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/tutorial_detail_locationinfo_grades"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/subtitle"
+        app:layout_constraintTop_toBottomOf="@+id/climb_grades_text_green3" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/climb_grades"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="climb_grades_text_black3,climb_grades_text_green3,climb_grades_text_orange3,climb_grades_text_red3" />
+
+    <TextView
+        android:id="@+id/climb_grades_text_green3"
+        style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
+        android:layout_width="24dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/map_dragbar_climb_grades_green"
+        android:text="1"
+        app:layout_constraintStart_toStartOf="@+id/climb_grade_info"
+        app:layout_constraintTop_toBottomOf="@+id/subtitle"
+        tools:text="1" />
+
+    <TextView
+        android:id="@+id/climb_grades_text_orange3"
+        style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
+        android:layout_width="24dp"
+        android:layout_height="27dp"
+        android:background="@color/map_dragbar_climb_grades_orange"
+        android:text="2"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_grades_text_green3"
+        app:layout_constraintStart_toEndOf="@+id/climb_grades_text_green3"
+        app:layout_constraintTop_toTopOf="@+id/climb_grades_text_green3"
+        tools:text="2" />
+
+    <TextView
+        android:id="@+id/climb_grades_text_red3"
+        style="@style/Wcr_MapBottomSheetClimbGradesText.DarkText"
+        android:layout_width="24dp"
+        android:layout_height="27dp"
+        android:background="@color/map_dragbar_climb_grades_red"
+        android:text="3"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_grades_text_green3"
+        app:layout_constraintStart_toEndOf="@+id/climb_grades_text_orange3"
+        app:layout_constraintTop_toTopOf="@+id/climb_grades_text_green3"
+        tools:text="3" />
+
+    <TextView
+        android:id="@+id/climb_grades_text_black3"
+        style="@style/Wcr_MapBottomSheetClimbGradesText.LightText"
+        android:layout_width="24dp"
+        android:layout_height="27dp"
+        android:background="@color/map_dragbar_climb_grades_black"
+        android:text="4"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_grades_text_green3"
+        app:layout_constraintStart_toEndOf="@+id/climb_grades_text_red3"
+        app:layout_constraintTop_toTopOf="@+id/climb_grades_text_green3"
+        tools:text="4" />
+
+    <TextView
+        android:id="@+id/climb_type_info"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/tutorial_detail_locationinfo_types"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/subtitle"
+        app:layout_constraintTop_toBottomOf="@+id/climb_types_icon_bouldering2" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/climb_types"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="climb_types_icon_bouldering2,climb_types_icon_sport2,climb_types_icon_trad2,bouldering_label,sport_label,trad_label" />
+
+    <ImageView
+        android:id="@+id/climb_types_icon_bouldering2"
+        style="@style/Wcr_MapBottomSheetClimbTypeIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/ic_boulder"
+        android:tint="#FFFFFF"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="@+id/climb_type_info"
+        app:layout_constraintTop_toBottomOf="@+id/climb_grade_info" />
+
+    <ImageView
+        android:id="@+id/climb_types_icon_sport2"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_quick_draw"
+        android:tint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@+id/bouldering_label"
+        app:layout_constraintEnd_toStartOf="@+id/sport_label"
+        app:layout_constraintTop_toTopOf="@+id/bouldering_label" />
+
+    <ImageView
+        android:id="@+id/climb_types_icon_trad2"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_cam"
+        android:tint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@+id/sport_label"
+        app:layout_constraintEnd_toStartOf="@+id/trad_label"
+        app:layout_constraintTop_toTopOf="@+id/sport_label"
+        tools:text="3" />
+
+    <TextView
+        android:id="@+id/bouldering_label"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/bouldering"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_bouldering2"
+        app:layout_constraintStart_toEndOf="@+id/climb_types_icon_bouldering2"
+        app:layout_constraintTop_toTopOf="@+id/climb_types_icon_bouldering2" />
+
+    <TextView
+        android:id="@+id/sport_label"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sport"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_sport2"
+        app:layout_constraintEnd_toStartOf="@+id/climb_types_icon_trad2"
+        app:layout_constraintStart_toEndOf="@+id/bouldering_label"
+        app:layout_constraintTop_toTopOf="@+id/climb_types_icon_sport2" />
+
+    <TextView
+        android:id="@+id/trad_label"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/trad"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_trad2"
+        app:layout_constraintEnd_toEndOf="@+id/climb_type_info"
+        app:layout_constraintTop_toTopOf="@+id/climb_types_icon_trad2" />
+
+    <Button
+        android:id="@+id/exit_button"
+        style="@style/Wcr_Tutorial_Exit_Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:onClick="exitTutorial"
+        android:text="@string/tutorial_exit_button"
+        app:layout_constraintBottom_toBottomOf="@+id/next_tutorial_button"
+        app:layout_constraintEnd_toStartOf="@+id/next_tutorial_button" />
+
+    <Button
+        android:id="@+id/next_tutorial_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="112dp"
+        android:onClick="continueTutorial"
+        android:text="@string/tutorial_continue_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
