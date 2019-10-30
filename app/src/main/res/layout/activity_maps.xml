@@ -49,13 +49,14 @@
 
         </com.arlib.floatingsearchview.FloatingSearchView>
 
+        <!--Bottom sheet needs to be hidable to allow search results to cover whole screen-->
         <androidx.cardview.widget.CardView
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/bg_grey_light"
             android:orientation="vertical"
-            app:behavior_hideable="false"
+            app:behavior_hideable="true"
             app:behavior_peekHeight="80dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="5dp"
