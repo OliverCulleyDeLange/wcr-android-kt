@@ -74,7 +74,7 @@ data class Grade(var string: String,
                     val tech = TradTechnicalGrade.values().first { it.textRepresentation == grades[1] }
                     from(adj, tech)
                 }
-                textRepresentation.matches(Regex("V\\d")) -> from(VGrade.values().first { it.textRepresentation == textRepresentation })
+                textRepresentation.matches(Regex("V\\d+")) -> from(VGrade.values().first { it.textRepresentation == textRepresentation })
                 else -> from(SportGrade.values().first { it.textRepresentation == textRepresentation })
             }
         }
