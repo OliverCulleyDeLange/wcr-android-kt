@@ -7,6 +7,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.takusemba.spotlight.OnSpotlightStateChangedListener
 import com.takusemba.spotlight.OnTargetStateChangedListener
 import com.takusemba.spotlight.Spotlight
+import com.takusemba.spotlight.shape.Circle
 import com.takusemba.spotlight.shape.Padding
 import com.takusemba.spotlight.shape.RoundedRectangle
 import com.takusemba.spotlight.target.CustomTarget
@@ -21,8 +22,7 @@ import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
     Y 1. MapCrag      : Crags
     Y 2. MapSector    : Select Crag -> Sectors
     Y 3. DragBarPeek  : Coloured section, Climb types, Title
-      3. Topos        : Select Sector, Expand bottom sheet -> Topos
-      4. Routes       : Select route
+    Y 3. Topos/Routes : Expand bottom sheet -> Topos & routes
       5. Sign in / Register
       6. FAB          : Hide bottom sheet, display fab -> Submit Crag / Sector / Topo (logged in)
       7. Submission   :
@@ -156,6 +156,53 @@ class TutorialManager {
 
                             override fun onEnded(target: CustomTarget) {
                                 Timber.d("Topo tutorial ended")
+                                vm?.onTopoTutorialComplete()
+//                                activity.floating_search_view.openMenu(true)
+                            }
+                        })
+                        .build(),
+                CustomTarget.Builder(activity)
+                        .setRectSupplierFromView(R.id.search_bar_left_action_container)
+                        .setShape(RoundedRectangle(Padding(0, 0), 10f))
+                        .setOverlay(R.layout.layout_tutorial_signin)
+//                        .setAutoStart(false)
+                        .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
+                            override fun onStarted(target: CustomTarget) {
+                                Timber.d("Signin tutorial started")
+                            }
+
+                            override fun onEnded(target: CustomTarget) {
+                                Timber.d("Signin tutorial ended")
+                            }
+                        })
+                        .build(),
+                CustomTarget.Builder(activity)
+                        .setRectSupplierFromView(R.id.fab)
+                        .setShape(Circle(100))
+                        .setOverlay(R.layout.layout_tutorial_fab)
+//                        .setAutoStart(false)
+                        .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
+                            override fun onStarted(target: CustomTarget) {
+                                Timber.d("Fab tutorial started")
+                            }
+
+                            override fun onEnded(target: CustomTarget) {
+                                Timber.d("Fab tutorial ended")
+                            }
+                        })
+                        .build(),
+                CustomTarget.Builder(activity)
+                        .setRect(0, 0, 0, 0)
+                        .setShape(RoundedRectangle(Padding(0, 0), 00f))
+                        .setOverlay(R.layout.layout_tutorial_submit)
+//                        .setAutoStart(false)
+                        .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
+                            override fun onStarted(target: CustomTarget) {
+                                Timber.d("Submit tutorial started")
+                            }
+
+                            override fun onEnded(target: CustomTarget) {
+                                Timber.d("Submit tutorial ended")
                             }
                         })
                         .build()

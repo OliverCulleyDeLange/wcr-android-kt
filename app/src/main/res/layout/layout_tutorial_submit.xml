@@ -15,10 +15,11 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:text="@string/tutorial_title_locationinfo"
+        android:layout_marginBottom="5dp"
+        android:text="@string/tutorial_title_submit"
         app:layout_constraintBottom_toTopOf="@+id/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
@@ -29,14 +30,24 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        android:text="@string/tutorial_subtitle_locationinfo"
+        android:text="@string/tutorial_subtitle_submit"
         app:layout_constraintBottom_toTopOf="@+id/next_tutorial_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <Button
+        android:id="@+id/next_tutorial_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:onClick="continueTutorial"
+        android:text="@string/tutorial_continue_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/exit_button"
@@ -48,16 +59,5 @@
         android:text="@string/tutorial_exit_button"
         app:layout_constraintBottom_toBottomOf="@+id/next_tutorial_button"
         app:layout_constraintEnd_toStartOf="@+id/next_tutorial_button" />
-
-    <Button
-        android:id="@+id/next_tutorial_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="96dp"
-        android:onClick="continueTutorial"
-        android:text="@string/tutorial_continue_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

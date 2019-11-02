@@ -54,6 +54,9 @@
     <string name="tutorial_title_locationinfo_grades">Climb grades</string>
     <string name="tutorial_title_locationinfo_climbtypes">Climb types</string>
     <string name="tutorial_title_topo">View Topos</string>
+    <string name="tutorial_title_signin">Signin</string>
+    <string name="tutorial_title_fab">Submit Locations</string>
+    <string name="tutorial_title_submit">Submit Topos</string>
 
     <string name="tutorial_subtitle_search">Search for crags, sectors, topos and routes. The search results will have one of the following icons: </string>
     <string name="tutorial_subtitle_map_crags">Explore climbing locations around the world using the map. </string>
@@ -61,7 +64,10 @@
     <string name="tutorial_subtitle_locationinfo">Get a quick summary of the selected location. Tap this section, or drag it up to reveal the topos. </string>
     <string name="tutorial_subtitle_locationinfo_grades">Quickly check grades for the selected location</string>
     <string name="tutorial_subtitle_locationinfo_climbtypes">Quickly check climb types for the selected location</string>
-    <string name="tutorial_subtitle_topo">View topos and routes</string>
+    <string name="tutorial_subtitle_topo">Swipe through routes to highlight them on the topo.</string>
+    <string name="tutorial_subtitle_signin">Using the menu indicated here, sign in or create an account to submit your own topos.</string>
+    <string name="tutorial_subtitle_fab">Once signed in, a button will appear here to submit.</string>
+    <string name="tutorial_subtitle_submit">With a sector selected, you can submit your own topo.</string>
 
     <string name="tutorial_detail_map_crag">This is a crag marker. They show where the general climbing areas are. Click on crag markers to reveal the crags sectors.</string>
     <string name="tutorial_detail_map_sectors">This is a sector marker. They show where the actual rock faces are in a crag.</string>

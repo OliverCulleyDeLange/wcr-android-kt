@@ -5,11 +5,18 @@ gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --depen
 #TODO before release
 Stuttery performance fix:
     - fix refresh sectors for crag
+Image scalin, accomodate panoramas. Min / max size for topo image view. (fit to size)
+Add 'ungraded' & 'project' grades which are the default
+Fix submit spinner layout
+Edit/delete things that you own
+Add routes to existing topo
+Add route button turn into 3 buttons, of different climb type?
 
-Tutorials and help screen - https://github.com/TakuSemba/Spotlight
 crashlytics
 Analytics
 License t&c
+
+Splitscreen crash investigate
 
 - Test before release
 Test DBs max length for strings - long paths could cause issues.

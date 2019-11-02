@@ -222,6 +222,10 @@ class MapViewModel @Inject constructor(application: Application,
         expandBottomSheet()
     }
 
+    fun onTopoTutorialComplete() {
+        collapseBottomSheet()
+    }
+
     fun onUserSignInSuccess() {
         userSignedIn.value = true
         val user = FirebaseAuth.getInstance().currentUser

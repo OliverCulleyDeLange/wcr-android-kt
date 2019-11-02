@@ -15,11 +15,14 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/tutorial_title_locationinfo_climbtypes"
+        app:layout_constraintBottom_toTopOf="@+id/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/subtitle"
@@ -28,8 +31,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/tutorial_subtitle_locationinfo_climbtypes"
+        app:layout_constraintBottom_toTopOf="@id/climb_types_icon_bouldering2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
@@ -37,26 +43,43 @@
         android:id="@+id/climb_type_info"
         style="@style/Wcr_Tutorial_Text"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="133dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/tutorial_detail_locationinfo_types"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintBottom_toTopOf="@+id/exit_button"
+        app:layout_constraintEnd_toEndOf="@+id/next_tutorial_button"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/subtitle"
-        app:layout_constraintTop_toBottomOf="@+id/climb_types_icon_bouldering2" />
+        app:layout_constraintTop_toBottomOf="@id/climb_types_icon_bouldering2" />
 
     <ImageView
         android:id="@+id/climb_types_icon_bouldering2"
         style="@style/Wcr_MapBottomSheetClimbTypeIcon"
         android:layout_width="wrap_content"
         android:layout_height="16dp"
-        android:layout_marginTop="16dp"
         android:src="@drawable/ic_boulder"
         android:tint="#FFFFFF"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@+id/climb_type_info"
+        app:layout_constraintBottom_toTopOf="@+id/climb_type_info"
+        app:layout_constraintEnd_toStartOf="@+id/bouldering_label"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+
+    <TextView
+        android:id="@+id/bouldering_label"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/bouldering"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_bouldering2"
+        app:layout_constraintEnd_toStartOf="@+id/climb_types_icon_sport2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/climb_types_icon_bouldering2"
+        app:layout_constraintTop_toTopOf="@+id/climb_types_icon_bouldering2" />
 
     <ImageView
         android:id="@+id/climb_types_icon_sport2"
@@ -67,7 +90,22 @@
         android:tint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="@+id/bouldering_label"
         app:layout_constraintEnd_toStartOf="@+id/sport_label"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/bouldering_label"
         app:layout_constraintTop_toTopOf="@+id/bouldering_label" />
+
+    <TextView
+        android:id="@+id/sport_label"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/sport"
+        app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_sport2"
+        app:layout_constraintEnd_toStartOf="@+id/climb_types_icon_trad2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/climb_types_icon_sport2"
+        app:layout_constraintTop_toTopOf="@+id/climb_types_icon_sport2" />
 
     <ImageView
         android:id="@+id/climb_types_icon_trad2"
@@ -78,30 +116,10 @@
         android:tint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="@+id/sport_label"
         app:layout_constraintEnd_toStartOf="@+id/trad_label"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sport_label"
         app:layout_constraintTop_toTopOf="@+id/sport_label"
         tools:text="3" />
-
-    <TextView
-        android:id="@+id/bouldering_label"
-        style="@style/Wcr_Tutorial_Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/bouldering"
-        app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_bouldering2"
-        app:layout_constraintStart_toEndOf="@+id/climb_types_icon_bouldering2"
-        app:layout_constraintTop_toTopOf="@+id/climb_types_icon_bouldering2" />
-
-    <TextView
-        android:id="@+id/sport_label"
-        style="@style/Wcr_Tutorial_Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sport"
-        app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_sport2"
-        app:layout_constraintEnd_toStartOf="@+id/climb_types_icon_trad2"
-        app:layout_constraintStart_toEndOf="@+id/bouldering_label"
-        app:layout_constraintTop_toTopOf="@+id/climb_types_icon_sport2" />
 
     <TextView
         android:id="@+id/trad_label"
@@ -111,7 +129,9 @@
         android:layout_marginEnd="16dp"
         android:text="@string/trad"
         app:layout_constraintBottom_toBottomOf="@+id/climb_types_icon_trad2"
-        app:layout_constraintEnd_toEndOf="@+id/climb_type_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/climb_types_icon_trad2"
         app:layout_constraintTop_toTopOf="@+id/climb_types_icon_trad2" />
 
     <Button
@@ -134,8 +154,6 @@
         android:onClick="continueTutorial"
         android:text="@string/tutorial_continue_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/climb_type_info"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,10 +16,12 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:text="@string/tutorial_title_locationinfo_grades"
+        app:layout_constraintBottom_toTopOf="@+id/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/subtitle"
@@ -29,7 +31,9 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:text="@string/tutorial_subtitle_locationinfo_grades"
+        app:layout_constraintBottom_toTopOf="@+id/climb_grades_text_green3"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
@@ -41,8 +45,9 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:text="@string/tutorial_detail_locationinfo_grades"
+        app:layout_constraintBottom_toTopOf="@+id/exit_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/subtitle"
         app:layout_constraintTop_toBottomOf="@+id/climb_grades_text_green3" />
 
@@ -54,6 +59,7 @@
         android:layout_marginTop="16dp"
         android:background="@color/map_dragbar_climb_grades_green"
         android:text="1"
+        app:layout_constraintBottom_toTopOf="@+id/climb_grade_info"
         app:layout_constraintStart_toStartOf="@+id/climb_grade_info"
         app:layout_constraintTop_toBottomOf="@+id/subtitle"
         tools:text="1" />

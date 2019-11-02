@@ -172,5 +172,6 @@
 
     <style name="Wcr_Tutorial_Exit_Button" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:textColor">#EEEEEE</item>
+        <item name="android:background">@color/bg_tutorial</item>
     </style>
 </resources>
