@@ -19,7 +19,6 @@ import uk.co.oliverdelange.wcr_android_kt.PREF_BOTTOM_SHEET_OPENED
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
-import uk.co.oliverdelange.wcr_android_kt.db.preload
 import uk.co.oliverdelange.wcr_android_kt.map.CragClusterItem
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
@@ -336,7 +335,7 @@ class MapViewModel @Inject constructor(application: Application,
         disposables.add(Completable.fromAction {
             Timber.d("Nuking DB")
             db.clearAllTables()
-        }.andThen(preload(WcrDb.getInstance(applicationContext)))
+        }
                 .subscribeOn(Schedulers.io())
                 .subscribe {
                     Timber.d("DB Nuked")
