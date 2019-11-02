@@ -22,20 +22,20 @@ android {
             }
         }
     }
-//    signingConfigs {
-//        releaseDevelop {
-//            keyAlias "WCR Release"
-//            storeFile file("/Users/culleyo1/.ssh/wcr_signing.jks")
-//            keyPassword KEYPWD //These come from <USER_HOME>/.gradle/gradle.properties
-//            storePassword KSTOREPWD
-//        }
-//    }
+    signingConfigs {
+        releaseDevelop {
+            keyAlias "wcr_release"
+            storeFile file("../release.jks")
+            keyPassword KPWD //These come from <USER_HOME>/.gradle/gradle.properties
+            storePassword KSTOREPWD
+        }
+    }
     buildTypes {
-//        release {
-//            minifyEnabled false
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//            signingConfig signingConfigs.releaseDevelop
-//        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseDevelop
+        }
         debug {
             applicationIdSuffix ".debug"
         }
