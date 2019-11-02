@@ -23,6 +23,7 @@ import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
+import com.crashlytics.android.Crashlytics
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -47,6 +48,7 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_maps.*
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.BuildConfig
 import uk.co.oliverdelange.wcr_android_kt.PREFS_KEY
 import uk.co.oliverdelange.wcr_android_kt.PREF_BOTTOM_SHEET_OPENED
 import uk.co.oliverdelange.wcr_android_kt.R
@@ -380,47 +382,57 @@ class MapsActivity : AppCompatActivity(),
                     false
                 }
             }
-            primaryItem(R.string.menu_about) {
-                iicon = GoogleMaterial.Icon.gmd_help
-                selectable = false
-                onClick { _ ->
-                    LibsBuilder()
-                            .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-                            .withAboutAppName("We Climb Rocks")
-                            .withLicenseShown(true)
-                            .withActivityTitle("About")
-                            .withAboutIconShown(true)
-                            .withAboutVersionShown(true)
-                            .withAboutDescription("We Climb Rocks is a platform for sharing climbing topos, and easily locating routes." +
-                                    "<br /><b>For support, email <a href='mailto:weclimbrocks@oliverdelange.co.uk'>weclimbrocks@oliverdelange.co.uk</a></b>" +
-                                    "<br /><br />" +
-                                    "Below is a list of Open Source libraries used in this app.")
-                            .start(this@MapsActivity)
-                    false
+            if (BuildConfig.DEBUG) {
+                primaryItem(R.string.menu_about) {
+                    iicon = GoogleMaterial.Icon.gmd_help
+                    selectable = false
+                    onClick { _ ->
+                        LibsBuilder()
+                                .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                                .withAboutAppName("We Climb Rocks")
+                                .withLicenseShown(true)
+                                .withActivityTitle("About")
+                                .withAboutIconShown(true)
+                                .withAboutVersionShown(true)
+                                .withAboutDescription("We Climb Rocks is a platform for sharing climbing topos, and easily locating routes." +
+                                        "<br /><b>For support, email <a href='mailto:weclimbrocks@oliverdelange.co.uk'>weclimbrocks@oliverdelange.co.uk</a></b>" +
+                                        "<br /><br />" +
+                                        "Below is a list of Open Source libraries used in this app.")
+                                .start(this@MapsActivity)
+                        false
+                    }
                 }
-            }
-            primaryItem("NukeDB") {
-                iicon = GoogleMaterial.Icon.gmd_warning
-                selectable = false
-                onClick { _ ->
-                    binding.vm?.nukeDb(applicationContext)
-                    false
+                primaryItem("Nuke DB") {
+                    iicon = GoogleMaterial.Icon.gmd_warning
+                    selectable = false
+                    onClick { _ ->
+                        binding.vm?.nukeDb(applicationContext)
+                        false
+                    }
                 }
-            }
-            primaryItem("Sync Up") {
-                iicon = GoogleMaterial.Icon.gmd_warning
-                selectable = false
-                onClick { _ ->
-                    uploadSync()
-                    false
+                primaryItem("Sync Up") {
+                    iicon = GoogleMaterial.Icon.gmd_warning
+                    selectable = false
+                    onClick { _ ->
+                        uploadSync()
+                        false
+                    }
                 }
-            }
-            primaryItem("Sync Down") {
-                iicon = GoogleMaterial.Icon.gmd_warning
-                selectable = false
-                onClick { _ ->
-                    downloadSync()
-                    false
+                primaryItem("Sync Down") {
+                    iicon = GoogleMaterial.Icon.gmd_warning
+                    selectable = false
+                    onClick { _ ->
+                        downloadSync()
+                        false
+                    }
+                }
+                primaryItem("Test Crash") {
+                    iicon = GoogleMaterial.Icon.gmd_warning
+                    selectable = false
+                    onClick { _ ->
+                        Crashlytics.getInstance().crash() // Force a crash
+                        false
+                    }
                 }
             }
         }

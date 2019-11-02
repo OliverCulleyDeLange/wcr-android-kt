@@ -1,19 +1,13 @@
-chrome://inspect/#devices
-Stetho the app to view DB contents
-gradlew.bat app:dependencyInsight --configuration debugCompileClasspath  --dependency kotlin-stdlib-jre7
-
 #TODO before release
 Stuttery performance fix:
     - fix refresh sectors for crag
+    - Don't animate map whilst doing oomplex bottom sheet layout.
 
-Image scaling, accomodate panoramas. Min / max size for topo image view. (fit to size)
+Image scaling, accommodate panoramas. Min / max size for topo image view. (fit to size)
 Add 'ungraded' & 'project' grades which are the default
-Fix submit spinner layout
 Edit/delete things that you own
 Add routes to existing topo
-Add route button turn into 3 buttons, of different climb type?
 
-crashlytics
 Analytics
 License t&c
 
@@ -36,6 +30,7 @@ Grade voting
 Place hold location on topo
 Full screen Topo view
 DWS grade / climb  type
+Add route button turn into 3 buttons, for each climb type?
 Add extra info:
     - Parking spots
     - Approach notes

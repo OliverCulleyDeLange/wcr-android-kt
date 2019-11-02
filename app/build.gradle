@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'groovyx.android'
-
+apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
@@ -95,6 +95,7 @@ dependencies {
     implementation "com.google.firebase:firebase-auth:17.0.0"
     implementation "com.google.firebase:firebase-firestore:21.1.1"
     implementation 'com.google.firebase:firebase-storage:17.0.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
 //    implementation "com.facebook.android:facebook-android-sdk:${versions.facebook}"
 
