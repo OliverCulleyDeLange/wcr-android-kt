@@ -70,6 +70,7 @@
             android:elevation="8dp"
             android:onClick="@{vm::onSubmit}"
             android:clickable="@{safeUnbox(vm.bottomSheetState) == 4}"
+            app:tint="@null"
             app:layout_anchor="@id/bottom_sheet"
             app:layout_anchorGravity="top|end"
             app:show="@{safeUnbox(vm.showFab)}" />

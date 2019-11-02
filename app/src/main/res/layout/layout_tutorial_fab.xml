@@ -15,25 +15,76 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/tutorial_title_fab"
-        app:layout_constraintBottom_toTopOf="@+id/next_tutorial_button"
+        app:layout_constraintBottom_toTopOf="@+id/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/subtitle"
         style="@style/Wcr_Tutorial_Text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/tutorial_subtitle_fab"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tutorial_add_crag_fab"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toStartOf="@+id/title"
         app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <TextView
+        android:id="@+id/subtitle2"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/tutorial_detail_fab_crag"
+        app:layout_constraintBottom_toBottomOf="@+id/tutorial_add_crag_fab"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toEndOf="@+id/tutorial_add_crag_fab"
+        app:layout_constraintTop_toTopOf="@+id/tutorial_add_crag_fab" />
+
+    <TextView
+        android:id="@+id/subtitle3"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/tutorial_detail_fab_sector"
+        app:layout_constraintBottom_toBottomOf="@+id/tutorial_add_sector_fab"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toEndOf="@+id/tutorial_add_sector_fab"
+        app:layout_constraintTop_toTopOf="@+id/tutorial_add_sector_fab" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/tutorial_add_sector_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/fab_new_sector"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tutorial_add_crag_fab"
+        app:layout_constraintTop_toBottomOf="@+id/tutorial_add_crag_fab"
+        app:srcCompat="@drawable/ic_add_sector"
+        app:tint="@null" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/tutorial_add_crag_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/fab_new_crag"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/tutorial_add_sector_fab"
+        app:layout_constraintStart_toStartOf="@+id/subtitle"
+        app:layout_constraintTop_toBottomOf="@+id/subtitle"
+        app:srcCompat="@drawable/ic_add_crag"
+        app:tint="@null" />
 
     <Button
         android:id="@+id/next_tutorial_button"

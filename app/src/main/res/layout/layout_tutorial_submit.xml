@@ -15,11 +15,11 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/tutorial_title_submit"
         app:layout_constraintBottom_toTopOf="@+id/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
@@ -29,14 +29,59 @@
         style="@style/Wcr_Tutorial_Text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/tutorial_subtitle_submit"
-        app:layout_constraintBottom_toTopOf="@+id/next_tutorial_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tutorial_add_topo_fab"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/title"
         app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/tutorial_add_topo_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/fab_new_topo"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@id/submit_screenshot"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/subtitle"
+        app:srcCompat="@drawable/ic_add_topo"
+        app:tint="@null" />
+
+    <TextView
+        android:id="@+id/tutorial_add_topo_label"
+        style="@style/Wcr_Tutorial_Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/tutorial_detail_fab_sector"
+        app:layout_constraintBottom_toBottomOf="@+id/tutorial_add_topo_fab"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toEndOf="@+id/tutorial_add_topo_fab"
+        app:layout_constraintTop_toTopOf="@+id/tutorial_add_topo_fab" />
+
+    <ImageView
+        android:id="@+id/submit_screenshot"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/exit_button"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/tutorial_add_topo_fab"
+        app:srcCompat="@android:color/darker_gray" />
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/submit_screenshot"
+        app:layout_constraintEnd_toEndOf="@+id/tutorial_add_topo_fab"
+        app:layout_constraintStart_toStartOf="@+id/tutorial_add_topo_fab"
+        app:layout_constraintTop_toBottomOf="@+id/tutorial_add_topo_fab"
+        app:srcCompat="@android:drawable/arrow_down_float" />
 
     <Button
         android:id="@+id/next_tutorial_button"

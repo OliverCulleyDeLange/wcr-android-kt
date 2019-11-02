@@ -145,6 +145,7 @@ class TutorialManager {
                         })
                         .build(),
                 CustomTarget.Builder(activity)
+                        .setDuration(300L)
                         .setRectSupplierFromView(R.id.topo_card_view)
                         .setShape(RoundedRectangle(Padding(10, 10), 10f))
                         .setOverlay(R.layout.layout_tutorial_topo)
@@ -162,10 +163,10 @@ class TutorialManager {
                         })
                         .build(),
                 CustomTarget.Builder(activity)
+                        .setDuration(300L)
                         .setRectSupplierFromView(R.id.search_bar_left_action_container)
                         .setShape(RoundedRectangle(Padding(0, 0), 10f))
                         .setOverlay(R.layout.layout_tutorial_signin)
-//                        .setAutoStart(false)
                         .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
                                 Timber.d("Signin tutorial started")
@@ -177,10 +178,10 @@ class TutorialManager {
                         })
                         .build(),
                 CustomTarget.Builder(activity)
-                        .setRectSupplierFromView(R.id.fab)
-                        .setShape(Circle(100))
+                        .setDuration(0L)
+                        .setRect(0, 0, 0, 0)
+                        .setShape(Circle(0))
                         .setOverlay(R.layout.layout_tutorial_fab)
-//                        .setAutoStart(false)
                         .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
                                 Timber.d("Fab tutorial started")
@@ -192,10 +193,10 @@ class TutorialManager {
                         })
                         .build(),
                 CustomTarget.Builder(activity)
+                        .setDuration(0L)
                         .setRect(0, 0, 0, 0)
                         .setShape(RoundedRectangle(Padding(0, 0), 00f))
                         .setOverlay(R.layout.layout_tutorial_submit)
-//                        .setAutoStart(false)
                         .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
                                 Timber.d("Submit tutorial started")

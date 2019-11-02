@@ -66,12 +66,15 @@
     <string name="tutorial_subtitle_locationinfo_climbtypes">Quickly check climb types for the selected location</string>
     <string name="tutorial_subtitle_topo">Swipe through routes to highlight them on the topo.</string>
     <string name="tutorial_subtitle_signin">Using the menu indicated here, sign in or create an account to submit your own topos.</string>
-    <string name="tutorial_subtitle_fab">Once signed in, a button will appear here to submit.</string>
+    <string name="tutorial_subtitle_fab">Once signed in, a button will appear which allows you to submit locations.</string>
     <string name="tutorial_subtitle_submit">With a sector selected, you can submit your own topo.</string>
 
     <string name="tutorial_detail_map_crag">This is a crag marker. They show where the general climbing areas are. Click on crag markers to reveal the crags sectors.</string>
     <string name="tutorial_detail_map_sectors">This is a sector marker. They show where the actual rock faces are in a crag.</string>
     <string name="tutorial_detail_locationinfo_grades">These show how many routes of each difficulty at the selected location. Green = easy, orange = medium, red = hard, black = epic.</string>
     <string name="tutorial_detail_locationinfo_types">These icons show how many routes of each climbing discipline at the selected location. Currently we support bouldering, sport and traditional climbing.</string>
+    <string name="tutorial_detail_fab_crag">Add a crag to the map</string>
+    <string name="tutorial_detail_fab_sector">Add a sector to the selected crag</string>
+    <string name="tutorial_detail_fab_topo">Add a topo to the selected sector</string>
 
 </resources>
