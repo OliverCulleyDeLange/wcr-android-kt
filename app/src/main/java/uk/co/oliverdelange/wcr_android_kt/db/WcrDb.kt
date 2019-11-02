@@ -5,9 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.RouteDao
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.SyncDao
@@ -40,16 +37,6 @@ abstract class WcrDb : RoomDatabase() {
                 }
 
         private fun buildDatabase(context: Context) = Room.databaseBuilder(context.applicationContext, WcrDb::class.java, "wcr.db")
-                // prepopulate the database after onCreate was called
-                .addCallback(object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        super.onCreate(db)
-                        preload(getInstance(context))
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe()
-                    }
-                })
                 .build()
     }
 }
