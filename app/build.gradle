@@ -121,7 +121,7 @@ dependencies {
 
     implementation "com.github.arimorty:floatingsearchview:${versions.floating_search_view}"
 
-//    implementation 'com.github.OliverCulleyDeLange:Spotlight:05480906cc'
+    implementation 'com.github.OliverCulleyDeLange:Spotlight:5d7ad9fb88'
 
     implementation "co.zsmb:materialdrawer-kt:2.0.1"
     implementation("com.mikepenz:materialdrawer:${versions.material_drawer}") { transitive = true }

@@ -141,16 +141,6 @@ class TutorialManager {
                                         }
                                     }
                                 })
-//                                val view = activity.findViewById<View>(R.id.bottom_sheet_peek)
-//                                view.viewTreeObserver
-//                                        .addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-//                                            override fun onGlobalLayout() {
-//                                                if (vm?.bottomSheetState?.value == BottomSheetBehavior.STATE_EXPANDED) {
-//                                                    spotlight?.startNextTarget()
-//                                                    view.viewTreeObserver.removeOnGlobalLayoutListener(this)
-//                                                }
-//                                            }
-//                                        })
                             }
                         })
                         .build(),
