@@ -67,7 +67,6 @@ data class Grade(var string: String,
         fun from(textRepresentation: String): Grade? {
             Timber.v("Converting $textRepresentation into a grade")
             return when {
-                textRepresentation.startsWith("V") -> from(VGrade.values().first { it.textRepresentation == textRepresentation })
                 textRepresentation.startsWith("f") -> from(FontGrade.values().first { it.textRepresentation == textRepresentation })
                 textRepresentation.contains(" ") -> {
                     val grades = textRepresentation.split(" ")
@@ -75,6 +74,7 @@ data class Grade(var string: String,
                     val tech = TradTechnicalGrade.values().first { it.textRepresentation == grades[1] }
                     from(adj, tech)
                 }
+                textRepresentation.matches(Regex("V\\d")) -> from(VGrade.values().first { it.textRepresentation == textRepresentation })
                 else -> from(SportGrade.values().first { it.textRepresentation == textRepresentation })
             }
         }
