@@ -382,26 +382,26 @@ class MapsActivity : AppCompatActivity(),
                     false
                 }
             }
-            if (BuildConfig.DEBUG) {
-                primaryItem(R.string.menu_about) {
-                    iicon = GoogleMaterial.Icon.gmd_help
-                    selectable = false
-                    onClick { _ ->
-                        LibsBuilder()
-                                .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-                                .withAboutAppName("We Climb Rocks")
-                                .withLicenseShown(true)
-                                .withActivityTitle("About")
-                                .withAboutIconShown(true)
-                                .withAboutVersionShown(true)
-                                .withAboutDescription("We Climb Rocks is a platform for sharing climbing topos, and easily locating routes." +
-                                        "<br /><b>For support, email <a href='mailto:weclimbrocks@oliverdelange.co.uk'>weclimbrocks@oliverdelange.co.uk</a></b>" +
-                                        "<br /><br />" +
-                                        "Below is a list of Open Source libraries used in this app.")
-                                .start(this@MapsActivity)
-                        false
-                    }
+            primaryItem(R.string.menu_about) {
+                iicon = GoogleMaterial.Icon.gmd_help
+                selectable = false
+                onClick { _ ->
+                    LibsBuilder()
+                            .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                            .withAboutAppName("We Climb Rocks")
+                            .withLicenseShown(true)
+                            .withActivityTitle("About")
+                            .withAboutIconShown(true)
+                            .withAboutVersionShown(true)
+                            .withAboutDescription("We Climb Rocks is a platform for sharing climbing topos, and easily locating routes." +
+                                    "<br /><b>For support, email <a href='mailto:weclimbrocks@oliverdelange.co.uk'>weclimbrocks@oliverdelange.co.uk</a></b>" +
+                                    "<br /><br />" +
+                                    "Below is a list of Open Source libraries used in this app.")
+                            .start(this@MapsActivity)
+                    false
                 }
+            }
+            if (BuildConfig.DEBUG) {
                 primaryItem("Nuke DB") {
                     iicon = GoogleMaterial.Icon.gmd_warning
                     selectable = false
