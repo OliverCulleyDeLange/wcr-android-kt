@@ -2,6 +2,8 @@ package uk.co.oliverdelange.wcr_android_kt.view
 
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import androidx.lifecycle.Observer
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.takusemba.spotlight.OnSpotlightStateChangedListener
 import com.takusemba.spotlight.OnTargetStateChangedListener
 import com.takusemba.spotlight.Spotlight
@@ -28,14 +30,14 @@ import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 
 class TutorialManager {
 
-    var currentTutorial: Spotlight? = null
+    var spotlight: Spotlight? = null
 
     fun next() {
-        currentTutorial?.closeCurrentTarget()
+        spotlight?.closeCurrentTarget()
     }
 
     fun exit() {
-        currentTutorial?.closeSpotlight()
+        spotlight?.closeSpotlight()
     }
 
     fun launch(activity: MapsActivity, vm: MapViewModel?) {
@@ -46,7 +48,7 @@ class TutorialManager {
                         .setRectSupplierFromView(R.id.search_query_section)
                         .setShape(RoundedRectangle(Padding(8, 8), 25f))
                         .setOverlay(R.layout.layout_tutorial_search)
-                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                        .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
                                 Timber.d("Search tutorial started")
                                 vm?.onTutorialStart()
@@ -62,7 +64,7 @@ class TutorialManager {
                         .setRectSupplierFromView(R.id.map)
                         .setShape(RoundedRectangle(Padding(-50, -400), 25f))
                         .setOverlay(R.layout.layout_tutorial_map_crag)
-                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                        .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
                                 Timber.d("Crag tutorial started")
                             }
@@ -78,7 +80,7 @@ class TutorialManager {
                         .setRectSupplierFromView(activity.findViewById<View>(R.id.map))
                         .setShape(RoundedRectangle(Padding(-50, -400), 25f))
                         .setOverlay(R.layout.layout_tutorial_map_sector)
-                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                        .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
                                 Timber.d("Sector tutorial started")
                             }
@@ -93,7 +95,7 @@ class TutorialManager {
                         .setRectSupplierFromView(R.id.bottom_sheet_peek)
                         .setShape(RoundedRectangle(Padding(10, 10), 10f))
                         .setOverlay(R.layout.layout_tutorial_locationinfo)
-                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                        .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
                                 Timber.d("Location info tutorial started")
                             }
@@ -108,7 +110,7 @@ class TutorialManager {
                         .setRectSupplierFromView(R.id.climb_grades_group)
                         .setShape(RoundedRectangle(Padding(10, 10), 10f))
                         .setOverlay(R.layout.layout_tutorial_locationinfo_grades)
-                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                        .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
                                 Timber.d("Grades tutorial started")
                             }
@@ -123,7 +125,7 @@ class TutorialManager {
                         .setRectSupplierFromView(R.id.climb_types_group)
                         .setShape(RoundedRectangle(Padding(10, 10), 10f))
                         .setOverlay(R.layout.layout_tutorial_locationinfo_climbtypes)
-                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                        .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
                                 Timber.d("Climb types tutorial started")
                             }
@@ -131,6 +133,24 @@ class TutorialManager {
                             override fun onEnded(target: CustomTarget) {
                                 Timber.d("Climb types tutorial ended")
                                 vm?.onLocationInfoTutorialComplete()
+                                vm?.bottomSheetState?.observe(activity, object : Observer<Int> {
+                                    override fun onChanged(t: Int?) {
+                                        if (vm.bottomSheetState.value == BottomSheetBehavior.STATE_EXPANDED) {
+                                            spotlight?.startNextTarget()
+                                            vm.bottomSheetState.removeObserver(this)
+                                        }
+                                    }
+                                })
+//                                val view = activity.findViewById<View>(R.id.bottom_sheet_peek)
+//                                view.viewTreeObserver
+//                                        .addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+//                                            override fun onGlobalLayout() {
+//                                                if (vm?.bottomSheetState?.value == BottomSheetBehavior.STATE_EXPANDED) {
+//                                                    spotlight?.startNextTarget()
+//                                                    view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+//                                                }
+//                                            }
+//                                        })
                             }
                         })
                         .build(),
@@ -138,7 +158,8 @@ class TutorialManager {
                         .setRectSupplierFromView(R.id.topo_card_view)
                         .setShape(RoundedRectangle(Padding(10, 10), 10f))
                         .setOverlay(R.layout.layout_tutorial_topo)
-                        .setOnSpotlightStartedListener(object : OnTargetStateChangedListener<CustomTarget> {
+                        .setAutoStart(false)
+                        .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
                                 Timber.d("Topo tutorial started")
                             }
@@ -150,7 +171,7 @@ class TutorialManager {
                         .build()
         )
 
-        currentTutorial = Spotlight.with(activity)
+        spotlight = Spotlight.with(activity)
                 .setOverlayColor(R.color.bg_tutorial)
                 .setDuration(500L)
                 .setAnimation(DecelerateInterpolator(2f))

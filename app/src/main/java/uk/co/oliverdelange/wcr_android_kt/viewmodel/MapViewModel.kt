@@ -160,6 +160,7 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
+    // TODO split into requested state and actual state?
     val bottomSheetState: MutableLiveData<Int> = MutableLiveData()
     val bottomSheetTitle: LiveData<String> = Transformations.map(selectedLocation) {
         it?.name
@@ -241,6 +242,10 @@ class MapViewModel @Inject constructor(application: Application,
         } else {
             collapseBottomSheet()
         }
+    }
+
+    fun onBottomSheetStateChanged(newState: Int) {
+        bottomSheetState.value = newState
     }
 
     private var bottomSheetExpandedPrefSet = false
@@ -392,7 +397,6 @@ class MapViewModel @Inject constructor(application: Application,
         if (existing != null && new != null) mediator.value = new + existing
         else mediator.value = new
     }
-
 }
 
 enum class MapMode {

@@ -506,7 +506,7 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.bottomSheetState?.value = bottomSheet?.state
         bottomSheet?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheetView: View, newState: Int) {
-                binding.vm?.bottomSheetState?.value = newState
+                binding.vm?.onBottomSheetStateChanged(newState)
             }
 
             override fun onSlide(bottomSheetView: View, slideOffset: Float) {
