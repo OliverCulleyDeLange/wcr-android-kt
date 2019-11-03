@@ -25,6 +25,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_submit_topo.*
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.BuildConfig
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.model.*
@@ -279,7 +280,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
                         photoFile?.also { file ->
                             val photoURI: Uri = FileProvider.getUriForFile(
                                     activity,
-                                    "com.example.android.fileprovider",
+                                    "${BuildConfig.APPLICATION_ID}.android.fileprovider",
                                     file
                             )
                             binding.vm?.photoUri?.value = photoURI
