@@ -52,6 +52,7 @@
                                               <map>
                                                 <entry key="color" value="000000" />
                                                 <entry key="scalingPercent" value="69" />
+                                                <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
                                           </PersistentState>
