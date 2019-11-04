@@ -40,7 +40,8 @@ fun <T : BaseEntity> uploadThingsToFirebase(collection: String, dao: BaseDao<T>,
         if (saveToFirestore.isEmpty()) {
             Completable.complete()
         } else {
-            Observable.mergeArrayDelayError(*saveToFirestore.toTypedArray())
+            //TODO Test: All uploaded items are marked as uploaded even if some fail
+            Observable.mergeArrayDelayError(*saveToFirestore.toTypedArray()) // This will swallow errors if there are more than one. Problem?
                     .flatMapCompletable {
                         Timber.d("Marking ${it.id} as uploaded")
                         dao.updateUploadedAt(it.id, it.uploadedAt)

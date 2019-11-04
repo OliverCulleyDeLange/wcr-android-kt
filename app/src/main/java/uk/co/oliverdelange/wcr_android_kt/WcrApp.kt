@@ -7,7 +7,9 @@ import android.content.SharedPreferences
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
+import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.di.AppInjector
+import uk.co.oliverdelange.wcr_android_kt.util.CrashlyticsTree
 import javax.inject.Inject
 
 const val PREFS_KEY = "wcr"
@@ -27,11 +29,13 @@ open class WcrApp : Application(), HasActivityInjector {
         prefs = getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
         AppInjector.init(this)
         AndroidThreeTen.init(this)
+        Timber.plant(CrashlyticsTree())
     }
 
     override fun activityInjector(): DispatchingAndroidInjector<Activity> {
         return dispatchingAndroidInjector
     }
 }
+
 
 

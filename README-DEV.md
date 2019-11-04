@@ -8,6 +8,8 @@ Image scaling, accommodate panoramas. Min / max size for topo image view. (fit t
 License t&c (Web)
 
 Report topo image
+Firebase DB backups
+Storage backups?
 
 - Test before release
 Test DBs max length for strings - long paths could cause issues.
