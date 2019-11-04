@@ -2,14 +2,10 @@
 Stuttery performance fix:
     - fix refresh sectors for crag
     - Don't animate map whilst doing oomplex bottom sheet layout.
-
+    - Pre-inflate bottom sheet fragment before aniating map?
 Image scaling, accommodate panoramas. Min / max size for topo image view. (fit to size)
-Add 'ungraded' & 'project' grades which are the default
-Edit/delete things that you own
-Add routes to existing topo
 
-Analytics
-License t&c
+License t&c (Web)
 
 Splitscreen crash investigate
 
@@ -19,8 +15,11 @@ Real topos / places
 Perf test - load huge data set and check performance
 Time dB queries
 
-
 - Do after release
+Analytics
+Add 'ungraded' & 'project' grades which are the default
+Edit/delete things that you own
+Add routes to existing topo
 Allow marking start/end holds, in / out holds
 Filter routes by grade and type
 Cache images on phone up to configurable limit
@@ -78,3 +77,8 @@ https://blog.andresteingress.com/2014/07/22/spock-junit-rules
 https://stackoverflow.com/questions/48391716/spock-with-mockito-testing-kotlin-classes
 https://proandroiddev.com/improve-your-tests-with-kotlin-in-android-pt-1-6d0b04017e80
 https://github.com/dpreussler/kotlin-testrunner
+
+
+Privacy Policy:
+https://app.termly.io/document/privacy-policy/9a5525bf-d062-48c8-8517-b1f6c9b6d4ae
+

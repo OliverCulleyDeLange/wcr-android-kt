@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.BounceInterpolator
 import android.view.animation.TranslateAnimation
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -19,7 +21,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import co.zsmb.materialdrawerkt.builders.accountHeader
 import co.zsmb.materialdrawerkt.builders.drawer
+import co.zsmb.materialdrawerkt.builders.footer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
+import co.zsmb.materialdrawerkt.draweritems.badgeable.secondaryItem
 import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
@@ -81,6 +85,8 @@ const val REQUEST_SIGNIN = 998
 const val MENU_SIGN_IN_ID = 1L
 const val MENU_SIGN_OUT_ID = 2L
 
+const val DEV_MENU_CLICKS = 7
+
 /*
     The Main Activity of the app. Shows a map with markers for crags, which when clicked reveal its sectors.
     Floating search bar allows searching crags, sectors and routes. It also give access to drawer menu
@@ -120,6 +126,8 @@ class MapsActivity : AppCompatActivity(),
     private lateinit var signInDrawerItem: PrimaryDrawerItem
     private lateinit var signOutDrawerItem: PrimaryDrawerItem
     internal lateinit var binding: ActivityMapsBinding
+
+    private var showDevMenu = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -343,7 +351,8 @@ class MapsActivity : AppCompatActivity(),
         slidingDrawer = drawer {
             selectedItem = -1
             accountHeader {
-                background = R.drawable.nature
+                backgroundScaleType = ImageView.ScaleType.FIT_CENTER
+                background = R.drawable.logo
             }
             signInDrawerItem = primaryItem(R.string.menu_signin) {
                 identifier = MENU_SIGN_IN_ID
@@ -401,37 +410,48 @@ class MapsActivity : AppCompatActivity(),
                     false
                 }
             }
-            if (BuildConfig.DEBUG) {
-                primaryItem("Nuke DB") {
-                    iicon = GoogleMaterial.Icon.gmd_warning
-                    selectable = false
-                    onClick { _ ->
-                        binding.vm?.nukeDb(applicationContext)
-                        false
-                    }
-                }
-                primaryItem("Sync Up") {
-                    iicon = GoogleMaterial.Icon.gmd_warning
-                    selectable = false
-                    onClick { _ ->
-                        uploadSync()
-                        false
-                    }
-                }
-                primaryItem("Sync Down") {
-                    iicon = GoogleMaterial.Icon.gmd_warning
-                    selectable = false
-                    onClick { _ ->
-                        downloadSync()
-                        false
-                    }
-                }
-                primaryItem("Test Crash") {
-                    iicon = GoogleMaterial.Icon.gmd_warning
-                    selectable = false
-                    onClick { _ ->
-                        Crashlytics.getInstance().crash() // Force a crash
-                        false
+            footer {
+                secondaryItem("${BuildConfig.BUILD_TYPE} ${BuildConfig.VERSION_NAME} ") {
+                    onClick { _, _, _ ->
+                        showDevMenu++
+                        if (showDevMenu == DEV_MENU_CLICKS - 1) {
+                            Toast.makeText(this@MapsActivity, "1 click away from showing dev menu", Toast.LENGTH_SHORT).show()
+                        }
+                        if (showDevMenu == DEV_MENU_CLICKS) {
+                            slidingDrawer.addItems(primaryItem("Nuke DB") {
+                                iicon = GoogleMaterial.Icon.gmd_warning
+                                selectable = false
+                                onClick { _ ->
+                                    binding.vm?.nukeDb(applicationContext)
+                                    false
+                                }
+                            },
+                                    primaryItem("Sync Up") {
+                                        iicon = GoogleMaterial.Icon.gmd_warning
+                                        selectable = false
+                                        onClick { _ ->
+                                            uploadSync()
+                                            false
+                                        }
+                                    },
+                                    primaryItem("Sync Down") {
+                                        iicon = GoogleMaterial.Icon.gmd_warning
+                                        selectable = false
+                                        onClick { _ ->
+                                            downloadSync()
+                                            false
+                                        }
+                                    },
+                                    primaryItem("Test Crash") {
+                                        iicon = GoogleMaterial.Icon.gmd_warning
+                                        selectable = false
+                                        onClick { _ ->
+                                            Crashlytics.getInstance().crash() // Force a crash
+                                            false
+                                        }
+                                    })
+                        }
+                        true
                     }
                 }
             }
