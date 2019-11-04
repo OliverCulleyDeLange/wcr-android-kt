@@ -18,9 +18,10 @@ fun uploadSync() {
 }
 
 fun downloadSync() {
-    Timber.d("Enqueueing cloud downloads")
-    val duration = if (BuildConfig.DEBUG) 7L else 15L
-    val unit = if (BuildConfig.DEBUG) TimeUnit.DAYS else TimeUnit.MINUTES
+    // 15 mins is the minimum
+    val duration = if (BuildConfig.DEBUG) 15 else 24L
+    val unit = if (BuildConfig.DEBUG) TimeUnit.MINUTES else TimeUnit.HOURS
+    Timber.d("Enqueueing cloud downloads every $duration $unit")
     WorkManager.getInstance()
             .enqueueUniquePeriodicWork(
                     "download-locations",

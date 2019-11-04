@@ -7,7 +7,7 @@ Image scaling, accommodate panoramas. Min / max size for topo image view. (fit t
 
 License t&c (Web)
 
-Splitscreen crash investigate
+Report topo image
 
 - Test before release
 Test DBs max length for strings - long paths could cause issues.
