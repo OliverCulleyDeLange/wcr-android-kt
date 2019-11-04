@@ -24,6 +24,7 @@ import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.builders.footer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.badgeable.secondaryItem
+import co.zsmb.materialdrawerkt.draweritems.divider
 import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
@@ -418,14 +419,16 @@ class MapsActivity : AppCompatActivity(),
                             Toast.makeText(this@MapsActivity, "1 click away from showing dev menu", Toast.LENGTH_SHORT).show()
                         }
                         if (showDevMenu == DEV_MENU_CLICKS) {
-                            slidingDrawer.addItems(primaryItem("Nuke DB") {
-                                iicon = GoogleMaterial.Icon.gmd_warning
-                                selectable = false
-                                onClick { _ ->
-                                    binding.vm?.nukeDb(applicationContext)
-                                    false
-                                }
-                            },
+                            slidingDrawer.addItems(
+                                    divider(),
+                                    primaryItem("Nuke DB") {
+                                        iicon = GoogleMaterial.Icon.gmd_warning
+                                        selectable = false
+                                        onClick { _ ->
+                                            binding.vm?.nukeDb(applicationContext)
+                                            false
+                                        }
+                                    },
                                     primaryItem("Sync Up") {
                                         iicon = GoogleMaterial.Icon.gmd_warning
                                         selectable = false
