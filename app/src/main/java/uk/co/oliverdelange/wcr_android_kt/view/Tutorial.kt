@@ -1,6 +1,5 @@
 package uk.co.oliverdelange.wcr_android_kt.view
 
-import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -61,8 +60,8 @@ class TutorialManager {
                         .build(),
                 CustomTarget.Builder(activity)
                         .setDuration(300L)
-                        .setRectSupplierFromView(R.id.map)
-                        .setShape(RoundedRectangle(Padding(-50, -400), 25f))
+                        .setRectSupplierFromView(R.id.map_placeholder)
+                        .setShape(RoundedRectangle(25f))
                         .setOverlay(R.layout.layout_tutorial_map_crag)
                         .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
@@ -77,8 +76,8 @@ class TutorialManager {
                         .build(),
                 CustomTarget.Builder(activity)
                         .setDuration(300L)
-                        .setRectSupplierFromView(activity.findViewById<View>(R.id.map))
-                        .setShape(RoundedRectangle(Padding(-50, -400), 25f))
+                        .setRectSupplierFromView(R.id.map_placeholder)
+                        .setShape(RoundedRectangle(25f))
                         .setOverlay(R.layout.layout_tutorial_map_sector)
                         .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
@@ -146,8 +145,8 @@ class TutorialManager {
                         .build(),
                 CustomTarget.Builder(activity)
                         .setDuration(300L)
-                        .setRectSupplierFromView(R.id.topo_card_view)
-                        .setShape(RoundedRectangle(Padding(10, 10), 10f))
+                        .setRectSupplierFromView(R.id.topo_placeholder)
+                        .setShape(RoundedRectangle(10f))
                         .setOverlay(R.layout.layout_tutorial_topo)
                         .setAutoStart(false)
                         .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
@@ -165,7 +164,7 @@ class TutorialManager {
                 CustomTarget.Builder(activity)
                         .setDuration(300L)
                         .setRectSupplierFromView(R.id.search_bar_left_action_container)
-                        .setShape(RoundedRectangle(Padding(0, 0), 10f))
+                        .setShape(RoundedRectangle(10f))
                         .setOverlay(R.layout.layout_tutorial_signin)
                         .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
@@ -180,7 +179,7 @@ class TutorialManager {
                 CustomTarget.Builder(activity)
                         .setDuration(0L)
                         .setRect(0, 0, 0, 0)
-                        .setShape(Circle(0))
+                        .setShape(Circle())
                         .setOverlay(R.layout.layout_tutorial_fab)
                         .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {
@@ -195,7 +194,7 @@ class TutorialManager {
                 CustomTarget.Builder(activity)
                         .setDuration(0L)
                         .setRect(0, 0, 0, 0)
-                        .setShape(RoundedRectangle(Padding(0, 0), 00f))
+                        .setShape(RoundedRectangle())
                         .setOverlay(R.layout.layout_tutorial_submit)
                         .setTargetListener(object : OnTargetStateChangedListener<CustomTarget> {
                             override fun onStarted(target: CustomTarget) {

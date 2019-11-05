@@ -24,12 +24,19 @@
             android:layout_height="0dp"
             app:drawMode="@{vm.isDrawing}"
             app:imageBitmap="@{vm.localTopoImageBitmap}"
-            app:layout_constraintBottom_toTopOf="@id/middle"
+            app:layout_constraintBottom_toTopOf="@+id/topo_name_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/nature"
-            tools:visibility="visible" />
+            tools:visibility="invisible" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/shown_when_no_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="select_topo_image,take_photo_image,take_photo_label,or_label,select_photo_label"
+            app:show="@{vm.localTopoImage == null}" />
 
         <ImageView
             android:id="@+id/select_topo_image"
@@ -38,13 +45,30 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="33dp"
             android:src="@drawable/ic_photo"
-            app:layout_constraintBottom_toTopOf="@id/middle"
+            app:layout_constraintBottom_toBottomOf="@+id/topo_image"
             app:layout_constraintEnd_toStartOf="@id/take_photo_image"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:show="@{vm.hasCamera &amp;&amp; vm.localTopoImage == null}" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/take_photo_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/submission_take_photo_label"
+            app:layout_constraintEnd_toEndOf="@+id/take_photo_image"
+            app:layout_constraintStart_toStartOf="@+id/take_photo_image"
+            app:layout_constraintTop_toBottomOf="@+id/take_photo_image" />
+
+        <TextView
+            android:id="@+id/or_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="or"
+            app:layout_constraintBottom_toBottomOf="@+id/take_photo_label"
+            app:layout_constraintEnd_toStartOf="@+id/take_photo_label"
+            app:layout_constraintStart_toEndOf="@+id/select_photo_label"
+            app:layout_constraintTop_toBottomOf="@+id/take_photo_image" />
 
         <ImageView
             android:id="@+id/take_photo_image"
@@ -53,14 +77,29 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="33dp"
             android:src="@drawable/ic_photo_camera_black_24dp"
-            app:layout_constraintBottom_toTopOf="@id/middle"
+            app:layout_constraintBottom_toBottomOf="@+id/topo_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/select_topo_image"
             app:layout_constraintTop_toTopOf="parent"
             app:show="@{vm.hasCamera &amp;&amp; vm.localTopoImage == null}" />
 
+        <TextView
+            android:id="@+id/select_photo_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/submission_select_photo_label"
+            app:layout_constraintEnd_toEndOf="@+id/select_topo_image"
+            app:layout_constraintStart_toStartOf="@+id/select_topo_image"
+            app:layout_constraintTop_toBottomOf="@+id/select_topo_image" />
+
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/shown_when_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="undo_tool,edit_tool"
+            app:show="@{vm.localTopoImage != null}" />
 
         <ImageButton
             android:id="@+id/undo_tool"
@@ -69,8 +108,7 @@
             android:onClick="@{vm::onUndoDrawing}"
             android:src="@drawable/ic_undo_black_24dp"
             app:layout_constraintEnd_toStartOf="@id/edit_tool"
-            app:layout_constraintTop_toTopOf="@id/topo_image"
-            app:show="@{vm.localTopoImage != null}" />
+            app:layout_constraintTop_toTopOf="@id/topo_image" />
 
         <ImageButton
             android:id="@+id/edit_tool"
@@ -80,32 +118,21 @@
             android:src="@{vm.isDrawing ? @drawable/ic_move_black_24dp : @drawable/ic_edit_black_24dp}"
             app:layout_constraintEnd_toEndOf="@+id/topo_image"
             app:layout_constraintTop_toTopOf="@+id/topo_image"
-            app:show="@{vm.localTopoImage != null}"
             tools:src="@drawable/ic_edit_black_24dp" />
-
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/middle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintGuide_percent="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/topo_name_input_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            android:layout_width="311dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:minHeight="50dp"
             app:errorEnabled="true"
-            app:layout_constraintBottom_toTopOf="@id/route_pager"
+            app:layout_constraintBottom_toTopOf="@+id/route_pager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/middle">
+            app:layout_constraintTop_toBottomOf="@+id/topo_image">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/topo_name_input"
@@ -120,13 +147,16 @@
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/route_pager"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="180dp"
-            app:layout_constraintBottom_toTopOf="@id/submit"
+            app:layout_constraintBottom_toTopOf="@+id/submit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/topo_name_input_layout"
-            tools:listitem="@layout/fragment_submit_route" />
+            app:layout_constraintTop_toBottomOf="@+id/topo_name_input_layout"
+            tools:listitem="@layout/fragment_submit_route">
+
+        </androidx.viewpager.widget.ViewPager>
+
 
         <ImageButton
             android:id="@+id/add_route"
@@ -143,10 +173,10 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/submit"
             style="@style/Wcr_Button"
-            android:layout_width="0dp"
+            android:layout_width="311dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:enabled="@{safeUnbox(!vm.submitting)}"
@@ -156,8 +186,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/route_pager" />
-
+            app:layout_constraintTop_toBottomOf="@+id/route_pager" />
 
         <ProgressBar
             android:id="@+id/topo_submit_progress"
@@ -170,7 +199,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/submit"
             app:layout_constraintEnd_toEndOf="@+id/submit"
             app:layout_constraintStart_toStartOf="@+id/submit"
-            app:layout_constraintTop_toTopOf="@id/submit"
             app:show="@{safeUnbox(vm.submitting)}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

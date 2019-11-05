@@ -23,7 +23,8 @@
 
     <!--SUBMIT-->
     <string name="button_submit">Submit</string>
-    <string name="button_select_topo_image">Select topo image</string>
+    <string name="submission_select_photo_label">Select photo</string>
+    <string name="submission_take_photo_label">Take photo</string>
     <string name="submission_text_input_crag_name">Enter the crag name</string>
     <string name="submission_text_input_sector_name">Enter the sector name</string>
 
@@ -36,7 +37,7 @@
     <!--WELCOME-->
     <string name="welcome_title">Select a crag or search</string>
     <string name="welcome_text">Or swipe up to learn more</string>
-    <string name="welcome_detail">Weclimb.rocks is a new crowd sourced climbing platform. It aims to make finding climbing routes easy and free.
+    <string name="welcome_detail">We-climb.rocks is a new crowd sourced climbing platform. It aims to make finding climbing routes easy and free.
         \nYou can create your own climbing topos and share them with the community. Simply take a photo of the rock face, draw on the routes, fill in some details and upload.
         \n\nTo get started, ensure the crag and sector location that the topo belongs to exists. If it doesn\'t, adding a new location is super simple.
         \n\nOnce your crag location and sector location exist, add a topo.</string>
@@ -76,5 +77,4 @@
     <string name="tutorial_detail_fab_crag">Add a crag to the map</string>
     <string name="tutorial_detail_fab_sector">Add a sector to the selected crag</string>
     <string name="tutorial_detail_fab_topo">Add a topo to the selected sector</string>
-
 </resources>

@@ -1,15 +1,17 @@
 #TODO before release
 Stuttery performance fix:
     - fix refresh sectors for crag
-    - Don't animate map whilst doing oomplex bottom sheet layout.
-    - Pre-inflate bottom sheet fragment before aniating map?
+    - Don't animate map whilst doing complex bottom sheet layout.
+    - Pre-inflate bottom sheet fragment before animating map?
 Image scaling, accommodate panoramas. Min / max size for topo image view. (fit to size)
-
+Fix no topos fragment
+Welcome screen fix
+Search functionality fix
 License t&c (Web)
-
 Report topo image
 Firebase DB backups
 Storage backups?
+Tests...?
 
 - Test before release
 Test DBs max length for strings - long paths could cause issues.

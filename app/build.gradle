@@ -121,7 +121,7 @@ dependencies {
 
     implementation "com.github.arimorty:floatingsearchview:${versions.floating_search_view}"
 
-    implementation 'com.github.OliverCulleyDeLange:Spotlight:5d7ad9fb88'
+    implementation 'com.github.OliverCulleyDeLange:Spotlight:9d2cf352e0'
 
     implementation "co.zsmb:materialdrawer-kt:2.0.1"
     implementation("com.mikepenz:materialdrawer:${versions.material_drawer}") { transitive = true }
@@ -141,9 +141,14 @@ dependencies {
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
     implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
 
-    implementation "com.facebook.stetho:stetho:${versions.stetho}"
-    implementation "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
-    implementation "com.facebook.stetho:stetho-js-rhino:${versions.stetho}"
+    debugImplementation 'com.facebook.flipper:flipper:0.27.0'
+    debugImplementation 'com.facebook.soloader:soloader:0.5.1'
+
+    releaseImplementation 'com.facebook.flipper:flipper-noop:0.27.0'
+
+//    implementation "com.facebook.stetho:stetho:${versions.stetho}"
+//    implementation "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
+//    implementation "com.facebook.stetho:stetho-js-rhino:${versions.stetho}"
 
     implementation "com.mikepenz:google-material-typeface:3.0.1.2.original@aar"
     implementation "com.mikepenz:fontawesome-typeface:5.0.6.0@aar"

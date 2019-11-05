@@ -71,7 +71,7 @@
         app:layout_constraintEnd_toEndOf="@+id/title"
         app:layout_constraintStart_toStartOf="@+id/title"
         app:layout_constraintTop_toBottomOf="@+id/tutorial_add_topo_fab"
-        app:srcCompat="@android:color/darker_gray" />
+        app:srcCompat="@drawable/submit_screenshot" />
 
     <ImageView
         android:id="@+id/arrow"

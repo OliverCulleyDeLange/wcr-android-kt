@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     tools:background="@color/bg_tutorial">
 
+    <View
+        android:id="@+id/topo_placeholder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/next_tutorial_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+
     <TextView
         android:id="@+id/title"
         style="@style/Wcr_Tutorial_Title"
