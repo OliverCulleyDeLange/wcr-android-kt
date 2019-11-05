@@ -67,6 +67,7 @@ import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.util.hideKeyboard
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
+import uk.co.oliverdelange.wcr_android_kt.util.stateFromInt
 import uk.co.oliverdelange.wcr_android_kt.view.TutorialManager
 import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitLocationFragment
@@ -236,10 +237,14 @@ class MapsActivity : AppCompatActivity(),
             }
         })
 
+        binding.vm?.bottomSheetRequestedState?.observe(this, Observer {
+            Timber.d("bottomSheetRequestedState changed to ${stateFromInt(it)}, changing state")
+            bottomSheet?.state = it
+        })
+
         binding.vm?.bottomSheetState?.observe(this, Observer {
-            Timber.d("bottomSheetState changed, updating state")
+            Timber.d("bottomSheetState changed to ${stateFromInt(it)}")
             it?.let { newState ->
-                bottomSheet?.state = it
                 when (newState) {
                     STATE_EXPANDED -> {
                         setMapBottomPadding(bottom_sheet.measuredHeight)
@@ -481,7 +486,7 @@ class MapsActivity : AppCompatActivity(),
 
         floating_search_view.setOnSearchListener(object : FloatingSearchView.OnSearchListener {
             override fun onSuggestionClicked(searchSuggestion: SearchSuggestion) {
-                Timber.i("Search suggestion clicked: $searchSuggestion")
+                Timber.i("Search suggestion clicked: ${searchSuggestion.body}")
                 if (searchSuggestion is SearchSuggestionItem) {
                     floating_search_view.clearQuery()
                     floating_search_view.clearSuggestions()

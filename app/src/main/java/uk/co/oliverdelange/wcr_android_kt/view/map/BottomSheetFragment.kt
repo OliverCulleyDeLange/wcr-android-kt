@@ -68,13 +68,14 @@ class BottomSheetFragment : Fragment(), Injectable {
 
             binding?.topoRecycler?.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
+                    Timber.v("topoRecycler : onGlobalLayout")
                     binding?.vm?.selectedTopoId?.value?.let { selectedTopoId ->
-                        Timber.d("Selecting the right topo in the list: $selectedTopoId")
                         val position = recyclerAdapter.topos.indexOfFirst { it.topo.id == selectedTopoId }
                         if (position != -1) {
-
+                            Timber.d("Selecting the right topo in the list: $selectedTopoId")
                             binding?.topoRecycler?.scrollToPosition(position)
                         } else {
+                            Timber.w("Couldn't find topo with id $selectedTopoId in topos. Selecting first")
                             binding?.topoRecycler?.scrollToPosition(0)
                         }
                         //Reset after we've scrolled to it so we don't scroll again after

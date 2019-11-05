@@ -163,8 +163,8 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
-    // TODO split into requested state and actual state?
     val bottomSheetState: MutableLiveData<Int> = MutableLiveData()
+    val bottomSheetRequestedState: MutableLiveData<Int> = MutableLiveData()
     val bottomSheetTitle: LiveData<String> = Transformations.map(selectedLocation) {
         it?.name
     }
@@ -298,8 +298,7 @@ class MapViewModel @Inject constructor(application: Application,
     }
 
     fun onSearchBarUnfocus() {
-        collapseBottomSheet()
-
+//        collapseBottomSheet()
     }
 
     fun onSearchBarFocus() {
@@ -308,8 +307,14 @@ class MapViewModel @Inject constructor(application: Application,
 
     fun onSearchSuggestionClicked(searchSuggestion: SearchSuggestionItem) {
         when (searchSuggestion.type) {
-            SearchResultType.CRAG -> onClusterItemClick(searchSuggestion.id)
-            SearchResultType.SECTOR -> onMapMarkerClick(searchSuggestion.id)
+            SearchResultType.CRAG -> {
+                collapseBottomSheet()
+                onClusterItemClick(searchSuggestion.id)
+            }
+            SearchResultType.SECTOR -> {
+                collapseBottomSheet()
+                onMapMarkerClick(searchSuggestion.id)
+            }
             SearchResultType.TOPO -> selectTopo(searchSuggestion.id)
             SearchResultType.ROUTE, SearchResultType.ROUTE_BOULDER, SearchResultType.ROUTE_TRAD, SearchResultType.ROUTE_SPORT -> {
                 selectRoute(searchSuggestion.id)
@@ -383,15 +388,15 @@ class MapViewModel @Inject constructor(application: Application,
     }
 
     private fun expandBottomSheet() {
-        bottomSheetState.value = BottomSheetBehavior.STATE_EXPANDED
+        bottomSheetRequestedState.value = BottomSheetBehavior.STATE_EXPANDED
     }
 
     private fun collapseBottomSheet() {
-        bottomSheetState.value = BottomSheetBehavior.STATE_COLLAPSED
+        bottomSheetRequestedState.value = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     private fun hideBottomSheet() {
-        bottomSheetState.value = BottomSheetBehavior.STATE_HIDDEN
+        bottomSheetRequestedState.value = BottomSheetBehavior.STATE_HIDDEN
     }
 
     private fun bottomSheetIsHidden() = bottomSheetState.value == BottomSheetBehavior.STATE_HIDDEN

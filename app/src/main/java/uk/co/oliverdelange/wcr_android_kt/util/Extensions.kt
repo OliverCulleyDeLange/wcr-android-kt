@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 
 // https://medium.com/thoughts-overflow/how-to-add-a-fragment-in-kotlin-way-73203c5a450b
@@ -46,3 +47,15 @@ fun hideKeyboard(activity: Activity) {
 }
 
 fun Int.toPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+fun stateFromInt(it: Int?): String {
+    return when (it) {
+        BottomSheetBehavior.STATE_DRAGGING -> "STATE_DRAGGING"
+        BottomSheetBehavior.STATE_SETTLING -> "STATE_SETTLING"
+        BottomSheetBehavior.STATE_EXPANDED -> "STATE_EXPANDED"
+        BottomSheetBehavior.STATE_COLLAPSED -> "STATE_COLLAPSED"
+        BottomSheetBehavior.STATE_HIDDEN -> "STATE_HIDDEN"
+        BottomSheetBehavior.STATE_HALF_EXPANDED -> "STATE_HALF_EXPANDED"
+        else -> "UNKNOWN"
+    }
+}
