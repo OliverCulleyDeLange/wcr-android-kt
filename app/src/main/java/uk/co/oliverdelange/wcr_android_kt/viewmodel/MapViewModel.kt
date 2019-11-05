@@ -97,6 +97,10 @@ class MapViewModel @Inject constructor(application: Application,
             }
     )
 
+    val submitButtonLabel = Transformations.map(selectedLocation) {
+        if (it?.type == LocationType.CRAG) "Submit sector" else "Submit topo"
+    }
+
     val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
 
     val cragClusterItems = Transformations.map(crags) {

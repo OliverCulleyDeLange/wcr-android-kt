@@ -9,6 +9,8 @@
 
         <import type="uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode" />
 
+        <import type="uk.co.oliverdelange.wcr_android_kt.model.LocationType" />
+
         <variable
             name="vm"
             type="uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel" />
@@ -205,7 +207,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/middle"
                 app:mapModeTextColour="@{vm.mapMode}"
-                tools:text="Some location name" />
+                tools:text="Some location name that super long " />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -214,14 +216,82 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout_height="500dp"
-            tools:listitem="@layout/layout_topo_card" />
+            tools:listitem="@layout/layout_topo_card"
+            tools:visibility="gone" />
 
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/no_topos"
-            app:show="@{vm.topos.size() == 0}" />
+            app:show="@{vm.topos.size() == 0}">
+
+            <TextView
+                android:id="@+id/no_topos_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:text="@string/no_topos"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/if_signed_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="sign_in_text,sign_in_button"
+                app:gone="@{safeUnbox(vm.userSignedIn)}" />
+
+            <TextView
+                android:id="@+id/sign_in_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:text="You need to sign in to submit your own."
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/no_topos_text" />
+
+            <Button
+                android:id="@+id/sign_in_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:onClick="signIn"
+                android:text="@string/menu_signin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sign_in_text" />
+
+
+            <Button
+                android:id="@+id/submit_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:onClick="@{vm::onSubmit}"
+                android:text="@{vm.submitButtonLabel}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/no_topos_text"
+                app:show="@{safeUnbox(vm.userSignedIn)}" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
 
 </layout>

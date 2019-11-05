@@ -19,10 +19,12 @@
 
     <!--MAP-->
     <string name="map_search_hint">Search for crags and climbs</string>
-    <string name="no_topos">There are no topos at this location yet</string>
+    <string name="no_topos">There are no topos at this location yet. </string>
 
     <!--SUBMIT-->
     <string name="button_submit">Submit</string>
+    <string name="button_submit_sector">Submit sector</string>
+    <string name="button_submit_topo">Submit topo</string>
     <string name="submission_select_photo_label">Select photo</string>
     <string name="submission_take_photo_label">Take photo</string>
     <string name="submission_text_input_crag_name">Enter the crag name</string>

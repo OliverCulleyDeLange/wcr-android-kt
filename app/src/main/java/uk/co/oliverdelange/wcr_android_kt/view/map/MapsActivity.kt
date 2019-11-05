@@ -73,7 +73,6 @@ import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitLocationFragment
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 import java.lang.Math.round
-import java.util.Arrays.asList
 import javax.inject.Inject
 
 const val MAP_ANIMATION_DURATION = 400
@@ -359,17 +358,8 @@ class MapsActivity : AppCompatActivity(),
                 identifier = MENU_SIGN_IN_ID
                 iicon = GoogleMaterial.Icon.gmd_account_circle
                 selectable = false
-                onClick { _ ->
-                    startActivityForResult(AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setIsSmartLockEnabled(false)
-                            .setAvailableProviders(asList(
-//                                    AuthUI.IdpConfig.FacebookBuilder().build(),//TODO FB integration
-                                    AuthUI.IdpConfig.EmailBuilder().build()
-                            ))
-                            .build(),
-                            REQUEST_SIGNIN
-                    )
+                onClick { view ->
+                    signIn(view)
                     false
                 }
             }
@@ -573,6 +563,18 @@ class MapsActivity : AppCompatActivity(),
         fab.setImageResource(iconId)
     }
 
+    fun signIn(view: View?) {
+        startActivityForResult(AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setIsSmartLockEnabled(false)
+                .setAvailableProviders(listOf(
+                        //                                    AuthUI.IdpConfig.FacebookBuilder().build(),//TODO FB integration
+                        AuthUI.IdpConfig.EmailBuilder().build()
+                ))
+                .build(),
+                REQUEST_SIGNIN
+        )
+    }
 
     fun doTutorial(view: View) {
         tutorialManager.launch(this, binding.vm)
