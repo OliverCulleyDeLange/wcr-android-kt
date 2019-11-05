@@ -39,10 +39,8 @@
     <!--WELCOME-->
     <string name="welcome_title">Select a crag or search</string>
     <string name="welcome_text">Or swipe up to learn more</string>
-    <string name="welcome_detail">We-climb.rocks is a new crowd sourced climbing platform. It aims to make finding climbing routes easy and free.
-        \nYou can create your own climbing topos and share them with the community. Simply take a photo of the rock face, draw on the routes, fill in some details and upload.
-        \n\nTo get started, ensure the crag and sector location that the topo belongs to exists. If it doesn\'t, adding a new location is super simple.
-        \n\nOnce your crag location and sector location exist, add a topo.</string>
+    <string name="welcome_detail">we-climb.rocks is a new crowd sourced climbing platform. It aims to make finding climbing routes easy and free.
+        \n\nYou can create your own climbing topos and share them with the community. Simply sign up, take a photo of the rock face, draw on the routes, fill in some details and upload.</string>
     <string name="welcome_random_crag_button">Explore a random crag</string>
     <string name="welcome_tutorial_button">Tutorial</string>
 

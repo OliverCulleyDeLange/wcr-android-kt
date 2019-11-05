@@ -4,7 +4,6 @@ Stuttery performance fix:
     - Don't animate map whilst doing complex bottom sheet layout.
     - Pre-inflate bottom sheet fragment before animating map?
 Image scaling, accommodate panoramas. Min / max size for topo image view. (fit to size)
-Welcome screen fix
 Search functionality fix
 License t&c (Web)
 Report topo image
