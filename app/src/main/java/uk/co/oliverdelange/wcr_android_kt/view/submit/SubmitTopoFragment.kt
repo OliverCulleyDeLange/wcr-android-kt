@@ -1,6 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.view.submit
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -255,6 +256,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
     }
 
     //https://developer.android.com/training/camera/photobasics
+    @SuppressLint("SimpleDateFormat")
     private fun takePhoto() {
         activity?.let { activity ->
             activity.packageManager?.let { packageManager ->
@@ -264,7 +266,7 @@ class SubmitTopoFragment : Fragment(), Injectable {
                         val photoFile: File? = try {
                             // Create an image file name
                             val timeStamp: String = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Date())
-                            val storageDir: File = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                            val storageDir: File? = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
                             File.createTempFile(
                                     "TOPO_${timeStamp}_",
                                     ".jpg",
