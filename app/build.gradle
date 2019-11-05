@@ -57,7 +57,6 @@ android {
 def versions = [:]
 versions.arch_core = '2.0.0-beta01'
 //versions.facebook = "4.33.0"
-versions.gmaps = "15.0.1"
 versions.maps_utils = "0.5"
 versions.metadata_extractor = "2.9.0"
 versions.apache_commons = "2.6"
@@ -114,7 +113,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0-alpha01"
     implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.2.0-alpha01"
 
-    implementation "com.google.android.gms:play-services-maps:${versions.gmaps}"
+    implementation "com.google.android.gms:play-services-maps:17.0.0"
     implementation "com.google.maps.android:android-maps-utils:${versions.maps_utils}"
 
     implementation "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}"
