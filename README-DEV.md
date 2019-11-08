@@ -1,18 +1,7 @@
 #TODO before release
 Stuttery performance fix:
-    - fix refresh sectors for crag
     - Don't animate map whilst doing complex bottom sheet layout.
-    - Pre-inflate bottom sheet fragment before animating map?
-
-Image scaling, accommodate panoramas. Min / max size for topo image view. (fit to size)
-Search functionality fix
-License t&c (Web)
-Report topo image
-Firebase DB backups
-Storage backups?
-Tests...?
-
-Fix flipper
+    - Single fragment with different modes based on MapMode
 
 - Test before release
 Test DBs max length for strings - long paths could cause issues.
@@ -21,6 +10,13 @@ Perf test - load huge data set and check performance
 Time dB queries
 
 - Do after release
+Fix flipper
+Firebase DB backups - https://firebase.google.com/docs/firestore/manage-data/export-import
+Storage backups?
+Tests...
+Report topo image
+Image scaling, accommodate panoramas. Min / max size for topo image view. (fit to size)
+License t&c (Web)
 Analytics
 Add 'ungraded' & 'project' grades which are the default
 Edit/delete things that you own

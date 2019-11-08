@@ -80,7 +80,6 @@ class BottomSheetFragment : Fragment(), Injectable {
                         }
                         //Reset after we've scrolled to it so we don't scroll again after
                         binding?.vm?.selectedTopoId?.value = null
-
                     }
                     binding?.topoRecycler?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
                 }
