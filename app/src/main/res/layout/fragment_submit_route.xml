@@ -87,7 +87,7 @@
                 android:layout_height="0dp"
                 android:onItemSelected="@{(parent, view, position, id) -> vm.onRouteTypeChanged(fragmentId, position)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textView"
-                app:layout_constraintEnd_toEndOf="@+id/route_description"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/text_align_guideline"
                 app:layout_constraintTop_toTopOf="@+id/textView"
                 tools:listitem="@layout/support_simple_spinner_dropdown_item" />
@@ -150,7 +150,7 @@
                 android:onItemSelected="@{(parent, view, position, id) -> vm.onGradeChanged(fragmentId, position, GradeDropDown.TRAD_TECH)}"
                 android:visibility="@{vm.shouldShowGradePicker(safeUnbox(fragmentId), GradeType.TRAD)}"
                 app:layout_constraintBottom_toBottomOf="@+id/climb_grade_label"
-                app:layout_constraintEnd_toEndOf="@+id/route_type_spinner"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/trad_adjectival_grade_spinner"
                 app:layout_constraintTop_toTopOf="@+id/climb_grade_label"
                 tools:listitem="@layout/support_simple_spinner_dropdown_item"
