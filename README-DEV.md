@@ -83,3 +83,6 @@ https://github.com/dpreussler/kotlin-testrunner
 Privacy Policy:
 https://app.termly.io/document/privacy-policy/9a5525bf-d062-48c8-8517-b1f6c9b6d4ae
 
+https://security.stackexchange.com/questions/3779/how-can-i-export-my-private-key-from-a-java-keytool-keystore
+keytool -importkeystore -srckeystore release.jks -destkeystore release.p12 -deststoretype PKCS12 -srcalias wcr_release -deststorepass "PASSWORD HERE" -destkeypass "PASSWORD HERE"
+openssl pkcs12 -in release.p12  -nodes -nocerts -out key.pem
