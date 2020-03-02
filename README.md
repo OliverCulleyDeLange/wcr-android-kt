@@ -17,5 +17,5 @@ I did contact a few of them to see if i could integrate with their backend and u
 - Since its only Android, I'm missing half the world, and new cross platform frameworks like flutter and react native are becoming better and better. I could re-write but the idea simply isn't worth investing any more time into. 
 
 Here's a demo:
-![WeClimb.Rocks Demo](https://photos.app.goo.gl/nfgJqNHGcteKLjS97)
+[WeClimb.Rocks Demo](https://photos.app.goo.gl/4FshJ8GtJwuwik7b6)
 
