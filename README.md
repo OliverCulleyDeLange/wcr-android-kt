@@ -1,5 +1,7 @@
 ### WeClimb.Rocks
 
+[WeClimb.Rocks Demo Video](https://photos.app.goo.gl/4FshJ8GtJwuwik7b6)
+
 This was going to be a crowd sourced climbing topo app for the climbing community. 
 
 There weren't any apps out there that allowed users to create and upload topos on mobile.
@@ -15,7 +17,3 @@ I did contact a few of them to see if i could integrate with their backend and u
 - I wasn't sure about the legalities of uploading existing routes that are present in other paid for guidebooks. Would this be some sort of plagiarism?
 - This project started as a way for me to learn Android development and I never really intended of releasing it, hence no tests and sometimes scrappy development. 
 - Since its only Android, I'm missing half the world, and new cross platform frameworks like flutter and react native are becoming better and better. I could re-write but the idea simply isn't worth investing any more time into. 
-
-Here's a demo:
-[WeClimb.Rocks Demo](https://photos.app.goo.gl/4FshJ8GtJwuwik7b6)
-
