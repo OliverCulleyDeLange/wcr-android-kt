@@ -5,6 +5,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.secret.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion '28.0.3'
@@ -24,10 +30,10 @@ android {
     }
     signingConfigs {
         releaseDevelop {
-            keyAlias "wcr_release"
-            storeFile file("../release.jks")
-            keyPassword KPWD //These come from <USER_HOME>/.gradle/gradle.properties
-            storePassword KSTOREPWD
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
     }
     buildTypes {
