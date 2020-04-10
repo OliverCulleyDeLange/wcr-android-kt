@@ -184,7 +184,7 @@ class MapsActivity : AppCompatActivity(),
         clusterManager.renderer = CustomRenderer(binding.vm, applicationContext, map, clusterManager)
         clusterManager.setOnClusterItemClickListener(this)
         clusterManager.setOnClusterClickListener {
-            val bounds: LatLngBounds = LatLngUtil.getBoundsForLatLngs(it.items.map { it.position })
+            val bounds: LatLngBounds = getBoundsForLatLngs(it.items.map { it.position })
             map.animate(bounds) {}
             true
         }
@@ -276,7 +276,7 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.mapLatLngBounds?.observe(this, Observer {
             Timber.d("mapLatLngBounds changed, animating map pan")
             if (it.isNotEmpty()) {
-                map.animate(LatLngUtil.getBoundsForLatLngs(it)) {
+                map.animate(getBoundsForLatLngs(it)) {
                     Timber.d("Map animation finished (callback), we can do expensive things now")
                 }
             }
