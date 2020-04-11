@@ -9,16 +9,16 @@ import uk.co.oliverdelange.wcr_android_kt.db.dao.local.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.RouteDao
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.SyncDao
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.TopoDao
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Location
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Route
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Sync
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationEntity
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.RouteEntity
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.SyncEntity
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.TopoEntity
 
 @Database(entities = [
-    (Location::class),
-    (Topo::class),
-    (Route::class),
-    (Sync::class)
+    (LocationEntity::class),
+    (TopoEntity::class),
+    (RouteEntity::class),
+    (SyncEntity::class)
 ], version = 1)
 @TypeConverters(WcrTypeConverters::class)
 abstract class WcrDb : RoomDatabase() {

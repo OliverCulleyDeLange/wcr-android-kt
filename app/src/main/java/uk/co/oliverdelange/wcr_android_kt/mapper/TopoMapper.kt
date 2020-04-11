@@ -3,8 +3,8 @@ package uk.co.oliverdelange.wcr_android_kt.mapper
 import uk.co.oliverdelange.wcr_android_kt.model.Topo
 import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
 import uk.co.oliverdelange.wcr_android_kt.util.randomAlphaNumeric
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo as TopoDTO
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.TopoAndRoutes as TopoAndRoutesDto
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.TopoEntity as TopoDTO
 
 fun toTopoDto(topo: Topo): TopoDTO {
     return TopoDTO(topo.id ?: "${topo.name}_${randomAlphaNumeric(8)}",

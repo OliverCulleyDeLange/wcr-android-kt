@@ -11,12 +11,13 @@ import org.threeten.bp.ZoneOffset
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.db.dao.remote.saveFromFirebase
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Location
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Route
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Sync
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationEntity
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.RouteEntity
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.SyncEntity
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.TopoEntity
 import uk.co.oliverdelange.wcr_android_kt.model.SyncType
 
+//TODO Test me
 class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : RxWorker(appContext, workerParams) {
     @SuppressLint("WrongThread")
     override fun createWork(): Single<Result> {
@@ -29,9 +30,9 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : RxWo
                 .doAfterSuccess {
                     Timber.d("Most recent sync: ${it.epochSeconds}")
                 }.flatMapPublisher {
-                    val downloadedLocationIds = saveFromFirebase(it, "locations", Location::class, localDb.locationDao())
-                    val downloadedTopoIds = saveFromFirebase(it, "topos", Topo::class, localDb.topoDao())
-                    val downloadedRouteIds = saveFromFirebase(it, "routes", Route::class, localDb.routeDao())
+                    val downloadedLocationIds = saveFromFirebase(it, "locations", LocationEntity::class, localDb.locationDao())
+                    val downloadedTopoIds = saveFromFirebase(it, "topos", TopoEntity::class, localDb.topoDao())
+                    val downloadedRouteIds = saveFromFirebase(it, "routes", RouteEntity::class, localDb.routeDao())
 
                     Single.mergeDelayError(downloadedLocationIds, downloadedTopoIds, downloadedRouteIds)
                 }.collect({ mutableListOf<String>() }, { list, it ->
@@ -40,7 +41,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : RxWo
                 })
                 .flatMapCompletable {
                     Timber.d("Sync completed. Saving sync record. ")
-                    val sync = Sync(
+                    val sync = SyncEntity(
                             epochSeconds = syncStartTime,
                             syncType = SyncType.DOWNLOAD.name
                     )

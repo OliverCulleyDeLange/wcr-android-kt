@@ -11,6 +11,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.usecases.SubmitLocationUseCase
 import javax.inject.Inject
+//TODO Test me
 
 class SubmitLocationViewModel @Inject constructor(private val submitLocationUseCase: SubmitLocationUseCase) : ViewModel() {
 

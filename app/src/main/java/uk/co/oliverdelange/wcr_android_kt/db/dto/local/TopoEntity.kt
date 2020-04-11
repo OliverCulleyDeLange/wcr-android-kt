@@ -6,19 +6,20 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(indices = [Index("id", unique = true), Index("locationId")],
+        tableName = "Topo",
         foreignKeys = (arrayOf(
                 ForeignKey(
-                        entity = Location::class,
+                        entity = LocationEntity::class,
                         onUpdate = ForeignKey.CASCADE,
                         parentColumns = arrayOf("id"),
                         childColumns = arrayOf("locationId")
                 )
         )))
-data class Topo(@PrimaryKey override var id: String = "",
-                var locationId: String = "",
+data class TopoEntity(@PrimaryKey override var id: String = "",
+                      var locationId: String = "",
 
-                var name: String = "",
-                var image: String = "",
-                override var uploadedAt: Long = -1,
-                override var uploaderId: String = ""
+                      var name: String = "",
+                      var image: String = "",
+                      override var uploadedAt: Long = -1,
+                      override var uploaderId: String = ""
 ) : BaseEntity()

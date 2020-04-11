@@ -26,6 +26,7 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.PREF_USE_V_GRADE_FOR_BOULDERING
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
+import uk.co.oliverdelange.wcr_android_kt.factory.from
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
@@ -38,6 +39,7 @@ import javax.inject.Inject
 
 
 const val MAX_TOPO_SIZE_PX = 1020
+//TODO Test me
 
 //@Singleton Not a singleton so a new one gets created so half finished submissions don't retain
 class SubmitTopoViewModel @Inject constructor(application: Application,
@@ -223,15 +225,15 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         routes[fragmentId]?.let { route ->
             when (gradeDropDown) {
                 GradeDropDown.V -> {
-                    route.grade = Grade.from(VGrade.values()[position])
+                    route.grade = from(VGrade.values()[position])
                     Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
                 }
                 GradeDropDown.FONT -> {
-                    route.grade = Grade.from(FontGrade.values()[position])
+                    route.grade = from(FontGrade.values()[position])
                     Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
                 }
                 GradeDropDown.SPORT -> {
-                    route.grade = Grade.from(SportGrade.values()[position])
+                    route.grade = from(SportGrade.values()[position])
                     Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
                 }
                 GradeDropDown.TRAD_ADJ -> {
@@ -239,7 +241,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                     val chosenTradAdjGrade = TradAdjectivalGrade.values()[position]
                     val halfFinishedTradGrade = halfFinishedTradGrades[routeId]
                     if (halfFinishedTradGrade?.second != null) {
-                        route.grade = Grade.from(chosenTradAdjGrade, halfFinishedTradGrade.second!!)
+                        route.grade = from(chosenTradAdjGrade, halfFinishedTradGrade.second!!)
                         Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
                     }
                     halfFinishedTradGrades[routeId] = Pair(chosenTradAdjGrade, halfFinishedTradGrades[routeId]?.second)
@@ -249,7 +251,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                     val chosenTradTechGrade = TradTechnicalGrade.values()[position]
                     val halfFinishedTradGrade = halfFinishedTradGrades[routeId]
                     if (halfFinishedTradGrade?.first != null) {
-                        route.grade = Grade.from(halfFinishedTradGrade.first!!, chosenTradTechGrade)
+                        route.grade = from(halfFinishedTradGrade.first!!, chosenTradTechGrade)
                         Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
                     }
                     halfFinishedTradGrades[routeId] = Pair(halfFinishedTradGrades[routeId]?.first, chosenTradTechGrade)

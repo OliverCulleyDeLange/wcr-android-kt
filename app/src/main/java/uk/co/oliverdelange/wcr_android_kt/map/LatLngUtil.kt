@@ -10,7 +10,7 @@ private val DEFAULT_BOUNDS = LatLngBounds.builder()
         .build()
 private const val PADDING_PERCENTAGE = 15.0
 
-
+//TODO Test me
 fun getBoundsForLatLngs(latLngs: Collection<LatLng>): LatLngBounds {
     var mostW: LatLng? = null
     var mostE: LatLng? = null

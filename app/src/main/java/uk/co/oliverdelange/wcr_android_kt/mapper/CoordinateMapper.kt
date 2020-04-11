@@ -2,6 +2,7 @@ package uk.co.oliverdelange.wcr_android_kt.mapper
 
 import timber.log.Timber
 
+//TODO Test me
 fun coordsSetToString(coords: List<List<Pair<Float, Float>>>?): String? {
     return coords?.flatten()?.let {
         it.joinToString(",", transform = { pair -> "${pair.first}:${pair.second}" })

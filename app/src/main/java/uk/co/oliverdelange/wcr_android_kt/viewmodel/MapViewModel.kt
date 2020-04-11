@@ -27,6 +27,7 @@ import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
 import javax.inject.Inject
 import javax.inject.Singleton
+//TODO Test me
 
 @Singleton
 class MapViewModel @Inject constructor(application: Application,

@@ -7,9 +7,9 @@ import androidx.room.Relation
 
 class TopoAndRoutes {
     @Embedded
-    var topo: Topo = Topo()
+    var topo: TopoEntity = TopoEntity()
     @Relation(parentColumn = "id", entityColumn = "topoId")
-    var routes: MutableList<Route> = mutableListOf()
+    var routes: MutableList<RouteEntity> = mutableListOf()
         set(v) {
             v.sort()
             field = v

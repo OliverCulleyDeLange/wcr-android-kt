@@ -11,7 +11,7 @@ import org.threeten.bp.ZoneOffset
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.db.dao.remote.uploadThingsToFirebase
-
+//TODO Test me
 class UploadWorker(appContext: Context, workerParams: WorkerParameters) : RxWorker(appContext, workerParams) {
 
     @SuppressLint("WrongThread")

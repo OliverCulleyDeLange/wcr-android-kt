@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng
 import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.util.randomAlphaNumeric
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Location as LocationDTO
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationEntity as LocationDTO
 
 fun toLocationDto(location: Location): LocationDTO {
     return LocationDTO(location.id ?: "${location.name}_${randomAlphaNumeric(8)}",

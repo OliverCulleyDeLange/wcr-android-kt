@@ -7,14 +7,14 @@ import androidx.room.Query
 import androidx.room.Transaction
 import io.reactivex.Completable
 import io.reactivex.Maybe
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Topo
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.TopoAndRoutes
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.TopoEntity
 
 @Dao
 @WorkerThread
-interface TopoDao : BaseDao<Topo> {
+interface TopoDao : BaseDao<TopoEntity> {
     @Query("SELECT * from topo where id = :id")
-    fun get(id: String): Topo
+    fun get(id: String): TopoEntity
 
     // https://stackoverflow.com/questions/26203799/using-an-inner-join-without-returning-any-columns-from-the-joined-table
     @Query("SELECT topo.* FROM topo " +
@@ -25,12 +25,12 @@ interface TopoDao : BaseDao<Topo> {
 
 
     @Query("SELECT * FROM topo where uploadedAt= -1")
-    override fun loadYetToBeUploaded(): Maybe<List<Topo>>
+    override fun loadYetToBeUploaded(): Maybe<List<TopoEntity>>
 
     @Query("UPDATE topo SET uploadedAt = :uploadedAt where id = :id")
     override fun updateUploadedAt(id: String, uploadedAt: Long): Completable
 
     //https://developer.android.com/training/data-storage/room/accessing-data
     @Query("SELECT * FROM topo WHERE name LIKE :search")
-    fun searchOnName(search: String): LiveData<List<Topo>?>
+    fun searchOnName(search: String): LiveData<List<TopoEntity>?>
 }

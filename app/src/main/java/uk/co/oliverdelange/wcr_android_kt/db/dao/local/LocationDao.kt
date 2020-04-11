@@ -6,14 +6,14 @@ import androidx.room.Dao
 import androidx.room.Query
 import io.reactivex.Completable
 import io.reactivex.Maybe
-import uk.co.oliverdelange.wcr_android_kt.db.dto.local.Location
+import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationEntity
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
 
 @Dao
 @WorkerThread
-interface LocationDao : BaseDao<Location> {
+interface LocationDao : BaseDao<LocationEntity> {
     @Query("SELECT * FROM location where id = :id")
-    fun load(id: String): LiveData<Location?>
+    fun load(id: String): LiveData<LocationEntity?>
 
     // https://stackoverflow.com/questions/4114940/select-random-rows-in-sqlite
 //    @Query("SELECT id FROM location WHERE id IN (SELECT id FROM location ORDER BY RANDOM() LIMIT 1)")
@@ -21,25 +21,25 @@ interface LocationDao : BaseDao<Location> {
     fun loadRandomId(type: String = "CRAG"): String?
 
     @Query("SELECT * FROM location where id = :id")
-    fun get(id: String): Location?
+    fun get(id: String): LocationEntity?
 
     @Query("SELECT * FROM location where type = :type")
-    fun loadByType(type: String): LiveData<List<Location>?>
+    fun loadByType(type: String): LiveData<List<LocationEntity>?>
 
     @Query("SELECT * FROM location where type = :type AND parentLocationId = :parentId")
-    fun loadWithParentId(parentId: String, type: String = "SECTOR"): LiveData<List<Location>?>
+    fun loadWithParentId(parentId: String, type: String = "SECTOR"): LiveData<List<LocationEntity>?>
 
     @Query("SELECT * FROM location where uploadedAt = -1")
-    override fun loadYetToBeUploaded(): Maybe<List<Location>>
+    override fun loadYetToBeUploaded(): Maybe<List<LocationEntity>>
 
     @Query("UPDATE location SET uploadedAt = :uploadedAt where id = :id")
     override fun updateUploadedAt(id: String, uploadedAt: Long): Completable
 
     @Query("SELECT * FROM location where type = :type AND parentLocationId = :parent")
-    fun getWithParentId(parent: String, type: String = "SECTOR"): List<Location>?
+    fun getWithParentId(parent: String, type: String = "SECTOR"): List<LocationEntity>?
 
     @Query("SELECT * FROM location WHERE name LIKE :search")
-    fun searchOnName(search: String): LiveData<List<Location>?>
+    fun searchOnName(search: String): LiveData<List<LocationEntity>?>
 
     @Query("SELECT " +
             "SUM(case when gradeColour = 'GREEN' THEN 1 ELSE 0 END) as greens," +

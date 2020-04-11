@@ -20,7 +20,7 @@ class LocationRepository @Inject constructor(private val locationDao: LocationDa
         return saveToLocalDb(locationDTO)
     }
 
-    private fun saveToLocalDb(location: uk.co.oliverdelange.wcr_android_kt.db.dto.local.Location)
+    private fun saveToLocalDb(location: uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationEntity)
             : Single<String> {
         return Single.fromCallable {
             locationDao.insert(location)
