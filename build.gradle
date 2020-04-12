@@ -13,15 +13,14 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.3.2'
         classpath 'io.fabric.tools:gradle:1.31.2' //Crashlytics
-        //https://github.com/groovy/groovy-android-gradle-plugin
-        classpath 'org.codehaus.groovy:groovy-android-gradle-plugin:2.0.0'  }
+    }
 }
 
 allprojects {
     repositories {
         google()
         jcenter()
-        maven { url "https://jitpack.io" }
+        maven { url "shttps://jitpack.io" }
     }
 }
 

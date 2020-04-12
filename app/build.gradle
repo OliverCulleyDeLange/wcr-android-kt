@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'groovyx.android'
 apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
@@ -125,20 +124,11 @@ dependencies {
     implementation "com.mikepenz:google-material-typeface:3.0.1.2.original@aar"
     implementation "com.mikepenz:fontawesome-typeface:5.0.6.0@aar"
 
-    def archCoreVersion = "2.1.0"
     def koTestVersion = "4.0.1"
     testImplementation "io.kotest:kotest-runner-junit5-jvm:$koTestVersion"
     testImplementation "io.kotest:kotest-assertions-core-jvm:$koTestVersion"
     testImplementation "io.mockk:mockk:1.9.3"
-    testImplementation "androidx.arch.core:core-testing:$archCoreVersion"
-
-    // Spock stuff
-    testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
-    testImplementation 'org.objenesis:objenesis:2.6'
-    testImplementation 'cglib:cglib-nodep:3.2.4'
-    testImplementation "org.mockito:mockito-core:2.19.0"
-    testImplementation 'org.codehaus.groovy:groovy:2.4.13:grooid'
-    testImplementation "androidx.arch.core:core-testing:$archCoreVersion"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
 
     // https://developer.android.com/jetpack/androidx/releases/test#1.2.0
     // https://developer.android.com/training/testing/set-up-project#android-test-dependencies
