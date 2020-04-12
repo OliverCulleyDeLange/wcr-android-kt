@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
+import kotlinx.android.synthetic.main.fragment_bottom_sheet.*
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentBottomSheetBinding
@@ -51,6 +52,9 @@ class BottomSheetFragment : Fragment(), Injectable {
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
         binding?.vm = viewModel
         binding?.lifecycleOwner = this
+        sign_in_button.setOnClickListener {
+            viewModel.onClickSignInButton()
+        }
         return binding?.root
     }
 

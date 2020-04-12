@@ -14,6 +14,7 @@
     <string name="menu_signin">Sign in / register</string>
     <string name="menu_signout">Sign out</string>
     <string name="menu_about">About</string>
+    <string name="clicks_to_dev_menu">Clicks until dev menu shown: %1$d</string>
 
     <string name="signout_prompt">Are you sure you want to sign out?</string>
 

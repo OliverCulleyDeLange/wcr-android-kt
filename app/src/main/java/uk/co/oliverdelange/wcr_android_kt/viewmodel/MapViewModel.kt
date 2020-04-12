@@ -2,7 +2,6 @@ package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.view.View
 import androidx.lifecycle.*
 import com.google.android.gms.maps.GoogleMap
@@ -25,16 +24,17 @@ import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
+import uk.co.oliverdelange.wcr_android_kt.view.map.DEV_MENU_CLICKS_REQUIRED
 import javax.inject.Inject
 import javax.inject.Singleton
 //TODO Test me
 
 @Singleton
 class MapViewModel @Inject constructor(application: Application,
-                                       val locationRepository: LocationRepository,
-                                       val topoRepository: TopoRepository,
-                                       val routeRepository: RouteRepository,
-                                       val db: WcrDb) : AndroidViewModel(application) {
+                                       private val locationRepository: LocationRepository,
+                                       private val topoRepository: TopoRepository,
+                                       private val routeRepository: RouteRepository,
+                                       private val db: WcrDb) : AndroidViewModel(application) {
 
     /*
         Observable Live Data
@@ -42,6 +42,9 @@ class MapViewModel @Inject constructor(application: Application,
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
+    val viewEvents = SingleLiveEvent<Event>()
+
+    // TODO Only expose LiveData not Mutable version!!
     val userSignedIn = MutableLiveData<Boolean>().also {
         val signedIn = FirebaseAuth.getInstance().currentUser != null
         Timber.d("Initialising userSignedIn: $signedIn")
@@ -108,7 +111,7 @@ class MapViewModel @Inject constructor(application: Application,
         it.map { location -> CragClusterItem(location) }
     }
 
-    val sectors: LiveData<List<Location>?> = Transformations.distinctUntilChanged(
+    val sectors: LiveData<List<Location>> = Transformations.distinctUntilChanged(
             Transformations.switchMap(selectedLocation) { selectedLocation ->
                 if (selectedLocation?.id != null) {
                     Timber.d("SelectedLocation changed to ${selectedLocation.id}: Updating 'sectors'")
@@ -231,6 +234,10 @@ class MapViewModel @Inject constructor(application: Application,
         collapseBottomSheet()
     }
 
+    fun onClickSignInButton(){
+        viewEvents.postValue(NavigateToSignIn)
+    }
+
     fun onUserSignInSuccess() {
         userSignedIn.value = true
         val user = FirebaseAuth.getInstance().currentUser
@@ -345,7 +352,18 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
-    fun nukeDb(applicationContext: Context) {
+    private var devMenuClicksLeft = DEV_MENU_CLICKS_REQUIRED
+    fun buildVersionClicked() {
+        devMenuClicksLeft--
+        if (devMenuClicksLeft <=3) {
+            viewEvents.postValue(ShowXClicksToDevMenuToast(devMenuClicksLeft))
+        }
+        if (devMenuClicksLeft == 0) {
+            viewEvents.postValue(ShowDevMenu)
+        }
+    }
+
+    fun nukeDb() {
         disposables.add(Completable.fromAction {
             Timber.d("Nuking DB")
             db.clearAllTables()

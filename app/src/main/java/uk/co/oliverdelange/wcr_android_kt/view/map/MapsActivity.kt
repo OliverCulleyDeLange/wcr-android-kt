@@ -1,7 +1,7 @@
 package uk.co.oliverdelange.wcr_android_kt.view.map
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.BounceInterpolator
 import android.view.animation.TranslateAnimation
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -19,16 +18,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import co.zsmb.materialdrawerkt.builders.accountHeader
-import co.zsmb.materialdrawerkt.builders.drawer
-import co.zsmb.materialdrawerkt.builders.footer
-import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
-import co.zsmb.materialdrawerkt.draweritems.badgeable.secondaryItem
-import co.zsmb.materialdrawerkt.draweritems.divider
-import co.zsmb.materialdrawerkt.imageloader.drawerImageLoader
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
-import com.crashlytics.android.Crashlytics
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -42,18 +33,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPS
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.maps.android.MarkerManager
 import com.google.maps.android.clustering.ClusterManager
-import com.mikepenz.aboutlibraries.Libs
-import com.mikepenz.aboutlibraries.LibsBuilder
-import com.mikepenz.google_material_typeface_library.GoogleMaterial
-import com.mikepenz.materialdrawer.Drawer
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
-import com.mikepenz.materialdrawer.util.DrawerUIUtils
 import com.squareup.picasso.Picasso
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_maps.*
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.BuildConfig
 import uk.co.oliverdelange.wcr_android_kt.PREFS_KEY
 import uk.co.oliverdelange.wcr_android_kt.PREF_BOTTOM_SHEET_OPENED
 import uk.co.oliverdelange.wcr_android_kt.R
@@ -64,7 +48,6 @@ import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
 import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
-import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.util.hideKeyboard
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import uk.co.oliverdelange.wcr_android_kt.util.stateFromInt
@@ -73,6 +56,9 @@ import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitLocationFragment
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode.*
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.NavigateToSignIn
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.ShowDevMenu
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.ShowXClicksToDevMenuToast
 import java.lang.Math.round
 import javax.inject.Inject
 
@@ -80,13 +66,8 @@ const val MAP_ANIMATION_DURATION = 400
 const val MAP_PADDING_TOP = 150
 
 const val EXTRA_SECTOR_ID = "EXTRA_SECTOR_ID"
-const val REQUEST_SUBMIT = 999
-const val REQUEST_SIGNIN = 998
-
-const val MENU_SIGN_IN_ID = 1L
-const val MENU_SIGN_OUT_ID = 2L
-
-const val DEV_MENU_CLICKS = 7
+const val ACTIVITY_RESULT_SUBMIT = 999
+const val ACTIVITY_RESULT_SIGNIN = 998
 
 /*
     The Main Activity of the app. Shows a map with markers for crags, which when clicked reveal its sectors.
@@ -123,13 +104,12 @@ class MapsActivity : AppCompatActivity(),
 
     private lateinit var clusterManager: ClusterManager<CragClusterItem>
     private lateinit var sectorMarkers: MarkerManager.Collection
-    private lateinit var slidingDrawer: Drawer
-    private lateinit var signInDrawerItem: PrimaryDrawerItem
-    private lateinit var signOutDrawerItem: PrimaryDrawerItem
+    private lateinit var drawerWrapper: DrawerWrapper
+    private lateinit var toast: Toast
+
     internal lateinit var binding: ActivityMapsBinding
 
-    private var showDevMenu = 0
-
+    @SuppressLint("ShowToast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.v("MapsActivity : onCreate")
@@ -142,7 +122,8 @@ class MapsActivity : AppCompatActivity(),
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        initialiseDrawer()
+        drawerWrapper = DrawerWrapper(this, viewModel)
+        toast = Toast.makeText(this, "", Toast.LENGTH_SHORT)
         initialiseFloatingSearchBar()
         initialiseBottomSheet()
         downloadSync()
@@ -155,13 +136,13 @@ class MapsActivity : AppCompatActivity(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_SUBMIT -> {
+            ACTIVITY_RESULT_SUBMIT -> {
                 binding.vm?.mapMode?.value = SECTOR_MODE
                 if (resultCode == Activity.RESULT_OK) {
                     Timber.d("User submitted topo")
                 }
             }
-            REQUEST_SIGNIN -> {
+            ACTIVITY_RESULT_SIGNIN -> {
 //                val response = IdpResponse.fromResultIntent(data)
                 if (resultCode == RESULT_OK) {
                     binding.vm?.onUserSignInSuccess()
@@ -217,15 +198,17 @@ class MapsActivity : AppCompatActivity(),
     }
 
     private fun observeViewModel() {
+        binding.vm?.viewEvents?.observe(this, Observer {
+            when (it) {
+                ShowDevMenu -> drawerWrapper.showDevMenu()
+                is ShowXClicksToDevMenuToast -> showToast(getString(R.string.clicks_to_dev_menu, it.clicks))
+                NavigateToSignIn -> startSignInActivity()
+            }
+        })
+
         binding.vm?.userSignedIn?.observe(this, Observer {
             Timber.d("userSignedIn changed, swapping drawer button")
-            slidingDrawer.removeItem(MENU_SIGN_IN_ID)
-            slidingDrawer.removeItem(MENU_SIGN_OUT_ID)
-            if (it == true) {
-                slidingDrawer.setItemAtPosition(signOutDrawerItem, 1)
-            } else {
-                slidingDrawer.setItemAtPosition(signInDrawerItem, 1)
-            }
+            drawerWrapper.toggleSignedIn(it)
         })
 
         binding.vm?.mapType?.observe(this, Observer {
@@ -319,7 +302,7 @@ class MapsActivity : AppCompatActivity(),
                     binding.vm?.selectedLocation?.value?.id?.let { sectorId ->
                         val intent = Intent(this, SubmitActivity::class.java)
                         intent.putExtra(EXTRA_SECTOR_ID, sectorId)
-                        startActivityForResult(intent, REQUEST_SUBMIT)
+                        startActivityForResult(intent, ACTIVITY_RESULT_SUBMIT)
                     }
                 }
             }
@@ -352,128 +335,13 @@ class MapsActivity : AppCompatActivity(),
         }
     }
 
-    private fun initialiseDrawer() {
-        slidingDrawer = drawer {
-            selectedItem = -1
-            accountHeader {
-                backgroundScaleType = ImageView.ScaleType.FIT_CENTER
-                background = R.drawable.logo
-            }
-            signInDrawerItem = primaryItem(R.string.menu_signin) {
-                identifier = MENU_SIGN_IN_ID
-                iicon = GoogleMaterial.Icon.gmd_account_circle
-                selectable = false
-                onClick { view ->
-                    signIn(view)
-                    false
-                }
-            }
-            signOutDrawerItem = primaryItem(R.string.menu_signout) {
-                identifier = MENU_SIGN_OUT_ID
-                iicon = GoogleMaterial.Icon.gmd_exit_to_app
-                selectable = false
-                onClick { _ ->
-                    AlertDialog.Builder(this@MapsActivity)
-                            .setMessage(R.string.signout_prompt)
-                            .setNegativeButton("No") { _, _ -> }
-                            .setPositiveButton("Yes") { _, _ ->
-                                AuthUI.getInstance()
-                                        .signOut(this@MapsActivity)
-                                        .addOnCompleteListener {
-                                            binding.vm?.userSignedIn?.value = false
-                                        }
-                            }
-                            .show()
-                    false
-                }
-            }
-            primaryItem(R.string.menu_about) {
-                iicon = GoogleMaterial.Icon.gmd_help
-                selectable = false
-                onClick { _ ->
-                    LibsBuilder()
-                            .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-                            .withAboutAppName("We Climb Rocks")
-                            .withLicenseShown(true)
-                            .withActivityTitle("About")
-                            .withAboutIconShown(true)
-                            .withAboutVersionShown(true)
-                            .withAboutDescription("We Climb Rocks is a platform for sharing climbing topos, and easily locating routes." +
-                                    "<br /><b>For support, email <a href='mailto:weclimbrocks@oliverdelange.co.uk'>weclimbrocks@oliverdelange.co.uk</a></b>" +
-                                    "<br /><br />" +
-                                    "Below is a list of Open Source libraries used in this app.")
-                            .start(this@MapsActivity)
-                    false
-                }
-            }
-            footer {
-                secondaryItem("${BuildConfig.BUILD_TYPE} ${BuildConfig.VERSION_NAME} ") {
-                    onClick { _, _, _ ->
-                        showDevMenu++
-                        if (showDevMenu == DEV_MENU_CLICKS - 1) {
-                            Toast.makeText(this@MapsActivity, "1 click away from showing dev menu", Toast.LENGTH_SHORT).show()
-                        }
-                        if (showDevMenu == DEV_MENU_CLICKS) {
-                            slidingDrawer.addItems(
-                                    divider(),
-                                    primaryItem("Nuke DB") {
-                                        iicon = GoogleMaterial.Icon.gmd_warning
-                                        selectable = false
-                                        onClick { _ ->
-                                            binding.vm?.nukeDb(applicationContext)
-                                            false
-                                        }
-                                    },
-                                    primaryItem("Sync Up") {
-                                        iicon = GoogleMaterial.Icon.gmd_warning
-                                        selectable = false
-                                        onClick { _ ->
-                                            uploadSync()
-                                            false
-                                        }
-                                    },
-                                    primaryItem("Sync Down") {
-                                        iicon = GoogleMaterial.Icon.gmd_warning
-                                        selectable = false
-                                        onClick { _ ->
-                                            downloadSync()
-                                            false
-                                        }
-                                    },
-                                    primaryItem("Test Crash") {
-                                        iicon = GoogleMaterial.Icon.gmd_warning
-                                        selectable = false
-                                        onClick { _ ->
-                                            Crashlytics.getInstance().crash() // Force a crash
-                                            false
-                                        }
-                                    })
-                        }
-                        true
-                    }
-                }
-            }
-        }
-
-        drawerImageLoader {
-            placeholder { ctx, _ ->
-                DrawerUIUtils.getPlaceHolder(ctx)
-            }
-            set { imageView, uri, placeholder, _ ->
-                val req = Picasso.get().load(uri)
-                placeholder?.let {
-                    req.placeholder(placeholder)
-                }
-                req.into(imageView)
-            }
-            cancel { imageView ->
-                Picasso.get().cancelRequest(imageView)
-            }
-        }
+    private fun showToast(text: String) {
+        toast.setText(text)
+        toast.show()
     }
 
     private fun initialiseFloatingSearchBar() {
-        floating_search_view.attachNavigationDrawerToMenuButton(slidingDrawer.drawerLayout)
+        floating_search_view.attachNavigationDrawerToMenuButton(drawerWrapper.drawer.drawerLayout)
         floating_search_view.setOnFocusChangeListener(object : FloatingSearchView.OnFocusChangeListener {
             override fun onFocusCleared() {
                 binding.vm?.onSearchBarUnfocus()
@@ -568,16 +436,15 @@ class MapsActivity : AppCompatActivity(),
         fab.setImageResource(iconId)
     }
 
-    fun signIn(view: View?) {
+    fun startSignInActivity() {
         startActivityForResult(AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setIsSmartLockEnabled(false)
                 .setAvailableProviders(listOf(
-                        //                                    AuthUI.IdpConfig.FacebookBuilder().build(),//TODO FB integration
                         AuthUI.IdpConfig.EmailBuilder().build()
                 ))
                 .build(),
-                REQUEST_SIGNIN
+                ACTIVITY_RESULT_SIGNIN
         )
     }
 
