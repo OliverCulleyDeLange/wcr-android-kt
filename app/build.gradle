@@ -49,6 +49,11 @@ android {
             applicationIdSuffix ".debug"
         }
     }
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+        }
+    }
     dataBinding {
         enabled = true
     }
@@ -124,11 +129,19 @@ dependencies {
     implementation "com.mikepenz:google-material-typeface:3.0.1.2.original@aar"
     implementation "com.mikepenz:fontawesome-typeface:5.0.6.0@aar"
 
-    def koTestVersion = "4.0.1"
-    testImplementation "io.kotest:kotest-runner-junit5-jvm:$koTestVersion"
-    testImplementation "io.kotest:kotest-assertions-core-jvm:$koTestVersion"
+    def koTestVersion = "4.0.2"
+//    testImplementation "io.kotest:kotest-runner-junit5-jvm:$koTestVersion"
+//    testImplementation "io.kotest:kotest-assertions-core-jvm:$koTestVersion"
     testImplementation "io.mockk:mockk:1.9.3"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
+
+    // Junit5
+    def junitVersion = "5.3.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+
+    testImplementation "com.google.truth:truth:1.0.1"
 
     // https://developer.android.com/jetpack/androidx/releases/test#1.2.0
     // https://developer.android.com/training/testing/set-up-project#android-test-dependencies
