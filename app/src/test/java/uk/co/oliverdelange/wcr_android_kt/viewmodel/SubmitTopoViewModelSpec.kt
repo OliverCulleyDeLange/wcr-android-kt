@@ -1,7 +1,9 @@
 package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
+import android.net.Uri
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
 import uk.co.oliverdelange.wcr_android_kt.InstantExecutorListener
 import uk.co.oliverdelange.wcr_android_kt.model.Route
@@ -21,6 +23,7 @@ class SubmitTopoViewModelSpec : FreeSpec() {
             mockTopoRepo = mockk()
             mockRouteRepo = mockk()
             vm = SubmitTopoViewModel(mockTopoRepo, mockRouteRepo)
+            vm.showTakePhotoIcon.observeForever { }
         }
 
         "initial state" {
@@ -35,12 +38,80 @@ class SubmitTopoViewModelSpec : FreeSpec() {
             vm.submitting.value shouldBe false
         }
 
-        "onToggleDrawing" {
+        "isDrawing can be toggled" {
             vm.isDrawing.value shouldBe true
             vm.onToggleDrawing()
             vm.isDrawing.value shouldBe false
             vm.onToggleDrawing()
             vm.isDrawing.value shouldBe true
+        }
+
+        "showTakePhotoIcon" - {
+            "with no topo image chosen," - {
+                println("No topo image chosen")
+                vm.localTopoImage.value shouldBe null
+                "is true if camera is available" {
+                    vm.showTakePhotoIcon.value shouldBe false
+
+                    vm.setHasCamera(true)
+
+                    vm.showTakePhotoIcon.value shouldBe true
+                }
+                "is false if camera is not available" {
+                    vm.setHasCamera(true)
+                    vm.showTakePhotoIcon.value shouldBe true
+
+                    vm.setHasCamera(false)
+
+                    vm.showTakePhotoIcon.value shouldBe false
+                }
+            }
+            "with topo image chosen, is false" {
+                val mockUri = mockk<Uri>()
+                vm.onSelectExistingPhoto(mockUri)
+                vm.localTopoImage.value shouldNotBe null
+
+                vm.showTakePhotoIcon.value shouldBe false
+            }
+        }
+
+        "shouldShowAddRouteButton" - {
+            "is true if no routes" {
+                vm.onRouteRemoved(0)
+                vm.shouldShowAddRouteButton.value shouldBe true
+            }
+            //TODO Figure out the scenarios for these tests, they're a bit confusing
+            "when drag scrolling (offset > 0)" - {
+                "is true if scrolled far right" {
+                    vm.onRoutePagerScroll(2, 0, 1f)
+                    vm.shouldShowAddRouteButton.value shouldBe true
+                }
+                "is false if not quite scrolled all the way right"{
+                    vm.onRoutePagerScroll(2, 0, 0.99f)
+                    vm.shouldShowAddRouteButton.value shouldBe false
+                }
+                "is false if not on last page"{
+                    vm.onRoutePagerScroll(3, 0, 1f)
+                    vm.shouldShowAddRouteButton.value shouldBe false
+                }
+            }
+            "when stationary" - {
+                "is false if not on last page"{
+                    vm.onRoutePagerScroll(3, 0, 0f)
+                    vm.shouldShowAddRouteButton.value shouldBe false
+                }
+                "is true if on last page"{
+                    vm.onRoutePagerScroll(2, 1, 0f)
+                    vm.shouldShowAddRouteButton.value shouldBe true
+                }
+            }
+        }
+
+        "topoNameError" {
+            vm.topoNameError.observeForever {  }
+            vm.topoNameError.value shouldBe null
+            vm.topoName.value = ""
+            vm.topoNameError.value shouldBe "Can not be empty"
         }
     }
 }

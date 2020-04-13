@@ -57,7 +57,7 @@ class MapViewModel @Inject constructor(application: Application,
     val mapType: LiveData<Int> get() = _mapType
 
     private val _mapLabel: LiveData<String> = Transformations.map(_mapType) {
-        if (it == 1) "SAT" else "MAP"
+        if (it == GoogleMap.MAP_TYPE_NORMAL) "SAT" else "MAP"
     }
     val mapLabel: LiveData<String> get() = _mapLabel
 
@@ -65,7 +65,6 @@ class MapViewModel @Inject constructor(application: Application,
         it.value = MapMode.DEFAULT_MODE
     }
     val mapMode: LiveData<MapMode> get() = _mapMode
-
 
     private val mapModesThatDisplayFab = listOf(MapMode.DEFAULT_MODE, MapMode.CRAG_MODE, MapMode.TOPO_MODE, MapMode.SECTOR_MODE)
     private val _showFab = MediatorLiveData<Boolean>().also {

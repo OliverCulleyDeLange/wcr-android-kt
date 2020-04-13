@@ -37,14 +37,13 @@ class MapViewModelSpec : BehaviorSpec() {
                 When("I create a MapViewModel") {
                     println("Initialising ViewModel")
                     vm = MapViewModel(mockApp, mockLocationRepo, mockTopoRepo, mockRouteRepo, mockAuthService, mockDb)
+                    vm.mapLabel.observeForever { /*So the label is updated*/ }
 
                     Then("Test initial state") {
                         vm.viewEvents.value shouldBe null
                         vm.userSignedIn.value shouldBe false
                         vm.mapType.value shouldBe MAP_TYPE_NORMAL
-                        // FIXME  _mapLabel hasn't registered its transformation by the time _mapType has set its value
-                        // Works when running on a device for some reason though
-//                        vm.mapLabel.value shouldBe "MAP"
+                        vm.mapLabel.value shouldBe "SAT" // Label should display opposite of map type
                         vm.mapMode.value shouldBe MapMode.DEFAULT_MODE
                         vm.showFab.value shouldBe false // as not signed in
                         vm.selectedLocationRouteInfo.value shouldBe null

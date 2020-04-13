@@ -29,6 +29,9 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     private val _isDrawing = MutableLiveData(true)
     val isDrawing: LiveData<Boolean> get() = _isDrawing
 
+    private val _localTopoImage = MutableLiveData<Uri?>()
+    val localTopoImage: LiveData<Uri?> get() = _localTopoImage
+
     private val _hasCamera = MutableLiveData(false)
 
     private val _showTakePhotoIcon = MediatorLiveData<Boolean>().also {
@@ -49,8 +52,6 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     private val _shouldShowAddRouteButton = MutableLiveData<Boolean>().also { it.value = true }
     val shouldShowAddRouteButton: LiveData<Boolean> get() = _shouldShowAddRouteButton
 
-    private val _localTopoImage = MutableLiveData<Uri?>()
-    val localTopoImage: LiveData<Uri?> get() = _localTopoImage
 
     // Expose MutableLiveData so databinding can change the value
     val topoName = MutableLiveData<String?>()
@@ -91,13 +92,18 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         User actions
      */
 
+    fun onToggleDrawing() {
+        Timber.d("Toggling drawing mode")
+        _isDrawing.value = _isDrawing.value != true
+    }
+
     fun setHasCamera(has: Boolean) {
         _hasCamera.value = has
     }
-
     // Is this needed just to avoid android..view classes in view model?
     enum class TouchEvent {
         TOUCH_DOWN, TOUCH_MOVE, TOUCH_UP, IGNORE
+
     }
 
     fun onDraw(x: Float, y: Float, event: TouchEvent): Boolean {
@@ -108,11 +114,6 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     fun onUndoDrawing() {
 //        doUndoDrawing.value = null
         //FIXME remove last action and redraw
-    }
-
-    fun onToggleDrawing() {
-        Timber.d("Toggling drawing mode")
-        _isDrawing.value = _isDrawing.value != true
     }
 
     // Taking a photo is a two step process.
@@ -168,12 +169,13 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     }
 
     fun onRoutePagerScroll(routeCount: Int?, position: Int, positionOffset: Float) {
-        onRouteRemoved(routeCount)
-        if (positionOffset > 0) {
+        _shouldShowAddRouteButton.value = if (positionOffset > 0) {
+            // Dragging between settled states
             val onLastRoute = routeCount == position + 2
-            _shouldShowAddRouteButton.value = onLastRoute && positionOffset > 0.99
+            onLastRoute && positionOffset > 0.99f
         } else {
-            _shouldShowAddRouteButton.value = routeCount == position + 1
+            // In a settled state
+            routeCount == position + 1
         }
     }
 
