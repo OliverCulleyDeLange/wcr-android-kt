@@ -16,6 +16,7 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.PREF_BOTTOM_SHEET_OPENED
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
+import uk.co.oliverdelange.wcr_android_kt.auth.AuthService
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
 import uk.co.oliverdelange.wcr_android_kt.map.CragClusterItem
@@ -27,56 +28,62 @@ import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
 import uk.co.oliverdelange.wcr_android_kt.view.map.DEV_MENU_CLICKS_REQUIRED
 import javax.inject.Inject
 import javax.inject.Singleton
-//TODO Test me
 
 @Singleton
 class MapViewModel @Inject constructor(application: Application,
                                        private val locationRepository: LocationRepository,
                                        private val topoRepository: TopoRepository,
                                        private val routeRepository: RouteRepository,
+                                       private val authService: AuthService,
                                        private val db: WcrDb) : AndroidViewModel(application) {
 
-    /*
-        Observable Live Data
-     */
+    /* State, exposed via LiveData. All MutableLiveData should be _private and exposed via a LiveData field*/
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
-    val viewEvents = SingleLiveEvent<Event>()
+    private val _viewEvents = SingleLiveEvent<Event>()
+    val viewEvents: LiveData<Event> get() = _viewEvents
 
-    // TODO Only expose LiveData not Mutable version!!
-    val userSignedIn = MutableLiveData<Boolean>().also {
-        val signedIn = FirebaseAuth.getInstance().currentUser != null
+    private val _userSignedIn = MutableLiveData<Boolean>().also {
+        val signedIn = authService.currentUser() != null
         Timber.d("Initialising userSignedIn: $signedIn")
         it.value = signedIn
     }
+    val userSignedIn: LiveData<Boolean> get() = _userSignedIn
 
-    val mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
+    private val _mapType: MutableLiveData<Int> = MutableLiveData<Int>().also {
         it.value = GoogleMap.MAP_TYPE_NORMAL
     }
-    val mapLabel: LiveData<String> = Transformations.map(mapType) {
+    val mapType: LiveData<Int> get() = _mapType
+
+    private val _mapLabel: LiveData<String> = Transformations.map(_mapType) {
         if (it == 1) "SAT" else "MAP"
     }
-    val mapMode: MutableLiveData<MapMode> = MutableLiveData<MapMode>().also {
+    val mapLabel: LiveData<String> get() = _mapLabel
+
+    private val _mapMode: MutableLiveData<MapMode> = MutableLiveData<MapMode>().also {
         it.value = MapMode.DEFAULT_MODE
     }
+    val mapMode: LiveData<MapMode> get() = _mapMode
+
 
     private val mapModesThatDisplayFab = listOf(MapMode.DEFAULT_MODE, MapMode.CRAG_MODE, MapMode.TOPO_MODE, MapMode.SECTOR_MODE)
-    val showFab = MediatorLiveData<Boolean>().also {
+    private val _showFab = MediatorLiveData<Boolean>().also {
         it.value = false
         fun getShowFab(): Boolean {
-            val show = userSignedIn.value == true && mapModesThatDisplayFab.contains(mapMode.value)
+            val show = _userSignedIn.value == true && mapModesThatDisplayFab.contains(_mapMode.value)
             Timber.d("'showFab': $show")
             return show
         }
-        it.addSource(userSignedIn) { _ -> it.value = getShowFab() }
-        it.addSource(mapMode) { _ -> it.value = getShowFab() }
+        it.addSource(_userSignedIn) { _ -> it.value = getShowFab() }
+        it.addSource(_mapMode) { _ -> it.value = getShowFab() }
     }
+    val showFab: LiveData<Boolean> get() = _showFab
 
-    val selectedLocationId: MutableLiveData<String?> = MutableLiveData<String?>().also {
+    private val _selectedLocationId: MutableLiveData<String?> = MutableLiveData<String?>().also {
         it.value = null
     }
-    val selectedLocationRouteInfo: LiveData<LocationRouteInfo?> = Transformations.switchMap(selectedLocationId) {
+     val selectedLocationRouteInfo: LiveData<LocationRouteInfo?> = Transformations.switchMap(_selectedLocationId) {
         if (it != null) {
             Timber.d("SelectedLocationId changed to $it: Updating 'selectedLocationRouteInfo'")
             locationRepository.loadRouteInfoFor(it)
@@ -89,8 +96,8 @@ class MapViewModel @Inject constructor(application: Application,
     // Distinct until changed stop the data reloading when the underlying Location object has not changed
     // For example, when its uploaded to firestore and the DB record gets its 'uploaded at' field updated
     // However the Location domain object doesn't have this field, so the compared Location objects are equal
-    val selectedLocation: LiveData<Location?> = Transformations.distinctUntilChanged(
-            Transformations.switchMap(selectedLocationId) {
+     val selectedLocation: LiveData<Location?> = Transformations.distinctUntilChanged(
+            Transformations.switchMap(_selectedLocationId) {
                 if (it != null) {
                     Timber.d("SelectedLocationId changed to $it: Updating 'selectedLocation'")
                     locationRepository.load(it)
@@ -101,17 +108,17 @@ class MapViewModel @Inject constructor(application: Application,
             }
     )
 
-    val submitButtonLabel = Transformations.map(selectedLocation) {
+     val submitButtonLabel = Transformations.map(selectedLocation) {
         if (it?.type == LocationType.CRAG) "Submit sector" else "Submit topo"
     }
 
-    val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
+     val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
 
-    val cragClusterItems = Transformations.map(crags) {
+     val cragClusterItems = Transformations.map(crags) {
         it.map { location -> CragClusterItem(location) }
     }
 
-    val sectors: LiveData<List<Location>> = Transformations.distinctUntilChanged(
+     val sectors: LiveData<List<Location>> = Transformations.distinctUntilChanged(
             Transformations.switchMap(selectedLocation) { selectedLocation ->
                 if (selectedLocation?.id != null) {
                     Timber.d("SelectedLocation changed to ${selectedLocation.id}: Updating 'sectors'")
@@ -128,15 +135,15 @@ class MapViewModel @Inject constructor(application: Application,
             }
     )
 
-    val selectedTopoId = MutableLiveData<String>()
-    val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
+    private val _selectedTopoId = MutableLiveData<String>()
+     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
         selectedLocation?.id?.let {
             Timber.d("SelectedLocation changed to $it: Updating 'topos'")
             topoRepository.loadToposForLocation(selectedLocation.id)
         }
     }
 
-    val mapLatLngBounds = MediatorLiveData<List<LatLng>>().also {
+    private val _mapLatLngBounds = MediatorLiveData<List<LatLng>>().also {
         it.value = emptyList()
         it.addSource(selectedLocation) { location ->
             if (location?.type == LocationType.SECTOR) {
@@ -158,7 +165,7 @@ class MapViewModel @Inject constructor(application: Application,
                 it.value = sectors?.plus(selectedLocation.value!!)?.map { l -> l.latlng }
             }
         }
-        it.addSource(mapMode) { mapMode ->
+        it.addSource(_mapMode) { mapMode ->
             val numberOfCrags: Int = crags.value?.size ?: 0
             if (mapMode == MapMode.DEFAULT_MODE && numberOfCrags > 0) {
                 Timber.d("mapMode changed to DEFAULT_MODE, and there are crags, setting mapLatLngBounds")
@@ -166,16 +173,19 @@ class MapViewModel @Inject constructor(application: Application,
             }
         }
     }
+    val mapLatLngBounds: LiveData<List<LatLng>> get() = _mapLatLngBounds
 
-    val bottomSheetState: MutableLiveData<Int> = MutableLiveData()
-    val bottomSheetRequestedState: MutableLiveData<Int> = MutableLiveData()
-    val bottomSheetTitle: LiveData<String> = Transformations.map(selectedLocation) {
+    private val _bottomSheetState: MutableLiveData<Int> = MutableLiveData()
+    val bottomSheetState: MutableLiveData<Int> get() = _bottomSheetState
+    private val _bottomSheetRequestedState: MutableLiveData<Int> = MutableLiveData()
+    val bottomSheetRequestedState: MutableLiveData<Int> get() = _bottomSheetRequestedState
+     val bottomSheetTitle: LiveData<String> = Transformations.map(selectedLocation) {
         it?.name
     }
 
-
-    val searchQuery = MutableLiveData<String>()
-    val searchResults: LiveData<List<SearchSuggestionItem>> = Transformations.switchMap(searchQuery) { query ->
+    private val _searchQuery = MutableLiveData<String>()
+    val searchQuery: MutableLiveData<String> get() = _searchQuery
+     val searchResults: LiveData<List<SearchSuggestionItem>> = Transformations.switchMap(_searchQuery) { query ->
         Timber.i("Search query changed to: $query")
         val trimmedQuery = query.trim()
         if (trimmedQuery.isNotEmpty()) {
@@ -206,9 +216,8 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
-    /*
-        User Actions
-     */
+
+    /*  User Actions  */
 
     fun onTutorialStart() {
         collapseBottomSheet()
@@ -221,8 +230,8 @@ class MapViewModel @Inject constructor(application: Application,
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { id ->
                     Timber.d("Random location id = $id")
-                    selectedLocationId.value = id
-                    mapMode.value = MapMode.CRAG_MODE
+                    _selectedLocationId.value = id
+                    _mapMode.value = MapMode.CRAG_MODE
                 }
     }
 
@@ -234,20 +243,25 @@ class MapViewModel @Inject constructor(application: Application,
         collapseBottomSheet()
     }
 
-    fun onClickSignInButton(){
-        viewEvents.postValue(NavigateToSignIn)
+    fun onClickSignInButton() {
+        _viewEvents.value = NavigateToSignIn
     }
 
     fun onUserSignInSuccess() {
-        userSignedIn.value = true
+        _userSignedIn.value = true
         val user = FirebaseAuth.getInstance().currentUser
         Timber.d("User successfully signed in: ${user?.email}")
     }
 
     fun onUserSignInFail() {
         val user = FirebaseAuth.getInstance().currentUser
-        userSignedIn.value = user != null
+        _userSignedIn.value = user != null
         Timber.d("User sign in failed")
+    }
+
+    fun onUserSignOut() {
+        _userSignedIn.value = false
+        Timber.d("User signed out")
     }
 
     fun onToggleBottomSheetState(view: View) {
@@ -260,7 +274,7 @@ class MapViewModel @Inject constructor(application: Application,
     }
 
     fun onBottomSheetStateChanged(newState: Int) {
-        bottomSheetState.value = newState
+        _bottomSheetState.value = newState
     }
 
     private var bottomSheetExpandedPrefSet = false
@@ -276,33 +290,48 @@ class MapViewModel @Inject constructor(application: Application,
     }
 
     fun onSubmit(view: View) {
-        when (mapMode.value) {
-            MapMode.DEFAULT_MODE -> mapMode.value = MapMode.SUBMIT_CRAG_MODE
-            MapMode.CRAG_MODE -> mapMode.value = MapMode.SUBMIT_SECTOR_MODE
-            MapMode.SECTOR_MODE, MapMode.TOPO_MODE -> mapMode.value = MapMode.SUBMIT_TOPO_MODE
+        when (_mapMode.value) {
+            MapMode.DEFAULT_MODE -> _mapMode.value = MapMode.SUBMIT_CRAG_MODE
+            MapMode.CRAG_MODE -> _mapMode.value = MapMode.SUBMIT_SECTOR_MODE
+            MapMode.SECTOR_MODE, MapMode.TOPO_MODE -> _mapMode.value = MapMode.SUBMIT_TOPO_MODE
             else -> Timber.e("Submit FAB clicked when it shouldn't be visible!")
         }
     }
 
+    fun onLocationSubmitted(submittedLocationId: String, locationType: LocationType) {
+        if (locationType == LocationType.CRAG) {
+            Timber.d("Crag submitted, changing map mode")
+            _mapMode.value = MapMode.CRAG_MODE
+        } else {
+            Timber.d("Sector submitted, changing map mode")
+            _mapMode.value = MapMode.SECTOR_MODE
+        }
+        _selectedLocationId.value = submittedLocationId
+    }
+
+    fun onSubmitTopoActivityComplete() {
+        _mapMode.value = MapMode.SECTOR_MODE
+    }
+
     fun onToggleMap(view: View) {
         Timber.d("Toggling map type")
-        if (GoogleMap.MAP_TYPE_NORMAL == mapType.value) {
-            mapType.value = GoogleMap.MAP_TYPE_SATELLITE
+        if (GoogleMap.MAP_TYPE_NORMAL == _mapType.value) {
+            _mapType.value = GoogleMap.MAP_TYPE_SATELLITE
         } else {
-            mapType.value = GoogleMap.MAP_TYPE_NORMAL
+            _mapType.value = GoogleMap.MAP_TYPE_NORMAL
         }
     }
 
     fun onClusterItemClick(id: String?) {
         Timber.d("Selecting crag with id %s", id)
-        selectedLocationId.value = id
-        mapMode.value = MapMode.CRAG_MODE
+        _selectedLocationId.value = id
+        _mapMode.value = MapMode.CRAG_MODE
     }
 
     fun onMapMarkerClick(id: String?) {
         Timber.d("Selecting sector with id %s", id)
-        selectedLocationId.value = id
-        mapMode.value = MapMode.SECTOR_MODE
+        _selectedLocationId.value = id
+        _mapMode.value = MapMode.SECTOR_MODE
     }
 
     fun onSearchBarUnfocus() {
@@ -335,19 +364,19 @@ class MapViewModel @Inject constructor(application: Application,
                 bottomSheetIsHidden()) {
             collapseBottomSheet()
         } else {
-            when (mapMode.value) {
+            when (_mapMode.value) {
                 MapMode.DEFAULT_MODE -> collapseBottomSheet()
                 MapMode.CRAG_MODE -> {
-                    mapMode.value = MapMode.DEFAULT_MODE
-                    selectedLocationId.value = null
+                    _mapMode.value = MapMode.DEFAULT_MODE
+                    _selectedLocationId.value = null
                 }
-                MapMode.SUBMIT_CRAG_MODE -> mapMode.value = MapMode.DEFAULT_MODE
+                MapMode.SUBMIT_CRAG_MODE -> _mapMode.value = MapMode.DEFAULT_MODE
                 MapMode.SECTOR_MODE, MapMode.TOPO_MODE -> {
-                    mapMode.value = MapMode.CRAG_MODE
-                    selectedLocation.value?.parentLocationId?.let { selectedLocationId.value = it }
+                    _mapMode.value = MapMode.CRAG_MODE
+                    selectedLocation.value?.parentLocationId?.let { _selectedLocationId.value = it }
                 }
-                MapMode.SUBMIT_SECTOR_MODE -> mapMode.value = MapMode.CRAG_MODE
-                MapMode.SUBMIT_TOPO_MODE -> mapMode.value = MapMode.SECTOR_MODE
+                MapMode.SUBMIT_SECTOR_MODE -> _mapMode.value = MapMode.CRAG_MODE
+                MapMode.SUBMIT_TOPO_MODE -> _mapMode.value = MapMode.SECTOR_MODE
             }
         }
     }
@@ -355,11 +384,11 @@ class MapViewModel @Inject constructor(application: Application,
     private var devMenuClicksLeft = DEV_MENU_CLICKS_REQUIRED
     fun buildVersionClicked() {
         devMenuClicksLeft--
-        if (devMenuClicksLeft <=3) {
-            viewEvents.postValue(ShowXClicksToDevMenuToast(devMenuClicksLeft))
+        if (devMenuClicksLeft <= 3) {
+            _viewEvents.postValue(ShowXClicksToDevMenuToast(devMenuClicksLeft))
         }
         if (devMenuClicksLeft == 0) {
-            viewEvents.postValue(ShowDevMenu)
+            _viewEvents.postValue(ShowDevMenu)
         }
     }
 
@@ -382,13 +411,13 @@ class MapViewModel @Inject constructor(application: Application,
         Timber.d("Selecting topo with id %s", id)
         id?.let {
             expandBottomSheet()
-            mapMode.value = MapMode.TOPO_MODE
+            _mapMode.value = MapMode.TOPO_MODE
             Observable.fromCallable { topoRepository.topoDao.get(it) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { topo ->
-                        selectedLocationId.value = topo.locationId
-                        selectedTopoId.value = topo.id
+                        _selectedLocationId.value = topo.locationId
+                        _selectedTopoId.value = topo.id
                     }
         }
     }
@@ -407,21 +436,21 @@ class MapViewModel @Inject constructor(application: Application,
     }
 
     private fun expandBottomSheet() {
-        bottomSheetRequestedState.value = BottomSheetBehavior.STATE_EXPANDED
+        _bottomSheetRequestedState.value = BottomSheetBehavior.STATE_EXPANDED
     }
 
     private fun collapseBottomSheet() {
-        bottomSheetRequestedState.value = BottomSheetBehavior.STATE_COLLAPSED
+        _bottomSheetRequestedState.value = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     private fun hideBottomSheet() {
-        bottomSheetRequestedState.value = BottomSheetBehavior.STATE_HIDDEN
+        _bottomSheetRequestedState.value = BottomSheetBehavior.STATE_HIDDEN
     }
 
-    private fun bottomSheetIsHidden() = bottomSheetState.value == BottomSheetBehavior.STATE_HIDDEN
+    private fun bottomSheetIsHidden() = _bottomSheetState.value == BottomSheetBehavior.STATE_HIDDEN
 
-    private fun bottomSheetIsExpanded() = bottomSheetState.value == BottomSheetBehavior.STATE_EXPANDED
-    private fun bottomSheetIsCollapsed() = bottomSheetState.value == BottomSheetBehavior.STATE_COLLAPSED
+    private fun bottomSheetIsExpanded() = _bottomSheetState.value == BottomSheetBehavior.STATE_EXPANDED
+    private fun bottomSheetIsCollapsed() = _bottomSheetState.value == BottomSheetBehavior.STATE_COLLAPSED
 
     private fun addToSearchItems(mediator: MediatorLiveData<List<SearchSuggestionItem>>, new: List<SearchSuggestionItem>?) {
         val existing = mediator.value

@@ -1,40 +1,19 @@
 package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
-import android.app.Application
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.ExifInterface
-import android.media.ExifInterface.ORIENTATION_UNDEFINED
-import android.media.ExifInterface.TAG_ORIENTATION
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
-import android.view.View
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableInt
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import com.google.android.gms.tasks.Tasks
+import androidx.lifecycle.*
 import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.PREF_USE_V_GRADE_FOR_BOULDERING
-import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.factory.from
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
-import uk.co.oliverdelange.wcr_android_kt.util.PathCapture
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.IOException
 import javax.inject.Inject
 
 
@@ -42,92 +21,68 @@ const val MAX_TOPO_SIZE_PX = 1020
 //TODO Test me
 
 //@Singleton Not a singleton so a new one gets created so half finished submissions don't retain
-class SubmitTopoViewModel @Inject constructor(application: Application,
-                                              private val topoRepository: TopoRepository,
-                                              private val routeRepository: RouteRepository) : AndroidViewModel(application) {
+class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRepository,
+                                              private val routeRepository: RouteRepository) : ViewModel() {
+    private val _viewEvents = SingleLiveEvent<Event>()
+    val viewEvents: LiveData<Event> get() = _viewEvents
 
-    val hasCamera: Boolean = application.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
+    private val _isDrawing = MutableLiveData(true)
+    val isDrawing: LiveData<Boolean> get() = _isDrawing
 
-    val isDrawing = ObservableBoolean(true)
+    private val _hasCamera = MutableLiveData(false)
 
-    val doUndoDrawing = MutableLiveData<Void>()
-
-    val photoUri = MutableLiveData<Uri>()
-
-    val localTopoImage = MutableLiveData<Uri?>()
-    private val localTopoImageBytes = Transformations.map(localTopoImage) {
-        it?.let { imageUri ->
-            MediaStore.Images.Media.getBitmap(getApplication<WcrApp>().contentResolver, imageUri)?.let { bitmap ->
-                Timber.d("Image WAS ${bitmap.width}x${bitmap.height} kb:${bitmap.byteCount / 1000}")
-                //Get orientation https://stackoverflow.com/questions/14066038/why-does-an-image-captured-using-camera-intent-gets-rotated-on-some-devices-on-a
-                val imageInputStream = application.contentResolver.openInputStream(imageUri)
-                // TODO Test on various OS versions
-                val exif = if (Build.VERSION.SDK_INT > 23) ExifInterface(imageInputStream) else ExifInterface(imageUri.path)
-                val orientation = exif.getAttributeInt(TAG_ORIENTATION, ORIENTATION_UNDEFINED)
-
-                val out = ByteArrayOutputStream()
-                val matrix = Matrix()
-                // Scale
-                val widthScale = MAX_TOPO_SIZE_PX.toFloat() / bitmap.width
-                matrix.setScale(widthScale, widthScale)
-                // Rotate
-                matrix.postRotate(when (orientation) {
-                    ExifInterface.ORIENTATION_ROTATE_90 -> 90f
-                    ExifInterface.ORIENTATION_ROTATE_180 -> 180f
-                    ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-                    else -> 0f
-                })
-                val scaledAndRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
-                // TODO CHeck memory usage
-                bitmap.recycle()
-                // Compress
-                scaledAndRotated.compress(Bitmap.CompressFormat.WEBP, 75, out)
-                scaledAndRotated.recycle()
-                out.toByteArray()
-            }
+    private val _showTakePhotoIcon = MediatorLiveData<Boolean>().also {
+        it.value = false
+        fun shouldShow(): Boolean {
+            val show = _hasCamera.value == true &&
+                    _localTopoImage.value == null
+            Timber.d("'showTakePhotoIcon': $show")
+            return show
         }
+        it.addSource(_hasCamera) { _ -> it.value = shouldShow() }
+        it.addSource(_localTopoImage) { _ -> it.value = shouldShow() }
     }
+    val showTakePhotoIcon: LiveData<Boolean> get() = _showTakePhotoIcon
 
-    val localTopoImageBitmap = Transformations.map(localTopoImageBytes) {
-        it?.let {
-            val scaledAndCompressed = BitmapFactory.decodeStream(ByteArrayInputStream(it))
-            Timber.d("Image IS ${scaledAndCompressed.width}x${scaledAndCompressed.height} kb:${scaledAndCompressed.byteCount / 1000}, filesize: ${it.size / 1000}kb")
-            scaledAndCompressed
-        }
-    }
+    private val _photoUri = MutableLiveData<Uri>()
 
+    private val _shouldShowAddRouteButton = MutableLiveData<Boolean>().also { it.value = true }
+    val shouldShowAddRouteButton: LiveData<Boolean> get() = _shouldShowAddRouteButton
+
+    private val _localTopoImage = MutableLiveData<Uri?>()
+    val localTopoImage: LiveData<Uri?> get() = _localTopoImage
+
+    // Expose MutableLiveData so databinding can change the value
     val topoName = MutableLiveData<String?>()
     val topoNameError = Transformations.map(topoName) {
         if (it?.isEmpty() == true) "Can not be empty"
         else null
     }
 
-    val shouldShowAddRouteButton = MutableLiveData<Boolean>().also { it.value = true }
+    private val _activeRoute = MutableLiveData<Int>()
+    val activeRoute: LiveData<Int>
+        get() = _activeRoute
 
-    val activeRoute = MutableLiveData<Int>()
-
+    //FIXME Shouldn't this be MLD?
     val routes = HashMap<Int, Route>()
 
-    val routeTypeUpdate = MutableLiveData<RouteType>()
+//    val useVGradeForBouldering = getApplication<WcrApp>()
+//            .prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)
 
-    val halfFinishedTradGrades = mutableMapOf<Long, Pair<TradAdjectivalGrade?, TradTechnicalGrade?>>()
+//    val routeColourUpdate = MutableLiveData<Int>()
 
-    val useVGradeForBouldering = getApplication<WcrApp>().prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)
-
-    val routeColourUpdate = MutableLiveData<Int>()
-
-    val visibilityTracker = mutableMapOf<Pair<Int, GradeType>, ObservableInt>()
 
     var sectorId: String = ""
-    val submissionResult = MutableLiveData<SubmissionResult>()
+
     // We display a loader and disable the submit button when a submission is in progress
     val submitting = MutableLiveData<Boolean>().also {
         it.value = false
     }
 
-    fun shouldShowGradePicker(fragmentId: Int, gradeType: GradeType): ObservableInt {
+    private val visibilityTracker = mutableMapOf<Pair<Int, GradeType>, ObservableBoolean>()
+    fun shouldShowGradePicker(fragmentId: Int, gradeType: GradeType): ObservableBoolean {
         return visibilityTracker[Pair(fragmentId, gradeType)]
-                ?: ObservableInt(View.GONE).apply {
+                ?: ObservableBoolean(false).apply {
                     visibilityTracker[Pair(fragmentId, gradeType)] = this
                 }
     }
@@ -136,31 +91,58 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         User actions
      */
 
-    fun onUndoDrawing(view: View) {
-        doUndoDrawing.value = null
+    fun setHasCamera(has: Boolean) {
+        _hasCamera.value = has
     }
 
-    fun onToggleDrawing(view: View) {
+    // Is this needed just to avoid android..view classes in view model?
+    enum class TouchEvent {
+        TOUCH_DOWN, TOUCH_MOVE, TOUCH_UP, IGNORE
+    }
+
+    fun onDraw(x: Float, y: Float, event: TouchEvent): Boolean {
+
+        return true //Event consumed
+    }
+
+    fun onUndoDrawing() {
+//        doUndoDrawing.value = null
+        //FIXME remove last action and redraw
+    }
+
+    fun onToggleDrawing() {
         Timber.d("Toggling drawing mode")
-        if (isDrawing.get()) {
-            isDrawing.set(false)
-        } else {
-            isDrawing.set(true)
-        }
+        _isDrawing.value = _isDrawing.value != true
     }
 
+    // Taking a photo is a two step process.
+    // 1. Create the file, and save the URI
+    fun onSelectTakePhoto(uri: Uri) {
+        _photoUri.value = uri
+    }
+
+    // 2. Take the photo
     fun onPhotoTaken() {
-        localTopoImage.value = photoUri.value
+        _localTopoImage.value = _photoUri.value
     }
 
-    fun onAddRoute(activeRouteFragId: Int, path: PathCapture?) {
+    fun onSelectExistingPhoto(uri: Uri) {
+        _localTopoImage.value = uri
+    }
+
+
+    fun onRouteSelected(routeId: Int) {
+        _activeRoute.value = routeId
+    }
+
+    fun onAddRoute(activeRouteFragId: Int) {
         if (!routes.containsKey(activeRouteFragId)) {
             routes[activeRouteFragId] = Route(name = "")
             Timber.d("Added empty route to view model with fragment id $activeRouteFragId")
         }
-        activeRoute.value = activeRouteFragId
-        // Link the route path capture to the Route in the view model
-        routes[activeRouteFragId]?.path = path?.actionStack
+        _activeRoute.value = activeRouteFragId
+        //FIXME don't link, just update on change
+//        routes[activeRouteFragId]?.path = path?.actionStack
         Timber.d("Set route $activeRouteFragId path")
     }
 
@@ -173,25 +155,25 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
             if (routes.size > 1) {
                 val firstRouteToRight = routes.keys.firstOrNull { it > activeRouteFragmentId }
                 val firstRouteToLeft = routes.keys.firstOrNull { it < activeRouteFragmentId }
-                if (firstRouteToRight != null) activeRoute.value = firstRouteToRight
-                else activeRoute.value = firstRouteToLeft
+                if (firstRouteToRight != null) _activeRoute.value = firstRouteToRight
+                else _activeRoute.value = firstRouteToLeft
             } else if (routes.size == 1) {
-                activeRoute.value = routes.keys.first()
+                _activeRoute.value = routes.keys.first()
             }
         }
     }
 
     fun onRouteRemoved(routeCount: Int?) {
-        if (routeCount == 0) shouldShowAddRouteButton.value = true
+        if (routeCount == 0) _shouldShowAddRouteButton.value = true
     }
 
     fun onRoutePagerScroll(routeCount: Int?, position: Int, positionOffset: Float) {
         onRouteRemoved(routeCount)
         if (positionOffset > 0) {
             val onLastRoute = routeCount == position + 2
-            shouldShowAddRouteButton.value = onLastRoute && positionOffset > 0.99
+            _shouldShowAddRouteButton.value = onLastRoute && positionOffset > 0.99
         } else {
-            shouldShowAddRouteButton.value = routeCount == position + 1
+            _shouldShowAddRouteButton.value = routeCount == position + 1
         }
     }
 
@@ -216,12 +198,13 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
             it.type = routeType
             Timber.d("Route fragment $fragmentId (${it.name}) type changed to ${it.type}")
             setGradeVisibility(fragmentId, routeType)
-            routeTypeUpdate.value = routeType
+//            routeTypeUpdate.value = routeType
         }
     }
 
+    private val halfFinishedTradGrades = mutableMapOf<Long, Pair<TradAdjectivalGrade?, TradTechnicalGrade?>>()
     fun onGradeChanged(fragmentId: Int, position: Int, gradeDropDown: GradeDropDown) {
-        routeColourUpdate.value = fragmentId
+//        routeColourUpdate.value = fragmentId
         routes[fragmentId]?.let { route ->
             when (gradeDropDown) {
                 GradeDropDown.V -> {
@@ -260,16 +243,16 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         }
     }
 
-    fun onClickSubmit(view: View) {
+    fun onClickSubmit() {
         Timber.d("Submit clicked for $sectorId")
 
         val hasName = !topoName.value.isNullOrEmpty()
-        val hasImage = localTopoImage.value != null
+        val hasImage = _localTopoImage.value != null
         val hasAtLeast1Route = routes.size > 0
         val routesHaveNameDescriptionAndPath = routes.none { route ->
             val emptyName = route.value.name?.isEmpty() ?: true
             val emptyDescription = route.value.description.isNullOrEmpty()
-            val noRoutePath = (route.value.path?.flatten()?.size ?: 0) < 2
+            val noRoutePath = (route.value.path?.size ?: 0) < 2 //TODO test me
             emptyName || emptyDescription || noRoutePath
         }
         val allowSubmit = hasName && hasImage && hasAtLeast1Route && routesHaveNameDescriptionAndPath
@@ -281,10 +264,10 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
                     ?.observeOn(AndroidSchedulers.mainThread())
                     ?.subscribe({ submittedTopoId ->
                         Timber.i("Submission Succeeded")
-                        submissionResult.postValue(SubmissionResult.success(submittedTopoId))
+                        _viewEvents.postValue(SubmissionSucceeded(submittedTopoId))
                     }, { e ->
                         Timber.e(e, "Submission Failed")
-                        submissionResult.postValue(SubmissionResult.failure("Failed to onSubmit topo!"))
+                        _viewEvents.postValue(SubmissionFailed("Failed to submit topo!"))
                     })
         } else {
             val error = if (!hasName) {
@@ -298,7 +281,7 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
             } else {
                 "Unknown error, please contact us for details"
             }
-            submissionResult.postValue(SubmissionResult.failure(error))
+            _viewEvents.postValue(SubmissionFailed(error))
         }
     }
 
@@ -315,29 +298,29 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
         return Single.create { emitter ->
             val rootRef = FirebaseStorage.getInstance().reference
             val imageRef = rootRef.child("topos/$sectorId/$topoName")
-            localTopoImageBytes.value?.let {
-                val uploadTask = imageRef.putBytes(it)
-                        .addOnProgressListener { snapshot ->
-                            val percent = snapshot.bytesTransferred / snapshot.totalByteCount
-                            Timber.d("Image uploading... ${percent * 100}%")
-                        }
 
-                try {
-                    Tasks.await(uploadTask)
-                    val url = Tasks.await(imageRef.downloadUrl)
-                    emitter.onSuccess(url)
-                } catch (e: IOException) {
-                    Timber.e(e, "Error uploading topo image to cloud")
-                    submitting.value = false
-                    emitter.onError(e)
-                }
-            }
+            //FIXME use file instead
+//            val uploadTask = imageRef.putBytes(it)
+//                    .addOnProgressListener { snapshot ->
+//                        val percent = snapshot.bytesTransferred / snapshot.totalByteCount
+//                        Timber.d("Image uploading... ${percent * 100}%")
+//                    }
+//
+//            try {
+//                Tasks.await(uploadTask)
+//                val url = Tasks.await(imageRef.downloadUrl)
+//                emitter.onSuccess(url)
+//            } catch (e: IOException) {
+//                Timber.e(e, "Error uploading topo image to cloud")
+//                submitting.value = false
+//                emitter.onError(e)
+//            }
         }
     }
 
     private fun submit(sectorId: String): Single<String> {
         val topoName = topoName.value
-        val topoImage = localTopoImage.value
+        val topoImage = _localTopoImage.value
         return if (topoName != null && topoImage != null) {
             Timber.i("Submission started")
             submitting.value = true
@@ -366,45 +349,21 @@ class SubmitTopoViewModel @Inject constructor(application: Application,
 
     private fun setGradeVisibility(fragmentId: Int, routeType: RouteType) {
         for (gradeType in GradeType.values()) {
-            visibilityTracker[Pair(fragmentId, gradeType)]?.set(View.GONE)
+            visibilityTracker[Pair(fragmentId, gradeType)]?.set(false)
         }
         when (routeType) {
-            RouteType.TRAD -> visibilityTracker[Pair(fragmentId, GradeType.TRAD)]?.set(View.VISIBLE)
-            RouteType.SPORT -> visibilityTracker[Pair(fragmentId, GradeType.SPORT)]?.set(View.VISIBLE)
+            RouteType.TRAD -> visibilityTracker[Pair(fragmentId, GradeType.TRAD)]?.set(true)
+            RouteType.SPORT -> visibilityTracker[Pair(fragmentId, GradeType.SPORT)]?.set(true)
             RouteType.BOULDERING -> {
-                val prefs = getApplication<WcrApp>().prefs
+                // FIXME
+//                val prefs = getApplication<WcrApp>().prefs
                 //TODO Settings toggle for PREF_USE_V_GRADE_FOR_BOULDERING
-                if (prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)) {
-                    visibilityTracker[Pair(fragmentId, GradeType.V)]?.set(View.VISIBLE)
-                } else {
-                    visibilityTracker[Pair(fragmentId, GradeType.FONT)]?.set(View.VISIBLE)
-                }
+//                if (prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)) {
+//                    visibilityTracker[Pair(fragmentId, GradeType.V)]?.set(true)
+//                } else {
+//                    visibilityTracker[Pair(fragmentId, GradeType.FONT)]?.set(true)
+//                }
             }
         }
-    }
-}
-
-class SubmissionResult private constructor(val success: Boolean) {
-    companion object {
-        fun success(submittedTopoId: String): SubmissionResult {
-            return SubmissionResult(true).withTopoId(submittedTopoId)
-        }
-
-        fun failure(errorMessage: String): SubmissionResult {
-            return SubmissionResult(false).withErrorMessage(errorMessage)
-        }
-    }
-
-    var submittedTopoId: String? = null
-    var errorMessage: String? = null
-
-    private fun withErrorMessage(errorMessage: String): SubmissionResult {
-        this.errorMessage = errorMessage
-        return this
-    }
-
-    private fun withTopoId(topoId: String): SubmissionResult {
-        this.submittedTopoId = topoId
-        return this
     }
 }

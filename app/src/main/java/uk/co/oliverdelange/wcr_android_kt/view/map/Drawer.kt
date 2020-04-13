@@ -61,7 +61,7 @@ class DrawerWrapper(private val mapsActivity: MapsActivity, private val viewMode
                                 AuthUI.getInstance()
                                         .signOut(mapsActivity)
                                         .addOnCompleteListener {
-                                            viewModel.userSignedIn.value = false
+                                            viewModel.onUserSignOut()
                                         }
                             }
                             .show()

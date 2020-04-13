@@ -39,3 +39,5 @@ interface Event
 object ShowDevMenu : Event
 object NavigateToSignIn : Event
 class ShowXClicksToDevMenuToast(val clicks: Int): Event
+class SubmissionFailed(val error: String) : Event
+class SubmissionSucceeded(val topoId: String): Event

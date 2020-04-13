@@ -11,7 +11,10 @@ class TopoAndRoutes {
     @Relation(parentColumn = "id", entityColumn = "topoId")
     var routes: MutableList<RouteEntity> = mutableListOf()
         set(v) {
-            v.sort()
+            // FIXME WTF
+            // Don't do this here wtf. This is just a DTO. Sort in the view model as thats handles
+            // logic for how things look on screen. Commenting out and will re-implement
+//            v.sort()
             field = v
         }
 }

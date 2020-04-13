@@ -28,8 +28,15 @@ data class Route(val id: String? = null,
                  var grade: Grade? = null,
                  var type: RouteType? = null,
                  var description: String? = null,
-                 var path: List<List<Pair<Float, Float>>>? = null)
+                 var path: List<PathSegment>? = null)
 
+class PathSegment(points: Collection<Pair<Float, Float>> = listOf()) {
+    private val _points: MutableList<Pair<Float, Float>> = points.toMutableList()
+    val points: List<Pair<Float, Float>>
+        get() = _points.toList()
+
+    fun addPoint(pair: Pair<Float, Float>) = _points.add(pair)
+}
 
 data class Grade(var string: String, var type: GradeType, var colour: GradeColour)
 

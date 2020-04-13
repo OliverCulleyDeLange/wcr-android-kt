@@ -11,6 +11,7 @@ import uk.co.oliverdelange.wcr_android_kt.mapper.toRouteDto
 import uk.co.oliverdelange.wcr_android_kt.model.Route
 import javax.inject.Inject
 
+// TODO Merge Topo and Route Repos, as the domain aggregate is a Topo, which has routes.
 class RouteRepository @Inject constructor(private val routeDao: RouteDao) {
 
     fun get(routeId: String): RouteEntity? {

@@ -7,6 +7,8 @@ import uk.co.oliverdelange.wcr_android_kt.util.randomAlphaNumeric
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.RouteEntity as RouteDTO
 
 fun toRouteDto(route: Route): RouteDTO {
+    val coords = route.path
+    val routePath = if (coords == null) "" else coordsSetToString(coords)
     return RouteDTO(route.id ?: "${route.name}_${randomAlphaNumeric(8)}",
             route.topoId ?: "UNKNOWN (Bug)",
 
@@ -15,7 +17,7 @@ fun toRouteDto(route: Route): RouteDTO {
             route.grade?.colour?.name ?: "",
             route.type?.name ?: "",
             route.description ?: "",
-            coordsSetToString(route.path) ?: ""
+            routePath
     )
 }
 

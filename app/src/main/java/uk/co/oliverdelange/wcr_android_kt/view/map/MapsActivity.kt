@@ -137,7 +137,7 @@ class MapsActivity : AppCompatActivity(),
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             ACTIVITY_RESULT_SUBMIT -> {
-                binding.vm?.mapMode?.value = SECTOR_MODE
+                binding.vm?.onSubmitTopoActivityComplete()
                 if (resultCode == Activity.RESULT_OK) {
                     Timber.d("User submitted topo")
                 }
@@ -186,14 +186,7 @@ class MapsActivity : AppCompatActivity(),
     }
 
     override fun onLocationSubmitted(locationType: LocationType, submittedLocationId: String) {
-        if (locationType == LocationType.CRAG) {
-            Timber.d("Crag submitted, changing map mode")
-            binding.vm?.mapMode?.value = CRAG_MODE
-        } else {
-            Timber.d("Sector submitted, changing map mode")
-            binding.vm?.mapMode?.value = SECTOR_MODE
-        }
-        binding.vm?.selectedLocationId?.value = submittedLocationId
+        binding.vm?.onLocationSubmitted(submittedLocationId, locationType)
         hideKeyboard(this)
     }
 
@@ -293,7 +286,7 @@ class MapsActivity : AppCompatActivity(),
                 }
                 SUBMIT_SECTOR_MODE -> {
                     Timber.d("MapMode changed to SUBMIT_SECTOR_MODE")
-                    submitSectorFragment.parentId = binding.vm?.selectedLocationId?.value
+                    submitSectorFragment.parentId = binding.vm?.selectedLocation?.value?.id
                     replaceFragment(submitSectorFragment, R.id.bottom_sheet)
                     refreshSectorsForCrag(binding.vm?.sectors?.value)
                 }

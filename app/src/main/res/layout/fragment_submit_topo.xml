@@ -23,7 +23,6 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:drawMode="@{vm.isDrawing}"
-            app:imageBitmap="@{vm.localTopoImageBitmap}"
             app:layout_constraintBottom_toTopOf="@+id/topo_name_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,7 +81,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/select_topo_image"
             app:layout_constraintTop_toTopOf="parent"
-            app:show="@{vm.hasCamera &amp;&amp; vm.localTopoImage == null}" />
+            app:show="@{vm.showTakePhotoIcon}" />
 
         <TextView
             android:id="@+id/select_photo_label"
@@ -105,7 +104,7 @@
             android:id="@+id/undo_tool"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{vm::onUndoDrawing}"
+            android:onClick="@{(view) -> vm.onUndoDrawing()}"
             android:src="@drawable/ic_undo_black_24dp"
             app:layout_constraintEnd_toStartOf="@id/edit_tool"
             app:layout_constraintTop_toTopOf="@id/topo_image" />
@@ -114,7 +113,7 @@
             android:id="@+id/edit_tool"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{vm::onToggleDrawing}"
+            android:onClick="@{(view) -> vm.onToggleDrawing()}"
             android:src="@{vm.isDrawing ? @drawable/ic_move_black_24dp : @drawable/ic_edit_black_24dp}"
             app:layout_constraintEnd_toEndOf="@+id/topo_image"
             app:layout_constraintTop_toTopOf="@+id/topo_image"
@@ -181,7 +180,7 @@
             android:layout_marginBottom="16dp"
             android:enabled="@{safeUnbox(!vm.submitting)}"
             android:gravity="center"
-            android:onClick="@{vm::onClickSubmit}"
+            android:onClick="@{(view) -> vm.onClickSubmit()}"
             android:text="@string/button_submit"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

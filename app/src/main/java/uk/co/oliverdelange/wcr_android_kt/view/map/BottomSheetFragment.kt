@@ -2,8 +2,11 @@ package uk.co.oliverdelange.wcr_android_kt.view.map
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_MASK
+import android.view.View
+import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -52,9 +55,6 @@ class BottomSheetFragment : Fragment(), Injectable {
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(MapViewModel::class.java)
         binding?.vm = viewModel
         binding?.lifecycleOwner = this
-        sign_in_button.setOnClickListener {
-            viewModel.onClickSignInButton()
-        }
         return binding?.root
     }
 
@@ -65,29 +65,33 @@ class BottomSheetFragment : Fragment(), Injectable {
         val recyclerAdapter = TopoRecyclerAdapter(activity)
         binding?.topoRecycler?.adapter = recyclerAdapter
 
-        binding?.vm?.topos?.observe(this, Observer { topos ->
+        sign_in_button.setOnClickListener {
+            binding?.vm?.onClickSignInButton()
+        }
+
+        binding?.vm?.topos?.observe(viewLifecycleOwner, Observer { topos ->
             Timber.d("topos changed, new topos: %s", topos?.map { it.topo.name })
             recyclerAdapter.updateTopos(topos ?: emptyList())
-//            binding?.executePendingBindings()
 
-            binding?.topoRecycler?.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    Timber.v("topoRecycler : onGlobalLayout")
-                    binding?.vm?.selectedTopoId?.value?.let { selectedTopoId ->
-                        val position = recyclerAdapter.topos.indexOfFirst { it.topo.id == selectedTopoId }
-                        if (position != -1) {
-                            Timber.d("Selecting the right topo in the list: $selectedTopoId")
-                            binding?.topoRecycler?.scrollToPosition(position)
-                        } else {
-                            Timber.w("Couldn't find topo with id $selectedTopoId in topos. Selecting first")
-                            binding?.topoRecycler?.scrollToPosition(0)
-                        }
-                        //Reset after we've scrolled to it so we don't scroll again after
-                        binding?.vm?.selectedTopoId?.value = null
-                    }
-                    binding?.topoRecycler?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
-                }
-            })
+            //FIXME Find better way of scrolling to selected topo (Use the new OnetimeEvent maybe)
+//            binding?.topoRecycler?.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+//                override fun onGlobalLayout() {
+//                    Timber.v("topoRecycler : onGlobalLayout")
+//                    binding?.vm?.selectedTopoId?.value?.let { selectedTopoId ->
+//                        val position = recyclerAdapter.topos.indexOfFirst { it.topo.id == selectedTopoId }
+//                        if (position != -1) {
+//                            Timber.d("Selecting the right topo in the list: $selectedTopoId")
+//                            binding?.topoRecycler?.scrollToPosition(position)
+//                        } else {
+//                            Timber.w("Couldn't find topo with id $selectedTopoId in topos. Selecting first")
+//                            binding?.topoRecycler?.scrollToPosition(0)
+//                        }
+//                        //Reset after we've scrolled to it so we don't scroll again after
+//                        binding?.vm?.selectedTopoId?.value = null
+//                    }
+//                    binding?.topoRecycler?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
+//                }
+//            })
         })
     }
 

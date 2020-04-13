@@ -53,7 +53,7 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
     private fun refreshPaths() {
         paths.clear()
         routes.forEach {
-            val routePoints = it.path?.flatten()
+            val routePoints = it.path?.flatMap { it.points }
             val routeId = it.id
             if (routePoints != null && routePoints.size > 1 && routeId != null) {
                 paths[routeId] = scalePath(routePoints)
