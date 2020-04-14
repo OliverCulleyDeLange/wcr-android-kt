@@ -2,6 +2,7 @@
 
 buildscript {
     ext.kotlin_version = '1.3.71'
+//    https://developer.android.com/studio/releases/gradle-plugin
     ext.gradle_plugin_version = '3.6.1'
     repositories {
         google()

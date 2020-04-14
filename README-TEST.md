@@ -1,13 +1,18 @@
 # Adventures in KoTest and Mockk
 
+##### My stuff
 - Gist on testing ViewModel / LiveData with KoTest and Mockk
     - https://gist.github.com/OliverCulleyDeLange/84aa4d2b299b2dfff3746bfdf346cd3e
 - KoTest + Mockk doesn't work unless you use init{} block
     - https://github.com/kotest/kotest/issues/583
-- KoTests have a delay before starting
+- KoTests have a delay before starting (commented)
     - https://github.com/kotest/kotest/issues/1355
 - KoTest results are wrong
     - https://github.com/kotest/kotest/issues/1378
+- Kotest Exception thrown in beforeTest{} block causes tests to exit with no output
+    - https://github.com/kotest/kotest/issues/1381
+    
+##### Others stuff
 - KoTest constant now()
     - https://github.com/kotest/kotest/blob/master/doc/extensions.md#current-instant-listeners
 - Kotest isolation mode is !Important

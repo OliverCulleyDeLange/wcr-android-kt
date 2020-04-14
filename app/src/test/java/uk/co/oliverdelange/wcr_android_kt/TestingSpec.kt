@@ -25,16 +25,19 @@ class TestingSpec : StringSpec() {
             mockApp = mockk()
             mockRepo = mockk()
             vm = MyViewModel(mockApp,mockRepo)
-            throw ExceptionInInitializerError("Fail")
+            println("AARRRRGGGGGGGG")
+//            throw ExceptionInInitializerError("Fail") // This makes everying go haywire
+            throw RuntimeException("Fail") // This is fine
         }
 
-        "test live data updated when doThing()" {
+        "test live data updated when doThing" {
             vm.data.value shouldBe "Loading..."
             val expected = "Something specific"
             every { mockRepo.getStuff() } returns expected
             vm.doThing()
             vm.data.value shouldBe expected
-//            true shouldBe false
+
+            true shouldBe false
         }
     }
 }
