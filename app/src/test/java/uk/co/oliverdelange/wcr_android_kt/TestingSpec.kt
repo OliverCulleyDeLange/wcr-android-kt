@@ -26,8 +26,8 @@ class TestingSpec : StringSpec() {
             mockRepo = mockk()
             vm = MyViewModel(mockApp,mockRepo)
             println("AARRRRGGGGGGGG")
-//            throw ExceptionInInitializerError("Fail") // This makes everying go haywire
-            throw RuntimeException("Fail") // This is fine
+//            throw ExceptionInInitializerError("Fail") // This makes everything go haywire
+//            throw RuntimeException("Fail") // This is fine
         }
 
         "test live data updated when doThing" {
@@ -37,7 +37,7 @@ class TestingSpec : StringSpec() {
             vm.doThing()
             vm.data.value shouldBe expected
 
-            true shouldBe false
+//            true shouldBe false
         }
     }
 }

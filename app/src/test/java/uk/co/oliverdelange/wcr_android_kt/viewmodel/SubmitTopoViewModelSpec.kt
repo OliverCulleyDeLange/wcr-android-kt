@@ -108,10 +108,53 @@ class SubmitTopoViewModelSpec : FreeSpec() {
         }
 
         "topoNameError" {
-            vm.topoNameError.observeForever {  }
+            vm.topoNameError.observeForever { }
             vm.topoNameError.value shouldBe null
             vm.topoName.value = ""
             vm.topoNameError.value shouldBe "Can not be empty"
+        }
+
+        "activeRoute," - {
+            "when route added, is id of new route" {
+                vm.activeRoute.value shouldBe null
+                vm.onAddRoute(1)
+                vm.activeRoute.value shouldBe 1
+            }
+            "when route selected, is id of selected route" {
+                vm.activeRoute.value shouldBe null
+                vm.onRouteSelected(1)
+                vm.activeRoute.value shouldBe 1
+            }
+            "!FIXME when only route is removed, is null" {
+                vm.onAddRoute(1)
+                vm.activeRoute.value shouldBe 1
+                vm.onRemoveRoute(1)
+                vm.activeRoute.value shouldBe null
+            }
+            "when route is removed and only one route is left, is id of only route left" {
+                vm.onAddRoute(1)
+                vm.onAddRoute(2)
+                vm.activeRoute.value shouldBe 2
+                vm.onRemoveRoute(2)
+                vm.activeRoute.value shouldBe 1
+            }
+            "when route removed, is id of right sibling" {
+                vm.onAddRoute(1)
+                vm.onAddRoute(2)
+                vm.onAddRoute(3)
+                vm.onRouteSelected(1)
+                vm.activeRoute.value shouldBe 1
+                vm.onRemoveRoute(1)
+                vm.activeRoute.value shouldBe 2
+            }
+            "when route removed, is left sibling, if no right sibling exists" {
+                vm.onAddRoute(1)
+                vm.onAddRoute(2)
+                vm.onAddRoute(3)
+                vm.activeRoute.value shouldBe 3
+                vm.onRemoveRoute(3)
+                vm.activeRoute.value shouldBe 2
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     private val _viewEvents = SingleLiveEvent<Event>()
     val viewEvents: LiveData<Event> get() = _viewEvents
 
-    private val _isDrawing = MutableLiveData(true)
+    private val _isDrawing = MutableLiveData(true) //Tested
     val isDrawing: LiveData<Boolean> get() = _isDrawing
 
     private val _localTopoImage = MutableLiveData<Uri?>()
@@ -44,7 +44,7 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         }
         it.addSource(_hasCamera) { _ -> it.value = shouldShow() }
         it.addSource(_localTopoImage) { _ -> it.value = shouldShow() }
-    }
+    } //Tested
     val showTakePhotoIcon: LiveData<Boolean> get() = _showTakePhotoIcon
 
     private val _photoUri = MutableLiveData<Uri>()
@@ -52,15 +52,14 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     private val _shouldShowAddRouteButton = MutableLiveData<Boolean>().also { it.value = true }
     val shouldShowAddRouteButton: LiveData<Boolean> get() = _shouldShowAddRouteButton
 
-
     // Expose MutableLiveData so databinding can change the value
     val topoName = MutableLiveData<String?>()
     val topoNameError = Transformations.map(topoName) {
         if (it?.isEmpty() == true) "Can not be empty"
         else null
-    }
+    } //Tested
 
-    private val _activeRoute = MutableLiveData<Int>()
+    private val _activeRoute = MutableLiveData<Int>() //Tested
     val activeRoute: LiveData<Int>
         get() = _activeRoute
 
@@ -95,15 +94,15 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     fun onToggleDrawing() {
         Timber.d("Toggling drawing mode")
         _isDrawing.value = _isDrawing.value != true
-    }
+    } //Tested
 
     fun setHasCamera(has: Boolean) {
         _hasCamera.value = has
-    }
+    }//Tested
+
     // Is this needed just to avoid android..view classes in view model?
     enum class TouchEvent {
         TOUCH_DOWN, TOUCH_MOVE, TOUCH_UP, IGNORE
-
     }
 
     fun onDraw(x: Float, y: Float, event: TouchEvent): Boolean {
@@ -151,18 +150,18 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         routes.remove(fragmentId)
 
         // Now set active route to right or left sibling
-        val activeRouteVal = activeRoute.value
+        val activeRouteVal = _activeRoute.value
         activeRouteVal?.let { activeRouteFragmentId ->
             if (routes.size > 1) {
                 val firstRouteToRight = routes.keys.firstOrNull { it > activeRouteFragmentId }
-                val firstRouteToLeft = routes.keys.firstOrNull { it < activeRouteFragmentId }
+                val firstRouteToLeft = routes.keys.reversed().firstOrNull() { it < activeRouteFragmentId }
                 if (firstRouteToRight != null) _activeRoute.value = firstRouteToRight
                 else _activeRoute.value = firstRouteToLeft
             } else if (routes.size == 1) {
                 _activeRoute.value = routes.keys.first()
             }
         }
-    }
+    } // Tested
 
     fun onRouteRemoved(routeCount: Int?) {
         if (routeCount == 0) _shouldShowAddRouteButton.value = true
