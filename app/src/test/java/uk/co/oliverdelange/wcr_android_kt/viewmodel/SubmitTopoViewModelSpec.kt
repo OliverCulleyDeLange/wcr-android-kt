@@ -34,8 +34,15 @@ class SubmitTopoViewModelSpec : FreeSpec() {
             vm.topoName.value shouldBe null
             vm.topoNameError.value shouldBe null
             vm.activeRoute.value shouldBe null
-            vm.routes shouldBe emptyMap<Int, Route>()
+            vm.routes.value shouldBe listOf(Route())
             vm.submitting.value shouldBe false
+        }
+
+        "viewEvents" - {
+            "NavigateToImageSelectionGallery" {
+                vm.onSelectExistingPhoto()
+                vm.viewEvents.value is NavigateToImageSelectionGallery
+            }
         }
 
         "isDrawing can be toggled" {
@@ -68,39 +75,40 @@ class SubmitTopoViewModelSpec : FreeSpec() {
             }
             "with topo image chosen, is false" {
                 val mockUri = mockk<Uri>()
-                vm.onSelectExistingPhoto(mockUri)
+                vm.onSelectedExistingPhoto(mockUri)
                 vm.localTopoImage.value shouldNotBe null
 
                 vm.showTakePhotoIcon.value shouldBe false
             }
         }
 
-        "shouldShowAddRouteButton" - {
-            "is true if no routes" {
-                vm.onRouteRemoved(0)
+        "shouldShowAddRouteButton," - {
+            "when there are no routes, is true" {
+                vm.onRemoveRoute(0)
+                vm.routes.value shouldBe emptyList()
                 vm.shouldShowAddRouteButton.value shouldBe true
             }
             //TODO Figure out the scenarios for these tests, they're a bit confusing
             "when drag scrolling (offset > 0)" - {
-                "is true if scrolled far right" {
+                "and scrolled far right, is true" {
                     vm.onRoutePagerScroll(2, 0, 1f)
                     vm.shouldShowAddRouteButton.value shouldBe true
                 }
-                "is false if not quite scrolled all the way right"{
+                "and not quite scrolled all the way right, is false"{
                     vm.onRoutePagerScroll(2, 0, 0.99f)
                     vm.shouldShowAddRouteButton.value shouldBe false
                 }
-                "is false if not on last page"{
+                "and not on last page, is false"{
                     vm.onRoutePagerScroll(3, 0, 1f)
                     vm.shouldShowAddRouteButton.value shouldBe false
                 }
             }
             "when stationary" - {
-                "is false if not on last page"{
+                "and not on last page, is false "{
                     vm.onRoutePagerScroll(3, 0, 0f)
                     vm.shouldShowAddRouteButton.value shouldBe false
                 }
-                "is true if on last page"{
+                "and on last page, is true"{
                     vm.onRoutePagerScroll(2, 1, 0f)
                     vm.shouldShowAddRouteButton.value shouldBe true
                 }
@@ -122,10 +130,10 @@ class SubmitTopoViewModelSpec : FreeSpec() {
             }
             "when route selected, is id of selected route" {
                 vm.activeRoute.value shouldBe null
-                vm.onRouteSelected(1)
+                vm.onSelectRoute(1)
                 vm.activeRoute.value shouldBe 1
             }
-            "!FIXME when only route is removed, is null" {
+            "!FIXME? when only route is removed, is null" {
                 vm.onAddRoute(1)
                 vm.activeRoute.value shouldBe 1
                 vm.onRemoveRoute(1)
@@ -142,7 +150,7 @@ class SubmitTopoViewModelSpec : FreeSpec() {
                 vm.onAddRoute(1)
                 vm.onAddRoute(2)
                 vm.onAddRoute(3)
-                vm.onRouteSelected(1)
+                vm.onSelectRoute(1)
                 vm.activeRoute.value shouldBe 1
                 vm.onRemoveRoute(1)
                 vm.activeRoute.value shouldBe 2
@@ -155,6 +163,19 @@ class SubmitTopoViewModelSpec : FreeSpec() {
                 vm.onRemoveRoute(3)
                 vm.activeRoute.value shouldBe 2
             }
+        }
+
+        "routes," - {
+            "" {
+                vm._routes.value
+            }
+        }
+
+        "!TODO SubmissionSucceeded" {
+            vm.viewEvents.value is SubmissionSucceeded
+        }
+        "!TODO SubmissionFailed" {
+            vm.viewEvents.value is SubmissionFailed
         }
     }
 }

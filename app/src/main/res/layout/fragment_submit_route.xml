@@ -176,6 +176,7 @@
                 android:layout_gravity="end|top"
                 android:background="@color/transparent"
                 android:src="@drawable/ic_cancel"
+                android:onClick="@{(v) -> vm.onRemoveRoute(safeUnbox(fragmentId))}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

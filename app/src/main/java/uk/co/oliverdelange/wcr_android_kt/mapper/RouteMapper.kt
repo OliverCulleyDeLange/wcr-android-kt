@@ -6,17 +6,19 @@ import uk.co.oliverdelange.wcr_android_kt.model.RouteType
 import uk.co.oliverdelange.wcr_android_kt.util.randomAlphaNumeric
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.RouteEntity as RouteDTO
 
+//TODO After running tests, check no UNKNOWN data
+const val UNKNOWN_FIELD = "UNKNOWN (Bug)"
+
 fun toRouteDto(route: Route): RouteDTO {
     val coords = route.path
-    val routePath = if (coords == null) "" else coordsSetToString(coords)
+    val routePath = if (coords == null) UNKNOWN_FIELD else coordsSetToString(coords)
     return RouteDTO(route.id ?: "${route.name}_${randomAlphaNumeric(8)}",
-            route.topoId ?: "UNKNOWN (Bug)",
-
-            route.name ?: "",
-            route.grade?.string ?: "",
-            route.grade?.colour?.name ?: "",
-            route.type?.name ?: "",
-            route.description ?: "",
+            route.topoId ?: UNKNOWN_FIELD,
+            route.name ?: UNKNOWN_FIELD,
+            route.grade?.string ?: UNKNOWN_FIELD,
+            route.grade?.colour?.name ?: UNKNOWN_FIELD,
+            route.type?.name ?: UNKNOWN_FIELD,
+            route.description ?: UNKNOWN_FIELD,
             routePath
     )
 }
@@ -26,7 +28,6 @@ fun fromRouteDto(route: RouteDTO): Route {
     val routeType = RouteType.valueOf(route.type)
     return Route(route.id,
             route.topoId,
-
             route.name,
             grade,
             routeType,

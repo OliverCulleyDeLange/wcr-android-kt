@@ -15,14 +15,25 @@ import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
 import javax.inject.Inject
+import kotlin.random.Random
 
 
 const val MAX_TOPO_SIZE_PX = 1020
-//TODO Test me
+
+class RouteViewModel(val route: Route = Route(),
+                     var isActive: Boolean = true,
+                     var pagerPosition: Int = 0,
+                     var pagerId: Int = Random.nextInt(),
+        // This keeps track of any grades the user might have selected for
+        // route types that aren't currently selected
+                     val selectedGrades: MutableMap<RouteType, Grade> = mutableMapOf())
 
 //@Singleton Not a singleton so a new one gets created so half finished submissions don't retain
 class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRepository,
                                               private val routeRepository: RouteRepository) : ViewModel() {
+    /* This needs to be set by the View otherwise submission will fail*/
+    var sectorId: String? = null
+
     private val _viewEvents = SingleLiveEvent<Event>()
     val viewEvents: LiveData<Event> get() = _viewEvents
 
@@ -52,27 +63,21 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     private val _shouldShowAddRouteButton = MutableLiveData<Boolean>().also { it.value = true }
     val shouldShowAddRouteButton: LiveData<Boolean> get() = _shouldShowAddRouteButton
 
-    // Expose MutableLiveData so databinding can change the value
+    // Expose MutableLiveData so databinding can change the value (Two way data binding)
     val topoName = MutableLiveData<String?>()
-    val topoNameError = Transformations.map(topoName) {
+    val topoNameError = Transformations.distinctUntilChanged(Transformations.map(topoName) {
         if (it?.isEmpty() == true) "Can not be empty"
         else null
-    } //Tested
+    }) //Tested
 
-    private val _activeRoute = MutableLiveData<Int>() //Tested
-    val activeRoute: LiveData<Int>
-        get() = _activeRoute
-
-    //FIXME Shouldn't this be MLD?
-    val routes = HashMap<Int, Route>()
+    private val _routes = MutableLiveData<List<RouteViewModel>>().apply { value = listOf(RouteViewModel()) }
+    val routes: LiveData<List<RouteViewModel>>
+        get() = _routes
 
 //    val useVGradeForBouldering = getApplication<WcrApp>()
 //            .prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)
 
 //    val routeColourUpdate = MutableLiveData<Int>()
-
-
-    var sectorId: String = ""
 
     // We display a loader and disable the submit button when a submission is in progress
     val submitting = MutableLiveData<Boolean>().also {
@@ -92,11 +97,12 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
      */
 
     fun onToggleDrawing() {
-        Timber.d("Toggling drawing mode")
         _isDrawing.value = _isDrawing.value != true
+        Timber.d("Toggling drawing mode: Drawing = ${_isDrawing.value}")
     } //Tested
 
     fun setHasCamera(has: Boolean) {
+        Timber.d("Camera available: $has")
         _hasCamera.value = has
     }//Tested
 
@@ -105,70 +111,83 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         TOUCH_DOWN, TOUCH_MOVE, TOUCH_UP, IGNORE
     }
 
-    fun onDraw(x: Float, y: Float, event: TouchEvent): Boolean {
-
-        return true //Event consumed
+    fun onDraw(x: Float, y: Float, event: TouchEvent) {
+        val pair = Pair(x, y)
+        Timber.v("User is drawing: $event x:$x y:$y ")
+        updateActiveRoute { vm ->
+            vm.route.path = (vm.route.path?.toMutableList() ?: mutableListOf()).also { path ->
+                Timber.v("Current path: $path")
+                when (event) {
+                    TouchEvent.TOUCH_DOWN -> {
+                        path.add(PathSegment(listOf(pair)))
+                    }
+                    TouchEvent.TOUCH_MOVE -> {
+                        //TODO only add point if suitable distance away from the last one
+                        path.last().addPoint(pair)
+                    }
+                }
+            }
+        }
     }
 
+    @kotlin.ExperimentalStdlibApi
     fun onUndoDrawing() {
-//        doUndoDrawing.value = null
-        //FIXME remove last action and redraw
+        Timber.d("User wants to undo drawing")
+        updateActiveRoute {
+            it.route.path = it.route.path?.toMutableList()?.apply {
+                removeLastOrNull()
+            }
+        }
     }
 
-    // Taking a photo is a two step process.
-    // 1. Create the file, and save the URI
-    fun onSelectTakePhoto(uri: Uri) {
-        _photoUri.value = uri
+    fun onSelectTakePhoto() {
+        Timber.d("User wants to take topo image with camera")
+        if (localTopoImage.value == null) _viewEvents.postValue(NavigateToCamera)
     }
 
-    // 2. Take the photo
-    fun onPhotoTaken() {
-        _localTopoImage.value = _photoUri.value
+    fun onPhotoTaken(uri: Uri) {
+        Timber.d("User has taken a photo: $uri")
+        _localTopoImage.value = uri
     }
 
-    fun onSelectExistingPhoto(uri: Uri) {
+    fun onSelectExistingPhoto() {
+        Timber.d("User wants to select topo image from gallery")
+        if (localTopoImage.value == null) _viewEvents.postValue(NavigateToImageSelectionGallery)
+    }
+
+    fun onSelectedExistingPhoto(uri: Uri) {
+        Timber.d("User selected topo image from gallery: $uri")
         _localTopoImage.value = uri
     }
 
 
-    fun onRouteSelected(routeId: Int) {
-        _activeRoute.value = routeId
-    }
-
-    fun onAddRoute(activeRouteFragId: Int) {
-        if (!routes.containsKey(activeRouteFragId)) {
-            routes[activeRouteFragId] = Route(name = "")
-            Timber.d("Added empty route to view model with fragment id $activeRouteFragId")
+    fun onSelectRoute(position: Int) {
+        Timber.d("User selected route at position $position")
+        updateRoutes {
+            it.makeActiveNotActive()
+            it.makeActive(position)
         }
-        _activeRoute.value = activeRouteFragId
-        //FIXME don't link, just update on change
-//        routes[activeRouteFragId]?.path = path?.actionStack
-        Timber.d("Set route $activeRouteFragId path")
     }
 
-    fun onRemoveRoute(fragmentId: Int?) {
-        routes.remove(fragmentId)
+    fun onAddRoute() {
+        Timber.d("User wants to add a new route")
+        updateRoutes {
+            it.makeActiveNotActive()
+            it.addNewRoute()
+        }
+    }
 
-        // Now set active route to right or left sibling
-        val activeRouteVal = _activeRoute.value
-        activeRouteVal?.let { activeRouteFragmentId ->
-            if (routes.size > 1) {
-                val firstRouteToRight = routes.keys.firstOrNull { it > activeRouteFragmentId }
-                val firstRouteToLeft = routes.keys.reversed().firstOrNull() { it < activeRouteFragmentId }
-                if (firstRouteToRight != null) _activeRoute.value = firstRouteToRight
-                else _activeRoute.value = firstRouteToLeft
-            } else if (routes.size == 1) {
-                _activeRoute.value = routes.keys.first()
-            }
+    fun onRemoveRoute(id: Int) {
+        Timber.d("User wants to remove route $id")
+        updateRoutes {
+            it.removeById(id)
+            it.setActiveNearest(id)
         }
     } // Tested
 
-    fun onRouteRemoved(routeCount: Int?) {
-        if (routeCount == 0) _shouldShowAddRouteButton.value = true
-    }
-
-    fun onRoutePagerScroll(routeCount: Int?, position: Int, positionOffset: Float) {
-        _shouldShowAddRouteButton.value = if (positionOffset > 0) {
+    fun onRoutePagerScroll(position: Int, positionOffset: Float) {
+        val routeCount = _routes.value?.size
+        val show = if (positionOffset > 0) {
             // Dragging between settled states
             val onLastRoute = routeCount == position + 2
             onLastRoute && positionOffset > 0.99f
@@ -176,71 +195,104 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
             // In a settled state
             routeCount == position + 1
         }
+        Timber.v("showAddRouteButton: $show. position=$position, offset=$positionOffset")
+        _shouldShowAddRouteButton.value = show
     }
 
 
-    fun onRouteNameChanged(fragmentId: Int, text: CharSequence) {
-        routes[fragmentId]?.let {
-            Timber.d("Route fragment $fragmentId (${it.name}) name changed to $text")
-            it.name = "$text"
+    fun onRouteNameChanged(id: Int, text: CharSequence) {
+        Timber.d("Route $id name changed to: $text")
+        _routes.value?.firstOrNull { it.pagerId == id }?.let {
+            // TODO Check ok? Just modifying the value, not posting a new value
+            // We don't really want to trigger anything, just capture the change
+            it.route.name = "$text"
         }
     }
 
-    fun onRouteDescriptionChanged(fragmentId: Int, text: CharSequence) {
-        routes[fragmentId]?.let {
-            it.description = text.toString()
-            Timber.d("Route fragment $fragmentId (${it.name}) description changed to ${it.description}")
+    fun onRouteDescriptionChanged(id: Int, text: CharSequence) {
+        Timber.d("Route $id description changed to $text")
+        _routes.value?.firstOrNull { it.pagerId == id }?.let {
+            it.route.description = text.toString()
         }
     }
 
-    fun onRouteTypeChanged(fragmentId: Int, position: Int) {
-        routes[fragmentId]?.let {
-            val routeType = RouteType.values()[position]
-            it.type = routeType
-            Timber.d("Route fragment $fragmentId (${it.name}) type changed to ${it.type}")
-            setGradeVisibility(fragmentId, routeType)
-//            routeTypeUpdate.value = routeType
+    fun onRouteTypeChanged(id: Int, enumIndex: Int) {
+        val routeType = RouteType.values()[enumIndex]
+        Timber.d("Route $id type changed to $routeType")
+        _routes.value?.firstOrNull { it.pagerId == id }?.let { vm ->
+            vm.route.type = routeType
+            setGradeVisibility(id, routeType)
+            vm.selectedGrades[routeType]?.let {
+                vm.route.grade = it
+                Timber.d("Set route grade to $it as it was previously chosen")
+            }
+        }
+    }
+
+    private fun setGradeVisibility(id: Int, routeType: RouteType) {
+        for (gradeType in GradeType.values()) {
+            visibilityTracker[Pair(id, gradeType)]?.set(false)
+        }
+        when (routeType) {
+            RouteType.TRAD -> visibilityTracker[Pair(id, GradeType.TRAD)]?.set(true)
+            RouteType.SPORT -> visibilityTracker[Pair(id, GradeType.SPORT)]?.set(true)
+            RouteType.BOULDERING -> {
+                // FIXME
+//                val prefs = getApplication<WcrApp>().prefs
+                //TODO Settings toggle for PREF_USE_V_GRADE_FOR_BOULDERING
+//                if (prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)) {
+                visibilityTracker[Pair(id, GradeType.V)]?.set(true)
+//                } else {
+//                    visibilityTracker[Pair(fragmentId, GradeType.FONT)]?.set(true)
+//                }
+            }
         }
     }
 
     private val halfFinishedTradGrades = mutableMapOf<Long, Pair<TradAdjectivalGrade?, TradTechnicalGrade?>>()
-    fun onGradeChanged(fragmentId: Int, position: Int, gradeDropDown: GradeDropDown) {
-//        routeColourUpdate.value = fragmentId
-        routes[fragmentId]?.let { route ->
+    fun onGradeChanged(id: Int, enumIndex: Int, gradeDropDown: GradeDropDown) {
+        Timber.d("Route $id $gradeDropDown grade changed to value at index $enumIndex ↴")
+        _routes.value?.firstOrNull { it.pagerId == id }?.let { vm ->
             when (gradeDropDown) {
                 GradeDropDown.V -> {
-                    route.grade = from(VGrade.values()[position])
-                    Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
+                    val grade = from(VGrade.values()[enumIndex])
+                    vm.route.grade = grade
+                    vm.selectedGrades[RouteType.BOULDERING] = grade
                 }
                 GradeDropDown.FONT -> {
-                    route.grade = from(FontGrade.values()[position])
-                    Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
+                    val grade = from(FontGrade.values()[enumIndex])
+                    vm.route.grade = grade
+                    vm.selectedGrades[RouteType.BOULDERING] = grade
                 }
                 GradeDropDown.SPORT -> {
-                    route.grade = from(SportGrade.values()[position])
-                    Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
+                    val grade = from(SportGrade.values()[enumIndex])
+                    vm.route.grade = grade
+                    vm.selectedGrades[RouteType.SPORT] = grade
                 }
                 GradeDropDown.TRAD_ADJ -> {
-                    val routeId = fragmentId.toLong()
-                    val chosenTradAdjGrade = TradAdjectivalGrade.values()[position]
+                    val routeId = id.toLong()
+                    val chosenTradAdjGrade = TradAdjectivalGrade.values()[enumIndex]
                     val halfFinishedTradGrade = halfFinishedTradGrades[routeId]
                     if (halfFinishedTradGrade?.second != null) {
-                        route.grade = from(chosenTradAdjGrade, halfFinishedTradGrade.second!!)
-                        Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
+                        val grade = from(chosenTradAdjGrade, halfFinishedTradGrade.second!!)
+                        vm.route.grade = grade
+                        vm.selectedGrades[RouteType.TRAD] = grade
                     }
                     halfFinishedTradGrades[routeId] = Pair(chosenTradAdjGrade, halfFinishedTradGrades[routeId]?.second)
                 }
                 GradeDropDown.TRAD_TECH -> {
-                    val routeId = fragmentId.toLong()
-                    val chosenTradTechGrade = TradTechnicalGrade.values()[position]
+                    val routeId = id.toLong()
+                    val chosenTradTechGrade = TradTechnicalGrade.values()[enumIndex]
                     val halfFinishedTradGrade = halfFinishedTradGrades[routeId]
                     if (halfFinishedTradGrade?.first != null) {
-                        route.grade = from(halfFinishedTradGrade.first!!, chosenTradTechGrade)
-                        Timber.d("Route fragment $fragmentId (${route.name}) grade changed to ${route.grade}")
+                        val grade = from(halfFinishedTradGrade.first!!, chosenTradTechGrade)
+                        vm.route.grade = grade
+                        vm.selectedGrades[RouteType.TRAD] = grade
                     }
                     halfFinishedTradGrades[routeId] = Pair(halfFinishedTradGrades[routeId]?.first, chosenTradTechGrade)
                 }
             }
+            Timber.d("Route $id $gradeDropDown grade changed to ${vm.route.grade}")
         }
     }
 
@@ -249,18 +301,19 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
 
         val hasName = !topoName.value.isNullOrEmpty()
         val hasImage = _localTopoImage.value != null
-        val hasAtLeast1Route = routes.size > 0
-        val routesHaveNameDescriptionAndPath = routes.none { route ->
-            val emptyName = route.value.name?.isEmpty() ?: true
-            val emptyDescription = route.value.description.isNullOrEmpty()
-            val noRoutePath = (route.value.path?.size ?: 0) < 2 //TODO test me
-            emptyName || emptyDescription || noRoutePath
-        }
-        val allowSubmit = hasName && hasImage && hasAtLeast1Route && routesHaveNameDescriptionAndPath
-        Timber.d("Submission allowed: $allowSubmit (hasName:$hasName, hasImage:$hasImage, hasAtLeast1Route:$hasAtLeast1Route, routesHaveNameDescriptionAndPath:$routesHaveNameDescriptionAndPath)")
+        val hasAtLeast1Route = _routes.value?.isNotEmpty() ?: false
+        val routesHaveNameDescriptionAndPath = _routes.value?.all { vm ->
+            val emptyName = vm.route.name?.isEmpty() ?: true
+            val emptyDescription = vm.route.description.isNullOrEmpty()
+            val noRoutePath = (vm.route.path?.size ?: 0) < 2 //TODO test me
+            !emptyName && !emptyDescription && !noRoutePath
+        } ?: false
 
-        if (allowSubmit) {
-            submit(sectorId)
+        val allowSubmission = sectorId != null && hasName && hasImage && hasAtLeast1Route && routesHaveNameDescriptionAndPath
+        Timber.d("Submission allowed: $allowSubmission (sectorId:$sectorId, hasName:$hasName, hasImage:$hasImage, hasAtLeast1Route:$hasAtLeast1Route, routesHaveNameDescriptionAndPath:$routesHaveNameDescriptionAndPath)")
+        if (allowSubmission) {
+            //FIXME Add submission to disposables and dispose on destroy
+            submit(sectorId!!)
                     .subscribeOn(Schedulers.io())
                     ?.observeOn(AndroidSchedulers.mainThread())
                     ?.subscribe({ submittedTopoId ->
@@ -291,9 +344,9 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         Timber.d("SubmitTopoViewModel is being destroyed...")
     }
 
-    /*
-        Private
-    */
+/*
+    Private
+*/
 
     private fun uploadImage(topoName: String, sectorId: String): Single<Uri> {
         return Single.create { emitter ->
@@ -332,8 +385,11 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
                         topoRepository.save(topo)
                     }.flatMap { topoId ->
                         Timber.d("Topo saved")
-                        val routesWithTopoId = routes.values.map { r -> r.also { it.topoId = topoId } }
-                        val saveRoutes = routesWithTopoId.map { routeRepository.save(it) }
+                        val routesWithTopoId = _routes.value?.map {
+                            it.route.topoId = topoId
+                            it
+                        } ?: emptyList()
+                        val saveRoutes = routesWithTopoId.map { routeRepository.save(it.route) }
                         Completable.mergeDelayError(saveRoutes).toSingleDefault(topoId)
                     }.doOnSuccess { topoId ->
                         Timber.d("All routes saved for topo $topoId")
@@ -348,23 +404,51 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         }
     }
 
-    private fun setGradeVisibility(fragmentId: Int, routeType: RouteType) {
-        for (gradeType in GradeType.values()) {
-            visibilityTracker[Pair(fragmentId, gradeType)]?.set(false)
+    // Convenience methods to update route state without forgetting to post the updated value
+    private fun updateRoutes(update: (vm: MutableList<RouteViewModel>) -> Unit) {
+        _routes.value?.toMutableList()?.also { routes ->
+            update(routes)
+            _routes.postValue(routes)
         }
-        when (routeType) {
-            RouteType.TRAD -> visibilityTracker[Pair(fragmentId, GradeType.TRAD)]?.set(true)
-            RouteType.SPORT -> visibilityTracker[Pair(fragmentId, GradeType.SPORT)]?.set(true)
-            RouteType.BOULDERING -> {
-                // FIXME
-//                val prefs = getApplication<WcrApp>().prefs
-                //TODO Settings toggle for PREF_USE_V_GRADE_FOR_BOULDERING
-//                if (prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)) {
-//                    visibilityTracker[Pair(fragmentId, GradeType.V)]?.set(true)
-//                } else {
-//                    visibilityTracker[Pair(fragmentId, GradeType.FONT)]?.set(true)
-//                }
+    }
+
+    private fun updateActiveRoute(update: (vm: RouteViewModel) -> Unit) {
+        updateRoutes { routes ->
+            routes.firstOrNull { it.isActive }?.also {
+                update(it)
             }
         }
     }
+}
+
+//TODO Check ok. Playing around with extension functions, seems nice but not sure if its "ok"
+private fun MutableList<RouteViewModel>.setActiveNearest(id: Int) {
+    singleOrNull { it.pagerId == id }?.also { route ->
+        if (size > 1) {
+            firstOrNull { it.pagerPosition > route.pagerPosition }?.apply { isActive = true }
+                    ?: firstOrNull { it.pagerPosition <= route.pagerPosition }?.apply { isActive = true }
+
+        } else if (size == 1) {
+            first().isActive = true
+        }
+    }
+}
+
+private fun MutableList<RouteViewModel>.removeById(id: Int) {
+    singleOrNull { it.pagerId == id }?.also { route ->
+        remove(route)
+        this.filter { it.pagerPosition > route.pagerPosition }.forEach { it.pagerPosition-- }
+    }
+}
+
+private fun MutableList<RouteViewModel>.addNewRoute() {
+    add(RouteViewModel(pagerPosition = size))
+}
+
+private fun MutableList<RouteViewModel>.makeActive(position: Int) {
+    singleOrNull { vm -> vm.pagerPosition == position }?.isActive = true
+}
+
+private fun MutableList<RouteViewModel>.makeActiveNotActive() {
+    filter { vm -> vm.isActive }.forEach { it.isActive = false }
 }

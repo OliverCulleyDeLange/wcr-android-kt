@@ -40,6 +40,7 @@ class SubmitLocationFragment : androidx.fragment.app.Fragment(), Injectable {
         }
     }
 
+    // TODO Get rid of this
     interface ActivityInteractor {
         fun onLocationSubmitted(locationType: LocationType, submittedLocationId: String)
     }

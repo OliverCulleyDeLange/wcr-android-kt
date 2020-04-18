@@ -1,5 +1,8 @@
-#TODO before release
-Stuttery performance fix:
+Ideas:
+- Enforce design rules  by writing annotation? to check used classes.
+  - -Eg: ViewModels don't use Android classes.
+
+# TODO before releaseStuttery performance fix:
     - Don't animate map whilst doing complex bottom sheet layout.
     - Single fragment with different modes based on MapMode
 

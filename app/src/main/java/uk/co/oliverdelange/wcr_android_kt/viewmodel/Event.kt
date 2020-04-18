@@ -38,6 +38,8 @@ open class SingleLiveEvent<T> : MutableLiveData<T>() {
 interface Event
 object ShowDevMenu : Event
 object NavigateToSignIn : Event
+object NavigateToImageSelectionGallery : Event
+object NavigateToCamera : Event
 class ShowXClicksToDevMenuToast(val clicks: Int): Event
 class SubmissionFailed(val error: String) : Event
 class SubmissionSucceeded(val topoId: String): Event

@@ -36,6 +36,10 @@ class PathSegment(points: Collection<Pair<Float, Float>> = listOf()) {
         get() = _points.toList()
 
     fun addPoint(pair: Pair<Float, Float>) = _points.add(pair)
+
+    override fun toString(): String {
+        return "PathSegment(${points.firstOrNull()} -> ${points.firstOrNull()})"
+    }
 }
 
 data class Grade(var string: String, var type: GradeType, var colour: GradeColour)
