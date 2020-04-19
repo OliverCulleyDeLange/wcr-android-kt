@@ -120,6 +120,10 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
                 when (event) {
                     TouchEvent.TOUCH_DOWN -> {
                         path.add(PathSegment(listOf(pair)))
+                        if (path.size == 1){
+                        // Hack to get white dot to show for first tap
+                            path[0].addPoint(Pair(x+0.0001f, y))
+                        }
                     }
                     TouchEvent.TOUCH_MOVE -> {
                         //TODO only add point if suitable distance away from the last one
@@ -309,8 +313,7 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         val routesHaveNameDescriptionAndPath = _routes.value?.all { vm ->
             val emptyName = vm.route.name?.isEmpty() ?: true
             val emptyDescription = vm.route.description.isNullOrEmpty()
-            val noRoutePath = (vm.route.path?.size ?: 0) < 2 //TODO test me
-            !emptyName && !emptyDescription && !noRoutePath
+            !emptyName && !emptyDescription && vm.route.hasPath()
         } ?: false
 
         val allowSubmission = sectorId != null && hasName && hasImage && hasAtLeast1Route && routesHaveNameDescriptionAndPath
