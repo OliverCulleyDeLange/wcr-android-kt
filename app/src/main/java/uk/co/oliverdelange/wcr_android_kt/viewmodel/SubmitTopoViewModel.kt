@@ -1,6 +1,12 @@
 package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
+import android.app.Application
+import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.*
 import com.google.android.gms.tasks.Tasks
@@ -11,11 +17,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.factory.from
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import kotlin.random.Random
@@ -32,8 +41,9 @@ class RouteViewModel(val route: Route = Route(),
                      val selectedGrades: MutableMap<RouteType, Grade> = mutableMapOf())
 
 //@Singleton Not a singleton so a new one gets created so half finished submissions don't retain
-class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRepository,
-                                              private val routeRepository: RouteRepository) : ViewModel() {
+class SubmitTopoViewModel @Inject constructor(app: Application,
+                                              private val topoRepository: TopoRepository,
+                                              private val routeRepository: RouteRepository) : AndroidViewModel(app) {
     /* This needs to be set by the View otherwise submission will fail*/
     var sectorId: String? = null
 
@@ -45,8 +55,12 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     private val _isDrawing = MutableLiveData(true) //Tested
     val isDrawing: LiveData<Boolean> get() = _isDrawing
 
-    private val _localTopoImage = MutableLiveData<Uri?>()
-    val localTopoImage: LiveData<Uri?> get() = _localTopoImage
+    private val _rawTopoImage = MutableLiveData<Uri?>()
+    val topoImage = Transformations.map(_rawTopoImage) { rawUri ->
+            rawUri?.let {
+                rotateScaleCompress(it)
+            }
+        }
 
     private val _hasCamera = MutableLiveData(false)
 
@@ -54,12 +68,12 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         it.value = false
         fun shouldShow(): Boolean {
             val show = _hasCamera.value == true &&
-                    _localTopoImage.value == null
+                    _rawTopoImage.value == null
             Timber.d("'showTakePhotoIcon': $show")
             return show
         }
         it.addSource(_hasCamera) { _ -> it.value = shouldShow() }
-        it.addSource(_localTopoImage) { _ -> it.value = shouldShow() }
+        it.addSource(_rawTopoImage) { _ -> it.value = shouldShow() }
     } //Tested
     val showTakePhotoIcon: LiveData<Boolean> get() = _showTakePhotoIcon
 
@@ -97,6 +111,8 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
                 }
     }
 
+    fun imageIsSelected() = _rawTopoImage.value != null
+
     /*
         User actions
      */
@@ -125,9 +141,9 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
                 when (event) {
                     TouchEvent.TOUCH_DOWN -> {
                         path.add(PathSegment(listOf(pair)))
-                        if (path.size == 1){
-                        // Hack to get white dot to show for first tap
-                            path[0].addPoint(Pair(x+0.0001f, y))
+                        if (path.size == 1) {
+                            // Hack to get white dot to show for first tap
+                            path[0].addPoint(Pair(x + 0.0001f, y))
                         }
                     }
                     TouchEvent.TOUCH_MOVE -> {
@@ -151,22 +167,22 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
 
     fun onSelectTakePhoto() {
         Timber.d("User wants to take topo image with camera")
-        if (localTopoImage.value == null) _viewEvents.postValue(NavigateToCamera)
+        if (!imageIsSelected()) _viewEvents.postValue(NavigateToCamera)
     }
 
     fun onPhotoTaken(uri: Uri) {
         Timber.d("User has taken a photo: $uri")
-        _localTopoImage.value = uri
+        _rawTopoImage.value = uri
     }
 
     fun onSelectExistingPhoto() {
         Timber.d("User wants to select topo image from gallery")
-        if (localTopoImage.value == null) _viewEvents.postValue(NavigateToImageSelectionGallery)
+        if (!imageIsSelected()) _viewEvents.postValue(NavigateToImageSelectionGallery)
     }
 
     fun onSelectedExistingPhoto(uri: Uri) {
         Timber.d("User selected topo image from gallery: $uri")
-        _localTopoImage.value = uri
+        _rawTopoImage.value = uri
     }
 
 
@@ -313,7 +329,7 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         Timber.d("Submit clicked for $sectorId")
 
         val hasName = !topoName.value.isNullOrEmpty()
-        val hasImage = _localTopoImage.value != null
+        val hasImage = topoImage.value != null
         val hasAtLeast1Route = _routes.value?.isNotEmpty() ?: false
         val routesHaveNameDescriptionAndPath = _routes.value?.all { vm ->
             val emptyName = vm.route.name?.isEmpty() ?: true
@@ -356,12 +372,12 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         Timber.d("SubmitTopoViewModel is being destroyed...")
     }
 
-/*
-    Private
-*/
+    /*
+        Private
+    */
     private fun submit(sectorId: String): Single<String> {
         val topoName = topoName.value
-        val topoImage = _localTopoImage.value
+        val topoImage = topoImage.value
         return if (topoName != null && topoImage != null) {
             Timber.i("Submission started")
             submitting.value = true
@@ -391,12 +407,51 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         }
     }
 
-    private fun uploadImage(topoName: String, sectorId: String, topoImage: Uri): Single<Uri> {
+    private fun rotateScaleCompress(imageUri: Uri): ByteArrayOutputStream? {
+        val contentResolver = getApplication<WcrApp>().contentResolver
+        MediaStore.Images.Media.getBitmap(contentResolver, imageUri)?.let { bitmap ->
+            Timber.d("Image WAS ${bitmap.width}x${bitmap.height} kb:${bitmap.byteCount / 1000}")
+            //Get orientation https://stackoverflow.com/questions/14066038/why-does-an-image-captured-using-camera-intent-gets-rotated-on-some-devices-on-a
+            val imageInputStream = contentResolver.openInputStream(imageUri)
+                    ?: throw Exception("Can't open input stream for $imageUri")
+            // TODO Test on various OS versions
+            val exif = if (Build.VERSION.SDK_INT > 23) ExifInterface(imageInputStream) else {
+                val filename = imageUri.path
+                        ?: throw Exception("Cant get path from imageUri: $imageUri")
+                ExifInterface(filename)
+            }
+            val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)
+
+            val out = ByteArrayOutputStream()
+            val matrix = Matrix()
+            // Scale
+            val widthScale = MAX_TOPO_SIZE_PX.toFloat() / bitmap.width
+            matrix.setScale(widthScale, widthScale)
+            // Rotate
+            matrix.postRotate(when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+                ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                else -> 0f
+            })
+            val scaledAndRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
+            // TODO CHeck memory usage
+            bitmap.recycle()
+            // Compress
+            scaledAndRotated.compress(Bitmap.CompressFormat.WEBP, 75, out)
+            scaledAndRotated.recycle()
+
+            return out
+        }
+        return null
+    }
+
+    private fun uploadImage(topoName: String, sectorId: String, image: ByteArrayOutputStream): Single<Uri> {
         return Single.create { emitter ->
             val rootRef = FirebaseStorage.getInstance().reference
             val imageRef = rootRef.child("topos/$sectorId/$topoName")
-
-            val uploadTask = imageRef.putFile(topoImage)
+            val stream = ByteArrayInputStream(image.toByteArray())
+            val uploadTask = imageRef.putStream(stream)
                     .addOnProgressListener { snapshot ->
                         val percent = snapshot.bytesTransferred / snapshot.totalByteCount
                         Timber.d("Image uploading... ${percent * 100}%")

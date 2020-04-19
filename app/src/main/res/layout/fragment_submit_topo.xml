@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="select_topo_image,take_photo_image,take_photo_label,or_label,select_photo_label"
-            app:show="@{vm.localTopoImage == null}" />
+            app:show="@{vm.topoImage == null}" />
 
         <ImageView
             android:id="@+id/select_topo_image"
@@ -98,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="undo_tool,edit_tool"
-            app:show="@{vm.localTopoImage != null}" />
+            app:show="@{vm.topoImage != null}" />
 
         <ImageButton
             android:id="@+id/undo_tool"

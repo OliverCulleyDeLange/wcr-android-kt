@@ -5,14 +5,8 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.ExifInterface
-import android.media.ExifInterface.ORIENTATION_UNDEFINED
-import android.media.ExifInterface.TAG_ORIENTATION
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -40,7 +34,6 @@ import uk.co.oliverdelange.wcr_android_kt.databinding.FragmentSubmitTopoBinding
 import uk.co.oliverdelange.wcr_android_kt.di.Injectable
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.*
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -97,16 +90,14 @@ class SubmitTopoFragment(private val sectorId: String) : Fragment(), Injectable 
 
     private fun observeViewModel(viewModel: SubmitTopoViewModel) {
 
-        viewModel.localTopoImage.observe(viewLifecycleOwner, Observer {
-            it?.let { uri -> loadImage(uri) }
+        viewModel.topoImage.observe(viewLifecycleOwner, Observer {
+            it?.let { bos ->
+                val bytes = bos.toByteArray()
+                val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(bytes))
+                Timber.d("Image IS ${bitmap.width}x${bitmap.height} kb:${bitmap.byteCount / 1000}, filesize: ${bytes.size / 1000}kb")
+                binding.topoImage.setImageBitmap(bitmap)
+            }
         })
-
-//        viewModel.doUndoDrawing.observe(this, Observer {
-//            Timber.d("doUndoDrawing changed, undoing last drawing action")
-//            // This feels super hacky, shouldn't all the route data live in the VM?
-//            // That way we just modify that, and re-draw the Paintable View.
-//            binding.topoImage.undoAction()
-//        })
 
         viewModel.submitting.observe(viewLifecycleOwner, Observer {
             Timber.d("submitting changed, ${if (it) "starting" else "stopping"} animation")
@@ -186,48 +177,6 @@ class SubmitTopoFragment(private val sectorId: String) : Fragment(), Injectable 
         intent.type = "image/*"
         intent.action = Intent.ACTION_OPEN_DOCUMENT
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE)
-    }
-
-    private fun loadImage(imageUri: Uri) {
-        val contentResolver = requireContext().contentResolver
-        MediaStore.Images.Media.getBitmap(contentResolver, imageUri)?.let { bitmap ->
-            Timber.d("Image WAS ${bitmap.width}x${bitmap.height} kb:${bitmap.byteCount / 1000}")
-            //Get orientation https://stackoverflow.com/questions/14066038/why-does-an-image-captured-using-camera-intent-gets-rotated-on-some-devices-on-a
-            val imageInputStream = contentResolver.openInputStream(imageUri)
-                    ?: throw Exception("Can't open input stream for $imageUri")
-            // TODO Test on various OS versions
-            val exif = if (Build.VERSION.SDK_INT > 23) ExifInterface(imageInputStream) else {
-                val filename = imageUri.path
-                        ?: throw Exception("Cant get path from imageUri: $imageUri")
-                ExifInterface(filename)
-            }
-            val orientation = exif.getAttributeInt(TAG_ORIENTATION, ORIENTATION_UNDEFINED)
-
-            val out = ByteArrayOutputStream()
-            val matrix = Matrix()
-            // Scale
-            val widthScale = MAX_TOPO_SIZE_PX.toFloat() / bitmap.width
-            matrix.setScale(widthScale, widthScale)
-            // Rotate
-            matrix.postRotate(when (orientation) {
-                ExifInterface.ORIENTATION_ROTATE_90 -> 90f
-                ExifInterface.ORIENTATION_ROTATE_180 -> 180f
-                ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-                else -> 0f
-            })
-            val scaledAndRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
-            // TODO CHeck memory usage
-            bitmap.recycle()
-            // Compress
-            scaledAndRotated.compress(Bitmap.CompressFormat.WEBP, 75, out)
-            scaledAndRotated.recycle()
-            val bytes = out.toByteArray()
-
-            val scaledAndCompressed = BitmapFactory.decodeStream(ByteArrayInputStream(bytes))
-            Timber.d("Image IS ${scaledAndCompressed.width}x${scaledAndCompressed.height} kb:${scaledAndCompressed.byteCount / 1000}, filesize: ${bytes.size / 1000}kb")
-
-            binding.topoImage.setImageBitmap(scaledAndCompressed)
-        }
     }
 
     //TODO Not sure if this is the best place to store the URI...
