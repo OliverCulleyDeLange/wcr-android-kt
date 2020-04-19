@@ -8,6 +8,7 @@ import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.factory.from
@@ -35,6 +36,8 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
                                               private val routeRepository: RouteRepository) : ViewModel() {
     /* This needs to be set by the View otherwise submission will fail*/
     var sectorId: String? = null
+
+    private val disposables = mutableListOf<Disposable>()
 
     private val _viewEvents = SingleLiveEvent<Event>()
     val viewEvents: LiveData<Event> get() = _viewEvents
@@ -322,16 +325,16 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         Timber.d("Submission allowed: $allowSubmission (sectorId:$sectorId, hasName:$hasName, hasImage:$hasImage, hasAtLeast1Route:$hasAtLeast1Route, routesHaveNameDescriptionAndPath:$routesHaveNameDescriptionAndPath)")
         if (allowSubmission) {
             //FIXME Add submission to disposables and dispose on destroy
-            submit(sectorId!!)
+            disposables.add(submit(sectorId!!)
                     .subscribeOn(Schedulers.io())
-                    ?.observeOn(AndroidSchedulers.mainThread())
-                    ?.subscribe({ submittedTopoId ->
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ submittedTopoId ->
                         Timber.i("Submission Succeeded")
                         _viewEvents.postValue(SubmissionSucceeded(submittedTopoId))
                     }, { e ->
                         Timber.e(e, "Submission Failed")
                         _viewEvents.postValue(SubmissionFailed("Failed to submit topo!"))
-                    })
+                    }))
         } else {
             val error = if (!hasName) {
                 "Please enter a name"

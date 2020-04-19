@@ -4,15 +4,12 @@ import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import uk.co.oliverdelange.wcr_android_kt.R
 import uk.co.oliverdelange.wcr_android_kt.util.addFragment
 import uk.co.oliverdelange.wcr_android_kt.view.map.EXTRA_SECTOR_ID
-import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmissionSucceeded
-import uk.co.oliverdelange.wcr_android_kt.viewmodel.SubmitTopoViewModel
 import javax.inject.Inject
 
 /*
@@ -37,18 +34,11 @@ class SubmitActivity : AppCompatActivity(), HasSupportFragmentInjector {
             val fragment = SubmitTopoFragment(it)
             addFragment(fragment, R.id.submit_topo_container)
         }
+    }
 
-        val viewModel = ViewModelProvider(this, viewModelFactory)
-                .get(SubmitTopoViewModel::class.java)
-
-        viewModel.viewEvents.observe(this, Observer {
-            when (it) {
-                is SubmissionSucceeded -> {
-                    setResult(Activity.RESULT_OK)
-                    finish()
-                }
-            }
-        })
+    fun end() {
+        setResult(Activity.RESULT_OK)
+        finish()
     }
 
     override fun onBackPressed() {

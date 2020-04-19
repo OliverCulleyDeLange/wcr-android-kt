@@ -26,13 +26,6 @@ open class SingleLiveEvent<T> : MutableLiveData<T>() {
         mPending.set(true)
         super.setValue(t)
     }
-//    TODO Not needed?
-//    /**
-//     * Util function for Void implementations.
-//     */
-//    fun call() {
-//        value = null
-//    }
 }
 
 interface Event

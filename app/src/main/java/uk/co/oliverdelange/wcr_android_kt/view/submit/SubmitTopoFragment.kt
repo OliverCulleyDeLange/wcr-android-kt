@@ -126,6 +126,10 @@ class SubmitTopoFragment(private val sectorId: String) : Fragment(), Injectable 
                 is SubmissionFailed -> Snackbar.make(binding.submit, it.error, Snackbar.LENGTH_SHORT).show()
                 is NavigateToImageSelectionGallery -> startSelectImageActivity()
                 is NavigateToCamera -> takePhoto()
+                is SubmissionSucceeded -> {
+                    Timber.d("Finishing SubmitActivity. Topo ${it.topoId} uploaded ok.")
+                    activity?.also { activity -> if (activity is SubmitActivity) activity.end() }
+                }
             }
         })
 
@@ -134,7 +138,7 @@ class SubmitTopoFragment(private val sectorId: String) : Fragment(), Injectable 
             binding.topoNameInputLayout.error = binding.vm?.topoNameError?.value
         })
 
-        viewModel.routes.observe(viewLifecycleOwner, Observer {routes->
+        viewModel.routes.observe(viewLifecycleOwner, Observer { routes ->
             Timber.d("Routes changed: $routes")
             val submitRoutePagerAdapter = binding.routePager.adapter as SubmitRoutePagerAdapter
             submitRoutePagerAdapter.routes = routes
@@ -147,8 +151,8 @@ class SubmitTopoFragment(private val sectorId: String) : Fragment(), Injectable 
                     binding.routePager.setCurrentItem(pagerPosition, true)
                 }
             }
-                // Update paths
-                binding.topoImage.update(routes)
+            // Update paths
+            binding.topoImage.update(routes)
         })
     }
 
@@ -165,14 +169,14 @@ class SubmitTopoFragment(private val sectorId: String) : Fragment(), Injectable 
             viewModel.onSelectTakePhoto()
         }
 
-        binding.topoImage.setOnDrawListener { x,y, event ->
+        binding.topoImage.setOnDrawListener { x, y, event ->
             val touchEvent = when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> SubmitTopoViewModel.TouchEvent.TOUCH_DOWN
                 MotionEvent.ACTION_MOVE -> SubmitTopoViewModel.TouchEvent.TOUCH_MOVE
                 MotionEvent.ACTION_UP -> SubmitTopoViewModel.TouchEvent.TOUCH_UP
                 else -> SubmitTopoViewModel.TouchEvent.IGNORE
             }
-            viewModel.onDraw(x,y, touchEvent)
+            viewModel.onDraw(x, y, touchEvent)
             true // Event consumed
         }
     }
