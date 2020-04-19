@@ -3,6 +3,7 @@ package uk.co.oliverdelange.wcr_android_kt.viewmodel
 import android.net.Uri
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.*
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -14,6 +15,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
 import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
+import java.io.IOException
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -354,31 +356,6 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
 /*
     Private
 */
-
-    private fun uploadImage(topoName: String, sectorId: String): Single<Uri> {
-        return Single.create { emitter ->
-            val rootRef = FirebaseStorage.getInstance().reference
-            val imageRef = rootRef.child("topos/$sectorId/$topoName")
-
-            //FIXME use file instead
-//            val uploadTask = imageRef.putBytes(it)
-//                    .addOnProgressListener { snapshot ->
-//                        val percent = snapshot.bytesTransferred / snapshot.totalByteCount
-//                        Timber.d("Image uploading... ${percent * 100}%")
-//                    }
-//
-//            try {
-//                Tasks.await(uploadTask)
-//                val url = Tasks.await(imageRef.downloadUrl)
-//                emitter.onSuccess(url)
-//            } catch (e: IOException) {
-//                Timber.e(e, "Error uploading topo image to cloud")
-//                submitting.value = false
-//                emitter.onError(e)
-//            }
-        }
-    }
-
     private fun submit(sectorId: String): Single<String> {
         val topoName = topoName.value
         val topoImage = _localTopoImage.value
@@ -386,7 +363,7 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
             Timber.i("Submission started")
             submitting.value = true
 
-            uploadImage(topoName, sectorId)
+            uploadImage(topoName, sectorId, topoImage)
                     .flatMap { imageUrl ->
                         val topo = Topo(name = topoName, locationId = sectorId, image = imageUrl.toString())
                         topoRepository.save(topo)
@@ -408,6 +385,28 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
         } else {
             Timber.e("Submit attempted but not all information available. (Submit button shouldn't have been active!)")
             Single.just("")
+        }
+    }
+
+    private fun uploadImage(topoName: String, sectorId: String, topoImage: Uri): Single<Uri> {
+        return Single.create { emitter ->
+            val rootRef = FirebaseStorage.getInstance().reference
+            val imageRef = rootRef.child("topos/$sectorId/$topoName")
+
+            val uploadTask = imageRef.putFile(topoImage)
+                    .addOnProgressListener { snapshot ->
+                        val percent = snapshot.bytesTransferred / snapshot.totalByteCount
+                        Timber.d("Image uploading... ${percent * 100}%")
+                    }
+            try {
+                Tasks.await(uploadTask)
+                val url = Tasks.await(imageRef.downloadUrl)
+                emitter.onSuccess(url)
+            } catch (e: IOException) {
+                Timber.e(e, "Error uploading topo image to cloud")
+                submitting.value = false
+                emitter.onError(e)
+            }
         }
     }
 
