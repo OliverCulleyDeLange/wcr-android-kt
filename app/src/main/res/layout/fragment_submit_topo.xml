@@ -172,7 +172,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/submit"
             style="@style/Wcr_Button"
-            android:layout_width="311dp"
+            android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
@@ -192,12 +192,15 @@
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:max="500"
             android:progress="0"
             android:progressDrawable="@drawable/spinner"
             app:layout_constraintBottom_toBottomOf="@+id/submit"
             app:layout_constraintEnd_toEndOf="@+id/submit"
             app:layout_constraintStart_toStartOf="@+id/submit"
+            app:layout_constraintTop_toTopOf="@+id/submit"
             app:show="@{safeUnbox(vm.submitting)}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
