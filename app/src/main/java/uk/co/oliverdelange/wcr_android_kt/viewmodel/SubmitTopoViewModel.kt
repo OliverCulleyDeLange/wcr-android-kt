@@ -219,12 +219,14 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     fun onRouteTypeChanged(id: Int, enumIndex: Int) {
         val routeType = RouteType.values()[enumIndex]
         Timber.d("Route $id type changed to $routeType")
-        _routes.value?.firstOrNull { it.pagerId == id }?.let { vm ->
-            vm.route.type = routeType
-            setGradeVisibility(id, routeType)
-            vm.selectedGrades[routeType]?.let {
-                vm.route.grade = it
-                Timber.d("Set route grade to $it as it was previously chosen")
+        updateRoutes { routes ->
+            routes.firstOrNull { it.pagerId == id }?.let { vm ->
+                vm.route.type = routeType
+                setGradeVisibility(id, routeType)
+                vm.selectedGrades[routeType]?.let {
+                    vm.route.grade = it
+                    Timber.d("Set route grade to $it as it was previously chosen")
+                }
             }
         }
     }
@@ -252,47 +254,49 @@ class SubmitTopoViewModel @Inject constructor(private val topoRepository: TopoRe
     private val halfFinishedTradGrades = mutableMapOf<Long, Pair<TradAdjectivalGrade?, TradTechnicalGrade?>>()
     fun onGradeChanged(id: Int, enumIndex: Int, gradeDropDown: GradeDropDown) {
         Timber.d("Route $id $gradeDropDown grade changed to value at index $enumIndex ↴")
-        _routes.value?.firstOrNull { it.pagerId == id }?.let { vm ->
-            when (gradeDropDown) {
-                GradeDropDown.V -> {
-                    val grade = from(VGrade.values()[enumIndex])
-                    vm.route.grade = grade
-                    vm.selectedGrades[RouteType.BOULDERING] = grade
-                }
-                GradeDropDown.FONT -> {
-                    val grade = from(FontGrade.values()[enumIndex])
-                    vm.route.grade = grade
-                    vm.selectedGrades[RouteType.BOULDERING] = grade
-                }
-                GradeDropDown.SPORT -> {
-                    val grade = from(SportGrade.values()[enumIndex])
-                    vm.route.grade = grade
-                    vm.selectedGrades[RouteType.SPORT] = grade
-                }
-                GradeDropDown.TRAD_ADJ -> {
-                    val routeId = id.toLong()
-                    val chosenTradAdjGrade = TradAdjectivalGrade.values()[enumIndex]
-                    val halfFinishedTradGrade = halfFinishedTradGrades[routeId]
-                    if (halfFinishedTradGrade?.second != null) {
-                        val grade = from(chosenTradAdjGrade, halfFinishedTradGrade.second!!)
+        updateRoutes { routes ->
+            routes.firstOrNull { it.pagerId == id }?.let { vm ->
+                when (gradeDropDown) {
+                    GradeDropDown.V -> {
+                        val grade = from(VGrade.values()[enumIndex])
                         vm.route.grade = grade
-                        vm.selectedGrades[RouteType.TRAD] = grade
+                        vm.selectedGrades[RouteType.BOULDERING] = grade
                     }
-                    halfFinishedTradGrades[routeId] = Pair(chosenTradAdjGrade, halfFinishedTradGrades[routeId]?.second)
-                }
-                GradeDropDown.TRAD_TECH -> {
-                    val routeId = id.toLong()
-                    val chosenTradTechGrade = TradTechnicalGrade.values()[enumIndex]
-                    val halfFinishedTradGrade = halfFinishedTradGrades[routeId]
-                    if (halfFinishedTradGrade?.first != null) {
-                        val grade = from(halfFinishedTradGrade.first!!, chosenTradTechGrade)
+                    GradeDropDown.FONT -> {
+                        val grade = from(FontGrade.values()[enumIndex])
                         vm.route.grade = grade
-                        vm.selectedGrades[RouteType.TRAD] = grade
+                        vm.selectedGrades[RouteType.BOULDERING] = grade
                     }
-                    halfFinishedTradGrades[routeId] = Pair(halfFinishedTradGrades[routeId]?.first, chosenTradTechGrade)
+                    GradeDropDown.SPORT -> {
+                        val grade = from(SportGrade.values()[enumIndex])
+                        vm.route.grade = grade
+                        vm.selectedGrades[RouteType.SPORT] = grade
+                    }
+                    GradeDropDown.TRAD_ADJ -> {
+                        val routeId = id.toLong()
+                        val chosenTradAdjGrade = TradAdjectivalGrade.values()[enumIndex]
+                        val halfFinishedTradGrade = halfFinishedTradGrades[routeId]
+                        if (halfFinishedTradGrade?.second != null) {
+                            val grade = from(chosenTradAdjGrade, halfFinishedTradGrade.second!!)
+                            vm.route.grade = grade
+                            vm.selectedGrades[RouteType.TRAD] = grade
+                        }
+                        halfFinishedTradGrades[routeId] = Pair(chosenTradAdjGrade, halfFinishedTradGrades[routeId]?.second)
+                    }
+                    GradeDropDown.TRAD_TECH -> {
+                        val routeId = id.toLong()
+                        val chosenTradTechGrade = TradTechnicalGrade.values()[enumIndex]
+                        val halfFinishedTradGrade = halfFinishedTradGrades[routeId]
+                        if (halfFinishedTradGrade?.first != null) {
+                            val grade = from(halfFinishedTradGrade.first!!, chosenTradTechGrade)
+                            vm.route.grade = grade
+                            vm.selectedGrades[RouteType.TRAD] = grade
+                        }
+                        halfFinishedTradGrades[routeId] = Pair(halfFinishedTradGrades[routeId]?.first, chosenTradTechGrade)
+                    }
                 }
+                Timber.d("Route $id $gradeDropDown grade changed to ${vm.route.grade}")
             }
-            Timber.d("Route $id $gradeDropDown grade changed to ${vm.route.grade}")
         }
     }
 

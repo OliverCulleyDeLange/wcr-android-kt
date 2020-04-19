@@ -134,14 +134,21 @@ class SubmitTopoFragment(private val sectorId: String) : Fragment(), Injectable 
             binding.topoNameInputLayout.error = binding.vm?.topoNameError?.value
         })
 
-        viewModel.routes.observe(viewLifecycleOwner, Observer {
-            Timber.d("Routes changed: $it")
+        viewModel.routes.observe(viewLifecycleOwner, Observer {routes->
+            Timber.d("Routes changed: $routes")
             val submitRoutePagerAdapter = binding.routePager.adapter as SubmitRoutePagerAdapter
-            submitRoutePagerAdapter.routes = it
+            submitRoutePagerAdapter.routes = routes
             submitRoutePagerAdapter.notifyDataSetChanged()
 
-            // Update paths
-            binding.topoImage.update(it)
+            routes.firstOrNull { it.isActive }?.let {
+                val pagerPosition = it.pagerPosition
+                if (pagerPosition != binding.routePager.currentItem) {
+                    Timber.d("Scrolling to new active route: $it")
+                    binding.routePager.setCurrentItem(pagerPosition, true)
+                }
+            }
+                // Update paths
+                binding.topoImage.update(routes)
         })
     }
 
