@@ -29,8 +29,10 @@ data class Route(val id: String? = null,
                  var type: RouteType? = null,
                  var description: String? = null,
                  var path: List<PathSegment>? = null) {
-    fun hasPath() = (path?.flatMap { it.points }?.size ?: 0) > 2
+    fun hasPath() = (path?.flattened()?.size ?: 0) > 2
 }
+
+fun List<PathSegment>.flattened() = flatMap { it.points }
 
 class PathSegment(points: Collection<Pair<Float, Float>> = listOf()) {
     private val _points: MutableList<Pair<Float, Float>> = points.toMutableList()

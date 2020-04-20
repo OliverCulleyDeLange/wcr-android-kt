@@ -6,6 +6,7 @@ import android.graphics.Path
 import android.util.AttributeSet
 import android.view.MotionEvent
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
+import uk.co.oliverdelange.wcr_android_kt.model.flattened
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.RouteViewModel
 
 class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, att) {
@@ -41,7 +42,7 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
         super.onDraw(canvas)
         canvas.concat(matrix)
         routeVms?.forEach { vm ->
-            val routePoints: Collection<Pair<Float, Float>> = vm.route.path?.flatMap { it.points }
+            val routePoints: Collection<Pair<Float, Float>> = vm.route.path?.flattened()
                     ?: emptyList()
             val scaledRoutePath = scalePath(routePoints)
             when (vm.route.grade?.colour) {

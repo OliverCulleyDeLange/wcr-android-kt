@@ -2,10 +2,11 @@ package uk.co.oliverdelange.wcr_android_kt.mapper
 
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.model.PathSegment
+import uk.co.oliverdelange.wcr_android_kt.model.flattened
 
 //TODO Test me
 fun coordsSetToString(coords: List<PathSegment>): String {
-    return coords.flatMap {it.points}.let {
+    return coords.flattened().let {
         it.joinToString(",", transform = { pair -> "${pair.first}:${pair.second}" })
     }
 }

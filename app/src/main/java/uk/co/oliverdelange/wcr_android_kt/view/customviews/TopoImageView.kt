@@ -9,6 +9,7 @@ import android.net.Uri
 import android.util.AttributeSet
 import uk.co.oliverdelange.wcr_android_kt.model.GradeColour
 import uk.co.oliverdelange.wcr_android_kt.model.Route
+import uk.co.oliverdelange.wcr_android_kt.model.flattened
 
 /*
  This is the non-editable version of the paintable topo image view, used to display topos
@@ -53,7 +54,7 @@ class TopoImageView(c: Context, a: AttributeSet) : TouchImageView(c, a) {
     private fun refreshPaths() {
         paths.clear()
         routes.forEach {
-            val routePoints = it.path?.flatMap { it.points }
+            val routePoints = it.path?.flattened()
             val routeId = it.id
             if (routePoints != null && routePoints.size > 1 && routeId != null) {
                 paths[routeId] = scalePath(routePoints)

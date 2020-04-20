@@ -23,16 +23,4 @@ data class RouteEntity(@PrimaryKey override var id: String = "",
                        var path: String = "",
                        override var uploadedAt: Long = -1,
                        override var uploaderId: String = ""
-) : BaseEntity() {
-    //FIXME this was done to order the paths on the topo from left to right
-    // Now i look back, its a bad way of doing it as any other comparison will now only
-    // compare the first x coord of the route path, nothing else.
-    // Write a custom sort function for routes, that doesn't override the compare of the whole class.
-    // Commented out and will re-implement properly later
-//    override fun compareTo(other: RouteEntity): Int {
-//        fun getFirstXCoord(pathString: String): Float {
-//            return stringToCoordsSet(pathString)?.flatten()?.first()?.first ?: 0f
-//        }
-//        return getFirstXCoord(path).compareTo(getFirstXCoord(other.path))
-//    }
-}
+) : BaseEntity()
