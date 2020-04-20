@@ -30,6 +30,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.Route
 import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
 import uk.co.oliverdelange.wcr_android_kt.model.flattened
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.ScrollToTopo
 import javax.inject.Inject
 
 /*
@@ -73,26 +74,22 @@ class BottomSheetFragment : Fragment(), Injectable {
         binding?.vm?.topos?.observe(viewLifecycleOwner, Observer { topos ->
             Timber.d("topos changed, new topos: %s", topos?.map { it.topo.name })
             recyclerAdapter.updateTopos(topos ?: emptyList())
+        })
 
-            //FIXME Find better way of scrolling to selected topo (Use the new OnetimeEvent maybe)
-//            binding?.topoRecycler?.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-//                override fun onGlobalLayout() {
-//                    Timber.v("topoRecycler : onGlobalLayout")
-//                    binding?.vm?.selectedTopoId?.value?.let { selectedTopoId ->
-//                        val position = recyclerAdapter.topos.indexOfFirst { it.topo.id == selectedTopoId }
-//                        if (position != -1) {
-//                            Timber.d("Selecting the right topo in the list: $selectedTopoId")
-//                            binding?.topoRecycler?.scrollToPosition(position)
-//                        } else {
-//                            Timber.w("Couldn't find topo with id $selectedTopoId in topos. Selecting first")
-//                            binding?.topoRecycler?.scrollToPosition(0)
-//                        }
-//                        //Reset after we've scrolled to it so we don't scroll again after
-//                        binding?.vm?.selectedTopoId?.value = null
-//                    }
-//                    binding?.topoRecycler?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
-//                }
-//            })
+        //FIXME THIS WON'T WORK AS THE ACTIVITY SWALLOWS EVENTS. Need a better mechanism for one time events - multi subscriber...
+        binding?.vm?.viewEvents?.observe(viewLifecycleOwner, Observer {event->
+            if (event is ScrollToTopo) {
+                val topoId = event.topoId
+                Timber.v("ScrollToTopo: $topoId")
+                val position = recyclerAdapter.topos.indexOfFirst { it.topo.id == topoId }
+                if (position != -1) {
+                    Timber.d("Selecting the right topo in the list: $topoId")
+                    binding?.topoRecycler?.scrollToPosition(position)
+                } else {
+                    Timber.w("Couldn't find topo with id $topoId in topos. Selecting first")
+                    binding?.topoRecycler?.scrollToPosition(0)
+                }
+            }
         })
     }
 }
@@ -182,7 +179,7 @@ class TopoRecyclerAdapter(val activity: FragmentActivity?, private val recyclerL
 
 class RouteRecyclerAdapter(var routes: List<Route>) : RecyclerView.Adapter<RouteRecyclerAdapter.ViewHolder>() {
     init {
-        routes =  routes.sortedBy { r -> r.path?.flattened()?.firstOrNull()?.first }
+        routes = routes.sortedBy { r -> r.path?.flattened()?.firstOrNull()?.first }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

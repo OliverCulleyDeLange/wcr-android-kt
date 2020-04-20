@@ -416,7 +416,7 @@ class MapViewModel @Inject constructor(application: Application,
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { topo ->
                         _selectedLocationId.value = topo.locationId
-                        _selectedTopoId.value = topo.id
+                        _viewEvents.postValue(ScrollToTopo(topo.id))
                     }
         }
     }

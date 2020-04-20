@@ -29,6 +29,7 @@ open class SingleLiveEvent<T> : MutableLiveData<T>() {
 }
 
 interface Event
+class ScrollToTopo(val topoId: String) : Event
 object ShowDevMenu : Event
 object NavigateToSignIn : Event
 object NavigateToImageSelectionGallery : Event
