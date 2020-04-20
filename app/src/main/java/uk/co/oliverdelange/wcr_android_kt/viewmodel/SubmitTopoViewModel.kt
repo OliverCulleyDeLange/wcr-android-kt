@@ -17,6 +17,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import uk.co.oliverdelange.wcr_android_kt.PREF_USE_V_GRADE_FOR_BOULDERING
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.factory.from
 import uk.co.oliverdelange.wcr_android_kt.model.*
@@ -57,10 +58,10 @@ class SubmitTopoViewModel @Inject constructor(app: Application,
 
     private val _rawTopoImage = MutableLiveData<Uri?>()
     val topoImage = Transformations.map(_rawTopoImage) { rawUri ->
-            rawUri?.let {
-                rotateScaleCompress(it)
-            }
+        rawUri?.let {
+            rotateScaleCompress(it)
         }
+    }
 
     private val _hasCamera = MutableLiveData(false)
 
@@ -264,14 +265,13 @@ class SubmitTopoViewModel @Inject constructor(app: Application,
             RouteType.TRAD -> visibilityTracker[Pair(id, GradeType.TRAD)]?.set(true)
             RouteType.SPORT -> visibilityTracker[Pair(id, GradeType.SPORT)]?.set(true)
             RouteType.BOULDERING -> {
-                // FIXME
-//                val prefs = getApplication<WcrApp>().prefs
+                val prefs = getApplication<WcrApp>().prefs
                 //TODO Settings toggle for PREF_USE_V_GRADE_FOR_BOULDERING
-//                if (prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)) {
-                visibilityTracker[Pair(id, GradeType.V)]?.set(true)
-//                } else {
-//                    visibilityTracker[Pair(fragmentId, GradeType.FONT)]?.set(true)
-//                }
+                if (prefs.getBoolean(PREF_USE_V_GRADE_FOR_BOULDERING, true)) {
+                    visibilityTracker[Pair(id, GradeType.V)]?.set(true)
+                } else {
+                    visibilityTracker[Pair(id, GradeType.FONT)]?.set(true)
+                }
             }
         }
     }
