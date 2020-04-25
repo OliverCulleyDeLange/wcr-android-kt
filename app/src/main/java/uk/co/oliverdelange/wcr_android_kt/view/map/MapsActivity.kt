@@ -254,15 +254,12 @@ class MapsActivity : AppCompatActivity(),
             if (it.isNotEmpty()) {
                 map.animate(getBoundsForLatLngs(it)) {
                     Timber.d("Map animation finished (callback), we can do expensive things now")
+                    binding.vm?.onMapAnimationFinished()
                 }
             }
         })
 
         binding.vm?.mapMode?.observe(this, Observer {
-            if (it == null) {
-                Timber.e("MapMode enum is null - wtf?")
-                return@Observer
-            }
             when (it) {
                 DEFAULT_MODE -> {
                     Timber.d("MapMode changed to DEFAULT_MODE")

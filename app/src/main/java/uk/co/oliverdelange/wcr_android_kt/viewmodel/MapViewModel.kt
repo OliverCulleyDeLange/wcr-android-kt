@@ -82,7 +82,7 @@ class MapViewModel @Inject constructor(application: Application,
     private val _selectedLocationId: MutableLiveData<String?> = MutableLiveData<String?>().also {
         it.value = null
     }
-     val selectedLocationRouteInfo: LiveData<LocationRouteInfo?> = Transformations.switchMap(_selectedLocationId) {
+    val selectedLocationRouteInfo: LiveData<LocationRouteInfo?> = Transformations.switchMap(_selectedLocationId) {
         if (it != null) {
             Timber.d("SelectedLocationId changed to $it: Updating 'selectedLocationRouteInfo'")
             locationRepository.loadRouteInfoFor(it)
@@ -95,7 +95,7 @@ class MapViewModel @Inject constructor(application: Application,
     // Distinct until changed stop the data reloading when the underlying Location object has not changed
     // For example, when its uploaded to firestore and the DB record gets its 'uploaded at' field updated
     // However the Location domain object doesn't have this field, so the compared Location objects are equal
-     val selectedLocation: LiveData<Location?> = Transformations.distinctUntilChanged(
+    val selectedLocation: LiveData<Location?> = Transformations.distinctUntilChanged(
             Transformations.switchMap(_selectedLocationId) {
                 if (it != null) {
                     Timber.d("SelectedLocationId changed to $it: Updating 'selectedLocation'")
@@ -107,17 +107,17 @@ class MapViewModel @Inject constructor(application: Application,
             }
     )
 
-     val submitButtonLabel = Transformations.map(selectedLocation) {
+    val submitButtonLabel = Transformations.map(selectedLocation) {
         if (it?.type == LocationType.CRAG) "Submit sector" else "Submit topo"
     }
 
-     val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
+    val crags: LiveData<List<Location>> = Transformations.distinctUntilChanged(locationRepository.loadCrags())
 
-     val cragClusterItems = Transformations.map(crags) {
+    val cragClusterItems = Transformations.map(crags) {
         it.map { location -> CragClusterItem(location) }
     }
 
-     val sectors: LiveData<List<Location>> = Transformations.distinctUntilChanged(
+    val sectors: LiveData<List<Location>> = Transformations.distinctUntilChanged(
             Transformations.switchMap(selectedLocation) { selectedLocation ->
                 if (selectedLocation?.id != null) {
                     Timber.d("SelectedLocation changed to ${selectedLocation.id}: Updating 'sectors'")
@@ -135,7 +135,7 @@ class MapViewModel @Inject constructor(application: Application,
     )
 
     private val _selectedTopoId = MutableLiveData<String>()
-     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
+    val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
         selectedLocation?.id?.let {
             Timber.d("SelectedLocation changed to $it: Updating 'topos'")
             topoRepository.loadToposForLocation(selectedLocation.id)
@@ -178,13 +178,13 @@ class MapViewModel @Inject constructor(application: Application,
     val bottomSheetState: MutableLiveData<Int> get() = _bottomSheetState
     private val _bottomSheetRequestedState: MutableLiveData<Int> = MutableLiveData()
     val bottomSheetRequestedState: MutableLiveData<Int> get() = _bottomSheetRequestedState
-     val bottomSheetTitle: LiveData<String> = Transformations.map(selectedLocation) {
+    val bottomSheetTitle: LiveData<String> = Transformations.map(selectedLocation) {
         it?.name
     }
 
     private val _searchQuery = MutableLiveData<String>()
     val searchQuery: MutableLiveData<String> get() = _searchQuery
-     val searchResults: LiveData<List<SearchSuggestionItem>> = Transformations.switchMap(_searchQuery) { query ->
+    val searchResults: LiveData<List<SearchSuggestionItem>> = Transformations.switchMap(_searchQuery) { query ->
         Timber.i("Search query changed to: $query")
         val trimmedQuery = query.trim()
         if (trimmedQuery.isNotEmpty()) {
@@ -321,16 +321,28 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
+    /**
+     *  Slightly hacky way of deferring the bottom sheet layout until after the map animation has finished
+     */
+    var tmpMapMode: MapMode? = null
     fun onClusterItemClick(id: String?) {
         Timber.d("Selecting crag with id %s", id)
         _selectedLocationId.value = id
-        _mapMode.value = MapMode.CRAG_MODE
+        tmpMapMode = MapMode.CRAG_MODE
     }
 
     fun onMapMarkerClick(id: String?) {
         Timber.d("Selecting sector with id %s", id)
         _selectedLocationId.value = id
-        _mapMode.value = MapMode.SECTOR_MODE
+        tmpMapMode = MapMode.SECTOR_MODE
+    }
+
+    fun onMapAnimationFinished() {
+        Timber.d("Map has finished animating, we can do layout now")
+        tmpMapMode?.let {
+            _mapMode.value = it
+            tmpMapMode = null
+        }
     }
 
     fun onSearchBarUnfocus() {
