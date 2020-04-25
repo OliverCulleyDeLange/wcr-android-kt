@@ -25,7 +25,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -63,6 +62,7 @@ import java.lang.Math.round
 import javax.inject.Inject
 
 const val MAP_ANIMATION_DURATION = 400
+const val MAP_PADDING_INSET = 150
 const val MAP_PADDING_TOP = 150
 
 const val EXTRA_SECTOR_ID = "EXTRA_SECTOR_ID"
@@ -165,8 +165,7 @@ class MapsActivity : AppCompatActivity(),
         clusterManager.renderer = CustomRenderer(binding.vm, applicationContext, map, clusterManager)
         clusterManager.setOnClusterItemClickListener(this)
         clusterManager.setOnClusterClickListener {
-            val bounds: LatLngBounds = getBoundsForLatLngs(it.items.map { it.position })
-            map.animate(bounds) {}
+            map.animate(it)
             true
         }
         map.setOnMarkerClickListener(markerManager)
@@ -175,11 +174,17 @@ class MapsActivity : AppCompatActivity(),
         observeViewModel()
     }
 
+    /**
+     * All ClusterItems are CRAGS (As they cluster when there are too many to display sensibly
+     * */
     override fun onClusterItemClick(clusterItem: CragClusterItem): Boolean {
         binding.vm?.onClusterItemClick(clusterItem.location.id)
         return true
     }
 
+    /**
+     * All Markers are SECTORS
+     * */
     override fun onMarkerClick(marker: Marker): Boolean {
         binding.vm?.onMapMarkerClick((marker.tag as Location).id)
         return true

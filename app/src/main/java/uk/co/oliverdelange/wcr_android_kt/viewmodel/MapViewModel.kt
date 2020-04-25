@@ -321,22 +321,21 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
-    /**
-     *  Slightly hacky way of deferring the bottom sheet layout until after the map animation has finished
-     */
-    var tmpMapMode: MapMode? = null
     fun onClusterItemClick(id: String?) {
         Timber.d("Selecting crag with id %s", id)
         _selectedLocationId.value = id
         tmpMapMode = MapMode.CRAG_MODE
     }
-
     fun onMapMarkerClick(id: String?) {
         Timber.d("Selecting sector with id %s", id)
         _selectedLocationId.value = id
         tmpMapMode = MapMode.SECTOR_MODE
     }
 
+    /**
+     *  Slightly hacky way of deferring the bottom sheet layout until after the map animation has finished
+     */
+    var tmpMapMode: MapMode? = null
     fun onMapAnimationFinished() {
         Timber.d("Map has finished animating, we can do layout now")
         tmpMapMode?.let {
