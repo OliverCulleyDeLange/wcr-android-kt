@@ -3,7 +3,6 @@ Tests...
 Perf test - load huge data set and check performance then time dB queries
 Image scaling, accommodate panoramas. Min / max size for topo image view. (fit to size)
 License t&c (Web)
-Analytics
 Add 'ungraded' & 'project' grades which are the default
 Edit/delete things that you own
 Add routes to existing topo
@@ -30,6 +29,20 @@ Nice to haves:
 - Clean architecture? RxJava? Single responsibility?
 https://proandroiddev.com/offline-apps-its-easier-than-you-think-9ff97701a73f
 
+
+### Analytics
+To enable verbose logging
+```bash
+adb shell setprop log.tag.FA VERBOSE
+adb shell setprop log.tag.FA-SVC VERBOSE
+adb logcat -v time -s FA FA-SVC
+```
+
+To enable debug mode:
+`adb shell setprop debug.firebase.analytics.app uk.co.oliverdelange.wcr_android_kt`
+To disable debug mode:
+`adb shell setprop debug.firebase.analytics.app .none.`
+
 ### GitLab
 `brew install gitlab-runner`
 
@@ -49,21 +62,13 @@ Verify a git remote:<br />
 `git remote -v`
 
 
-##### Data Structure:
+### Data Structure:
 ```
 - Crags (Location)
     - Sectors (Location)
         - Topos (Topo)
             - Routes (Route)
 ```
-
-Useful Links:
-Spock testing Kotlin Android
-https://dzone.com/articles/testing-kotlin-with-spock-part-1-object
-https://blog.andresteingress.com/2014/07/22/spock-junit-rules
-https://stackoverflow.com/questions/48391716/spock-with-mockito-testing-kotlin-classes
-https://proandroiddev.com/improve-your-tests-with-kotlin-in-android-pt-1-6d0b04017e80
-https://github.com/dpreussler/kotlin-testrunner
 
 
 Privacy Policy:

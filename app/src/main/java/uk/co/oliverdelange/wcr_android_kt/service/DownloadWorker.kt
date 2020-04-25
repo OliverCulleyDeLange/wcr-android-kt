@@ -2,8 +2,10 @@ package uk.co.oliverdelange.wcr_android_kt.service
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Bundle
 import androidx.work.RxWorker
 import androidx.work.WorkerParameters
+import com.google.firebase.analytics.FirebaseAnalytics
 import io.reactivex.Completable
 import io.reactivex.Single
 import org.threeten.bp.LocalDateTime
@@ -49,8 +51,10 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : RxWo
                     Completable.complete()
                 }.toSingle {
                     Result.success()
-                }.doOnError {
+                }.onErrorReturn {
                     Timber.e(it, "Error downloading things from remote db")
+                    FirebaseAnalytics.getInstance(applicationContext).logEvent("wcr_sync_download_failed", Bundle().apply { putString("error", it.message) })
+                    Result.failure()
                 }
     }
 }

@@ -26,7 +26,7 @@ private fun <T : BaseEntity> getFromFirebase(mostRecentDownload: MostRecentSync,
             emitter.onComplete()
         } catch (e: Exception) {
             Timber.e(e, "Error downloading $collection from firestore")
-//            emitter.onError(e)
+            emitter.onError(e)
         }
     }.flatMapObservable {
         Observable.fromIterable(it.asIterable())

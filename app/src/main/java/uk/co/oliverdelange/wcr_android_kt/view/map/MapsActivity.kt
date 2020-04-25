@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.maps.android.MarkerManager
 import com.google.maps.android.clustering.ClusterManager
 import com.squareup.picasso.Picasso
@@ -88,6 +89,9 @@ class MapsActivity : AppCompatActivity(),
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var analytics: FirebaseAnalytics
 
     override fun supportFragmentInjector(): DispatchingAndroidInjector<Fragment> {
         return dispatchingAndroidInjector
@@ -459,6 +463,7 @@ class MapsActivity : AppCompatActivity(),
 
     fun doTutorial(view: View) {
         tutorialManager.launch(this, binding.vm)
+        analytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_BEGIN, null)
     }
 
     fun continueTutorial(view: View) {

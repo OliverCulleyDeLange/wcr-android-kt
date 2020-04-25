@@ -2,11 +2,13 @@ package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -18,7 +20,7 @@ import uk.co.oliverdelange.wcr_android_kt.PREF_BOTTOM_SHEET_OPENED
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.auth.AuthService
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
-import uk.co.oliverdelange.wcr_android_kt.db.dao.remote.reportTopo
+import uk.co.oliverdelange.wcr_android_kt.db.dao.remote.TopoReporter
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
 import uk.co.oliverdelange.wcr_android_kt.map.CragClusterItem
 import uk.co.oliverdelange.wcr_android_kt.model.*
@@ -36,7 +38,9 @@ class MapViewModel @Inject constructor(application: Application,
                                        private val topoRepository: TopoRepository,
                                        private val routeRepository: RouteRepository,
                                        private val authService: AuthService,
-                                       private val db: WcrDb) : AndroidViewModel(application) {
+                                       private val db: WcrDb,
+                                       private val topoReporter: TopoReporter,
+                                       private val analytics: FirebaseAnalytics) : AndroidViewModel(application) {
 
     /* State, exposed via LiveData. All MutableLiveData should be _private and exposed via a LiveData field*/
 
@@ -135,10 +139,13 @@ class MapViewModel @Inject constructor(application: Application,
             }
     )
 
-    private val _selectedTopoId = MutableLiveData<String>()
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
         selectedLocation?.id?.let {
             Timber.d("SelectedLocation changed to $it: Updating 'topos'")
+            analytics.logEvent("wcr_load_topos", Bundle().apply {
+                putString("locationId", selectedLocation.id)
+                putString("locationType", selectedLocation.type.toString())
+            })
             topoRepository.loadToposForLocation(selectedLocation.id)
         }
     }
@@ -187,6 +194,7 @@ class MapViewModel @Inject constructor(application: Application,
     val searchQuery: MutableLiveData<String> get() = _searchQuery
     val searchResults: LiveData<List<SearchSuggestionItem>> = Transformations.switchMap(_searchQuery) { query ->
         Timber.i("Search query changed to: $query")
+        analytics.logEvent("wcr_search", Bundle().apply { putString("query", query) })
         val trimmedQuery = query.trim()
         if (trimmedQuery.isNotEmpty()) {
             val mediator = MediatorLiveData<List<SearchSuggestionItem>>()
@@ -250,6 +258,7 @@ class MapViewModel @Inject constructor(application: Application,
     fun onUserSignInSuccess() {
         _userSignedIn.value = true
         val user = FirebaseAuth.getInstance().currentUser
+        analytics.logEvent(FirebaseAnalytics.Event.LOGIN, null)
         Timber.d("User successfully signed in: ${user?.email}")
     }
 
@@ -327,6 +336,7 @@ class MapViewModel @Inject constructor(application: Application,
         _selectedLocationId.value = id
         tmpMapMode = MapMode.CRAG_MODE
     }
+
     fun onMapMarkerClick(id: String?) {
         Timber.d("Selecting sector with id %s", id)
         _selectedLocationId.value = id
@@ -350,10 +360,11 @@ class MapViewModel @Inject constructor(application: Application,
         Timber.w("User might want to report a topo! $topo")
         _viewEvents.postValue(ReportTopo(topo))
     }
+
     // User submits the topo report
     fun onReportTopo(report: String, topo: Topo) {
         Timber.w("User has reported a topo! Report: $report. Reported topo: $topo")
-        reportTopo(topo, report)
+        topoReporter.reportTopo(topo, report)
     }
 
     fun onSearchBarUnfocus() {
