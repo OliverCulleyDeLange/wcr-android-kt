@@ -28,9 +28,14 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.math.abs
 import kotlin.random.Random
 
-
+/**
+ * Percentage of the photo size needed to move before capturing a point
+ * eg: If photo is 1000 x 1000px, user would need to move 10px before a point would be captured given MIN_DRAWING_DELTA = 0.01
+ * */
+const val MIN_DRAWING_DELTA = 0.03
 const val MAX_TOPO_SIZE_PX = 1020
 
 class RouteViewModel(val route: Route = Route(),
@@ -148,8 +153,13 @@ class SubmitTopoViewModel @Inject constructor(app: Application,
                         }
                     }
                     TouchEvent.TOUCH_MOVE -> {
-                        //TODO only add point if suitable distance away from the last one
-                        path.last().addPoint(pair)
+                        val last = path.last().points.last()
+                        val dx = abs(x - last.first)
+                        val dy = abs(y - last.second)
+                        if (dx > MIN_DRAWING_DELTA || dy > MIN_DRAWING_DELTA) {
+                            Timber.v("Adding point: $pair")
+                            path.last().addPoint(pair)
+                        }
                     }
                 }
             }
@@ -340,7 +350,6 @@ class SubmitTopoViewModel @Inject constructor(app: Application,
         val allowSubmission = sectorId != null && hasName && hasImage && hasAtLeast1Route && routesHaveNameDescriptionAndPath
         Timber.d("Submission allowed: $allowSubmission (sectorId:$sectorId, hasName:$hasName, hasImage:$hasImage, hasAtLeast1Route:$hasAtLeast1Route, routesHaveNameDescriptionAndPath:$routesHaveNameDescriptionAndPath)")
         if (allowSubmission) {
-            //FIXME Add submission to disposables and dispose on destroy
             disposables.add(submit(sectorId!!)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

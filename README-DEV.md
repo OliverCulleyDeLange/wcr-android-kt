@@ -2,10 +2,6 @@ Ideas:
 - Enforce design rules  by writing annotation? to check used classes.
   - -Eg: ViewModels don't use Android classes.
 
-# TODO before releaseStuttery performance fix:
-    - Don't animate map whilst doing complex bottom sheet layout.
-    - Single fragment with different modes based on MapMode
-
 - Test before release
 Test DBs max length for strings - long paths could cause issues.
 Real topos / places

@@ -3,7 +3,6 @@ package uk.co.oliverdelange.wcr_android_kt.viewmodel
 import android.net.Uri
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
 import uk.co.oliverdelange.wcr_android_kt.InstantExecutorListener
 import uk.co.oliverdelange.wcr_android_kt.model.Route
@@ -30,7 +29,7 @@ class SubmitTopoViewModelSpec : FreeSpec() {
             vm.isDrawing.value shouldBe true
             vm.showTakePhotoIcon.value shouldBe false
             vm.shouldShowAddRouteButton.value shouldBe true
-            vm.localTopoImage.value shouldBe null
+            vm.rawTopoImage.value shouldBe null
             vm.topoName.value shouldBe null
             vm.topoNameError.value shouldBe null
             vm.activeRoute.value shouldBe null
@@ -56,7 +55,7 @@ class SubmitTopoViewModelSpec : FreeSpec() {
         "showTakePhotoIcon" - {
             "with no topo image chosen," - {
                 println("No topo image chosen")
-                vm.localTopoImage.value shouldBe null
+                vm.rawTopoImage.value shouldBe null
                 "is true if camera is available" {
                     vm.showTakePhotoIcon.value shouldBe false
 
@@ -76,7 +75,7 @@ class SubmitTopoViewModelSpec : FreeSpec() {
             "with topo image chosen, is false" {
                 val mockUri = mockk<Uri>()
                 vm.onSelectedExistingPhoto(mockUri)
-                vm.localTopoImage.value shouldNotBe null
+                vm.rawTopoImage.value shouldNotBe null
 
                 vm.showTakePhotoIcon.value shouldBe false
             }

@@ -28,7 +28,10 @@ class PaintableTopoImageView(c: Context, att: AttributeSet) : TouchImageView(c, 
     fun setDrawing(newDrawMode: Boolean?) {
         enableTouch = newDrawMode?.not() ?: true
     }
-
+/**
+ * Sets a listener that receives x,y coordinates as a percentage of the size of the image
+ * eg: image size 100 x 10, x:50, y:8 would output x:0.5, y:0.8
+ * */
     fun setOnDrawListener(listener: (x: Float, y: Float, event: MotionEvent) -> Boolean) {
         onDrawListener = listener
     }
