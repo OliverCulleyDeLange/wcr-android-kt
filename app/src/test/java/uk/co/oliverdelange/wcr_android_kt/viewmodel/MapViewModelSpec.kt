@@ -7,11 +7,11 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import uk.co.oliverdelange.wcr_android_kt.InstantExecutorListener
-import uk.co.oliverdelange.wcr_android_kt.auth.AuthService
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
+import uk.co.oliverdelange.wcr_android_kt.service.AuthService
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
 
 class MapViewModelSpec : BehaviorSpec() {

@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.auth
+package uk.co.oliverdelange.wcr_android_kt.service
 
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject

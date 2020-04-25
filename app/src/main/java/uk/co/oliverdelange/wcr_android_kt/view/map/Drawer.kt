@@ -20,8 +20,8 @@ import com.mikepenz.materialdrawer.util.DrawerUIUtils
 import com.squareup.picasso.Picasso
 import uk.co.oliverdelange.wcr_android_kt.BuildConfig
 import uk.co.oliverdelange.wcr_android_kt.R
-import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
-import uk.co.oliverdelange.wcr_android_kt.service.uploadSync
+import uk.co.oliverdelange.wcr_android_kt.sync.downloadSync
+import uk.co.oliverdelange.wcr_android_kt.sync.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
 
 const val DEV_MENU_CLICKS_REQUIRED = 7

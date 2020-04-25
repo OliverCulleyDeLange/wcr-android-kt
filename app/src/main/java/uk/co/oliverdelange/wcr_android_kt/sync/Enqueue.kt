@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.service
+package uk.co.oliverdelange.wcr_android_kt.sync
 
 import androidx.work.*
 import timber.log.Timber

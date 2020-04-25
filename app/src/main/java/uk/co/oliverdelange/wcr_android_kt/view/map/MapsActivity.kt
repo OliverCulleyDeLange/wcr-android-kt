@@ -50,7 +50,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
 import uk.co.oliverdelange.wcr_android_kt.model.Topo
-import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
+import uk.co.oliverdelange.wcr_android_kt.sync.downloadSync
 import uk.co.oliverdelange.wcr_android_kt.util.hideKeyboard
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
 import uk.co.oliverdelange.wcr_android_kt.util.stateFromInt

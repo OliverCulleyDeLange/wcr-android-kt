@@ -1,4 +1,4 @@
-package uk.co.oliverdelange.wcr_android_kt.service
+package uk.co.oliverdelange.wcr_android_kt.sync
 
 import android.annotation.SuppressLint
 import android.content.Context

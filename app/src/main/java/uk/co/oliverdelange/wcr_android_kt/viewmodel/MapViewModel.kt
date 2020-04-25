@@ -18,7 +18,6 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import uk.co.oliverdelange.wcr_android_kt.PREF_BOTTOM_SHEET_OPENED
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
-import uk.co.oliverdelange.wcr_android_kt.auth.AuthService
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
 import uk.co.oliverdelange.wcr_android_kt.db.dao.remote.TopoReporter
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
@@ -27,6 +26,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
+import uk.co.oliverdelange.wcr_android_kt.service.AuthService
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
 import uk.co.oliverdelange.wcr_android_kt.view.map.DEV_MENU_CLICKS_REQUIRED
 import javax.inject.Inject

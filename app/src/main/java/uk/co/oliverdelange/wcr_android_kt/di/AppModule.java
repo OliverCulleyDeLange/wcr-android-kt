@@ -13,6 +13,7 @@ import uk.co.oliverdelange.wcr_android_kt.db.WcrDb;
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.LocationDao;
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.RouteDao;
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.TopoDao;
+import uk.co.oliverdelange.wcr_android_kt.service.Analytics;
 
 @Module(includes = ViewModelModule.class)
 class AppModule {
@@ -48,7 +49,7 @@ class AppModule {
 
     @Singleton
     @Provides
-    FirebaseAnalytics provideAnalytics(Application app) {
-        return FirebaseAnalytics.getInstance(app);
+    Analytics provideAnalytics(Application app) {
+        return new Analytics(FirebaseAnalytics.getInstance(app));
     }
 }
