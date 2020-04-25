@@ -1,7 +1,3 @@
-Ideas:
-- Enforce design rules  by writing annotation? to check used classes.
-  - -Eg: ViewModels don't use Android classes.
-
 - Test before release
 Test DBs max length for strings - long paths could cause issues.
 Real topos / places
