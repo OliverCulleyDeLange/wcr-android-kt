@@ -20,6 +20,7 @@ import com.mikepenz.materialdrawer.util.DrawerUIUtils
 import com.squareup.picasso.Picasso
 import uk.co.oliverdelange.wcr_android_kt.BuildConfig
 import uk.co.oliverdelange.wcr_android_kt.R
+import uk.co.oliverdelange.wcr_android_kt.service.Analytics
 import uk.co.oliverdelange.wcr_android_kt.sync.downloadSync
 import uk.co.oliverdelange.wcr_android_kt.sync.uploadSync
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
@@ -28,7 +29,9 @@ const val DEV_MENU_CLICKS_REQUIRED = 7
 const val MENU_SIGN_IN_ID = 1L
 const val MENU_SIGN_OUT_ID = 2L
 
-class DrawerWrapper(private val mapsActivity: MapsActivity, private val viewModel: MapViewModel) {
+class DrawerWrapper(private val mapsActivity: MapsActivity,
+                    private val viewModel: MapViewModel,
+                    private val analytics: Analytics) {
     var drawer: Drawer
     private lateinit var signInDrawerItem: PrimaryDrawerItem
     private lateinit var signOutDrawerItem: PrimaryDrawerItem
@@ -45,7 +48,7 @@ class DrawerWrapper(private val mapsActivity: MapsActivity, private val viewMode
                 iicon = GoogleMaterial.Icon.gmd_account_circle
                 selectable = false
                 onClick { _ ->
-                   viewModel.onClickSignInButton()
+                    viewModel.onClickSignInButton()
                     false
                 }
             }
@@ -130,7 +133,8 @@ class DrawerWrapper(private val mapsActivity: MapsActivity, private val viewMode
                 Pair("Nuke DB", { viewModel.nukeDb() }),
                 Pair("Sync Up", { uploadSync() }),
                 Pair("Sync Down", { downloadSync() }),
-                Pair("Test Crash", { Crashlytics.getInstance().crash() })
+                Pair("Test Crash", { Crashlytics.getInstance().crash() }),
+                Pair("Test Analytics", { analytics.logTestEvent() })
         ))
     }
 

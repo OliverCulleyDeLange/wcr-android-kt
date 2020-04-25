@@ -46,4 +46,11 @@ class Analytics(private val firebaseAnalytics: FirebaseAnalytics) {
     fun logLogin() {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, null)
     }
+
+    fun logTestEvent() {
+        firebaseAnalytics.logEvent("wct_test_analytics_event", Bundle().apply {
+            putString("key", "value")
+            putString("date", Date().toString())
+        })
+    }
 }

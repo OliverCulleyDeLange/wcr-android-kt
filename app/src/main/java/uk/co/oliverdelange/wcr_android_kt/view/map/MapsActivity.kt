@@ -126,7 +126,7 @@ class MapsActivity : AppCompatActivity(),
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        drawerWrapper = DrawerWrapper(this, viewModel)
+        drawerWrapper = DrawerWrapper(this, viewModel, analytics)
         toast = Toast.makeText(this, "", Toast.LENGTH_SHORT)
         initialiseFloatingSearchBar()
         initialiseBottomSheet()
