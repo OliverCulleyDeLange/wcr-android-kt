@@ -1,7 +1,6 @@
 TODO
 Tests...
 Perf test - load huge data set and check performance then time dB queries
-Fix flipper
 Image scaling, accommodate panoramas. Min / max size for topo image view. (fit to size)
 License t&c (Web)
 Analytics

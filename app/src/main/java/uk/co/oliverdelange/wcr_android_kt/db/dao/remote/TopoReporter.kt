@@ -8,7 +8,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.Topo
 import java.util.*
 
 /**
- * Saves a topo report to the DB. This happens when a user lets us know somethig isn't right with a topo
+ * Saves a topo report to the DB. This happens when a user lets us know something isn't right with a topo
  * For example, a route has the wrong grade, or type, or the topo path is wrong, is the image is offensive etc
  * */
 fun reportTopo(topo: Topo, report: String) {
