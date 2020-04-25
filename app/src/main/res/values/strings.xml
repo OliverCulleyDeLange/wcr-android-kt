@@ -21,6 +21,8 @@
     <!--MAP-->
     <string name="map_search_hint">Search for crags and climbs</string>
     <string name="no_topos">There are no topos at this location yet. </string>
+    <string name="report_topo_title">Report a topo</string>
+    <string name="report_topo_text">Is there something wrong with this topo? Let us know below.</string>
 
     <!--SUBMIT-->
     <string name="button_submit">Submit</string>

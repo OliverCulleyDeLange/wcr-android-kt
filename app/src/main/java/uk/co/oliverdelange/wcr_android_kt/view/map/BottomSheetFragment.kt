@@ -64,7 +64,7 @@ class BottomSheetFragment : Fragment(), Injectable {
         Timber.v("BottomSheetFragment: onActivityCreated")
         val deScrollLinearLayoutManager = DeScrollLinearLayoutManager(activity)
         binding?.topoRecycler?.layoutManager = deScrollLinearLayoutManager
-        val recyclerAdapter = TopoRecyclerAdapter(activity, deScrollLinearLayoutManager)
+        val recyclerAdapter = TopoRecyclerAdapter(activity, deScrollLinearLayoutManager, binding?.vm)
         binding?.topoRecycler?.adapter = recyclerAdapter
 
         sign_in_button.setOnClickListener {
@@ -94,7 +94,7 @@ class BottomSheetFragment : Fragment(), Injectable {
     }
 }
 
-class TopoRecyclerAdapter(val activity: FragmentActivity?, private val recyclerLayoutManager: DeScrollLinearLayoutManager) : RecyclerView.Adapter<TopoRecyclerAdapter.ViewHolder>() {
+class TopoRecyclerAdapter(val activity: FragmentActivity?, private val recyclerLayoutManager: DeScrollLinearLayoutManager, private val viewModel: MapViewModel?) : RecyclerView.Adapter<TopoRecyclerAdapter.ViewHolder>() {
 
     var topos: List<TopoAndRoutes> = emptyList()
 
@@ -141,6 +141,7 @@ class TopoRecyclerAdapter(val activity: FragmentActivity?, private val recyclerL
         holder.binding.topo = topoAndRoutes.topo
         holder.binding.topoImage.routes = topoAndRoutes.routes
         holder.binding.routeRecycler.adapter = RouteRecyclerAdapter(topoAndRoutes.routes)
+        holder.binding.reportButton.setOnClickListener { viewModel?.onTapReportTopo(topoAndRoutes.topo) }
     }
 
     fun updateTopos(newTopos: List<TopoAndRoutes>) {

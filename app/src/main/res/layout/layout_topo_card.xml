@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="@{topo.name}"
-                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintEnd_toEndOf="@+id/topo_image"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toBottomOf="@+id/topo_image"
                 tools:text="Topo name that is really long so we see the wrapping behaviour" />
@@ -77,6 +77,19 @@
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toBottomOf="@+id/topo_name"
                 tools:listitem="@layout/layout_route_card" />
+
+            <ImageButton
+                android:id="@+id/report_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="#00FFFFFF"
+                app:srcCompat="@drawable/ic_error_outline_grey_24dp"
+                card_view:layout_constraintBottom_toBottomOf="@+id/topo_image"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintTop_toTopOf="@+id/topo_image"
+                card_view:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -4,6 +4,7 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import uk.co.oliverdelange.wcr_android_kt.model.Topo
 import java.util.concurrent.atomic.AtomicBoolean
 
 // I'm not convinced by this method, but i'm giving it a try
@@ -34,6 +35,7 @@ object ShowDevMenu : Event
 object NavigateToSignIn : Event
 object NavigateToImageSelectionGallery : Event
 object NavigateToCamera : Event
+class ReportTopo(val topo: Topo): Event
 class ShowXClicksToDevMenuToast(val clicks: Int): Event
 class SubmissionFailed(val error: String) : Event
 class SubmissionSucceeded(val topoId: String): Event

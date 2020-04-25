@@ -18,6 +18,7 @@ import uk.co.oliverdelange.wcr_android_kt.PREF_BOTTOM_SHEET_OPENED
 import uk.co.oliverdelange.wcr_android_kt.WcrApp
 import uk.co.oliverdelange.wcr_android_kt.auth.AuthService
 import uk.co.oliverdelange.wcr_android_kt.db.WcrDb
+import uk.co.oliverdelange.wcr_android_kt.db.dao.remote.reportTopo
 import uk.co.oliverdelange.wcr_android_kt.db.dto.local.LocationRouteInfo
 import uk.co.oliverdelange.wcr_android_kt.map.CragClusterItem
 import uk.co.oliverdelange.wcr_android_kt.model.*
@@ -344,6 +345,17 @@ class MapViewModel @Inject constructor(application: Application,
         }
     }
 
+    // User taps the ! button on the topo
+    fun onTapReportTopo(topo: Topo) {
+        Timber.w("User might want to report a topo! $topo")
+        _viewEvents.postValue(ReportTopo(topo))
+    }
+    // User submits the topo report
+    fun onReportTopo(report: String, topo: Topo) {
+        Timber.w("User has reported a topo! Report: $report. Reported topo: $topo")
+        reportTopo(topo, report)
+    }
+
     fun onSearchBarUnfocus() {
 //        collapseBottomSheet()
     }
@@ -422,7 +434,7 @@ class MapViewModel @Inject constructor(application: Application,
         id?.let {
             expandBottomSheet()
             _mapMode.value = MapMode.TOPO_MODE
-            Observable.fromCallable { topoRepository.topoDao.get(it) }
+            Observable.fromCallable { topoRepository.topoDao.get(it) } //FIXME Why is the dao exposed? And why am i using it?
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { topo ->

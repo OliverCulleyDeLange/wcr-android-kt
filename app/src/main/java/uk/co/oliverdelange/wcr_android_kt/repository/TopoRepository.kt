@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import io.reactivex.Single
 import timber.log.Timber
-import uk.co.oliverdelange.wcr_android_kt.db.dao.local.LocationDao
 import uk.co.oliverdelange.wcr_android_kt.db.dao.local.TopoDao
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromTopoAndRouteDto
 import uk.co.oliverdelange.wcr_android_kt.mapper.fromTopoDto
@@ -13,8 +12,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.Topo
 import uk.co.oliverdelange.wcr_android_kt.model.TopoAndRoutes
 import javax.inject.Inject
 
-class TopoRepository @Inject constructor(val topoDao: TopoDao,
-                                         val locationDao: LocationDao) {
+class TopoRepository @Inject constructor(val topoDao: TopoDao) {
 
     fun save(topo: Topo): Single<String> {
         Timber.d("Saving topo %s", topo.name)

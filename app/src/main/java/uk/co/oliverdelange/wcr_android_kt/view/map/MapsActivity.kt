@@ -2,6 +2,7 @@ package uk.co.oliverdelange.wcr_android_kt.view.map
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.BounceInterpolator
 import android.view.animation.TranslateAnimation
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -46,6 +48,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.Location
 import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
+import uk.co.oliverdelange.wcr_android_kt.model.Topo
 import uk.co.oliverdelange.wcr_android_kt.service.downloadSync
 import uk.co.oliverdelange.wcr_android_kt.util.hideKeyboard
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
@@ -53,11 +56,8 @@ import uk.co.oliverdelange.wcr_android_kt.util.stateFromInt
 import uk.co.oliverdelange.wcr_android_kt.view.TutorialManager
 import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitActivity
 import uk.co.oliverdelange.wcr_android_kt.view.submit.SubmitLocationFragment
+import uk.co.oliverdelange.wcr_android_kt.viewmodel.*
 import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapMode.*
-import uk.co.oliverdelange.wcr_android_kt.viewmodel.MapViewModel
-import uk.co.oliverdelange.wcr_android_kt.viewmodel.NavigateToSignIn
-import uk.co.oliverdelange.wcr_android_kt.viewmodel.ShowDevMenu
-import uk.co.oliverdelange.wcr_android_kt.viewmodel.ShowXClicksToDevMenuToast
 import java.lang.Math.round
 import javax.inject.Inject
 
@@ -69,12 +69,12 @@ const val EXTRA_SECTOR_ID = "EXTRA_SECTOR_ID"
 const val ACTIVITY_RESULT_SUBMIT = 999
 const val ACTIVITY_RESULT_SIGNIN = 998
 
-/*
-    The Main Activity of the app. Shows a map with markers for crags, which when clicked reveal its sectors.
-    Floating search bar allows searching crags, sectors and routes. It also give access to drawer menu
+/**
+The Main Activity of the app. Shows a map with markers for crags, which when clicked reveal its sectors.
+Floating search bar allows searching crags, sectors and routes. It also give access to drawer menu
 
-    Bottom sheet gives information on the selected crag/sector location map marker, including topos.
-        - See BottomSheetFragment.kt
+Bottom sheet gives information on the selected crag/sector location map marker, including topos.
+- See [BottomSheetFragment]
  */
 class MapsActivity : AppCompatActivity(),
         HasSupportFragmentInjector,
@@ -199,6 +199,7 @@ class MapsActivity : AppCompatActivity(),
         binding.vm?.viewEvents?.observe(this, Observer {
             when (it) {
                 ShowDevMenu -> drawerWrapper.showDevMenu()
+                is ReportTopo -> showReportTopoDialog(it.topo)
                 is ShowXClicksToDevMenuToast -> showToast(getString(R.string.clicks_to_dev_menu, it.clicks))
                 NavigateToSignIn -> startSignInActivity()
             }
@@ -335,6 +336,19 @@ class MapsActivity : AppCompatActivity(),
         toast.show()
     }
 
+    private fun showReportTopoDialog(topo: Topo) {
+        val editText = EditText(this)
+        AlertDialog.Builder(this)
+                .setTitle(R.string.report_topo_title)
+                .setMessage(R.string.report_topo_text)
+                .setView(editText)
+                .setNegativeButton("Cancel") { _, _ -> }
+                .setPositiveButton("Submit") { _, _ ->
+                    binding.vm?.onReportTopo(editText.text.toString(), topo)
+                }
+                .show()
+    }
+
     private fun initialiseFloatingSearchBar() {
         floating_search_view.attachNavigationDrawerToMenuButton(drawerWrapper.drawer.drawerLayout)
         floating_search_view.setOnFocusChangeListener(object : FloatingSearchView.OnFocusChangeListener {
@@ -431,7 +445,7 @@ class MapsActivity : AppCompatActivity(),
         fab.setImageResource(iconId)
     }
 
-    fun startSignInActivity() {
+    private fun startSignInActivity() {
         startActivityForResult(AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setIsSmartLockEnabled(false)
