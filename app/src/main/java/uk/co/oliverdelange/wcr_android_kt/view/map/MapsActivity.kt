@@ -32,7 +32,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.maps.android.MarkerManager
 import com.google.maps.android.clustering.ClusterManager
 import com.squareup.picasso.Picasso
@@ -50,6 +49,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.LocationType
 import uk.co.oliverdelange.wcr_android_kt.model.SearchResultType.*
 import uk.co.oliverdelange.wcr_android_kt.model.SearchSuggestionItem
 import uk.co.oliverdelange.wcr_android_kt.model.Topo
+import uk.co.oliverdelange.wcr_android_kt.service.Analytics
 import uk.co.oliverdelange.wcr_android_kt.sync.downloadSync
 import uk.co.oliverdelange.wcr_android_kt.util.hideKeyboard
 import uk.co.oliverdelange.wcr_android_kt.util.replaceFragment
@@ -91,7 +91,7 @@ class MapsActivity : AppCompatActivity(),
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @Inject
-    lateinit var analytics: FirebaseAnalytics
+    lateinit var analytics: Analytics
 
     override fun supportFragmentInjector(): DispatchingAndroidInjector<Fragment> {
         return dispatchingAndroidInjector
@@ -463,7 +463,7 @@ class MapsActivity : AppCompatActivity(),
 
     fun doTutorial(view: View) {
         tutorialManager.launch(this, binding.vm)
-        analytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_BEGIN, null)
+        analytics.logTutorialBegin()
     }
 
     fun continueTutorial(view: View) {

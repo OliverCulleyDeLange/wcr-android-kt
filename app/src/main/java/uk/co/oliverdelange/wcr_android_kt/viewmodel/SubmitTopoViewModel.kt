@@ -6,12 +6,10 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.provider.MediaStore
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.*
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -25,6 +23,7 @@ import uk.co.oliverdelange.wcr_android_kt.factory.from
 import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
+import uk.co.oliverdelange.wcr_android_kt.service.Analytics
 import uk.co.oliverdelange.wcr_android_kt.sync.uploadSync
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -52,7 +51,7 @@ class RouteViewModel(val route: Route = Route(),
 class SubmitTopoViewModel @Inject constructor(app: Application,
                                               private val topoRepository: TopoRepository,
                                               private val routeRepository: RouteRepository,
-                                              private val analytics: FirebaseAnalytics) : AndroidViewModel(app) {
+                                              private val analytics: Analytics) : AndroidViewModel(app) {
     /* This needs to be set by the View otherwise submission will fail*/
     var sectorId: String? = null
 
@@ -359,11 +358,11 @@ class SubmitTopoViewModel @Inject constructor(app: Application,
                     .subscribe({ submittedTopoId ->
                         Timber.i("Submission Succeeded")
                         _viewEvents.postValue(SubmissionSucceeded(submittedTopoId))
-                        analytics.logEvent("wcr_submission_succeeded", Bundle().apply { putString("topoId", submittedTopoId) })
+                        analytics.logSubmissionSucceeded(submittedTopoId)
                     }, { e ->
                         Timber.e(e, "Submission Failed")
                         _viewEvents.postValue(SubmissionFailed("Failed to submit topo!"))
-                        analytics.logEvent("wcr_submission_failed", Bundle().apply { putString("error", e.message) })
+                        analytics.logSubmissionFailed(e.message)
                     }))
         } else {
             val error = if (!hasName) {

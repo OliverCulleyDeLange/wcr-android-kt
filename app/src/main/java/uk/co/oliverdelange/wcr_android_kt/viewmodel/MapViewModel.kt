@@ -2,13 +2,11 @@ package uk.co.oliverdelange.wcr_android_kt.viewmodel
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -26,6 +24,7 @@ import uk.co.oliverdelange.wcr_android_kt.model.*
 import uk.co.oliverdelange.wcr_android_kt.repository.LocationRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.RouteRepository
 import uk.co.oliverdelange.wcr_android_kt.repository.TopoRepository
+import uk.co.oliverdelange.wcr_android_kt.service.Analytics
 import uk.co.oliverdelange.wcr_android_kt.service.AuthService
 import uk.co.oliverdelange.wcr_android_kt.util.AbsentLiveData
 import uk.co.oliverdelange.wcr_android_kt.view.map.DEV_MENU_CLICKS_REQUIRED
@@ -40,7 +39,7 @@ class MapViewModel @Inject constructor(application: Application,
                                        private val authService: AuthService,
                                        private val db: WcrDb,
                                        private val topoReporter: TopoReporter,
-                                       private val analytics: FirebaseAnalytics) : AndroidViewModel(application) {
+                                       private val analytics: Analytics) : AndroidViewModel(application) {
 
     /* State, exposed via LiveData. All MutableLiveData should be _private and exposed via a LiveData field*/
 
@@ -142,10 +141,7 @@ class MapViewModel @Inject constructor(application: Application,
     val topos: LiveData<List<TopoAndRoutes>> = Transformations.switchMap(selectedLocation) { selectedLocation ->
         selectedLocation?.id?.let {
             Timber.d("SelectedLocation changed to $it: Updating 'topos'")
-            analytics.logEvent("wcr_load_topos", Bundle().apply {
-                putString("locationId", selectedLocation.id)
-                putString("locationType", selectedLocation.type.toString())
-            })
+            analytics.logLoadTopos(selectedLocation.id, selectedLocation.type.toString())
             topoRepository.loadToposForLocation(selectedLocation.id)
         }
     }
@@ -194,7 +190,7 @@ class MapViewModel @Inject constructor(application: Application,
     val searchQuery: MutableLiveData<String> get() = _searchQuery
     val searchResults: LiveData<List<SearchSuggestionItem>> = Transformations.switchMap(_searchQuery) { query ->
         Timber.i("Search query changed to: $query")
-        analytics.logEvent("wcr_search", Bundle().apply { putString("query", query) })
+        analytics.logSearch(query)
         val trimmedQuery = query.trim()
         if (trimmedQuery.isNotEmpty()) {
             val mediator = MediatorLiveData<List<SearchSuggestionItem>>()
@@ -258,7 +254,7 @@ class MapViewModel @Inject constructor(application: Application,
     fun onUserSignInSuccess() {
         _userSignedIn.value = true
         val user = FirebaseAuth.getInstance().currentUser
-        analytics.logEvent(FirebaseAnalytics.Event.LOGIN, null)
+        analytics.logLogin()
         Timber.d("User successfully signed in: ${user?.email}")
     }
 
